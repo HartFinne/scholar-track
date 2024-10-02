@@ -1,0 +1,168 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.lte{
+    margin: auto;
+    width: 70%;
+    padding: 50px;
+    border-radius: 10px;
+    background-color: rgb(191, 191, 191, .2);
+    font-size: 1.1rem;
+}
+
+.date, .receipient, .lte-subject{
+    margin: 50px 0;
+}
+
+.lte-subject{
+    text-indent: 50px;
+}
+
+.salutation-lte, .lte-body{
+    margin-bottom: 30px;
+}
+
+.closing-lte, .lte-reason, .file-upload{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.signature{
+    border: 1px solid;
+    width: 200px;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.submit-lte{
+    margin: 50px;
+}
+
+.lte-form{
+    background-color: rgb(191, 191, 191, .2);
+    border-radius: 10px;
+    width: 80%;
+    margin: auto;
+}
+
+.lteform-title{
+    padding: 20px 40px;
+    background-color: #2e7c55;
+    border-radius: 10px;
+}
+
+.lteform-title .form-heading, .form-desc{
+    color: #fff;
+}
+
+.form-body{
+    padding: 50px;
+    font-size: 1.1rem;
+}
+
+.agreement{
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    font-size: 1.1rem;
+}
+
+.agreement input[type="checkbox"], .lte-reason input[type="radio"]{
+    transform: scale(1.5);
+    margin-right: 20px;
+}
+
+.lte-reason{
+    width: 90%;
+    margin: auto;
+}
+
+.lte-reason .rad{
+    margin-bottom: 20px;
+}
+
+.file-upload{
+    margin: 10px 0 30px;
+}
+
+.file-upload input[type="file"]{
+    margin:10px 0 30px;
+    border: 1px solid gray;
+    border-radius: 10px;
+    padding: 2px 5px;
+}
+
+@media only screen and (max-width: 768px) {
+    .status{
+        margin-top: 30px;
+        font-size: 1rem;
+        gap: 15px;
+    }
+    .ctn-table, .table-title{
+        font-size: 1rem;
+    }
+    .filter-btn{
+        padding: 2px 15px;
+        margin-bottom: 10px;
+    }
+    .lte{
+        padding: 30px;
+        font-size: 1rem;
+    }
+    .lte h5{
+        font-size: 1.1rem;
+    }
+    .lte-form .lte-reason, .agreement, .file-upload{
+        font-size: 1rem;
+    }
+    .lte-reason, .file-upload{
+        width: 100%;
+        gap: 0;
+    }
+    .lte-reason .rad{
+        margin-bottom: 15px;
+    }
+    .form-body{
+        padding: 30px;
+    }
+    .form-body .file-upload {
+        margin-left: 0;
+    }
+    .agreement{
+        padding: 0 30px;
+    }
+    .agreement input[type="checkbox"], .lte-reason input[type="radio"]{
+        transform: scale(1.1);
+        margin-right: 10px;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .ctn-main{
+        padding: 20px 40px;
+    }
+    .file-upload {
+        margin-left: 150px;
+    }
+    .form-body{
+        padding: 40px;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .ctn-main{
+        padding: 20px 50px;
+    }
+    .lte{
+        width: 90%;
+    }
+    .lte-form{
+        width: 90%;
+        margin-top: 20px;
+    }
+}

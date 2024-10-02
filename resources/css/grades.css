@@ -1,0 +1,122 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main{
+    padding: 20px 90px;
+}
+
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 1.1rem;
+}
+
+.sub-title{
+    color: #1a5319;
+    font-weight: bolder;
+    font-size: 1.6rem;
+    margin: 30px 0;
+}
+
+.grade-form{
+    padding: 20px;
+}
+
+.grade-form input{
+    border: 1px solid darkgray;
+    margin-right: 10px;
+    border-radius: 10px;
+}
+
+.gwa, .file{
+    padding: 5px;
+    margin-bottom: 20px;
+    width: 270px;
+}
+
+.grade-stat{
+    background-color: #c1ff72;
+    font-weight: bold;
+    padding: 10px;
+    width: 150px;
+    text-align: center;
+    float: right;
+    border-radius: 10px;
+    margin: 0 30px;
+}
+
+.grades-view{
+    width: 70%;
+    margin: auto;
+    border: 1px solid #fff;
+}
+
+.grades-info{
+    border: 1px solid #8eb79c;
+    background-color: #eaebea;
+    border-radius: 10px;
+    margin: 50px 30px;
+    padding: 20px 30px;
+}
+
+.grades-info h4{
+    background-color: #1a5319;
+    color: #d6efd8;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.grades-info .info{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px; 
+    align-items: center; 
+    padding: 10px;
+}
+
+.label {
+    text-align: left; 
+    margin-bottom: 5px;
+}
+
+.grades-info span{
+    color: #1e5430;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.grades-img img{
+    width: 100%;
+}
+
+@media only screen and (max-width: 768px) {
+    .ctn-main{
+        padding: 20px 45px;
+    }
+    .status{
+        margin-top: 30px;
+        font-size: 1rem;
+    }
+    .ctn-table, .grade-form{
+        font-size: 1rem;
+    }
+    .grade-stat, .grades-info h4{
+        font-size: 1.1rem;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .grades-info{
+        margin: 50px 0;
+    }
+    .grade-stat{
+        margin: 0;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .grades-view{
+        width: 90%;
+    }
+}

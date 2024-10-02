@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Poppins', sans-serif;
+    background-color: #eaebea;
+}
+
+.bg-holder{
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-image: url('/images/tzu-chi-bg.jpg'); 
+    background-position:  center;
+    background-repeat: no-repeat;
+}
+
+h2{
+    color: #1a5319;
+}
+
+#footer a{
+    color: rgb(104, 223, 104);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn{
+    background-color: #1a5319;
+    color: #fff;
+    font-size: 1.1rem;
+}

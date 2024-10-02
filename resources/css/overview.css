@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main{
+    padding: 20px 90px;
+}
+
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 1.1rem;
+}
+
+.ctn-main .title{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: bold;
+    margin: 25px 0;
+}
+
+.sc-info{
+    background-color: rgb(191, 191, 191, .3);
+    border-radius: 10px;
+}
+
+.sc-info-1{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;                   
+    flex-wrap: wrap; 
+    padding: 20px 40px;
+    background-color: #2e7c55;
+    border-radius: 10px;
+}
+
+.sc-info-1 .text{
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.sc-info-1 .text span{
+    background-color: #c1ff72;
+    color: #000;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.sc-info-2{
+    padding: 20px 40px;
+}
+
+.sc-info-2 .text{
+    color: #1a5319;
+    font-size: 1.2rem;
+}
+
+.overview-graph{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap; 
+    padding: 20px 40px;
+    margin-top: 20px;
+}
+
+.overview-graph .card1, .card2{
+    width: 600px;
+    background-color: #d6efd8;
+    border: 1px solid #1a5319;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.sc-renewal h4{
+    text-align: center;
+    font-weight: bolder;
+    color: #1a5319;
+    background-color: rgb(142, 183, 156, .5);
+    padding: 20px 50px;
+    border-radius: 10px;
+}
+
+.sub-title{
+    color: #1a5319;
+    font-weight: bolder;
+    font-size: 1.6rem;
+    margin: 30px 0;
+}
+
+.status{
+    display: flex;
+    gap: 40px;
+}
+
+.filter-btn{
+    border: 2px solid #bfbfbf;
+    padding: 5px 20px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.filter-btn:active{
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.ctn-table{
+    margin-bottom: 50px;
+    font-size: 1.1rem;
+}
+
+.table thead tr th{
+    background-color: #1a5319;
+    color: #fff;
+}
+
+.table tr td{
+    text-align: center;
+    padding: 15px;
+}
+
+.table-title{
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.btn-submit{
+    background-color: #8bc34a;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 50px;
+    transition: 0.3s ease;
+}
+
+.btn-submit:hover{
+    background-color: #1a5319;
+}
+
+#view, #cancel{
+    text-decoration: none;
+    background-color: #56a72e;
+    color: #fff;
+    font-weight: bold;
+    padding: 5px 50px;
+    border-radius: 20px;
+    transition: 0.3s ease;
+}
+
+#view:hover, #cancel:hover{
+    background-color: gray;
+}
+
+@media only screen and (max-width: 768px) {
+    .ctn-main{
+        padding: 20px 60px;
+    }
+    .sc-info-2 .text p, .filter-btn, .ctn-table{
+        font-size: 1rem;
+    }
+    .sub-title{
+        font-size: 1.3rem;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .overview-graph .card1, .card2{
+        margin: auto;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .overview-graph{
+        padding: 20px;
+    }
+    .overview-graph .card1, .card2{
+        width: 450px;
+    }
+}

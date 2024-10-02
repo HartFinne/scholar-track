@@ -1,0 +1,88 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main{
+    padding: 20px 90px;
+}
+
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 1.1rem;
+}
+
+.ctn-main .title{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.btn-edit{
+    background-color: #8bc34a;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 50px;
+    transition: 0.3s ease;
+}
+
+.btn-edit:hover{
+    background-color: #1a5319;
+}
+
+.profile{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-view{
+    width: 100%;
+    margin: auto;
+    border: 1px solid #8eb79c;
+    background-color: #eaebea;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.profile-info{
+    margin-bottom: 10px;
+}
+
+.profile-info h4{
+    background-color: #1a5319;
+    color: #d6efd8;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.profile-info .info{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px; 
+    align-items: center; 
+    padding: 10px;
+}
+
+.label {
+    text-align: left; 
+    margin-bottom: 5px;
+}
+
+.profile-info span{
+    color: #1e5430;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+    .ctn-main{
+        padding: 20px 50px;
+    }
+    .profile-info h4{
+        font-size: 1.1rem;
+    }
+}

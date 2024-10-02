@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main{
+    padding: 20px 90px;
+    
+}
+
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 1.1rem;
+}
+
+.ctn-main .title{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: bold;
+    margin: 25px 0;
+}
+
+.ctn-main .title-desc{
+    font-size: 1.1rem;
+}
+
+.attendance-dashboard, .status{
+    display: flex;
+    width: 90%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin: auto;
+    padding: 30px;
+}
+
+.total-attendance, .total-tardiness, .total-absences{
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    padding: 15px 30px;
+    background-color: #2e7c55;
+}
+
+.total-attendance h5, .total-tardiness h5, .total-absences h5{
+    font-weight: bold;
+    color: #fff;
+}
+
+.total-attendance h4, .total-tardiness h4, .total-absences h4{
+    margin-top: 10px;
+    font-weight: bold;
+    color: #d6efd8;
+}
+
+.status{
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.filter-status{
+    display: flex;
+    gap: 40px;
+}
+
+.filter-btn{
+    border: 2px solid #bfbfbf;
+    padding: 5px 20px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.filter-btn:active{
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.class-img img{
+    height: auto;
+    width: 200px;
+}
+
+.attendance-card{
+    display: flex;
+    width: 90%;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin: auto;
+    padding: 30px;
+    background-color: #d6efd8;
+    border-radius: 10px;
+}
+
+.attendance-details{
+    width: 75%;
+    margin: auto;
+}
+
+.topic h5{
+    padding: 0 30px;
+    font-weight: 600;
+}
+
+.details{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin: auto;
+    padding: 30px;
+    font-size: 1.1rem;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center; 
+    position: relative;
+    /* margin-top: 20px;  */
+}
+
+.search-container i{
+    position: absolute;
+    top: 30%;
+    left: 5%;
+    color: gray;
+}
+
+.search-input {
+    width: 100%; 
+    padding: 10px 40px 10px 15px; 
+    border: 2px solid #ccc; 
+    border-radius: 10px; 
+    text-indent: 30px;
+    outline: none;  
+    transition: border-color 0.3s; 
+}
+
+.search-input:focus {
+    border-color: #4CAF50; 
+}
+
+
+@media only screen and (max-width: 768px) {
+    .search-container {
+        width: 100%;
+    }
+    .filter-status{
+        flex-direction: column;
+        gap: 20px;
+    }
+    .filter-status p{
+        margin: 0;
+        font-size: 1.1rem;
+    }
+    .status{
+        flex-direction: column;
+        font-size: 1rem;
+    }
+    .filter-btn{
+        margin-bottom: 5px;
+    }
+    .attendance-details{
+        width: 100%;
+    }
+    .topic h5{
+        padding: 0;
+        text-align: center;
+    }
+    .details{
+        gap: 0;
+        flex-direction: column;
+        padding: 20px 20px 0;
+        font-size: 1rem;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .ctn-main{
+        padding: 20px 70px;   
+    }
+    
+    .attendance-dashboard{
+        width: 100%;
+       flex-direction: column;
+    }
+    .class-img img{
+        width: auto;
+        height: 150px;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .attendance-dashboard, .status{
+        width: 100%;
+        gap: 20px;
+        padding: 20px;
+    }
+    .filter-status{
+        gap: 30px;
+    }
+    .search-input {
+        padding: 10px 30px 10px 10px; 
+    }
+    .total-attendance, .total-tardiness, .total-absences{
+        width: 250px;
+        padding: 15px 20px;
+    }
+    .attendance-card{
+        width: 100%;
+        gap: 30px;
+    }
+    .attendance-details{
+        width: 75%;
+    }
+}

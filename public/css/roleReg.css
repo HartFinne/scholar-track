@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Poppins', sans-serif;
+    background-color: #eaebea;
+}
+
+.bg-holder{
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-image: url('/images/tzu-chi-bg.jpg'); 
+    background-position:  center;
+    background-repeat: no-repeat;
+}
+
+h2{
+    color: #1a5319;
+}
+
+#footer a{
+    color: rgb(104, 223, 104);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn{
+    background-color: #1a5319;
+    color: #fff;
+    font-size: 1.1rem;
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #eaebea;
+}
+
+.registration-form{
+    padding: 50px 100px;
+}
+
+.btn-back{
+    padding: 5px 20px;
+    border-radius: 10px;
+    background-color: #80af81;
+    color: #fff;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.btn-back:hover{
+    background-color: #8eb79c;
+}
+
+.header{
+    margin-top: 30px;
+}
+
+.logo{
+    height: 50px;
+    width: auto;
+}
+
+.header h6{
+    color: #1a5319;
+    font-size: 1.2rem;
+}
+
+.registration-form h1{
+    width: 100%;
+    color: #2e7c55;
+    border-top: 3px solid #8eb79c;
+    border-bottom: 3px solid #8eb79c;
+    margin: 50px 0 0;
+}
+
+.registration-form .description{
+    font-size: 1.125rem;
+    color: #1a5319;
+}
+
+.custom-fieldset {
+    border: 2px solid #1a5319; /* Match Bootstrap's form control border color */
+    padding: 25px;
+    border-radius: 10px;
+    position: relative;
+    margin: 40px 0px;
+}
+
+.custom-fieldset legend {
+    color: #eaebea;
+    font-size: 1.3rem;
+    font-weight: bold;
+    width: auto; /* Override default full width */
+    padding: 0 10px; /* Add padding to blend into the border */
+    margin-bottom: 0; /* Remove bottom margin */
+    margin-left: 20px;
+    border-bottom: none; /* Remove default border line */
+    border-radius: 10px;
+    position: absolute;
+    top: -12px; /* Move up to overlap border */
+    left: 10px; /* Align with the padding */
+    background-color: #1a5319; /* Match the fieldset background */
+}
+
+.form{
+    width: 95%;
+    margin: auto;
+    font-size: 1.1rem;
+}
+
+.row{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-gap: 10px; 
+    align-items: center;
+    margin: 20px 0;
+}
+
+.row-checkbox{
+    margin: 20px 50px;
+    font-size: 1.1rem;
+}
+
+.row-checkbox input[type="text"]{
+    width: 500px;
+    padding: 8px;
+    margin: 0 20px;
+    border: 2px solid #bfbfbf;
+    border-radius: 5px;
+    transition: all border-color 0.3s ease-in-out;
+}
+
+.row input, .row select {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #bfbfbf;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
+}
+
+input:focus, select:focus{
+    border-color: #2e7c55
+}
+
+.agreement{
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.agreement input[type="checkbox"], .row-checkbox input[type="checkbox"]{
+    transform: scale(1.5);
+    margin-right: 20px;
+}
+
+.register{
+    text-align: right;
+}
+
+.btn-register{
+    padding: 10px 80px;
+    border-radius: 10px;
+    background-color: #8bc34a;
+    color: #fff;
+    border: 1px solid #898989;
+    transition: 0.3s ease;
+}
+
+.btn-register:hover{
+    background-color: #1a5319;
+}
+
+@media (max-width: 768px) {
+    .row {
+        display: flex;
+        flex-direction: column;
+        margin: 20px 0;
+    }
+    .row input{
+        width: 100%;
+    }
+    .row-checkbox{
+        margin: 20px 30px;
+    }
+    .row-checkbox input[type="text"]{
+        width: 100%;
+        margin: 20px;
+    }
+    .agreement{
+        padding: 0;
+    }
+    .register{
+        text-align: center;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .logo{
+        height: 40px;
+    }
+    
+    .header h6{
+        font-size: 1.1rem;
+    }
+    .registration-form h1{
+        font-size: 2rem;
+    }
+    .custom-fieldset legend{
+        font-size: 1.2rem;
+    }
+    .form, .row-checkbox, .registration-form .description, .agreement{
+        font-size: 1rem;
+    }
+    .form .row{
+        grid-template-columns: 200px 1fr;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .registration-form{
+        padding: 50px 80px;
+    }
+    .row{
+        grid-template-columns: 250px 1fr;
+    }
+}

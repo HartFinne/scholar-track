@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', Arial;
+}
+
+#btn-showmenu {
+    border: none;
+    padding: 10px 15px;
+    font-size: 32px;
+    color: #1a5319;
+    text-align: right;
+    background-color: transparent;
+    transition: all 0.3s ease;
+    float: left;
+    overflow: auto;
+    position: fixed;
+}
+
+#btn-showmenu:hover {
+    color: #fff;
+    background-color: #8eb79c;
+}
+
+.ctn-sidebar {
+    position: fixed;
+    z-index: 2;
+    height: 100%;
+    width: 250px;
+    background-color: #eaebea;
+    overflow: auto;
+    float: left;
+    display: none;
+    margin-right: 20px;
+}
+
+.ctn-options {
+    display: flex;
+    flex-direction: column;
+}
+
+.menuoptions {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #8eb79c;
+}
+
+#btn-closemenu {
+    border: none;
+    padding: 10px;
+    font-size: 18px;
+    color: #1a5319;
+    text-align: right;
+    transition: all 0.3s ease;
+    width: fit-content;
+    margin-left: auto;
+    background-color: transparent;
+}
+
+#btn-closemenu:hover {
+    color: #fff;
+    background-color: #8eb79c;
+}
+
+.ctn-options button {
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    border-bottom: 1px solid #8eb79c;
+    font-size: 18px;
+    text-decoration: none;
+    color: #1a5319;
+    text-align: left;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ctn-options button.active {
+    background-color: #8eb79c;
+    color: #fff;
+}
+
+.ctn-options button:hover {
+    background: #8eb79c;
+    color: #fff;
+}
+
+.subopt {
+    display: flex;
+    flex-direction: column;
+}
+
+.subopt a {
+    padding: 2px 20px;
+    font-size: 16px;
+    text-decoration: none;
+    color: #1a5319;
+    border-bottom: 1px solid #8eb79c;
+}
+
+.ctn-options a:hover {
+    background: #8eb79c;
+    color: #fff;
+}

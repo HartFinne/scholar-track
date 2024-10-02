@@ -1,0 +1,338 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main{
+    padding: 20px 90px;
+}
+
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 1.1rem;
+}
+
+.ctn-main .title{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: bold;
+    margin: 25px 0;
+}
+
+.ctn-main .title-desc{
+    font-size: 1.1rem;
+}
+
+.cs-dashboard{
+    display: flex;
+    width: 80%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin: auto;
+    padding: 30px;
+}
+
+.cs-dashboard i{
+    margin-right: 20px;
+}
+
+.complete-hrs, .remaining-hrs{
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+    padding: 15px 25px;
+    background-color: #2e7c55;
+}
+
+.complete-hrs h5, .remaining-hrs h5{
+    font-weight: bold;
+    color: #fff;
+}
+
+.complete-hrs h4, .remaining-hrs h4{
+    margin-top: 10px;
+    font-weight: bold;
+    color: #d6efd8;
+}
+
+.cshours-graph{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap; 
+    padding: 20px 40px;
+    margin-top: 20px;
+}
+
+.cshours-graph .card1, .card2{
+    width: 600px;
+    background-color: #d6efd8;
+    border: 1px solid #1a5319;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+#cancel{
+    background-color: red;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+    font-size: 1.1rem;
+}
+
+.search-input, .cs-area {
+    width: 30%; 
+    padding: 10px 40px 10px 15px; 
+    margin-right: 30px;
+    border: 2px solid #ccc; 
+    border-radius: 10px; 
+    outline: none;  
+    transition: border-color 0.3s; 
+}
+
+.search-input:focus, .cs-area:focus {
+    border-color: #4CAF50; 
+}
+
+.cs-area{
+    width: 20%;
+}
+
+.activity-container, .activity-details-container{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.card{
+    width: 325px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin: 30px;
+    transition: 0.3s ease;
+}
+
+.card:hover{
+    transform: scale(1.1);
+    box-shadow: 0 5px 10px rgb(116, 152, 113);
+}
+
+.card a{
+    text-decoration: none;
+    color: #000;
+    background-color: rgb(191, 191, 191, .2);
+}
+
+.card img{
+    width: 325px;
+    height: auto;
+    border-radius: 10px;
+    /* margin-bottom: 20px; */
+}
+
+.card-content, .card-details-content{
+    margin: 30px;
+}
+
+.card-content i, .card-details-content i{
+    margin-right: 15px;
+}
+
+.cs-title{
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.num-vol{
+    background-color: #749871;
+    color: #d6efd8;
+    padding: 5px;
+}
+
+.num-vol p{
+    margin-top: 5px;
+    font-size: 1.1rem;
+}
+
+.activity-details-container{
+    width: 100%;
+    align-items: center;
+    margin: 20px;
+}
+
+.cs-img img{
+    width: 600px;
+    height: auto;
+    margin: 20px;
+    border-radius: 10px;
+}
+
+.card-details-content{
+    width: 400px;
+    padding: 30px;
+    border-radius: 10px;
+    background-color: rgb(191, 191, 191, .2);
+}
+
+.cs-stat{
+    color: #56a72e;
+    font-size: 1.1rem;
+}
+
+.no-vol{
+    background-color: #e4e8ec;
+    color: #1e5430;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.btn-reg{
+    text-align:  center;
+    margin-top: 30px;
+}
+
+.btn-reg button, .submit-attendance button, .btn-submit{
+    padding: 10px 40px;
+    border-radius: 10px;
+    background-color: #8bc34a;
+    color: #fff;
+    border: 1px solid #898989;
+    transition: 0.3s ease;
+}
+
+.btn-reg button:hover, .submit-attendance button:hover, .btn-submit:hover{
+    background-color: #1a5319;
+}
+
+.btn-submit{
+    margin-bottom: 50px;
+    padding: 10px 50px;
+}
+
+.activity-desc{
+    font-size: 1.1rem;
+    margin: 20px 30px 30px;
+}
+
+.cs-form{
+    width: 95%;
+    margin: auto;
+    font-size: 1.1rem;
+}
+
+.custom-fieldset {
+    border: 2px solid #1a5319; /* Match Bootstrap's form control border color */
+    padding: 25px;
+    border-radius: 10px;
+    position: relative;
+    margin: 40px 0px;
+}
+
+.custom-fieldset legend {
+    color: #eaebea;
+    font-size: 1.2rem;
+    font-weight: bold;
+    width: auto; /* Override default full width */
+    padding: 0 10px; /* Add padding to blend into the border */
+    margin-bottom: 0; /* Remove bottom margin */
+    margin-left: 20px;
+    border-bottom: none; /* Remove default border line */
+    border-radius: 10px;
+    position: absolute;
+    top: -12px; /* Move up to overlap border */
+    left: 10px; /* Align with the padding */
+    background-color: #1e5430;
+}
+
+.cs-form .row{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+    grid-gap: 20px 30px;
+    margin-bottom: 20px;
+}
+
+label{
+    font-weight: bold;
+}
+
+input, select{
+    width: 100%;
+    padding: 5px;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #bfbfbf;
+    transition: border-color 0.3s ease-in-out;
+}
+
+input:focus, select:focus{
+    border-color:#4CAF50;
+}
+
+@media only screen and (max-width: 768px) {
+    .cs-dashboard, .activity-details-container{
+        flex-direction: column;
+    }
+    .complete-hrs, .remaining-hrs{
+        width: 300px;
+        padding: 15px;
+    }
+    .cs-dashboard h5{
+        font-size: 1.1rem;
+    }
+    .cs-dashboard h4{
+        font-size: 1.3rem;
+    }
+    table{
+        font-size: 1rem;
+    }
+    .search-container .search-input, .cs-area {
+        width: 100%; 
+        font-size: 1rem;
+    }
+
+    .activity-details-container, .cs-img img{
+        margin: 0;
+    }
+    
+    .cs-img img{
+        width: 400px;
+    }
+}
+@media only screen and (max-width: 1024px) {
+    .ctn-main{
+        padding: 20px 70px;
+    }
+    .cshours-graph{
+        flex-direction: column;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .cs-dashboard{
+        width: 100%;
+    }
+    .cshours-graph{
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .cshours-graph .card1, .card2{
+        width: 450px;
+        padding: 30px;
+    }
+    .search-input, .cs-area {
+        width: 90%; 
+    }
+}
