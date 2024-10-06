@@ -29,54 +29,75 @@
             to you, write <strong>N/A</strong>.
         </p>
 
+
+        {{-- show if the registration is success --}}
+        <x-alert />
+
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="form">
-            <form action="">
+            <form action="{{ route('registerScholar') }}" method="POST">
+                @csrf
                 <fieldset class="custom-fieldset">
                     <legend>PERSONAL INFORMATION</legend>
                     <div class="row">
                         <label for="caseCode">Case Code</label>
-                        <input type="text" class="reg-input" id="caseCode" required>
+                        <input type="text" class="reg-input" id="caseCode" name="caseCode" required>
                     </div>
                     <div class="row">
                         <label for="area">Assigned Area</label>
-                        <select class="" aria-label="area" required>
-                            <option value="1">Mindong</option>
-                            <option value="2">Minxi</option>
-                            <option value="3">Minzhong</option>
+                        <select class="" aria-label="area" name="assignedArea" required>
+                            <option value="Mindong">Mindong</option>
+                            <option value="Minxi">Minxi</option>
+                            <option value="Minzhong">Minzhong</option>
                         </select>
                     </div>
                     <div class="row">
                         <label for="fname">First Name</label>
-                        <input type="text" id="fname" class="reg-input" placeholder="" name="fname" required>
+                        <input type="text" id="fname" class="reg-input" placeholder="" name="firstName" required>
                     </div>
                     <div class="row">
                         <label for="mname">Middle Name</label>
-                        <input type="text" id="mname" class="reg-input" placeholder="" name="fname" required>
+                        <input type="text" id="mname" class="reg-input" placeholder="" name="middleName"
+                            required>
                     </div>
                     <div class="row">
                         <label for="lname">Last Name</label>
-                        <input type="text" id="lname" class="reg-input" placeholder="" name="fname" required>
+                        <input type="text" id="lname" class="reg-input" placeholder="" name="lastName" required>
                     </div>
                     <div class="row">
                         <label for="date">Date of Birth</label>
-                        <input type="date" id="date" class="reg-input" placeholder="" name="date" required>
+                        <input type="date" id="date" class="reg-input" placeholder="" name="birthdate" required>
                     </div>
                     <div class="row">
                         <label for="sex">Sex</label>
-                        <select class="" aria-label="sex" required>
-                            <option value="1">Female</option>
-                            <option value="2">Male</option>
+                        <select class="" aria-label="sex" name="sex" required>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
                         </select>
                     </div>
                     <div class="row">
                         <label for="fbName">Facebook Name</label>
-                        <input type="text" id="fbName" class="reg-input" placeholder="" name="fbName" required>
+                        <input type="text" id="fbName" class="reg-input" placeholder="" name="facebookName"
+                            required>
                     </div>
                     <p>Are you a member of any indigenous group?</p>
                     <div class="row-checkbox">
-                        <input type="checkbox" id="indigenousCheck" onclick="toggleInput()"> Yes
-                        <input type="text" id="indigenousInput" placeholder="If Yes, please specify" disabled>
-                        <input type="checkbox" id="noCheck" onclick="disableInput()"> No
+                        <input type="checkbox" name="isIndigenous" id="indigenousCheck" value="yes"
+                            onclick="toggleInput()"> Yes
+                        <input type="text" name="indigenousGroup" id="indigenousInput"
+                            placeholder="If Yes, please specify" disabled>
+                        <input type="checkbox" name="isIndigenous" id="noCheck" value="no"
+                            onclick="disableInput()"> No
                     </div>
                     <p class="description"><i>If the scholar does not have any personal email or phone number, please
                             provide the contact information of the parent or guardian.</i>
@@ -84,11 +105,12 @@
                     <div class="row">
                         <label for="email">Email Address</label>
                         <input type="email" id="email" class="reg-input" placeholder="name@example.com"
-                            name="email" required>
+                            name="emailAddress" required>
                     </div>
                     <div class="row">
                         <label for="phoneNum">Phone Number</label>
-                        <input type="tel" id="phoneNum" class="reg-input" placeholder="" name="phonenum" required>
+                        <input type="tel" id="phoneNum" class="reg-input" placeholder="" name="phoneNumber"
+                            required>
                     </div>
                 </fieldset>
 
@@ -97,11 +119,11 @@
                     <div class="row">
                         <label for="resAddress">Home Address</label>
                         <input type="text" id="resAddress"
-                            placeholder="House #/Unit #/Floor/Bldg. Name/Street Name" name="residential" required>
+                            placeholder="House #/Unit #/Floor/Bldg. Name/Street Name" name="homeAddress" required>
                     </div>
                     <div class="row">
                         <label for="brgy">Barangay</label>
-                        <input type="text" id="brgy" placeholder="" name="brgy" required>
+                        <input type="text" id="brgy" placeholder="" name="barangay" required>
                     </div>
                     <div class="row">
                         <label for="city">City/Municipality</label>
@@ -117,7 +139,7 @@
                     </div>
                     <div class="row">
                         <label for="permAddress">Permanent Address</label>
-                        <input type="text" id="permAddress" placeholder="" name="permadd" required>
+                        <input type="text" id="permAddress" placeholder="" name="permanentAddress" required>
                     </div>
                 </fieldset>
 
@@ -125,28 +147,28 @@
                     <legend>EDUCATIONAL BACKGROUND</legend>
                     <div class="row">
                         <label for="schoolLevel">School Level</label>
-                        <select class="" aria-label="schoolLevel" required>
+                        <select class="" aria-label="schoolLevel" name="schoolLevel" required>
                             <option value="" disabled selected hidden>Select school level</option>
-                            <option value="1">Elementary</option>
-                            <option value="2">High School</option>
-                            <option value="2">College</option>
+                            <option value="Elementary">Elementary</option>
+                            <option value="High School">High School</option>
+                            <option value="College">College</option>
                         </select>
                     </div>
                     <div class="row">
                         <label for="school">Name of Elementary/High School/University</label>
-                        <input type="text" id="school" placeholder="" name="school" required>
+                        <input type="text" id="school" placeholder="" name="nameOfSchool" required>
                     </div>
                     <div class="row">
                         <label for="collegeDept">College Department</label>
-                        <input type="text" id="collegeDept" placeholder="" name="collegeDept" required>
+                        <input type="text" id="collegeDept" placeholder="" name="collegeDepartment" required>
                     </div>
                     <div class="row">
                         <label for="yrLevel">Year Level</label>
-                        <input type="text" id="yrLevel" placeholder="" name="yrLevel" required>
+                        <input type="text" id="yrLevel" placeholder="" name="yearLevel" required>
                     </div>
                     <div class="row">
                         <label for="course">Course/Strand & Section</label>
-                        <input type="text" id="course" placeholder="" name="course" required>
+                        <input type="text" id="course" placeholder="" name="courseSection" required>
                     </div>
                 </fieldset>
 
@@ -158,15 +180,16 @@
                     </div>
                     <div class="row">
                         <label for="relation">Relation to Guardian</label>
-                        <input type="text" id="relation" placeholder="" name="relation" required>
+                        <input type="text" id="relation" placeholder="" name="relationToGuardian" required>
                     </div>
                     <div class="row">
                         <label for="guardianEmail">Guardian's Email Address</label>
-                        <input type="email" id="guardianEmail" placeholder="" name="uardianEmail" required>
+                        <input type="email" id="guardianEmail" placeholder="" name="guardianEmailAddress"
+                            required>
                     </div>
                     <div class="row">
                         <label for="guardianNum">Guardian's Phone Number</label>
-                        <input type="tel" id="guardianNum" placeholder="" name="guardianNum"" required>
+                        <input type="tel" id="guardianNum" placeholder="" name="guardianPhoneNumber" required>
                     </div>
                 </fieldset>
 
@@ -178,12 +201,13 @@
                     </div>
                     <div class="row">
                         <label for="conPassword">Confirm Password</label>
-                        <input type="password" id="conPassword" placeholder="" name="conPassword" required>
+                        <input type="password" id="password_confirmation" placeholder=""
+                            name="password_confirmation" required>
                     </div>
                 </fieldset>
 
                 <div class="agreement">
-                    <input type="checkbox" value="" id="agreement">
+                    <input type="checkbox" value="yes" id="agreement" name="agreement">
                     <label for="agreement">
                         <i>I hereby attest that the information I have provided is true and correct.
                             I also give my consent to Tzu Chi Foundation to obtain, retain and verify
@@ -222,6 +246,7 @@
             }
         }
     </script>
+
 </body>
 
 </html>
