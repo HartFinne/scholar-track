@@ -1,0 +1,21 @@
+.button {
+    width: 100px;
+    border: 2px solid #2e7c55;
+    color: #2e7c55;
+    background-color: #d6efd8;
+    padding: 5px;
+    font-weight: bold;
+    border-radius: 6px;
+    transition: all ease 0.3s;
+}
+
+.button:hover {
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.button:disabled {
+    border: 2px solid #303030;
+    background-color: #808080;
+    color: #303030;
+}

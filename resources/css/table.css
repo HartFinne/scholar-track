@@ -1,0 +1,116 @@
+/* HEADER */
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#btngoback {
+    border: 2px solid #8eb79c;
+    border-radius: 6px;
+    background-color: #d6efd8;
+    padding: 3px 10px;
+    text-decoration: none;
+    color: #2e7c55;
+    font-weight: bold;
+    transition: all ease 0.3s;
+}
+
+/* FILTER */
+.filterform {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border: 2px solid #8eb79c;
+    row-gap: 5px;
+    color: #2e7c55;
+}
+
+.filtertitle {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.filtermenu {
+    display: flex;
+    padding: 0 10px;
+}
+
+.filterlabel {
+    min-width: 150px;
+}
+
+.filteroptions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+.lbloptions {
+    width: 150px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    column-gap: 5px;
+}
+
+.lbloptions input {
+    cursor: pointer;
+}
+
+#btnapply {
+    font-weight: bold;
+    color: #2e7c55;
+    border: 2px solid #8eb79c;
+    border-radius: 50px;
+    background-color: #d6efd8;
+    padding: 3px 15px;
+    margin-left: auto;
+    transition: all ease 0.3s;
+}
+
+#btnapply:hover,
+#btngoback:hover {
+    color: #fff;
+    border: 2px solid #2e7c55;
+    background-color: #2e7c55;
+}
+
+/* TABLE */
+.ctntable table thead tr th {
+    border: 2px solid #8eb79c;
+    background-color: #d6efd8;
+    color: #2e7c55;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.ctntable table tbody tr td {
+    border: 2px solid #8eb79c;
+    background-color: #fff;
+    color: #2e7c55;
+    font-size: 16px;
+    padding: 5px;
+}
+
+/* MOBILE */
+@media only screen and (max-width: 767px) {
+    .ctntable table thead tr th {
+        font-size: 14px;
+        padding: 5px;
+    }
+
+    .filtertitle {
+        font-size: 14px;
+    }
+
+    .filtermenu {
+        font-size: 12px;
+    }
+
+    #btnapply,
+    #btngoback {
+        font-size: 14px;
+    }
+}

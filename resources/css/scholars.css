@@ -1,0 +1,71 @@
+.groupA {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 20px;
+    padding: 0 10px;
+}
+
+.groupA1 {
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    text-align: center;
+    background-color: #d6efd8;
+    border: 1px solid #2e7c55;
+    border-radius: 8px;
+    color: #2e7c55;
+    width: 100%;
+}
+
+.label {
+    font-size: 16px;
+}
+
+.data {
+    font-size: 32px;
+    font-weight: bold;
+    padding: 0;
+    text-align: center;
+}
+
+/* MOBILE | PAD | TABLET */
+@media only screen and (max-width: 1024px) {
+    .groupA1 {
+        max-width: 350px;
+    }
+}
+
+/* DESKTOP */
+@media only screen and (min-width: 1025px) {
+    .groupA1 {
+        max-width: 650px;
+    }
+}
+
+.groupB {
+    display: flex;
+    flex-direction: column;
+    row-gap: 3px;
+}
+
+.groupB1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: #2e7c55;
+    border: 1px solid #2e7c55;
+    background-color: #d6efd8;
+    padding: 5px 10px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all ease 0.3s;
+}
+
+.groupB1:hover {
+    transform: scale(1.005);
+    background-color: #2e7c55;
+    color: #fff;
+}

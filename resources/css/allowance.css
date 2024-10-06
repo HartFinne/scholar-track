@@ -1,0 +1,72 @@
+/* FONTS IMPORT*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+.groupA {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 20px;
+}
+
+.groupA1 {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 250px;
+    border: 2px solid #2e7c55;
+    border-radius: 8px;
+    background-color: #d6efd8;
+    color: #2e7c55;
+}
+
+.label {
+    font-size: 16px;
+}
+
+.data {
+    font-size: 32px;
+    font-weight: bold;
+    padding: 0;
+    text-align: center;
+}
+
+.groupB {
+    display: flex;
+    flex-direction: column;
+    row-gap: 3px;
+}
+
+.groupB1 {
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.togglebuttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid #2e7c55;
+    background-color: #d6efd8;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Poppins', Arial;
+    color: #2e7c55;
+    padding: 2px 10px;
+    width: 100%;
+    transition: all ease 0.3s;
+}
+
+.togglebuttons:hover {
+    background-color: #2e7c55;
+    color: #fff;
+    transform: scale(1.003);
+}
+
+/* MOBILE */
+@media only screen and (max-width: 480px) {
+    .togglebuttons {
+        font-size: 14px;
+    }
+}

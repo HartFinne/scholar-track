@@ -1,0 +1,111 @@
+.subtitle {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2e7c55;
+}
+
+.groupA {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 10px;
+    column-gap: 10px;
+}
+
+.groupA1 {
+    display: flex;
+    flex-direction: column;
+    width: 450px;
+    row-gap: 5px;
+}
+
+.groupA2 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 100%;
+}
+
+.groupA3 {
+    display: flex;
+    column-gap: 5px;
+}
+
+.btncontrol {
+    padding: 2px 5px;
+    border: 2px solid #2e7c55;
+    border-radius: 6px;
+    background-color: #d6efd8;
+    color: #2e7c55;
+    font-weight: bold;
+    font-size: 15px;
+    transition: all ease 0.3s;
+    width: 50px;
+}
+
+.btncontrol:hover {
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.btncontrol:disabled,
+.reqinput:disabled {
+    border: 2px solid #303030;
+    background-color: #808080;
+    color: #303030;
+}
+
+.addinput,
+.reqinput {
+    padding: 2px 5px;
+    border: 2px solid #2e7c55;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #fff;
+}
+
+.reqinput:focus,
+.addinput:focus {
+    outline: 1px solid #2e7c55;
+}
+
+.groupA4 {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    row-gap: 5px;
+    border: 2px solid #8eb79c;
+}
+
+.groupA5 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#btnsavereq {
+    margin-left: auto;
+}
+
+.label {
+    color: #2e7c55;
+    font-weight: bold;
+    width: 75%;
+}
+
+.instruction {
+    color: #2e7c55;
+    font-weight: bold;
+}
+
+.reqinput {
+    width: 25%;
+}
+
+/* SMALL MOBILE */
+@media only screen and (max-width: 479px) {
+    .groupA1 {
+        max-width: 300px;
+    }
+}

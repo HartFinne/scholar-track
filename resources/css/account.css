@@ -1,0 +1,101 @@
+.mainctn {
+    padding: 100px 0;
+    display: flex;
+    justify-content: center;
+}
+
+.groupA {
+    display: flex;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    border: 1px solid #1a5319;
+    border-radius: 8px;
+}
+
+#outusername {
+    padding: 10px;
+    border-bottom: 1px solid #1a5319;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #1a5319;
+}
+
+.groupA1 {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    padding: 20px 30px 50px 30px;
+    row-gap: 20px;
+}
+
+.groupA2 {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+}
+
+.subtitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.groupA3 {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.inacctinfo,
+.inpassinfo {
+    font-size: 14px;
+    padding: 2px 5px;
+    outline: none;
+    border: 1px solid #1a5319;
+    margin-bottom: 10px;
+}
+
+.inacctinfo {
+    width: 375px;
+}
+
+.inpassinfo {
+    width: 200px;
+}
+
+input:focus {
+    outline: 1px solid #1a5319;
+}
+
+.button {
+    border: 1px solid #56a72e;
+    font-weight: bold;
+    color: #fff;
+    background-color: #56a72e;
+    padding: 5px 0;
+    width: 100px;
+    border-radius: 50px;
+    margin-left: auto;
+    transition: all ease 0.3s;
+}
+
+.button:hover {
+    background-color: #6dc541;
+}
+
+/* MOBILE */
+@media only screen and (max-width: 767px) {
+    .inpassinfo {
+        width: 300px;
+    }
+}
+
+/* PAD | TABLET */
+@media only screen and (max-width: 1024px) {
+    .inacctinfo {
+        width: 300px;
+    }
+}
