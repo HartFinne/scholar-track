@@ -13,7 +13,7 @@
 <body>
     <div class="row vh-100 g-0">
         <div class="col-lg-8 position-relative d-none d-lg-block">
-            <div class="bg-holder" style="background-image: url('{{ asset('images/tzu-chi-bg.jpg') }}');"></div>
+            <div class="bg-holder" style="background-image: url(../../public/images/tzu-chi-bg.jpg);"></div>
         </div>
 
         <div class="col-lg-4">

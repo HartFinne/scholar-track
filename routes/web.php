@@ -26,5 +26,30 @@ Route::prefix('scholar')->group(function () {
 });
 
 Route::prefix('staff')->group(function () {
+    Route::view('/account', 'staff.account')->name('staccount');
+    Route::view('/applicants', 'staff.applicants')->name('stapplicants');
+    Route::view('/applicationforms', 'staff.applicationforms')->name('stapplicationforms');
+    Route::view('/closedevents', 'staff.closedevents')->name('stclosedevents');
+    Route::view('/hcattendancesystem', 'staff.hcattendancesystem')->name('sthcattendancesystem');
+    Route::view('/home', 'staff.home')->name('sthome');
+    Route::view('/listcollege', 'staff.listcollege')->name('stlistcollege');
+    Route::view('/listelementary', 'staff.listelementary')->name('stlistelementary');
+    Route::view('/listhighschool', 'staff.listhighschool')->name('stlisthighschool');
     Route::view('/login', 'staff.login')->name('stlogin');
+    Route::view('/lte', 'staff.lte')->name('stlte');
+    Route::view('/managecs', 'staff.managecs')->name('stmanagecs');
+    Route::view('/managehc', 'staff.managehc')->name('stmanagehc');
+    Route::view('/openevents', 'staff.openevents')->name('stopenevents');
+    Route::view('/penalty', 'staff.penalty')->name('stpenalty');
+    Route::view('/qualificationcollege', 'staff.qualificationcollege')->name('stqualificationcollege');
+    Route::view('/qualificationelem', 'staff.qualificationelem')->name('stqualificationelem');
+    Route::view('/qualificationjhs', 'staff.qualificationjhs')->name('stqualificationjhs');
+    Route::view('/qualificationshs', 'staff.qualificationshs')->name('stqualificationshs');
+    Route::view('/regularallowance', 'staff.regularallowance')->name('stregularallowance');
+    Route::view('/renewal', 'staff.renewal')->name('strenewal');
+    Route::view('/renewcollege', 'staff.renewcollege')->name('strenewcollege');
+    Route::view('/renewelementary', 'staff.renewelementary')->name('strenewelementary');
+    Route::view('/renewhighschool', 'staff.renewhighschool')->name('strenewhighschool');
+    Route::view('/scholars', 'staff.scholars')->name('stscholars');
+    Route::view('/specialallowance', 'staff.specialallowance')->name('stspecialallowance');
 });
