@@ -14,7 +14,6 @@
     <div class="row vh-100 g-0">
         <div class="col-lg-8 position-relative d-none d-lg-block">
             <div class="bg-holder" style="background-image: url('{{ asset('images/tzu-chi-bg.jpg') }}');"></div>
-
         </div>
 
         <div class="col-lg-4">
@@ -29,8 +28,8 @@
                         <p class="text-secondary">Please click or tap you destination.</p>
                     </div>
 
-                    <button class="btn btn-outline-secondary bnt-lg w-100 m-2">Scholar</button>
-                    <button class="btn btn-outline-secondary bnt-lg w-100 m-2">Admin</button>
+                    <a href="{{ route('sclogin') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2">Scholar</a>
+                    <a href="{{ route('stlogin') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2">Admin</a>
 
                     <div class="text-center mt-5">
                         <p id="footer">By using this service, you understood and agree to the Tzu Chi Online Services
