@@ -52,4 +52,8 @@ Route::prefix('staff')->group(function () {
     Route::view('/renewhighschool', 'staff.renewhighschool')->name('strenewhighschool');
     Route::view('/scholars', 'staff.scholars')->name('stscholars');
     Route::view('/specialallowance', 'staff.specialallowance')->name('stspecialallowance');
+    Route::view('/admdashboard', 'staff.admdashboard')->name('admdashboard');
+    Route::view('/admscholars', 'staff.admscholars')->name('admscholars');
+    Route::view('/admstaff', 'staff.admstaff')->name('admstaff');
+    Route::view('/admapplicants', 'staff.admapplicants')->name('admapplicants');
 });

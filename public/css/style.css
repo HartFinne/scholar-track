@@ -54,46 +54,45 @@ body {
     background: #eaebea;
     position: fixed;
     z-index: 3;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.3);
 }
 
 #btnclosesidebar {
     margin-left: auto;
     max-width: fit-content;
     padding: 2px 10px;
-    font-size: 20px;
+    font-size: 24px;
     border: none;
     background: none;
-    color: #db3333;
+    color: #2e7c55;
+}
+
+#btnclosesidebar:hover {
+    color: #c31c1c;
 }
 
 #ctnoptions {
-    width: 100%;
     display: flex;
     flex-direction: column;
-    border-top: 1px solid #8eb79c;
+    border-bottom: 1px solid #2e7c55;
 }
 
-#ctnoptions button {
-    padding: 5px 10px;
+.sbarmainopt {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: none;
-    border-bottom: 1px solid #8eb79c;
-    background: transparent;
-    text-align: left;
-    color: #2e7c55;
+    text-decoration: none;
+    padding: 8px;
     font-size: 18px;
-    transition: all 0.3s ease;
+    color: #2e7c55;
+    border: none;
+    border-top: 1px solid #2e7c55;
+    transition: all ease 0.3s;
 }
 
-#ctnsidebar button:hover {
-    background-color: #8eb79c;
-    color: #fff;
-}
-
-#ctnoptions button.active {
-    background-color: #8eb79c;
+.sbarmainopt:hover,
+.sbarmainopt.active {
+    background-color: #2e7c55;
     color: #fff;
 }
 
@@ -102,17 +101,22 @@ body {
     flex-direction: column;
 }
 
-.ctnsuboptions a {
-    padding: 5px 20px;
+.sbarsubopt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     text-decoration: none;
-    color: #2e7c55;
-    border-bottom: 1px solid #8eb79c;
+    padding: 5px 15px;
     font-size: 16px;
-    transition: all 0.3s ease;
+    color: #2e7c55;
+    border: none;
+    border-top: 1px solid #2e7c55;
+    transition: all ease 0.3s;
 }
 
-.ctnsuboptions a:hover {
-    background-color: #8eb79c;
+.sbarsubopt:hover,
+.sbarsubopt.active {
+    background-color: #2e7c55;
     color: #fff;
 }
 
@@ -123,7 +127,7 @@ body {
     width: fit-content;
     row-gap: 5px;
     padding: 10px 15px;
-    border: 1px solid #1a5319;
+    border: 1px solid #2e7c55;
     border-radius: 6px;
     background-color: #eaebea;
     position: fixed;
@@ -140,8 +144,7 @@ body {
     width: 25px;
 }
 
-#linkprofile,
-#linkchangepass {
+#linkprofile {
     color: #303030;
 }
 
@@ -150,8 +153,7 @@ body {
     color: #2e7c55;
 }
 
-#linkprofile:hover,
-#linkchangepass:hover {
+#linkprofile:hover {
     color: #2e7c55;
     text-decoration: underline;
 }

@@ -29,11 +29,19 @@
                     </div>
                     <div class="groupA3">
                         <span style="width: 150px;">Email Address</span>
-                        <input type="text" id="incontactno" class="inacctinfo" required>
+                        <input type="email" id="incontactno" class="inacctinfo" required>
                     </div>
                     <div class="groupA3">
                         <span style="width: 150px;">Mobile No.</span>
-                        <input type="text" id="incontactno" class="inacctinfo" required>
+                        <input type="number" id="incontactno" class="inacctinfo" required>
+                    </div>
+                    <div class="groupA3">
+                        <span style="width: 150px;">Area</span>
+                        <input type="text" id="inarea" class="inacctinfo" required>
+                    </div>
+                    <div class="groupA3">
+                        <span style="width: 150px;">Role</span>
+                        <input type="text" id="inrole" class="inacctinfo" required>
                     </div>
                     <button type="submit" id="btnupdateacct" class="button">Save</button>
                 </form>
