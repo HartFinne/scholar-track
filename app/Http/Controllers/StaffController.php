@@ -7,9 +7,14 @@ use App\Models\staccount;
 
 class StaffController extends Controller
 {
-    public function showAccount()
+    public function showAccountSW()
     {
-        return view('staff.account');
+        return view('staff.accountsw');
+    }
+
+    public function showAccountSA()
+    {
+        return view('staff.accountsa');
     }
 
     public function showApplicants()

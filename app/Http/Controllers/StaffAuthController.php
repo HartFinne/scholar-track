@@ -5,9 +5,37 @@ namespace App\Http\Controllers;
 use App\Models\staccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class StaffAuthController extends Controller
 {
+    public function login(Request $request)
+    {
+        // Validate the input fields
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        // Attempt to authenticate the user
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Authentication successful, get the authenticated user
+            $user = Auth::user();
+
+            // Check user role and redirect accordingly
+            if ($user->role == 'Social Worker') {
+                return redirect()->route('home-sw');
+            } elseif ($user->role == 'System Admin') {
+                return redirect()->route('dashboard');
+            } else {
+                return redirect()->back()->with('error', 'Unknown role. Access denied.');
+            }
+        } else {
+            // Authentication failed
+            return redirect()->back()->with('error', 'Invalid email or password.');
+        }
+    }
+
     public function createAccount(Request $request)
     {
         try {

@@ -33,7 +33,7 @@
 
     <!-- PROFILE MENU -->
     <div id="ctnprofilemenu">
-        <a id="linkprofile" href="{{ route('account-sw') }}"><i class="fas fa-user"></i>Account</a>
+        <a id="linkprofile" href="{{ route('account-sa') }}"><i class="fas fa-user"></i>Account</a>
         <a id="linksignout" href="{{ route('login-sw') }}"><i class="fa-solid fa-right-from-bracket"></i>Sign out</a>
     </div>
 </body>

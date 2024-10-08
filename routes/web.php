@@ -28,7 +28,8 @@ Route::prefix('scholar')->group(function () {
 });
 
 Route::prefix('staff')->group(function () {
-    Route::get('/account', [StaffController::class, 'showAccount'])->name('account-sw');
+    Route::get('/accountsw', [StaffController::class, 'showAccountSW'])->name('account-sw');
+    Route::get('/accountsa', [StaffController::class, 'showAccountSA'])->name('account-sa');
     Route::get('/applicants', [StaffController::class, 'showApplicants'])->name('applicants');
     Route::get('/applicationforms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
     Route::get('/closedevents', [StaffController::class, 'showCSClosedEvents'])->name('communityservice-closed');
@@ -38,6 +39,7 @@ Route::prefix('staff')->group(function () {
     Route::get('/listelementary', [StaffController::class, 'showScholarsElem'])->name('scholars-elementary');
     Route::get('/listhighschool', [StaffController::class, 'showScholarsHS'])->name('scholars-highschool');
     Route::get('/login', [StaffController::class, 'showLogin'])->name('login-sw');
+    Route::post('/login', [StaffAuthController::class, 'login'])->name('login');
     Route::get('/lte', [StaffController::class, 'showLTE'])->name('lte');
     Route::get('/managecs', [StaffController::class, 'showCommunityService'])->name('communityservice');
     Route::get('/managehc', [StaffController::class, 'showHumanitiesClass'])->name('humanitiesclass');
