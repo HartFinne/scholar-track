@@ -29,7 +29,7 @@
                     </div>
 
                     <a href="{{ route('sclogin') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2">Scholar</a>
-                    <a href="{{ route('stlogin') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2">Admin</a>
+                    <a href="{{ route('login-sw') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2">Admin</a>
 
                     <div class="text-center mt-5">
                         <p id="footer">By using this service, you understood and agree to the Tzu Chi Online Services

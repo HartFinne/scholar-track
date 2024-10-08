@@ -23,18 +23,18 @@
     <div id="ctnsidebar">
         <button id="btnclosesidebar" onclick="togglesidebar()"><i class="fas fa-xmark"></i></button>
         <div id="ctnoptions">
-            <a href="{{ route('admdashboard') }}" class="sbarmainopt">Dashboard</a>
-            <a href="{{ route('admscholars') }}" class="sbarmainopt">Scholars</a>
-            <a href="{{ route('admstaff') }}" class="sbarmainopt">Staff</a>
-            <a href="{{ route('admapplicants') }}" class="sbarmainopt">Applicants</a>
+            <a href="{{ route('dashboard') }}" class="sbarmainopt">Dashboard</a>
+            <a href="{{ route('users-scholar') }}" class="sbarmainopt">Scholars</a>
+            <a href="{{ route('users-staff') }}" class="sbarmainopt">Staff</a>
+            <a href="{{ route('users-applicant') }}" class="sbarmainopt">Applicants</a>
             {{-- <a href="{{ route('admfeatures') }}">System Features</a> --}}
         </div>
     </div>
 
     <!-- PROFILE MENU -->
     <div id="ctnprofilemenu">
-        <a id="linkprofile" href="{{ route('staccount') }}"><i class="fas fa-user"></i>Account</a>
-        <a id="linksignout" href="{{ route('stlogin') }}"><i class="fa-solid fa-right-from-bracket"></i>Sign out</a>
+        <a id="linkprofile" href="{{ route('account-sw') }}"><i class="fas fa-user"></i>Account</a>
+        <a id="linksignout" href="{{ route('login-sw') }}"><i class="fa-solid fa-right-from-bracket"></i>Sign out</a>
     </div>
 </body>
 

@@ -26,7 +26,7 @@
                     <input type="search" placeholder="Search" id="insearch" required>
                     <button type="submit" id="btnsearch"><i class="fas fa-magnifying-glass"></i></button>
                 </form>
-                <a href="{{ route('stscholars') }}" id="btnback">Go Back</a>
+                <a href="{{ route('scholars-overview') }}" id="btnback">Go Back</a>
             </div>
         </div>
         <div class="ctntable table-responsive">

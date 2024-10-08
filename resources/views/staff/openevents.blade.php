@@ -44,10 +44,10 @@
         <span class="pagetitle">List of Activities</span>
         <div class="groupB">
             <div class="groupB1">
-                <a href="{{ route('stmanagecs') }}" class="option">All</a>
-                <a href="{{ route('stopenevents') }}" class="option"
+                <a href="{{ route('communityservice') }}" class="option">All</a>
+                <a href="{{ route('communityservice-open') }}" class="option"
                     style="color: #fff; background-color: #2e7c55; font-weight: bold;">Open</a>
-                <a href="{{ route('stclosedevents') }}" class="option">Close</a>
+                <a href="{{ route('communityservice-closed') }}" class="option">Close</a>
             </div>
             <button id="btnaddevent" onclick="toggleeventform()">Create an Event</button>
         </div>

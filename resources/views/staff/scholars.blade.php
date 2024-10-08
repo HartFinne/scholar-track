@@ -49,15 +49,15 @@
         <span class="pagetitle">List of Scholars</span>
         <span class="lblinstruction">Select which list to view:</span>
         <div class="groupB">
-            <a href="{{ route('stlistcollege') }}" class="groupB1">
+            <a href="{{ route('scholars-college') }}" class="groupB1">
                 College
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
-            <a href="{{ route('stlisthighschool') }}" class="groupB1">
+            <a href="{{ route('scholars-highschool') }}" class="groupB1">
                 High School
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
-            <a href="{{ route('stlistelementary') }}" class="groupB1">
+            <a href="{{ route('scholars-elementary') }}" class="groupB1">
                 Elementary
                 <i class="fa-solid fa-arrow-right"></i>
             </a>

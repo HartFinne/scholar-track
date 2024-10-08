@@ -25,7 +25,7 @@
                 <input type="search" placeholder="Search" id="insearch" required>
                 <button type="submit" id="btnsearch"><i class="fas fa-magnifying-glass"></i></button>
             </form>
-            <a href="{{ route('sthcattendancesystem') }}" id="btnattendance">
+            <a href="{{ route('attendancesystem') }}" id="btnattendance">
                 Start Attendance System
                 <i class="fas fa-arrow-right"></i>
             </a>

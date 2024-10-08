@@ -27,15 +27,15 @@
                 <span class="label">Total Users</span>
                 <span class="data" id="outusers">0</span>
             </span>
-            <a class="groupB1" href="{{ route('admscholars') }}">
+            <a class="groupB1" href="{{ route('users-scholar') }}">
                 <span class="label">Total Scholars</span>
                 <span class="data" id="outscholars">0</span>
             </a>
-            <a class="groupB1" href="{{ route('admstaff') }}">
+            <a class="groupB1" href="{{ route('users-staff') }}">
                 <span class="label">Total Staff</span>
                 <span class="data" id="outstaff">0</span>
             </a>
-            <a class="groupB1" href="{{ route('admapplicants') }}">
+            <a class="groupB1" href="{{ route('users-applicant') }}">
                 <span class="label">Total Applicants</span>
                 <span class="data" id="outapplicants">0</span>
             </a>

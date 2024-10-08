@@ -41,9 +41,10 @@
         <span class="pagetitle">Renewal Application</span>
         <span class="lblinstruction">Select which list to view:</span>
         <div class="groupB">
-            <a href="{{ route('strenewcollege') }}" class="groupB1">College<i class="fas fa-arrow-right"></i></a>
-            <a href="{{ route('strenewhighschool') }}" class="groupB1">High School<i class="fas fa-arrow-right"></i></a>
-            <a href="{{ route('strenewelementary') }}" class="groupB1">Elementary<i class="fas fa-arrow-right"></i></a>
+            <a href="{{ route('renewal-college') }}" class="groupB1">College<i class="fas fa-arrow-right"></i></a>
+            <a href="{{ route('renewal-highschool') }}" class="groupB1">High School<i
+                    class="fas fa-arrow-right"></i></a>
+            <a href="{{ route('renewal-elementary') }}" class="groupB1">Elementary<i class="fas fa-arrow-right"></i></a>
         </div>
     </div>
 

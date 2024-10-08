@@ -20,7 +20,7 @@
     <div class="ctnmain">
         <div class="header">
             <span class="pagetitle">School Level: COLLEGE</span>
-            <a href="{{ route('strenewal') }}" id="btngoback">
+            <a href="{{ route('scholarshiprenewal') }}" id="btngoback">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
         </div>

@@ -35,7 +35,7 @@
             <input class="input" type="password" id="inpassword" required>
             <a href="forgotpass.html" id="btnforgotpass">Forgot password?</a>
             {{-- <button type="submit" id="btnlogin">Sign In</button> --}}
-            <a href="{{ route('sthome') }}" id="btnlogin">Sign In</a>
+            <a href="{{ route('home-sw') }}" id="btnlogin">Sign In</a>
         </form>
     </div>
 
