@@ -28,6 +28,13 @@
 
     <!-- MAIN CONTENT -->
     <div class="maincontent">
+        <!-- Display error message if login fails -->
+        @if (session('error'))
+            <div class="alert alert-danger" role="alert" id="ctnerrormsg">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <!-- Update the form action and method -->
         <form class="groupA" method="POST" action="{{ route('login') }}">
             @csrf <!-- Add CSRF token for security -->
@@ -48,13 +55,6 @@
             <!-- Submit Button -->
             <button type="submit" id="btnlogin">Sign In</button>
         </form>
-
-        <!-- Display error message if login fails -->
-        @if (session('error'))
-            <div class="alert alert-danger" role="alert" id="ctnerrormsg">
-                {{ session('error') }}
-            </div>
-        @endif
     </div>
 
     <script src="{{ asset('js/hcattendancecontrol.js') }}"></script>

@@ -22,13 +22,22 @@ class StaffAuthController extends Controller
             // Authentication successful, get the authenticated user
             $user = Auth::user();
 
-            // Check user role and redirect accordingly
-            if ($user->role == 'Social Worker') {
-                return redirect()->route('home-sw');
-            } elseif ($user->role == 'System Admin') {
-                return redirect()->route('dashboard');
+            // Check user account status
+            if ($user->status == 'Active') {
+                // Check user role and redirect accordingly
+                $request->session()->regenerate();  // Regenerate session ID
+                switch ($user->role) {
+                    case 'Social Worker':
+                        $request->session()->regenerate();
+                        return redirect()->route('home-sw');
+                    case 'System Admin':
+                        $request->session()->regenerate();
+                        return redirect()->route('dashboard');
+                    default:
+                        return redirect()->back()->with('error', 'Unknown role. Access denied.');
+                }
             } else {
-                return redirect()->back()->with('error', 'Unknown role. Access denied.');
+                return redirect()->back()->with('error', 'Your account has been deactivated. If this was an error, please contact us at support@example.com or call us at +1 234 567 8901 for assistance.');
             }
         } else {
             // Authentication failed

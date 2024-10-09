@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'staccount' => [
+            'driver' => 'session',
+            'provider' => 'staccounts',
+        ]
     ],
 
     /*
@@ -60,6 +64,10 @@ return [
     */
 
     'providers' => [
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class, // Point to staccounts model
+        ],
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\StAccount::class, // Point to staccounts model
