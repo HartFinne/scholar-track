@@ -25,7 +25,7 @@ class StaffAuthController extends Controller
             // Check user account status
             if ($user->status == 'Active') {
                 // Check user role and redirect accordingly
-                $request->session()->regenerate();  // Regenerate session ID
+                $request->session()->regenerate();
                 switch ($user->role) {
                     case 'Social Worker':
                         $request->session()->regenerate();
@@ -82,5 +82,15 @@ class StaffAuthController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('users-staff')->with('error', 'Account creation was unsuccessful. ' . $e->getMessage());
         }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login-sw');
     }
 }

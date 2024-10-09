@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\staccount;
+use Illuminate\Support\Facades\Auth;
 
 class StaffController extends Controller
 {
@@ -39,7 +40,12 @@ class StaffController extends Controller
 
     public function showHome()
     {
-        return view('staff.home');
+        if (Auth::check()) { // Check if the user is authenticated
+            return view('staff.home');
+        }
+
+        // Redirect the user if not authenticated
+        return redirect()->back();
     }
 
     public function showScholarsCollege()
@@ -144,7 +150,12 @@ class StaffController extends Controller
 
     public function showDashboard()
     {
-        return view('staff.admdashboard');
+        if (Auth::check()) { // Check if the user is authenticated
+            return view('staff.admdashboard');
+        }
+
+        // Redirect the user if not authenticated
+        return redirect()->back();
     }
 
     public function showUsersScholar()

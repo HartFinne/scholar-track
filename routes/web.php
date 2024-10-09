@@ -32,7 +32,6 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/manageprofile', 'scholar.manageprofile')->name('manageprofile');
 });
 
-
 // routing still for scholars page forms with logic to send to the database
 
 // route to registration
@@ -44,8 +43,6 @@ Route::prefix('scholar')->controller(LoginController::class)->group(function () 
     Route::post('/scholar-login', 'authLogin')->name('scholar-login.post'); // For handling the form submission
     Route::post('/logout', 'logout')->name('logout');
 });
-
-
 
 Route::prefix('staff')->group(function () {
     Route::get('/accountsw', [StaffController::class, 'showAccountSW'])->name('account-sw');
@@ -60,6 +57,7 @@ Route::prefix('staff')->group(function () {
     Route::get('/listhighschool', [StaffController::class, 'showScholarsHS'])->name('scholars-highschool');
     Route::get('/login', [StaffController::class, 'showLogin'])->name('login-sw');
     Route::post('/login', [StaffAuthController::class, 'login'])->name('login');
+    Route::get('/logout', [StaffAuthController::class, 'logout'])->name('logout-sw');
     Route::get('/lte', [StaffController::class, 'showLTE'])->name('lte');
     Route::get('/managecs', [StaffController::class, 'showCommunityService'])->name('communityservice');
     Route::get('/managehc', [StaffController::class, 'showHumanitiesClass'])->name('humanitiesclass');
