@@ -10,171 +10,263 @@ class StaffController extends Controller
 {
     public function showAccountSW()
     {
-        return view('staff.accountsw');
-    }
-
-    public function showAccountSA()
-    {
-        return view('staff.accountsa');
-    }
-
-    public function showApplicants()
-    {
-        return view('staff.applicants');
-    }
-
-    public function showApplicationForms()
-    {
-        return view('staff.applicationforms');
-    }
-
-    public function showCSClosedEvents()
-    {
-        return view('staff.closedevents');
-    }
-
-    public function showAttendanceSystem()
-    {
-        return view('staff.hcattendancesystem');
-    }
-
-    public function showScholarsCollege()
-    {
-        return view('staff.listcollege');
-    }
-
-    public function showScholarsElem()
-    {
-        return view('staff.listelementary');
-    }
-
-    public function showScholarsHS()
-    {
-        return view('staff.listhighschool');
-    }
-
-    public function showLogin()
-    {
-        return view('staff.login');
-    }
-
-    public function showLTE()
-    {
-        return view('staff.lte');
-    }
-
-    public function showCommunityService()
-    {
-        return view('staff.managecs');
-    }
-
-    public function showHumanitiesClass()
-    {
-        return view('staff.managehc');
-    }
-
-    public function showCSOpenEvents()
-    {
-        return view('staff.openevents');
-    }
-
-    public function showPenalty()
-    {
-        return view('staff.penalty');
-    }
-
-    public function showQualiCollege()
-    {
-        return view('staff.qualificationcollege');
-    }
-
-    public function showQualiElem()
-    {
-        return view('staff.qualificationelem');
-    }
-
-    public function showQualiJHS()
-    {
-        return view('staff.qualificationjhs');
-    }
-
-    public function showQualiSHS()
-    {
-        return view('staff.qualificationshs');
-    }
-
-    public function showAllowanceRegular()
-    {
-        return view('staff.regularallowance');
-    }
-
-    public function showRenewal()
-    {
-        return view('staff.renewal');
-    }
-
-    public function showRenewalCollege()
-    {
-        return view('staff.renewcollege');
-    }
-
-    public function showRenewalElem()
-    {
-        return view('staff.renewelementary');
-    }
-
-    public function showRenewalHS()
-    {
-        return view('staff.renewhighschool');
-    }
-
-    public function showScholars()
-    {
-        return view('staff.scholars');
-    }
-
-    public function showAllowanceSpecial()
-    {
-        return view('staff.specialallowance');
-    }
-
-    public function showHome()
-    {
         if (Auth::guard('staff')->check()) { // Check if the user is authenticated using the staff guard
-            return view('staff.home');
+            return view('staff.accountsw');
         }
 
         // Redirect the user if not authenticated
         return redirect()->route('login');
     }
 
-    public function showDashboard()
+    public function showAccountSA()
     {
-        if (Auth::guard('staff')->check()) { // Check if the user is authenticated using the staff guard
-            return view('staff.admdashboard');
+        if (Auth::guard('staff')->check()) {
+            return view('staff.accountsa');
         }
 
-        // Redirect the user if not authenticated
+        return redirect()->route('login');
+    }
+
+    public function showApplicants()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.applicants');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showApplicationForms()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.applicationforms');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showCSClosedEvents()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.closedevents');
+        }
+
+        return redirect()->route('login');
+    }
+    public function showAttendanceSystem()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.hcattendancesystem');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showScholarsCollege()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.listcollege');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showScholarsElem()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.listelementary');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showScholarsHS()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.listhighschool');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showLogin()
+    {
+        return view('staff.login'); // No need for authentication check on login
+    }
+
+    public function showLTE()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.lte');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showCommunityService()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.managecs');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showHumanitiesClass()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.managehc');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showCSOpenEvents()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.openevents');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showPenalty()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.penalty');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showQualiCollege()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.qualificationcollege');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showQualiElem()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.qualificationelem');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showQualiJHS()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.qualificationjhs');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showQualiSHS()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.qualificationshs');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showAllowanceRegular()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.regularallowance');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showRenewal()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.renewal');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showRenewalCollege()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.renewcollege');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showRenewalElem()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.renewelementary');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showRenewalHS()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.renewhighschool');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showAllowanceSpecial()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.specialallowance');
+        }
+
         return redirect()->route('login');
     }
 
     public function showUsersScholar()
     {
-        return view('staff.admscholars');
+        if (Auth::guard('staff')->check()) {
+            return view('staff.admscholars');
+        }
+
+        return redirect()->route('login');
     }
 
     public function showUserApplicants()
     {
-        return view('staff.admapplicants');
+        if (Auth::guard('staff')->check()) {
+            return view('staff.admapplicants');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showScholars()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.scholars');
+        }
+
+        return redirect()->route('login');
     }
 
     public function showUserStaff()
     {
-        // Retrieve all staff accounts
-        $staffAccounts = Staccount::all();
+        if (Auth::guard('staff')->check()) {
+            // Retrieve all staff accounts
+            $staffAccounts = Staccount::all();
 
-        // Pass the staff accounts to the view
-        return view('staff.admstaff', compact('staffAccounts'));
+            // Pass the staff accounts to the view
+            return view('staff.admstaff', compact('staffAccounts'));
+        }
+
+        return redirect()->route('login');
     }
 
     // Method to activate a user
@@ -199,10 +291,33 @@ class StaffController extends Controller
 
     public function showUserInfo($id)
     {
-        // Retrieve the user account by ID
-        $user = Staccount::findOrFail($id);
+        if (Auth::guard('staff')->check()) {
+            // Retrieve the user account by ID
+            $user = Staccount::findOrFail($id);
 
-        // Pass the user info to the view
-        return view('staff.admuserinfo', compact('user'));
+            // Pass the user info to the view
+            return view('staff.admuserinfo', compact('user'));
+        }
+
+        // Redirect the user if not authenticated
+        return redirect()->route('login');
+    }
+
+    public function showHome()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.home');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showDashboard()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.admdashboard');
+        }
+
+        return redirect()->route('login');
     }
 }
