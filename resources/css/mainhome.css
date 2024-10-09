@@ -11,21 +11,20 @@
 body{
     height: 100vh;
     width: 100%;
-    background-image: url(/images/background.png);
+    background-image: url(/imgs/background.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    
 }
 
 .navbar{
-    margin-top: 50px;
+    margin: 50px;
 }
 
 .logo{
     display: flex;
-    margin: 0 50px;
     gap: 20px;
+    align-items: center;
 }
 
 .logo img{
@@ -42,31 +41,28 @@ body{
     text-decoration: none;
     font-size: 1rem;
     color: #fff;
-    /* background-color: #8eb79c; */
     background-color: #1a5319;
     border-radius: 10px;
     padding: 10px 60px;
-    margin: 0 50px;
     transition: 0.3s ease;
     box-shadow: rgba(142, 183, 156, 0.35) 0px 15px 15px;
-
 }
 
 .navbar a:hover{
     background-color: #8eb79c;
-    /* background-color: #1a5319; */
-
 }
 
 .ctn-main{
-    margin: 90px 150px 100px;
+    width: 80%;
+    margin:auto;
+    padding: 0 0 100px;
 }
 
 .content{
-    width: 30%;
+    width: 40%;
 }
 
-.content .text-1, .text-2{
+.content .text-1, .content .text-2{
     font-family: 'Libre Baskerville', sans-serif, serif;
     font-weight: bold;
 }
@@ -130,6 +126,7 @@ footer{
     background-color: #303030;
     text-align: center;
     padding: 30px;
+    width: 100%;
 }
 
 footer .text, h5{
@@ -181,10 +178,19 @@ footer .soc-med{
     .logo h6{
         font-size: 0.9rem;
     }
+    .navbar{
+        margin: 50px 0;
+    }
     .navbar a{
         font-size: 1rem;
-        padding: 10px 40px;
-        margin: 0 20px;
+        margin: 20px auto 0;
+    }
+    .ctn-main .content{
+        width: 100%;
+        text-align: center;
+    }
+    .ctn-main .content .text-2{
+        font-size: 3rem;
     }
 }
 @media only screen and (max-width: 1024px) {
@@ -199,9 +205,6 @@ footer .soc-med{
     }
     .navbar a{
         font-size: 1rem;
-    }
-    .ctn-main{
-        margin: 50px 80px 60px;
     }
     .content{
         width: 50%;
@@ -220,10 +223,5 @@ footer .soc-med{
     }
     footer .main-2 h2{
         font-size: 1.6rem;
-    }
-}
-@media only screen and (max-width: 1200px) {
-    .ctn-main{
-        margin: 70px 100px 80px;
     }
 }

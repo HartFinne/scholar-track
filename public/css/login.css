@@ -1,0 +1,166 @@
+/* FONTS IMPORT*/
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body {
+    width: 100%;
+    height: 100vh;
+    /* background: url(../images/background.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#btnexit {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 5px 15px;
+    font-size: 28px;
+    text-decoration: none;
+    color: #ba1d1d;
+    background-color: transparent;
+    border: none;
+}
+
+#btnexit:hover {
+    color: #cf2a2a;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 0;
+    column-gap: 10px;
+}
+
+#headerlogo {
+    height: 75px;
+}
+
+.headertitle {
+    display: flex;
+    flex-direction: column;
+    font-family: 'League Spartan', Arial;
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 1;
+}
+
+.maincontent {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.groupA * {
+    font-family: 'Poppins', Arial;
+    color: #101010;
+    width: 300px;
+}
+
+.groupA {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    min-width: fit-content;
+    height: fit-content;
+    justify-content: center;
+    padding: 40px 5% 50px 5%;
+    border: 1px solid #808080;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+#formtitle {
+    text-align: center;
+    font-family: 'Poppins', Arial;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+#formsubtitle {
+    text-align: center;
+    font-family: 'Poppins', Arial;
+    font-size: 18px;
+    line-height: 1;
+    margin-bottom: 25px;
+}
+
+.label {
+    font-size: 16px;
+    font-family: 'Poppins', Arial;
+    text-align: left;
+    margin-top: 15px;
+}
+
+.input {
+    padding: 5px;
+    font-size: 16px;
+    text-align: left;
+    border: 1px solid #808080;
+    border-radius: 6px;
+    outline: none;
+}
+
+.input:focus {
+    outline: 1px solid #303030;
+}
+
+#btnforgotpass {
+    text-decoration: none;
+    text-align: right;
+    color: #1a5319;
+    transition: all ease 0.3s;
+    width: fit-content;
+    border-bottom: 1px solid transparent;
+    margin-left: auto;
+}
+
+#btnforgotpass:hover {
+    color: #56a72e;
+    border-bottom: 1px solid #56a72e;
+}
+
+#btnlogin {
+    border: 1px solid #56a72e;
+    background-color: #56a72e;
+    padding: 5px 0;
+    font-family: 'Poppins', Arial;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 30px;
+    border-radius: 6px;
+    transition: all ease 0.3s;
+}
+
+#btnlogin:hover {
+    background-color: #6dc541;
+}
+
+/* SMALL DEVICES */
+@media only screen and (max-width: 767px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .headertitle {
+        font-size: 6vw;
+        margin: 10px 0;
+    }
+}
+
+/* SMALL DEVICES */
+@media only screen and (min-height: 1000px) {
+    .maincontent {
+        padding: 5%;
+    }
+}

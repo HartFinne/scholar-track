@@ -8,8 +8,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
-    
+    width: 90%;
+    margin: auto;
 }
 
 .ctn-main .goback{
@@ -93,7 +93,7 @@
     width: 90%;
     gap: 50px;
     flex-wrap: wrap;
-    margin: auto;
+    margin: 20px auto;
     padding: 30px;
     background-color: #d6efd8;
     border-radius: 10px;
@@ -184,7 +184,7 @@
 }
 @media only screen and (max-width: 1024px) {
     .ctn-main{
-        padding: 20px 70px;   
+        width: 85%;   
     }
     
     .attendance-dashboard{

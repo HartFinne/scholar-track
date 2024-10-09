@@ -18,7 +18,11 @@ mix.styles([
 mix.styles([
     'resources/css/home.css',
     'resources/css/sccommunity.css'
-], 'public/css/scholar2.css'); // Compiled into a single file named 'all.css'
+], 'public/css/scholar2.css');
+
+mix.styles([
+    'resources/css/sccommunity.css'
+], 'public/css/scholar3.css'); //// Compiled into a single file named 'all.css'
 
 mix.styles([
    'resources/css/overview.css',
@@ -28,21 +32,26 @@ mix.styles([
 
 mix.styles([
     'resources/css/home.css',
+    'resources/css/screnewal.css',
 ], 'public/css/home.css'); // Compiled into a single file named 'all.css'
 
 // Compile each CSS file
 mix.styles([
-    'resources/css/mainhome.css'
+    'resources/css/mainhome.css',
 ], 'public/css/view.css'); // Compiled into a single file named 'all.css'
 
 mix.styles([
-    'resources/css/role.css',
     'resources/css/registration.css'
-], 'public/css/roleReg.css'); // Compiled into a single file named 'all.css'
+], 'public/css/Reg.css'); // Compiled into a single file named 'all.css'
+
+mix.styles([
+    'resources/css/role.css',
+], 'public/css/role.css');
 
 mix.scripts([
     'resources/js/toggleprofile.js',
-    'resources/js/togglesidebar.js'
+    'resources/js/togglesidebar.js',
+    'resources/js/csdialog.js'
 ], 'public/js/scholar.js').version();
 
 mix.copyDirectory('resources/images', 'public/images');

@@ -17,5 +17,13 @@
     <button class="toggle-btn active">SMS</button>
     <button class="toggle-btn">Email</button><br>
     <hr>
-    <a href="" id="btn-signout"><i class="fa-solid fa-right-from-bracket"></i>Sign out</a>
+    <a href="#" id="btn-signout"
+        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="fa-solid fa-right-from-bracket"></i>Sign out
+    </a>
+
+    <!-- Logout form -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 </div>

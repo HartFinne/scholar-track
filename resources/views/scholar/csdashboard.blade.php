@@ -85,9 +85,32 @@
                             <b>Date:</b> 10/1/2024<br>
                             <b>Time:</b> 10:00 AM
                         </td>
-                        <td><a href="#" id="cancel">Cancel</a></td>
+                        <td><button id="cancel" onclick="showDialog('confirmDialog')">Cancel</button></td>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Cancel registration -->
+        <div id="confirmDialog" class="dialog hidden">
+            <div class="dialog-content">
+                <span class="close-btn" onclick="closeDialog('confirmDialog')"><i class="fa-solid fa-x"></i></span>
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <h2>Are you sure?</h2>
+                <p>Do you really want to cancel your registration? This action cannot be undone.</p>
+                <div class="dialog-actions">
+                    <button id="noBtn" onclick="closeDialog('confirmDialog')">No</button>
+                    <button id="yesBtn" onclick="showCancelDialog()">Yes</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="cancelDialog" class="dialog hidden">
+            <div class="dialog-content">
+                <span class="close-btn" onclick="closeDialog('cancelDialog')"><i class="fa-solid fa-x"></i></span>
+                <i class="fa-solid fa-circle-check"></i>
+                <h2>Your registration has been canceled.<br>Your attendance will be marked as absent.</h2>
+                <p>Kindly submit a Letter of Explanation about your absence. Thank You.</p>
+            </div>
         </div>
     </div>
 

@@ -29,7 +29,9 @@
                         <p class="text-secondary">Please click or tap you destination.</p>
                     </div>
 
-                    <button class="btn btn-outline-secondary bnt-lg w-100 m-2">Scholar</button>
+                    <form action="{{ route('scholar-login') }}" method="get">
+                        <button class="btn btn-outline-secondary bnt-lg w-100 m-2" type="submit">Scholar</button>
+                    </form>
                     <button class="btn btn-outline-secondary bnt-lg w-100 m-2">Admin</button>
 
                     <div class="text-center mt-5">

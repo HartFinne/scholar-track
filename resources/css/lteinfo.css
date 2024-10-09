@@ -92,14 +92,73 @@
     margin: 10px 0 30px;
 }
 
-.file-upload input[type="file"]{
+.explanation label{
+    margin-right: 20px;
+}
+
+.explanation input[type="file"], .file-upload input[type="file"]{
     margin:10px 0 30px;
     border: 1px solid gray;
     border-radius: 10px;
     padding: 2px 5px;
+    width: 100%;
+}
+
+.lte-stat{
+    background-color: #c1ff72;
+    font-weight: bold;
+    padding: 10px;
+    width: 150px;
+    text-align: center;
+    float: right;
+    border-radius: 10px;
+    margin: 0 30px;
+}
+
+.lte-view{
+    width: 70%;
+    margin: auto;
+    border: 1px solid #fff;
+}
+
+.lte-info{
+    border: 1px solid #8eb79c;
+    background-color: #eaebea;
+    border-radius: 10px;
+    margin: 50px 30px;
+    padding: 20px 30px;
+}
+
+.lte-info h4{
+    background-color: #1a5319;
+    color: #d6efd8;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.lte-info .info{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px; 
+    align-items: center; 
+    padding: 10px;
+}
+
+.label {
+    text-align: left; 
+    margin-bottom: 5px;
+}
+
+.lte-info span{
+    color: #1e5430;
+    font-weight: bold;
+    margin-left: 20px;
 }
 
 @media only screen and (max-width: 768px) {
+    .ctn-main{
+        width: 85%;;
+    }
     .status{
         margin-top: 30px;
         font-size: 1rem;
@@ -107,6 +166,9 @@
     }
     .ctn-table, .table-title{
         font-size: 1rem;
+    }
+    .status{
+        display: block;
     }
     .filter-btn{
         padding: 2px 15px;
@@ -119,7 +181,7 @@
     .lte h5{
         font-size: 1.1rem;
     }
-    .lte-form .lte-reason, .agreement, .file-upload{
+    .lte-form .lte-reason, .agreement, .file-upload, .explanation{
         font-size: 1rem;
     }
     .lte-reason, .file-upload{
@@ -140,24 +202,42 @@
     }
     .agreement input[type="checkbox"], .lte-reason input[type="radio"]{
         transform: scale(1.1);
-        margin-right: 10px;
+        margin-right: 5px;
+    }
+    .lteform-title{
+        padding: 20px;
+    }
+    .lte-form .form-body{
+        padding: 20px;
+    }
+    .lte-view{
+        width: 100%;
+    }
+    .lte-info{
+        padding: 20px;
+    }
+    .label, .lte-info span {
+        font-size: 14px;
+    }
+    .submit-lte{
+        margin: 40px auto;
     }
 }
 @media only screen and (max-width: 1024px) {
-    .ctn-main{
-        padding: 20px 40px;
-    }
     .file-upload {
         margin-left: 150px;
     }
     .form-body{
         padding: 40px;
     }
+    .lte-info{
+        margin: 50px 0;
+    }
+    .lte-stat{
+        margin: 0;
+    }
 }
 @media only screen and (max-width: 1200px) {
-    .ctn-main{
-        padding: 20px 50px;
-    }
     .lte{
         width: 90%;
     }

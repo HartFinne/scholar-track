@@ -23,13 +23,18 @@
 
     <!-- MAIN -->
     <div class="ctn-main">
-        <a href="{{ route('schome') }}" class="goback">&lt Go back</a>
+        <a href="" class="goback">&lt Go back</a>
         <div class="text-center">
             <h1 class="sub-title">Grades Submission</h1>
             <p class="desc">Submit your GWA and the scanned copy of pdf file of your grades.</p>
         </div>
 
         <form action="" class="grade-form text-center">
+            <select class="sem" aria-label="qtrsem" required>
+                <option value="" disabled selected hidden>Semester</option>
+                <option value="">1ST SEMESTER</option>
+                <option value="">2ND SEMESTER</option>
+            </select>
             <input type="text" class="gwa" id="gwa" placeholder="General Weighted Average">
             <input type="file" class="file">
             <button type="submit" class="btn-submit fw-bold">Submit</button>
@@ -62,7 +67,7 @@
                         <td>1ST SEMESTER</td>
                         <td>1.25</td>
                         <td>PASSED</td>
-                        <td><a href="gradesinfo.html" id="view">View</a></td>
+                        <td><a href="{{ route('gradesinfo') }}" id="view">View</a></td>
                 </tbody>
             </table>
         </div>

@@ -39,7 +39,7 @@
 
         <div class="activity-container">
             <div class="card">
-                <a href="csdetails.html">
+                <a href="{{ route('csdetails') }}">
                     <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
                     <div class="card-content">
                         <p class="text-center fw-bold cs-title">TITLE</p>

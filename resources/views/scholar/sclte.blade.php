@@ -42,7 +42,7 @@
                         <td>09/11/2024</td>
                         <td>Absent in Community Service</td>
                         <td>09/14/2024</td>
-                        <td><a href="lteinfo.html" id="view">View</a></td>
+                        <td><a href="{{ route('lteinfo') }}" id="view">View</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -73,7 +73,7 @@
                         <td>09/12/2024</td>
                         <td>Absent in Humanities Class</td>
                         <td>PENDING</td>
-                        <td><a href="sublteinfo.html" id="view">View</a></td>
+                        <td><a href="{{ route('subtleinfo') }}" id="view">View</a></td>
                     </tr>
                 </tbody>
             </table>

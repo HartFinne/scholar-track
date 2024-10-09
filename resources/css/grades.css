@@ -5,7 +5,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
+    width: 90%;
+    margin: auto;
 }
 
 .ctn-main .goback{
@@ -25,16 +26,27 @@
     padding: 20px;
 }
 
-.grade-form input{
-    border: 1px solid darkgray;
+.grade-form input, select{
+    border: 2px solid darkgray;
     margin-right: 10px;
     border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
 }
 
-.gwa, .file{
+.sem, .gwa, .file{
     padding: 5px;
     margin-bottom: 20px;
     width: 270px;
+}
+
+.grade-form input:focus, select:focus{
+    border-color:#4CAF50;
+}
+
+.status{
+    display: flex;
+    gap: 40px;
 }
 
 .grade-stat{
@@ -94,17 +106,27 @@
 
 @media only screen and (max-width: 768px) {
     .ctn-main{
-        padding: 20px 45px;
+        width: 85%;
     }
     .status{
         margin-top: 30px;
         font-size: 1rem;
+        display: block;
     }
     .ctn-table, .grade-form{
         font-size: 1rem;
     }
     .grade-stat, .grades-info h4{
         font-size: 1.1rem;
+    }
+    .ctn-main .grades-view{
+        width: 100%;
+    }
+    .grades-info{
+        padding: 20px;
+    }
+    .label {
+        font-size: 14px;
     }
 }
 @media only screen and (max-width: 1024px) {

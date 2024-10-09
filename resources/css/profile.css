@@ -5,7 +5,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
+    width: 90%;
+    margin: 0 auto 30px;
 }
 
 .ctn-main .goback{
@@ -80,9 +81,28 @@
 
 @media only screen and (max-width: 768px) {
     .ctn-main{
-        padding: 20px 50px;
+        width: 85%;
+    }
+    .profile{
+        display: block;
+    }
+    .btn-edit{
+        margin-bottom: 20px;
+    }
+    .profile-view{
+        padding: 15px;
+    }
+    .label, .value {
+        font-size: 0.9rem;
+    }
+    .profile-info .info{
+        gap: 5px; 
+        padding: 5px;
+    }
+    .profile-info span{
+        margin-left: 2px;
     }
     .profile-info h4{
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 }

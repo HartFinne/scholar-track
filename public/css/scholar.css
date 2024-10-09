@@ -5,7 +5,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
+    width: 90%;
+    margin: auto;
 }
 
 .ctn-main .goback{
@@ -25,16 +26,27 @@
     padding: 20px;
 }
 
-.grade-form input{
-    border: 1px solid darkgray;
+.grade-form input, select{
+    border: 2px solid darkgray;
     margin-right: 10px;
     border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
 }
 
-.gwa, .file{
+.sem, .gwa, .file{
     padding: 5px;
     margin-bottom: 20px;
     width: 270px;
+}
+
+.grade-form input:focus, select:focus{
+    border-color:#4CAF50;
+}
+
+.status{
+    display: flex;
+    gap: 40px;
 }
 
 .grade-stat{
@@ -94,17 +106,27 @@
 
 @media only screen and (max-width: 768px) {
     .ctn-main{
-        padding: 20px 45px;
+        width: 85%;
     }
     .status{
         margin-top: 30px;
         font-size: 1rem;
+        display: block;
     }
     .ctn-table, .grade-form{
         font-size: 1rem;
     }
     .grade-stat, .grades-info h4{
         font-size: 1.1rem;
+    }
+    .ctn-main .grades-view{
+        width: 100%;
+    }
+    .grades-info{
+        padding: 20px;
+    }
+    .label {
+        font-size: 14px;
     }
 }
 @media only screen and (max-width: 1024px) {
@@ -214,14 +236,73 @@
     margin: 10px 0 30px;
 }
 
-.file-upload input[type="file"]{
+.explanation label{
+    margin-right: 20px;
+}
+
+.explanation input[type="file"], .file-upload input[type="file"]{
     margin:10px 0 30px;
     border: 1px solid gray;
     border-radius: 10px;
     padding: 2px 5px;
+    width: 100%;
+}
+
+.lte-stat{
+    background-color: #c1ff72;
+    font-weight: bold;
+    padding: 10px;
+    width: 150px;
+    text-align: center;
+    float: right;
+    border-radius: 10px;
+    margin: 0 30px;
+}
+
+.lte-view{
+    width: 70%;
+    margin: auto;
+    border: 1px solid #fff;
+}
+
+.lte-info{
+    border: 1px solid #8eb79c;
+    background-color: #eaebea;
+    border-radius: 10px;
+    margin: 50px 30px;
+    padding: 20px 30px;
+}
+
+.lte-info h4{
+    background-color: #1a5319;
+    color: #d6efd8;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.lte-info .info{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px; 
+    align-items: center; 
+    padding: 10px;
+}
+
+.label {
+    text-align: left; 
+    margin-bottom: 5px;
+}
+
+.lte-info span{
+    color: #1e5430;
+    font-weight: bold;
+    margin-left: 20px;
 }
 
 @media only screen and (max-width: 768px) {
+    .ctn-main{
+        width: 85%;;
+    }
     .status{
         margin-top: 30px;
         font-size: 1rem;
@@ -229,6 +310,9 @@
     }
     .ctn-table, .table-title{
         font-size: 1rem;
+    }
+    .status{
+        display: block;
     }
     .filter-btn{
         padding: 2px 15px;
@@ -241,7 +325,7 @@
     .lte h5{
         font-size: 1.1rem;
     }
-    .lte-form .lte-reason, .agreement, .file-upload{
+    .lte-form .lte-reason, .agreement, .file-upload, .explanation{
         font-size: 1rem;
     }
     .lte-reason, .file-upload{
@@ -262,24 +346,42 @@
     }
     .agreement input[type="checkbox"], .lte-reason input[type="radio"]{
         transform: scale(1.1);
-        margin-right: 10px;
+        margin-right: 5px;
+    }
+    .lteform-title{
+        padding: 20px;
+    }
+    .lte-form .form-body{
+        padding: 20px;
+    }
+    .lte-view{
+        width: 100%;
+    }
+    .lte-info{
+        padding: 20px;
+    }
+    .label, .lte-info span {
+        font-size: 14px;
+    }
+    .submit-lte{
+        margin: 40px auto;
     }
 }
 @media only screen and (max-width: 1024px) {
-    .ctn-main{
-        padding: 20px 40px;
-    }
     .file-upload {
         margin-left: 150px;
     }
     .form-body{
         padding: 40px;
     }
+    .lte-info{
+        margin: 50px 0;
+    }
+    .lte-stat{
+        margin: 0;
+    }
 }
 @media only screen and (max-width: 1200px) {
-    .ctn-main{
-        padding: 20px 50px;
-    }
     .lte{
         width: 90%;
     }
@@ -298,8 +400,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
-    
+    width: 90%;
+    margin: auto;
 }
 
 .ctn-main .goback{
@@ -383,7 +485,7 @@
     width: 90%;
     gap: 50px;
     flex-wrap: wrap;
-    margin: auto;
+    margin: 20px auto;
     padding: 30px;
     background-color: #d6efd8;
     border-radius: 10px;
@@ -474,7 +576,7 @@
 }
 @media only screen and (max-width: 1024px) {
     .ctn-main{
-        padding: 20px 70px;   
+        width: 85%;   
     }
     
     .attendance-dashboard{
@@ -520,7 +622,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
+    width: 90%;
+    margin: auto;
 }
 
 .ctn-main .goback{
@@ -593,13 +696,31 @@
     padding: 30px;
 }
 
-.sc-renewal h4{
+.open{
+    display: none;
+}
+
+.sc-renewal .text{
     text-align: center;
     font-weight: bolder;
     color: #1a5319;
     background-color: rgb(142, 183, 156, .5);
     padding: 20px 50px;
     border-radius: 10px;
+}
+
+.sc-renewal button{
+    padding: 7px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #1a5319;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+.sc-renewal button:hover{
+    transform: scale(1.1);
+    background-color: #2e7c55;
 }
 
 .sub-title{
@@ -677,7 +798,18 @@
 
 @media only screen and (max-width: 768px) {
     .ctn-main{
-        padding: 20px 60px;
+        width: 85%;
+    }
+    .sc-info-1, .sc-info-2{
+        gap: 0;                   
+        padding: 20px;
+    }
+    .sc-info-1 .text, span{
+        font-size: 1.1rem;
+    }
+    .sc-info-1 .text span{
+        padding: 3px;
+        font-size: 1rem;
     }
     .sc-info-2 .text p, .filter-btn, .ctn-table{
         font-size: 1rem;
@@ -706,7 +838,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
+    width: 90%;
+    margin: 0 auto 30px;
 }
 
 .ctn-main .goback{
@@ -781,9 +914,28 @@
 
 @media only screen and (max-width: 768px) {
     .ctn-main{
-        padding: 20px 50px;
+        width: 85%;
+    }
+    .profile{
+        display: block;
+    }
+    .btn-edit{
+        margin-bottom: 20px;
+    }
+    .profile-view{
+        padding: 15px;
+    }
+    .label, .value {
+        font-size: 0.9rem;
+    }
+    .profile-info .info{
+        gap: 5px; 
+        padding: 5px;
+    }
+    .profile-info span{
+        margin-left: 2px;
     }
     .profile-info h4{
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 }

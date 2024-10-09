@@ -15,6 +15,16 @@
 </head>
 
 <body>
+    @if (session()->has('id'))
+        <p>Session ID: {{ session()->getId() }}</p>
+    @endif
+
+    @if (Auth::check())
+        <p>Your Scholar ID (Case Code): {{ Auth::user()->caseCode }}</p>
+    @else
+        <p>You are not logged in.</p>
+    @endif
+
     <!-- Include Sidebar -->
     @include('partials._sidebar')
 

@@ -14,7 +14,6 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    /* aspect-ratio: 16/9; */
 }
 
 .header .container{
@@ -40,7 +39,8 @@
 }
 
 .ctn-main{
-    padding: 20px 60px;
+    width: 90%;
+    margin: 30px auto;
 }
 
 .status{
@@ -101,22 +101,6 @@
     left: 5%;
     color: gray;
 }
-
-/* .btn-filter{
-    padding: 3px 35px;
-    border: 1px solid;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    background-color: #1a5319;
-    color: #fff;
-}
-
-.btn-filter:hover{
-    background-color: #fff;
-    color: #1a5319;
-    transition: 0.3s ease-in-out;
-} */
-
 
 #sc-name, #announce-title, #notif-title{
     color: #1a5319;
@@ -180,8 +164,23 @@
 }
 
 @media only screen and (max-width: 768px) {
+    body .header{
+        height: 170px;
+    }
+    .logo-header{
+        display: block;
+    }
+    body .header .logo-header img{
+        height: 50px;
+    }
     body .header h1{
-        font-size:2rem;
+        font-size: 20px;
+    }
+    body .header .container{
+        padding: 20px;
+    }
+    .ctn-main{
+        width: 85%;
     }
     .search-container{
         width: 100%;
@@ -198,7 +197,7 @@
     .filter-btn{
         padding: 5px 20px;
     }
-    body .header .logo-header img{
+    .header .logo-header img{
         height: 70px;
     }
 }
@@ -211,9 +210,6 @@
     }
     .header h1{
         font-size:2.7rem;
-    }
-    .header .logo-header img{
-        height: 80px;
     }
     .filter-btn{
         padding: 5px 20px;

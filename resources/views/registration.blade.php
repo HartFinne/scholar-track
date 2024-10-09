@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/roleReg.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Reg.css') }}">
 
 </head>
 
@@ -32,7 +32,6 @@
 
         {{-- show if the registration is success --}}
         <x-alert />
-
 
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -86,9 +85,56 @@
                         </select>
                     </div>
                     <div class="row">
-                        <label for="fbName">Facebook Name</label>
-                        <input type="text" id="fbName" class="reg-input" placeholder="" name="facebookName"
-                            required>
+                        <label for="tshirt">T-Shirt Size</label>
+                        <select class="" aria-label="tshirt" name="tshirt" required>
+                            <option value="" disabled selected hidden>Select size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="2XL">2XL</option>
+                            <option value="3XL">3XL</option>
+                            <option value="4XL">4XL</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label for="shoes">Shoe Size</label>
+                        <input type="number" id="shoes" name="shoes" min="6" max="12" step="0.5"
+                            placeholder="6-12" required>
+                    </div>
+                    <div class="row">
+                        <label for="slippers">Slippers Size</label>
+                        <input type="number" id="slippers" name="slippers" min="6" max="12"
+                            step="0.5" placeholder="6-12" required>
+                    </div>
+                    <div class="row">
+                        <label for="pants">Pants Size</label>
+                        <select class="" aria-label="pants" name="pants" required>
+                            <option value="" disabled selected hidden>Select size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="2XL">2XL</option>
+                            <option value="3XL">3XL</option>
+                            <option value="4XL">4XL</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label for="joggingPants">Jogging Pants Size</label>
+                        <select class="" aria-label="joggingPants" name="joggingPants" required>
+                            <option value="" disabled selected hidden>Select size</option>
+                            <option value="XS">XS</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="2XL">2XL</option>
+                            <option value="3XL">3XL</option>
+                            <option value="4XL">4XL</option>
+                        </select>
                     </div>
                     <p>Are you a member of any indigenous group?</p>
                     <div class="row-checkbox">
@@ -159,16 +205,23 @@
                         <input type="text" id="school" placeholder="" name="nameOfSchool" required>
                     </div>
                     <div class="row">
-                        <label for="collegeDept">College Department</label>
-                        <input type="text" id="collegeDept" placeholder="" name="collegeDepartment" required>
-                    </div>
-                    <div class="row">
                         <label for="yrLevel">Year Level</label>
-                        <input type="text" id="yrLevel" placeholder="" name="yearLevel" required>
+                        <input type="text" id="yrLevel" placeholder="Grade 6 or Grade 11 or First Year"
+                            name="yearLevel" required>
                     </div>
                     <div class="row">
                         <label for="course">Course/Strand & Section</label>
-                        <input type="text" id="course" placeholder="" name="courseSection" required>
+                        <input type="text" id="course"
+                            placeholder="Ruby or Stem or Bachelor of Science in Information Technology"
+                            name="courseSection" required>
+                    </div>
+                    <div class="row">
+                        <label for="semester">Semester</label>
+                        <select class="" aria-label="semester" name="semester" required>
+                            <option value="" disabled selected hidden>Select Semester</option>
+                            <option value="1st Semester">1st Semester</option>
+                            <option value="2nd Semester">2nd Semester</option>
+                        </select>
                     </div>
                 </fieldset>
 
@@ -207,7 +260,7 @@
                 </fieldset>
 
                 <div class="agreement">
-                    <input type="checkbox" value="yes" id="agreement" name="agreement">
+                    <input type="checkbox" value="on" id="agreement" name="agreement">
                     <label for="agreement">
                         <i>I hereby attest that the information I have provided is true and correct.
                             I also give my consent to Tzu Chi Foundation to obtain, retain and verify

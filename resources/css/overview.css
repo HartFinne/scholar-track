@@ -8,7 +8,8 @@
 }
 
 .ctn-main{
-    padding: 20px 90px;
+    width: 90%;
+    margin: auto;
 }
 
 .ctn-main .goback{
@@ -81,13 +82,31 @@
     padding: 30px;
 }
 
-.sc-renewal h4{
+.open{
+    display: none;
+}
+
+.sc-renewal .text{
     text-align: center;
     font-weight: bolder;
     color: #1a5319;
     background-color: rgb(142, 183, 156, .5);
     padding: 20px 50px;
     border-radius: 10px;
+}
+
+.sc-renewal button{
+    padding: 7px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #1a5319;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+.sc-renewal button:hover{
+    transform: scale(1.1);
+    background-color: #2e7c55;
 }
 
 .sub-title{
@@ -165,7 +184,18 @@
 
 @media only screen and (max-width: 768px) {
     .ctn-main{
-        padding: 20px 60px;
+        width: 85%;
+    }
+    .sc-info-1, .sc-info-2{
+        gap: 0;                   
+        padding: 20px;
+    }
+    .sc-info-1 .text, span{
+        font-size: 1.1rem;
+    }
+    .sc-info-1 .text span{
+        padding: 3px;
+        font-size: 1rem;
     }
     .sc-info-2 .text p, .filter-btn, .ctn-table{
         font-size: 1rem;

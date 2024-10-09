@@ -26,7 +26,6 @@
     <div class="ctn-main">
         <a href="{{ route('schome') }}" class="goback">&lt Go back</a>
         <h1 class="title">Scholarship Overview</h1>
-        <hr>
         <div class="sc-info">
             <div class="sc-info-1">
                 <div class="text">
@@ -57,9 +56,20 @@
             </div>
         </div>
 
-        <div class="sc-renewal">
+        <div class="sc-renewal close">
             <hr>
-            <h4>SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h4>
+            <div class="text">
+                <h4>SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h4>
+            </div>
+            <hr>
+        </div>
+
+        <div class="sc-renewal open">
+            <hr>
+            <div class="text">
+                <h4>SCHOLARSHIP RENEWAL IS NOW OPEN.</h4>
+                <button onclick="window.location.href='screnewal.html'">Renew Scholarship</button>
+            </div>
             <hr>
         </div>
 
@@ -85,7 +95,33 @@
                         <td>09/11/2024</td>
                         <td>Absent in Community Service</td>
                         <td>1st Offense</td>
-                        <!-- <td><a href="scholarinfo.html" id="view">View</a></td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="sub-title">Scholarship Renewal</p>
+        <div class="filter">
+            <button class="filter-btn">All</button>
+            <button class="filter-btn">Pending</button>
+            <button class="filter-btn">Accepted</button>
+        </div>
+        <div class="ctn-table table-responsive">
+            <table class="table table-bordered" id="table">
+                <thead>
+                    <tr>
+                        <th class="text-center align-middle">Date Submitted</th>
+                        <th class="text-center align-middle">School Year</th>
+                        <th class="text-center align-middle">Status</th>
+                        <th class="text-center align-middle">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>09/11/2024</td>
+                        <td>--</td>
+                        <td>--</td>
+                        <td><a href="{{ route('subrenewal') }}" id="view">View</a></td>
                     </tr>
                 </tbody>
             </table>
