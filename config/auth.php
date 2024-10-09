@@ -40,9 +40,9 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'staccount' => [
+        'staff' => [
             'driver' => 'session',
-            'provider' => 'staccounts',
+            'provider' => 'staff',
         ]
     ],
 
@@ -68,7 +68,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class, // Point to staccounts model
         ],
-        'users' => [
+        'staff' => [
             'driver' => 'eloquent',
             'model' => App\Models\StAccount::class, // Point to staccounts model
         ],

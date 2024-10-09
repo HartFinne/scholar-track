@@ -38,16 +38,6 @@ class StaffController extends Controller
         return view('staff.hcattendancesystem');
     }
 
-    public function showHome()
-    {
-        if (Auth::check()) { // Check if the user is authenticated
-            return view('staff.home');
-        }
-
-        // Redirect the user if not authenticated
-        return redirect()->back();
-    }
-
     public function showScholarsCollege()
     {
         return view('staff.listcollege');
@@ -148,14 +138,24 @@ class StaffController extends Controller
         return view('staff.specialallowance');
     }
 
+    public function showHome()
+    {
+        if (Auth::guard('staff')->check()) { // Check if the user is authenticated using the staff guard
+            return view('staff.home');
+        }
+
+        // Redirect the user if not authenticated
+        return redirect()->route('login');
+    }
+
     public function showDashboard()
     {
-        if (Auth::check()) { // Check if the user is authenticated
+        if (Auth::guard('staff')->check()) { // Check if the user is authenticated using the staff guard
             return view('staff.admdashboard');
         }
 
         // Redirect the user if not authenticated
-        return redirect()->back();
+        return redirect()->route('login');
     }
 
     public function showUsersScholar()

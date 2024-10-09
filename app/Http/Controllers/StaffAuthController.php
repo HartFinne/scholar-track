@@ -18,9 +18,9 @@ class StaffAuthController extends Controller
         ]);
 
         // Attempt to authenticate the user
-        if (Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::guard('staff')->attempt($request->only('email', 'password'))) {
             // Authentication successful, get the authenticated user
-            $user = Auth::user();
+            $user = Auth::guard('staff')->user();
 
             // Check user account status
             if ($user->status === 'Active') {
@@ -28,7 +28,14 @@ class StaffAuthController extends Controller
                 $request->session()->regenerate();
 
                 // Check user role and redirect accordingly
-                return $this->handleUserRedirect($user);
+                switch ($user->role) {
+                    case 'Social Worker':
+                        return redirect()->route('home-sw');
+                    case 'System Admin':
+                        return redirect()->route('dashboard');
+                    default:
+                        return redirect()->back()->with('error', 'Unknown role. Access denied.');
+                }
             } else {
                 return redirect()->back()->with('error', 'Your account has been deactivated. If this was an error, please contact us at support@example.com or call us at +1 234 567 8901 for assistance.');
             }
@@ -37,19 +44,6 @@ class StaffAuthController extends Controller
             return redirect()->back()->with('error', 'Invalid email or password.');
         }
     }
-
-    protected function handleUserRedirect($user)
-    {
-        switch ($user->role) {
-            case 'Social Worker':
-                return redirect()->route('home-sw');
-            case 'System Admin':
-                return redirect()->route('dashboard');
-            default:
-                return redirect()->back()->with('error', 'Unknown role. Access denied.');
-        }
-    }
-
 
     public function createAccount(Request $request)
     {
