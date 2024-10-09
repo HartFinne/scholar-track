@@ -1,0 +1,126 @@
+#btnaddpenalty {
+    padding: 3px 10px;
+    border: 2px solid #8eb79c;
+    border-radius: 6px;
+    background-color: #d6efd8;
+    color: #2e7c55;
+    font-weight: bold;
+    transition: all ease 0.3s;
+}
+
+#btnaddpenalty:hover {
+    color: #fff;
+    border: 2px solid #2e7c55;
+    background-color: #2e7c55;
+}
+
+.ctnpenaltyform {
+    display: none;
+    flex-direction: column;
+    width: 700px;
+    position: fixed;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.groupA {
+    display: flex;
+    justify-content: space-between;
+    border: 2px solid #2e7c55;
+    background-color: #2e7c55;
+    color: #fff;
+    padding: 5px 10px;
+}
+
+#btnclose {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    transition: all ease 0.2s;
+}
+
+#btnclose:hover {
+    color: #c62121;
+}
+
+.groupB form {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    background-color: #fff;
+    border: 2px solid #2e7c55;
+}
+
+.groupB1 {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    padding: 0 50px;
+}
+
+.groupB1 input,
+.groupB1 select {
+    border: 1px solid #8eb79c;
+    outline: none;
+    padding: 2px 5px;
+    color: #303030;
+}
+
+.formnote {
+    font-size: 14px;
+    font-style: italic;
+}
+
+#btnsubmit {
+    padding: 3px 20px;
+    border: 1px solid #2e7c55;
+    border-radius: 6px;
+    background-color: #d6efd8;
+    color: #2e7c55;
+    margin-left: auto;
+    font-weight: bold;
+    transition: all ease 0.3s;
+}
+
+#btnsubmit:hover {
+    color: #fff;
+    background-color: #2e7c55;
+}
+
+/* TABLET | PAD */
+@media only screen and (max-width: 1024px) {
+    .ctnpenaltyform {
+        width: 500px;
+    }
+
+    .groupB1 {
+        padding: 0 25px;
+    }
+}
+
+/* MOBILE */
+@media only screen and (max-width: 767px) {
+    .ctnpenaltyform {
+        width: 300px;
+    }
+
+    .groupB1 {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        row-gap: 0;
+    }
+
+    .groupB1 input,
+    .groupB1 select {
+        margin-bottom: 5px;
+    }
+
+    .selectoptions {
+        width: 200px;
+    }
+}

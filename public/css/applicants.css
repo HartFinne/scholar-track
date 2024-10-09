@@ -1,0 +1,40 @@
+.groupA {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 10px;
+}
+
+.groupA1 {
+    border: 2px solid #2e7c55;
+    background-color: #d6efd8;
+    color: #2e7c55;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    border-radius: 8px;
+}
+
+.label {
+    font-size: 16px;
+}
+
+.data {
+    font-size: 32px;
+    font-weight: bold;
+    padding: 0;
+    text-align: center;
+}
+
+.groupA2 {
+    border: 2px solid #2e7c55;
+    background-color: #d6efd8;
+    color: #2e7c55;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    border-radius: 8px;
+    text-align: center;
+}

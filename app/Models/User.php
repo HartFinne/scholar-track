@@ -47,26 +47,4 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
-    public function basicInfo()
-    {
-        return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
-    }
-
-    // Define relationship to address info
-    public function addressInfo()
-    {
-        return $this->hasOne(ScAddressInfo::class, 'caseCode', 'caseCode');
-    }
-
-    public function clothingSize()
-    {
-        return $this->hasOne(ScClothingSize::class, 'caseCode', 'caseCode');
-    }
-
-    // Define relationship to education info
-    public function education()
-    {
-        return $this->hasOne(ScEducation::class, 'caseCode', 'caseCode');
-    }
 }

@@ -1,0 +1,220 @@
+/* FONTS IMPORT*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Poppins', Arial;
+}
+
+body {
+    height: 100vh;
+}
+
+/* PAGE HEADER */
+.pageheader {
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    position: fixed;
+    z-index: 2;
+    background-color: #fff;
+}
+
+.pageheader button {
+    border: none;
+    background: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+    background: #1a5319;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.pageheader button i {
+    font-size: 18px;
+}
+
+.pageheader button:hover {
+    background: #8eb79c;
+    color: #1a5319;
+}
+
+/* SIDE BAR */
+
+#ctnsidebar {
+    display: none;
+    flex-direction: column;
+    width: 250px;
+    height: 100%;
+    background: #eaebea;
+    position: fixed;
+    z-index: 3;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.3);
+}
+
+#btnclosesidebar {
+    margin-left: auto;
+    max-width: fit-content;
+    padding: 2px 10px;
+    font-size: 24px;
+    border: none;
+    background: none;
+    color: #2e7c55;
+}
+
+#btnclosesidebar:hover {
+    color: #c31c1c;
+}
+
+#ctnoptions {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid #2e7c55;
+}
+
+.sbarmainopt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    padding: 8px;
+    font-size: 18px;
+    color: #2e7c55;
+    border: none;
+    border-top: 1px solid #2e7c55;
+    transition: all ease 0.3s;
+}
+
+.sbarmainopt:hover,
+.sbarmainopt.active {
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.ctnsuboptions {
+    display: flex;
+    flex-direction: column;
+}
+
+.sbarsubopt {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    padding: 5px 15px;
+    font-size: 16px;
+    color: #2e7c55;
+    border: none;
+    border-top: 1px solid #2e7c55;
+    transition: all ease 0.3s;
+}
+
+.sbarsubopt:hover,
+.sbarsubopt.active {
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+/* PROFILE MENU */
+#ctnprofilemenu {
+    display: none;
+    flex-direction: column;
+    width: fit-content;
+    row-gap: 5px;
+    padding: 10px 15px;
+    border: 1px solid #2e7c55;
+    border-radius: 6px;
+    background-color: #eaebea;
+    position: fixed;
+    z-index: 3;
+    top: 55px;
+    right: 25px;
+}
+
+#ctnprofilemenu a {
+    text-decoration: none;
+}
+
+#ctnprofilemenu a i {
+    width: 25px;
+}
+
+#linkprofile {
+    color: #303030;
+}
+
+#linksignout {
+    font-weight: bold;
+    color: #2e7c55;
+}
+
+#linkprofile:hover {
+    color: #2e7c55;
+    text-decoration: underline;
+}
+
+#linksignout:hover {
+    color: #c62121;
+    text-decoration: underline;
+}
+
+/* MAIN CONTENT */
+
+.divider {
+    border: 1px solid #2e7c55;
+    margin: 20px 0 10px 0;
+}
+
+.divider1 {
+    border: 1px solid #2e7c55;
+}
+
+.pagetitle {
+    font-size: 28px;
+    font-weight: bold;
+    font-family: 'League Spartan', Arial;
+    color: #1a5319;
+}
+
+.lblinstruction {
+    font-size: 16px;
+    font-family: 'Poppins', Arial;
+    color: #1a5319;
+}
+
+.ctnmain {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+/* MOBILE */
+@media only screen and (max-width: 767px) {
+    .ctnmain {
+        padding: 90px 25px;
+    }
+
+    .pagetitle {
+        font-size: 22px;
+    }
+}
+
+/* PAD | TABLET */
+@media only screen and (max-width: 1024px) {
+    .ctnmain {
+        padding: 90px 25px;
+    }
+}
+
+/* DESKTOP */
+@media only screen and (min-width: 1025px) {
+    .ctnmain {
+        padding: 100px 50px;
+    }
+}
