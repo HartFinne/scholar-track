@@ -44,6 +44,7 @@
                 required>
             <a href="forgotpass.html" id="btnforgotpass">Forgot password?</a>
             <button type="submit" id="btnlogin">Sign In</button>
+            <a href="{{ route('registration') }}" id="btnregister">Don't have an account? Register here.</a>
         </form>
     </div>
 

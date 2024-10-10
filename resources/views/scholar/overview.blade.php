@@ -29,20 +29,25 @@
         <div class="sc-info">
             <div class="sc-info-1">
                 <div class="text">
-                    <p class="casecode" id="casecode">2021-02312-MINDONG</p>
-                    <p class="fullname" id="fullname">DELA CRUZ, JUAN SANTOS</p>
+                    <p class="casecode" id="casecode">{{ $user->caseCode }}</p>
+                    <p class="fullname" id="fullname">
+                        {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
+                        {{ $user->basicInfo->scMiddlename }}</p>
                 </div>
                 <div class="text">
-                    <p class="sc-status">Scholarship Status: <span>CONTINUING</span></p>
+                    <p class="sc-status">Scholarship Status: <span>{{ $user->basicInfo->scScholarshipStatus }}</span>
+                    </p>
                     <p class="sc-type">Old Scholar</p>
                 </div>
             </div>
             <div class="sc-info-2">
                 <div class="text">
-                    <p class="school">Polytechnic University of the Philippines</p>
-                    <p class="yrlevel">First Year</p>
-                    <p class="course">Bachelor of Science in Information Technology</p>
+                    <p class="school">{{ $user->education->scSchoolName }}</p>
+                    <p class="yrlevel">{{ $user->education->scYearLevel }}</p>
+                    <p class="course">{{ $user->education->scCourseStrand }}</p>
                 </div>
+
+
 
             </div>
         </div>
@@ -86,16 +91,19 @@
                 <thead>
                     <tr>
                         <th class="text-center align-middle">Date</th>
+                        <th class="text-center align-middle">Condition</th>
                         <th class="text-center align-middle">Penalty</th>
-                        <th class="text-center align-middle">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>09/11/2024</td>
-                        <td>Absent in Community Service</td>
-                        <td>1st Offense</td>
-                    </tr>
+                    @foreach ($penalties as $penalty)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($penalty->dateOfPenalty)->format('m/d/Y') }}</td>
+                            <!-- Formatting the date -->
+                            <td>{{ $penalty->pendCondition }}</td>
+                            <td>{{ $penalty->penalty }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

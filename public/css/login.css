@@ -72,7 +72,7 @@ body {
     min-width: fit-content;
     height: fit-content;
     justify-content: center;
-    padding: 40px 5% 50px 5%;
+    padding: 40px 5% 20px 5%;
     border: 1px solid #808080;
     border-radius: 12px;
     background-color: rgba(255, 255, 255, 0.5);
@@ -114,7 +114,8 @@ body {
     outline: 1px solid #303030;
 }
 
-#btnforgotpass {
+#btnforgotpass,
+#btnregister {
     text-decoration: none;
     text-align: right;
     color: #1a5319;
@@ -124,7 +125,14 @@ body {
     margin-left: auto;
 }
 
-#btnforgotpass:hover {
+#btnregister {
+    margin-top: 30px;
+    margin-left: 0;
+    text-align: center;
+}
+
+#btnforgotpass:hover,
+#btnregister:hover {
     color: #56a72e;
     border-bottom: 1px solid #56a72e;
 }

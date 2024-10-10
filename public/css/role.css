@@ -7,33 +7,34 @@
     box-sizing: border-box;
 }
 
-body{
+body {
     font-family: 'Poppins', sans-serif;
     background-color: #eaebea;
 }
 
-.bg-holder{
+.bg-holder {
     position: absolute;
     width: 100%;
     min-height: 100%;
     top: 0;
     left: 0;
+    background-image: url(../images/tzu-chi-bg.jpg);
     background-size: cover;
-    background-position:  center;
+    background-position: center;
     background-repeat: no-repeat;
 }
 
-h2{
+h2 {
     color: #1a5319;
 }
 
-#footer a{
+#footer a {
     color: rgb(104, 223, 104);
     cursor: pointer;
     text-decoration: none;
 }
 
-.btn{
+.btn {
     background-color: #1a5319;
     color: #fff;
     font-size: 1.1rem;

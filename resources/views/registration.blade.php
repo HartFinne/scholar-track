@@ -15,7 +15,8 @@
 <body>
     <div class="registration-form">
         <a href="">
-            <button class="btn-back fw-bold">&lt Go back</button>
+            <a class="btn-back fw-bold" style="text-decoration: none" href="{{ route('scholar-login') }}">&lt Go
+                back</a>
         </a>
         <div class="d-flex justify-content-center header">
             <img src="{{ asset('images/logo.png') }}" alt="" class="logo">

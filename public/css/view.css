@@ -2,42 +2,42 @@
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
-*{
+* {
     margin: 0;
     padding: 0;
     font-family: 'Poppins', Arial;
 }
 
-body{
+body {
     height: 100vh;
     width: 100%;
-    background-image: url(/imgs/background.png);
+    background-image: url(../images/background.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
 }
 
-.navbar{
+.navbar {
     margin: 50px;
 }
 
-.logo{
+.logo {
     display: flex;
     gap: 20px;
     align-items: center;
 }
 
-.logo img{
+.logo img {
     width: auto;
     height: 50px;
 }
 
-.logo h6{
+.logo h6 {
     color: #1a5319;
     font-size: 1.2rem;
 }
 
-.navbar a{
+.navbar a {
     text-decoration: none;
     font-size: 1rem;
     color: #fff;
@@ -48,44 +48,45 @@ body{
     box-shadow: rgba(142, 183, 156, 0.35) 0px 15px 15px;
 }
 
-.navbar a:hover{
+.navbar a:hover {
     background-color: #8eb79c;
 }
 
-.ctn-main{
+.ctn-main {
     width: 80%;
-    margin:auto;
+    margin: auto;
     padding: 0 0 100px;
 }
 
-.content{
+.content {
     width: 40%;
 }
 
-.content .text-1, .content .text-2{
+.content .text-1,
+.content .text-2 {
     font-family: 'Libre Baskerville', sans-serif, serif;
     font-weight: bold;
 }
 
-.content .text-1{
+.content .text-1 {
     font-size: 3.2rem;
     color: #508d4e;
-    text-shadow: 2px 2px #d6efd8 ;
+    text-shadow: 2px 2px #d6efd8;
 }
 
-.content .text-2{
+.content .text-2 {
     font-size: 5rem;
     color: #1e5430;
     text-shadow: 3px 3px #d6efd8;
 }
 
-.content p{
+.content p {
     color: #fff;
     margin-bottom: 20px;
     text-shadow: 1.3px 1.3px 1.3px rgba(7, 7, 7, 0.35);
 }
 
-.content button{
+.content button {
     font-size: 1rem;
     color: #fff;
     background-color: #508d4e;
@@ -102,8 +103,8 @@ body{
     display: inline-block;
     position: relative;
     transition: 0.5s;
-  }
-  
+}
+
 .content button span:after {
     content: '\00bb';
     position: absolute;
@@ -111,56 +112,57 @@ body{
     top: 0;
     right: -20px;
     transition: 0.5s;
-  }
-  
+}
+
 .content button:hover span {
     padding-right: 25px;
-  }
-  
+}
+
 .content button:hover span:after {
     opacity: 1;
     right: 0;
-  }
+}
 
-footer{
+footer {
     background-color: #303030;
     text-align: center;
     padding: 30px;
     width: 100%;
 }
 
-footer .text, h5{
+footer .text,
+h5 {
     color: #fff;
 }
 
-footer p{
+footer p {
     color: #898989;
     font-size: 1.2rem;
 }
 
-footer a{
+footer a {
     text-decoration: none;
     color: #56a72e;
 }
 
-footer .main-1{
+footer .main-1 {
     margin-bottom: 40px;
     border-bottom: 1px solid grey;
 }
 
-footer .main-1 p{
+footer .main-1 p {
     margin: 30px 0px;
 }
 
-footer .main-2 h2{
+footer .main-2 h2 {
     margin-bottom: 30px;
 }
 
-footer .main-2 a{
+footer .main-2 a {
     color: gray;
 }
 
-footer .soc-med{
+footer .soc-med {
     display: flex;
     justify-content: center;
     font-size: 2rem;
@@ -169,59 +171,76 @@ footer .soc-med{
 }
 
 @media only screen and (max-width: 768px) {
-    .logo{
+    .logo {
         margin: 0 30px;
     }
-    .logo img{
+
+    .logo img {
         height: 20px;
     }
-    .logo h6{
+
+    .logo h6 {
         font-size: 0.9rem;
     }
-    .navbar{
+
+    .navbar {
         margin: 50px 0;
     }
-    .navbar a{
+
+    .navbar a {
         font-size: 1rem;
         margin: 20px auto 0;
     }
-    .ctn-main .content{
+
+    .ctn-main .content {
         width: 100%;
         text-align: center;
     }
-    .ctn-main .content .text-2{
+
+    .ctn-main .content .text-2 {
         font-size: 3rem;
     }
 }
+
 @media only screen and (max-width: 1024px) {
-    .logo{
+    .logo {
         margin: 0 40px;
     }
-    .logo img{
+
+    .logo img {
         height: 40px;
     }
-    .logo h6{
+
+    .logo h6 {
         font-size: 1.1rem;
     }
-    .navbar a{
+
+    .navbar a {
         font-size: 1rem;
     }
-    .content{
+
+    .content {
         width: 50%;
     }
-    .content .text-1{
+
+    .content .text-1 {
         font-size: 2.2rem;
     }
-    .content .text-2{
+
+    .content .text-2 {
         font-size: 4rem;
     }
-    footer p, h5{
+
+    footer p,
+    h5 {
         font-size: 1.1rem;
     }
-    footer .main-1 h4{
+
+    footer .main-1 h4 {
         font-size: 1.3rem;
     }
-    footer .main-2 h2{
+
+    footer .main-2 h2 {
         font-size: 1.6rem;
     }
 }

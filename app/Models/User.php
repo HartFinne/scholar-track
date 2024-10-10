@@ -47,4 +47,29 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Define the relationship to the sc_basicinfo table.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function basicInfo()
+    {
+        return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
+
+    public function education()
+    {
+        return $this->hasOne(ScEducation::class, 'caseCode', 'caseCode');
+    }
+
+    public function addressInfo()
+    {
+        return $this->hasOne(ScAddressInfo::class, 'caseCode', 'caseCode');
+    }
+
+    public function clothingSize()
+    {
+        return $this->hasOne(ScClothingSize::class, 'caseCode', 'caseCode');
+    }
 }

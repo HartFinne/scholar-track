@@ -1,9 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ScholarController;
+use App\Http\Controllers\Scholar\ScholarController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffAuthController;
 
@@ -19,18 +19,28 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/csdashboard', 'scholar.csdashboard')->name('csdashboard');
     Route::view('/csdetails', 'scholar.csdetails')->name('csdetails');
     Route::view('/gradesinfo', 'scholar.gradesinfo')->name('gradesinfo');
-    Route::view('/gradesub', 'scholar.gradesub')->name('gradesub');
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/lteinfo', 'scholar.lteinfo')->name('lteinfo');
     Route::view('/schumanities', 'scholar.schumanities')->name('schumanities');
     Route::view('/sclte', 'scholar.sclte')->name('sclte');
-    Route::view('/overview', 'scholar.overview')->name('overview');
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
     Route::view('/schome', 'scholar.schome')->name('schome');
-    Route::view('/manageprofile', 'scholar.manageprofile')->name('manageprofile');
+
+    // fixed about 70%
+    Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
+    Route::get('/gradesub', [ScholarController::class, 'showGradeSubmission'])->name('gradesub');
+    // nag skip ako dito
+    Route::post('/gradesub', [ScholarController::class, 'storeGradeSubmission'])->name('gradesub.post');
+
+
+    Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
+    Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
+
+    Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
 });
+
 
 // routing still for scholars page forms with logic to send to the database
 

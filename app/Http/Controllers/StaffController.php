@@ -91,7 +91,7 @@ class StaffController extends Controller
 
     public function showLogin()
     {
-        return view('staff.login'); // No need for authentication check on login
+        return view('staff.login');
     }
 
     public function showLTE()
