@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\ScEducation;
 use Illuminate\Support\Facades\DB;
 use App\Models\ScPenalty;
 
@@ -68,6 +69,8 @@ class ScholarController extends Controller
     // for viewing page the change password
     public function changePassword()
     {
+
+
         return view('scholar.changepassword');
     }
 

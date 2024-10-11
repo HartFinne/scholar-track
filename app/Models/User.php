@@ -48,11 +48,6 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Define the relationship to the sc_basicinfo table.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
     public function basicInfo()
     {
         return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
@@ -67,9 +62,13 @@ class User extends Authenticatable
     {
         return $this->hasOne(ScAddressInfo::class, 'caseCode', 'caseCode');
     }
-
     public function clothingSize()
     {
         return $this->hasOne(ScClothingSize::class, 'caseCode', 'caseCode');
+    }
+
+    public function penalty()
+    {
+        return $this->hasOne(ScPenalty::class, 'caseCode', 'caseCode');
     }
 }

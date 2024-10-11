@@ -15,6 +15,11 @@
 </head>
 
 <body>
+    {{-- @if (Auth::check())
+        <p>Your Scholar ID (Case Code): {{ Auth::user()->caseCode }}</p>
+    @else
+        <p>You are not logged in.</p>
+    @endif --}}
     <!-- Include Sidebar -->
     @include('partials._sidebar')
 
@@ -29,7 +34,8 @@
             <p class="desc">Submit your GWA and the scanned copy of pdf file of your grades.</p>
         </div>
 
-        <form action="" class="grade-form text-center">
+        <form action="{{ route('gradesub.post') }}" class="grade-form text-center" method="POST">
+            @csrf
             <select class="sem" aria-label="qtrsem" required>
                 <option value="" disabled selected hidden>Semester</option>
                 <option value="">1ST SEMESTER</option>

@@ -8,4 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class ScPenalty extends Model
 {
     use HasFactory;
+
+    protected $table = 'sc_penalty';
+
+    public $timestamps = false;
+
+
+    protected $fillable = [
+        'caseCode',
+        'pendCondition',
+        'penalty',
+        'scYearLevel',
+        'dateOfPenalty',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
 }

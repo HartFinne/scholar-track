@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Scholar\HomeController;
+use App\Http\Controllers\Scholar\LoginController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Scholar\ScholarController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffAuthController;
@@ -39,7 +39,22 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
 
     Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
+
+    // fixed about 70%
+    Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
+    Route::get('/gradesub', [ScholarController::class, 'showGradeSubmission'])->name('gradesub');
+    // nag skip ako dito
+    Route::post('/gradesub', [ScholarController::class, 'storeGradeSubmission'])->name('gradesub.post');
+
+
+    Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
+    Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
+
+    Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
 });
+
+
+Route::view('chartjs', 'chartjs');
 
 
 // routing still for scholars page forms with logic to send to the database
@@ -53,6 +68,8 @@ Route::prefix('scholar')->controller(LoginController::class)->group(function () 
     Route::post('/scholar-login', 'authLogin')->name('scholar-login.post'); // For handling the form submission
     Route::post('/logout', 'logout')->name('logout');
 });
+
+
 
 Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/accountsw', 'showAccountSW')->name('account-sw');

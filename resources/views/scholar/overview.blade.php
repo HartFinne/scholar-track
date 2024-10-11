@@ -15,6 +15,13 @@
 </head>
 
 <body>
+
+    {{-- @if (Auth::check())
+        <p>Your Scholar ID (Case Code): {{ Auth::user()->caseCode }}</p>
+    @else
+        <p>You are not logged in.</p>
+    @endif --}}
+
     <!-- Include Sidebar -->
     @include('partials._sidebar')
 
@@ -33,6 +40,10 @@
                     <p class="fullname" id="fullname">
                         {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
                         {{ $user->basicInfo->scMiddlename }}</p>
+                    <p class="casecode" id="casecode">{{ $user->caseCode }}</p>
+                    <p class="fullname" id="fullname">
+                        {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
+                        {{ $user->basicInfo->scMiddlename }}</p>
                 </div>
                 <div class="text">
                     <p class="sc-status">Scholarship Status: <span>{{ $user->basicInfo->scScholarshipStatus }}</span>
@@ -42,6 +53,9 @@
             </div>
             <div class="sc-info-2">
                 <div class="text">
+                    <p class="school">{{ $user->education->scSchoolName }}</p>
+                    <p class="yrlevel">{{ $user->education->scYearLevel }}</p>
+                    <p class="course">{{ $user->education->scCourseStrand }}</p>
                     <p class="school">{{ $user->education->scSchoolName }}</p>
                     <p class="yrlevel">{{ $user->education->scYearLevel }}</p>
                     <p class="course">{{ $user->education->scCourseStrand }}</p>
@@ -55,9 +69,15 @@
         <div class="overview-graph">
             <div class="card1">
                 <p>Academic Performance</p>
+                <div>
+                    <canvas id="myLineChart"></canvas>
+                </div>
             </div>
             <div class="card2">
                 <p>Community Service</p>
+                <div>
+                    <canvas id="myChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -92,10 +112,19 @@
                     <tr>
                         <th class="text-center align-middle">Date</th>
                         <th class="text-center align-middle">Condition</th>
+                        <th class="text-center align-middle">Condition</th>
                         <th class="text-center align-middle">Penalty</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($penalties as $penalty)
+                        <tr>
+                            <td>{{ \Carbon\Carbon::parse($penalty->dateOfPenalty)->format('m/d/Y') }}</td>
+                            <!-- Formatting the date -->
+                            <td>{{ $penalty->pendCondition }}</td>
+                            <td>{{ $penalty->penalty }}</td>
+                        </tr>
+                    @endforeach
                     @foreach ($penalties as $penalty)
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($penalty->dateOfPenalty)->format('m/d/Y') }}</td>
@@ -137,6 +166,70 @@
     </div>
 
     <script src="{{ asset('js/scholar.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Completed', 'Remaining'],
+                borderColor: '#36A2EB',
+                datasets: [{
+                    label: 'Hours',
+                    data: [1, 2],
+                    borderWidth: 1,
+                    borderColor: 'darkgreen', // Bar border color changed to dark green
+                    backgroundColor: 'rgba(0, 100, 0, 0.8)', // Bar fill color set to a dark green with transparency
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    {{-- for line chart --}}
+    <script>
+        window.onload = function() {
+            var ctx = document.getElementById('myLineChart').getContext('2d');
+            var myLineChart = new Chart(ctx, {
+                type: 'line', // Specify chart type as 'line'
+                data: {
+                    labels: ['S.Y.2122 - 1st Sem', 'S.Y.2122 - 2nd Sem', 'S.Y.2223 - 1st Sem',
+                        'S.Y.2223 - 2nd Sem',
+                        'S.Y.2324 - 1st Sem', 'S.Y.2324 - 2nd Sem'
+                    ], // X-axis labels
+                    datasets: [{
+                        label: 'GWA',
+                        data: [1, 2, 1.5, 2.25, 1, 1.25], // Y-axis data points
+                        fill: false, // Don't fill under the line
+                        borderColor: 'darkgreen', // Line color (changed to dark green)
+                        tension: 0.1, // Curve tension for smoothness
+                        pointBackgroundColor: 'darkgreen', // Color of the points
+                        pointBorderColor: 'darkgreen', // Border color of the points
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            beginAtOne: false
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        };
+    </script>
+
+
 </body>
 
 </html>
