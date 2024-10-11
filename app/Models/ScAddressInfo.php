@@ -26,5 +26,8 @@ class ScAddressInfo extends Model
     ];
 
     // Define inverse relationship to account
-
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
 }

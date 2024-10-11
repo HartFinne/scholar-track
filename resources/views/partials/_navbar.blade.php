@@ -9,7 +9,7 @@
 
 <div class="ctn-profilemenu" id="profilemenu" style="display: none;">
     <a href="{{ route('manageprofile') }}"><i class="fa-solid fa-user"></i>Profile</a><br>
-    <a href=""><i class="fa-solid fa-key"></i>Change Password</a><br>
+    <a href="{{ route('changepassword') }}"><i class="fa-solid fa-key"></i>Change Password</a><br>
     <span><i class="fa-solid fa-language"></i>Language</span></a>
     <button class="toggle-btn active">English</button>
     <button class="toggle-btn">Tagalog</button><br>

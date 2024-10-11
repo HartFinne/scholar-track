@@ -47,4 +47,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function basicInfo()
+    {
+        return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
+
+    public function education()
+    {
+        return $this->hasOne(ScEducation::class, 'caseCode', 'caseCode');
+    }
+
+    public function addressInfo()
+    {
+        return $this->hasOne(ScAddressInfo::class, 'caseCode', 'caseCode');
+    }
+    public function clothingSize()
+    {
+        return $this->hasOne(ScClothingSize::class, 'caseCode', 'caseCode');
+    }
+
+    public function penalty()
+    {
+        return $this->hasOne(ScPenalty::class, 'caseCode', 'caseCode');
+    }
 }

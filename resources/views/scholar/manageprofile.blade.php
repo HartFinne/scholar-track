@@ -15,12 +15,6 @@
 </head>
 
 <body>
-
-    @if (Auth::check())
-        <p>Your Scholar ID (Case Code): {{ Auth::user()->caseCode }}</p>
-    @else
-        <p>You are not logged in.</p>
-    @endif
     <!-- Include Sidebar -->
     @include('partials._sidebar')
 
@@ -30,111 +24,137 @@
     <!-- MAIN CONTENT -->
     <div class="ctn-main">
         <a href="{{ route('schome') }}" class="goback">&lt Go back</a>
-        <div class="text-center profile">
-            <h1 class="title">My Profile</h1>
-            <button type="" class="btn-edit fw-bold">Edit Profile</button>
-        </div>
-        <div class="info">
-            <div class="label">Case Code</div>
-            <div class="value">: <span>--</span></div>
 
-            <div class="label">Assigned Area</div>
-            <div class="value">: <span>Mindong</span></div>
+        <form action="{{ route('manageprofile.post') }}" method="POST">
+            @csrf
+            <div class="text-center profile">
+                <h1 class="title">My Profile</h1>
+                <button type="" class="btn-edit fw-bold">Save Profile</button>
+            </div>
+            <div class="profile-view">
+                <div class="profile-info">
+                    <h4>BASIC INFORMATION</h4>
+                    <div class="info">
+                        <div class="label">Case Code</div>
+                        <div class="value">: <span>{{ $data->caseCode }}</span></div>
 
-            <div class="label">Name</div>
-            <div class="value">: <span>Dela Cruz, Juan Santos</span></div>
+                        <div class="label">Assigned Area</div>
+                        <div class="value">: <span>{{ $data->addressInfo->scArea }}</span></div>
 
-            <div class="label">Date of Birth</div>
-            <div class="value">: <span>January 1, 2002</span></div>
+                        <div class="label">Name</div>
+                        <div class="value">: <span>{{ $data->basicInfo->scLastname }},
+                                {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</span></div>
 
-            <div class="label">Sex</div>
-            <div class="value">: <span>Male</span></div>
+                        <div class="label">Date of Birth</div>
+                        <div class="value">:
+                            <span>{{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m/d/Y') }}</span>
+                        </div>
 
-            <div class="label">Start of Scholarship</div>
-            <div class="value">: <span>MM/DD/YYYY</span></div>
+                        <div class="label">Sex</div>
+                        <div class="value">: <span>{{ $data->basicInfo->scSex }}</span></div>
 
-            <div class="label">T-Shirt Size</div>
-            <div class="value">: <span>M</span></div>
+                        <div class="label">Start of Scholarship</div>
+                        <div class="value">: <span>Di ko pa nagagawa mga lodi</span></div>
 
-            <div class="label">Shoe Size</div>
-            <div class="value">: <span>9</span></div>
+                        <div class="label">T-Shirt Size</div>
+                        <div class="value">: <span>{{ $data->clothingSize->scTShirtSize }}</span></div>
 
-            <div class="label">Slippers Size</div>
-            <div class="value">: <span>9</span></div>
+                        <div class="label">Shoe Size</div>
+                        <div class="value">: <span>{{ $data->clothingSize->scShoesSize }}</span></div>
 
-            <div class="label">Pants Size</div>
-            <div class="value">: <span>L</span></div>
+                        <div class="label">Slippers Size</div>
+                        <div class="value">: <span>{{ $data->clothingSize->scSlipperSize }}</span></div>
 
-            <div class="label">Jogging Pants Size</div>
-            <div class="value">: <span>L</span></div>
+                        <div class="label">Pants Size</div>
+                        <div class="value">: <span>{{ $data->clothingSize->scPantsSize }}</span></div>
 
-            <div class="label">Email Address</div>
-            <div class="value">: <span>example@gmail.com</span></div>
+                        <div class="label">Jogging Pants Size</div>
+                        <div class="value">: <span>{{ $data->clothingSize->scJoggingPantSize }}</span></div>
 
-            <div class="label">Contact Number</div>
-            <div class="value">: <span>09XXXXXXXXX</span></div>
-        </div>
-    </div>
-    <div class="profile-info">
-        <h4>ACCOUNT INFORMATION</h4>
-        <div class="info">
-            <div class="label">Account Number</div>
-            <div class="value">: <span>--</span></div>
+                        {{-- change --}}
+                        <div class="label">Email Address</div>
+                        <div class="value">:
+                            <input type="email" name="scEmail" value="{{ old('scEmail', $data->scEmail) }}"
+                                class="input">
+                        </div>
 
-            <div class="label">Card Number</div>
-            <div class="value">: <span>--</span></div>
-        </div>
-    </div>
-    <div class="profile-info">
-        <h4>ADDRESS INFORMATION</h4>
-        <div class="info">
-            <div class="label">Home Address</div>
-            <div class="value">: <span>--</span></div>
+                        {{-- change --}}
+                        <div class="label">Contact Number</div>
+                        <div class="value">: <input type="text" name="scPhoneNum"
+                                value="{{ old('scPhoneNum', $data->scPhoneNum) }}"></div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h4>ACCOUNT INFORMATION</h4>
+                    <div class="info">
+                        <div class="label">Account Number</div>
+                        <div class="value">: <span>wala eto sa database na ginawa ko pasensya na</span></div>
 
-            <div class="label">Area Code</div>
-            <div class="value">: <span>--</span></div>
+                        <div class="label">Card Number</div>
+                        <div class="value">: <span>wala eto sa database na ginawa ko pasensya na</span></div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h4>ADDRESS INFORMATION</h4>
+                    <div class="info">
+                        {{-- change --}}
+                        <div class="label">Home Address</div>
+                        <div class="value">: <input type="text" name="scResidential"
+                                value="{{ old('scEmail', $data->addressinfo->scResidential) }}"></div>
 
-            <div class="label">Permanent Address</div>
-            <div class="value">: <span>--</span></div>
-        </div>
-    </div>
-    <div class="profile-info">
-        <h4>EMERGENCY CONTACT</h4>
-        <div class="info">
-            <div class="label">Name</div>
-            <div class="value">: <span>--</span></div>
+                        <div class="label">Area Code</div>
+                        <div class="value">: <span>what do you mean area code bro?</span></div>
 
-            <div class="label">Relation</div>
-            <div class="value">: <span>Mother</span></div>
+                        <div class="label">Permanent Address</div>
+                        <div class="value">: <input type="text" name="scResidential"
+                                value="{{ old('scEmail', $data->addressinfo->scResidential) }}"></div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h4>EMERGENCY CONTACT</h4>
+                    <div class="info">
+                        {{-- change --}}
+                        <div class="label">Name</div>
+                        <div class="value">: <input type="text" name="scGuardianName"
+                                value="{{ old('scGuardianName', $data->basicInfo->scGuardianName) }}"></div>
 
-            <div class="label">Email Address</div>
-            <div class="value">: <span>example@gmail.com</span></div>
+                        <div class="label">Relation</div>
+                        <div class="value">: <input type="text" name="scRelationToGuardian"
+                                value="{{ old('scRelationToGuardian', $data->basicInfo->scRelationToGuardian) }}">
+                        </div>
 
-            <div class="label">Contact Number</div>
-            <div class="value">: <span>09XXXXXXXXX</span></div>
-        </div>
-    </div>
-    <div class="profile-info">
-        <h4>EDUCATIONAL BACKGROUND</h4>
-        <div class="info">
-            <div class="label">School</div>
-            <div class="value">: <span>--</span></div>
+                        <div class="label">Email Address</div>
+                        <div class="value">: <input type="text" name="scGuardianEmailAddress"
+                                value="{{ old('scGuardianEmailAddress', $data->basicInfo->scGuardianEmailAddress) }}">
+                        </div>
 
-            <div class="label">College Department</div>
-            <div class="value">: <span>--</span></div>
+                        <div class="label">Contact Number</div>
+                        <div class="value">: <input type="text" name="scGuardianPhoneNumber"
+                                value="{{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h4>EDUCATIONAL BACKGROUND</h4>
+                    <div class="info">
+                        <div class="label">School Level</div>
+                        <div class="value">: <span>{{ $data->education->scSchoolLevel }}</span></div>
 
-            <div class="label">Grade/Year Level</div>
-            <div class="value">: <span>--</span></div>
+                        <div class="label">School Name</div>
+                        <div class="value">: <span>{{ $data->education->scSchoolName }}</span></div>
 
-            <div class="label">Course/Strand</div>
-            <div class="value">: <span>--</span></div>
-        </div>
-    </div>
-    </div>
-    </div>
+                        <div class="label">Grade/Year Level</div>
+                        <div class="value">: <span>{{ $data->education->scYearLevel }}</span></div>
+
+                        <div class="label">Course/Strand</div>
+                        <div class="value">: <span>{{ $data->education->scCourseStrand }}</span></div>
+                    </div>
+                </div>
+            </div>
+        </form>
 
 
-    <script src="{{ asset('js/scholar.js') }}"></script>
+        <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
 
 </html>

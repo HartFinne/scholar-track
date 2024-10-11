@@ -28,6 +28,11 @@ class ScBasicInfo extends Model
         'scScholarshipStatus'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
+
 
     // Define inverse relationship to account
 

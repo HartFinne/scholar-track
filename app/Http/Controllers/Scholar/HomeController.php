@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Scholar;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Db;
@@ -11,6 +11,7 @@ use App\Models\ScClothingSize;
 use App\Models\ScEducation;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\Controller;
 
 
 class HomeController extends Controller
@@ -52,7 +53,6 @@ class HomeController extends Controller
                 'nameOfSchool' => 'required|string|max:255',
                 'yearLevel' => 'required|string|max:50',
                 'courseSection' => 'required|string|max:50',
-                'semester' => 'required|in:1st Semester,2nd Semester',
                 'guardianName' => 'required|string|max:50',
                 'relationToGuardian' => 'required|string|max:50',
                 'guardianEmailAddress' => 'required|email|max:100',
@@ -134,7 +134,6 @@ class HomeController extends Controller
                 'scSchoolName' => $request->nameOfSchool, // nameOfSchool -> scSchoolName
                 'scYearLevel' => $request->yearLevel, // yearLevel -> scYearLevel
                 'scCourseStrand' => $request->courseSection, // courseSection -> scCourseStrand
-                'scSemester' => $request->semester, // semester -> scSemester
             ]);
 
             // If everything is successful, commit the transaction

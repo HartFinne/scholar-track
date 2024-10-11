@@ -14,7 +14,7 @@
 
 <body>
     <div class="registration-form">
-        <a href="">
+        <a href="{{ route('scholar-login') }}">
             <button class="btn-back fw-bold">&lt Go back</button>
         </a>
         <div class="d-flex justify-content-center header">
@@ -194,9 +194,9 @@
                     <div class="row">
                         <label for="schoolLevel">School Level</label>
                         <select class="" aria-label="schoolLevel" name="schoolLevel" required>
-                            <option value="" disabled selected hidden>Select school level</option>
+                            {{-- <option value="" disabled selected hidden>Select school level</option>
                             <option value="Elementary">Elementary</option>
-                            <option value="High School">High School</option>
+                            <option value="High School">High School</option> --}}
                             <option value="College">College</option>
                         </select>
                     </div>
@@ -214,14 +214,6 @@
                         <input type="text" id="course"
                             placeholder="Ruby or Stem or Bachelor of Science in Information Technology"
                             name="courseSection" required>
-                    </div>
-                    <div class="row">
-                        <label for="semester">Semester</label>
-                        <select class="" aria-label="semester" name="semester" required>
-                            <option value="" disabled selected hidden>Select Semester</option>
-                            <option value="1st Semester">1st Semester</option>
-                            <option value="2nd Semester">2nd Semester</option>
-                        </select>
                     </div>
                 </fieldset>
 

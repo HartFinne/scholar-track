@@ -32,18 +32,19 @@
             @csrf
             <span id="formtitle">Scholar Portal</span>
             <span id="formsubtitle">Sign in to start your session.</span>
-            <span class="label">Case Code</span>
-            <input class="input" type="text" name="caseCode" id="caseCode" value="{{ old('caseCode') }}" required>
             @if ($errors->has('caseCode'))
                 <div class="alert alert-danger">
                     <strong>{{ $errors->first('caseCode') }}</strong>
                 </div>
             @endif
+            <span class="label">Case Code</span>
+            <input class="input" type="text" name="caseCode" id="caseCode" value="{{ old('caseCode') }}" required>
             <span class="label">Password</span>
             <input class="input" type="password" name="password" id="inpassword" value="{{ old('password') }}"
                 required>
             <a href="forgotpass.html" id="btnforgotpass">Forgot password?</a>
             <button type="submit" id="btnlogin">Sign In</button>
+            <a href=" {{ route('registration') }} ">Existing Scholar?</a>
         </form>
     </div>
 
