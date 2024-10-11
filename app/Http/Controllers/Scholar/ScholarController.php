@@ -19,8 +19,7 @@ class ScholarController extends Controller
     // for manage profile
     public function showProfile()
     {
-
-        $data = User::with(['basicInfo', 'education', 'addressInfo'])
+        $data = User::with(['basicInfo', 'education', 'addressInfo', 'clothingSize'])
             ->where('id', Auth::id())
             ->first();
 

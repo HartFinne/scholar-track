@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\staccount;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class StaffController extends Controller
@@ -65,7 +66,10 @@ class StaffController extends Controller
     public function showScholarsCollege()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.listcollege');
+            // Retrieve all scholars
+            $scholar = User::with(['basicInfo', 'education', 'addressInfo'])->get();
+
+            return view('staff.listcollege', compact('scholar'));
         }
 
         return redirect()->route('login');
@@ -84,6 +88,18 @@ class StaffController extends Controller
     {
         if (Auth::guard('staff')->check()) {
             return view('staff.listhighschool');
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showScholarProfile($id)
+    {
+        if (Auth::guard('staff')->check()) {
+            // Retrieve scholar info
+            $data = User::with(['basicInfo', 'education', 'addressInfo'])->findOrFail($id);
+
+            return view('staff.scholarsinfo', compact('data'));
         }
 
         return redirect()->route('login');
@@ -229,10 +245,22 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
+    public function showScholars()
+    {
+        if (Auth::guard('staff')->check()) {
+            return view('staff.scholars');
+        }
+
+        return redirect()->route('login');
+    }
+
     public function showUsersScholar()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.admscholars');
+            // Retrieve all scholars accounts
+            $scholarAccounts = User::all();
+
+            return view('staff.admscholars', compact('scholarAccounts'));
         }
 
         return redirect()->route('login');
@@ -242,15 +270,6 @@ class StaffController extends Controller
     {
         if (Auth::guard('staff')->check()) {
             return view('staff.admapplicants');
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showScholars()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.scholars');
         }
 
         return redirect()->route('login');
@@ -269,40 +288,6 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
-    // Method to activate a user
-    public function activateUser($id)
-    {
-        $user = Staccount::findOrFail($id);
-        $user->status = 'Active';
-        $user->save();
-
-        return redirect()->back()->with('success', 'User activated successfully.');
-    }
-
-    // Method to deactivate a user
-    public function deactivateUser($id)
-    {
-        $user = Staccount::findOrFail($id);
-        $user->status = 'Inactive';
-        $user->save();
-
-        return redirect()->back()->with('success', 'User deactivated successfully.');
-    }
-
-    public function showUserInfo($id)
-    {
-        if (Auth::guard('staff')->check()) {
-            // Retrieve the user account by ID
-            $user = Staccount::findOrFail($id);
-
-            // Pass the user info to the view
-            return view('staff.admuserinfo', compact('user'));
-        }
-
-        // Redirect the user if not authenticated
-        return redirect()->route('login');
-    }
-
     public function showHome()
     {
         if (Auth::guard('staff')->check()) {
@@ -318,6 +303,73 @@ class StaffController extends Controller
             return view('staff.admdashboard');
         }
 
+        return redirect()->route('login');
+    }
+
+    // Methods to activate and deactivate a user
+    public function activateStaff($id)
+    {
+        $user = Staccount::findOrFail($id);
+        $user->status = 'Active';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User activated successfully.');
+    }
+
+    public function deactivateStaff($id)
+    {
+        $user = Staccount::findOrFail($id);
+        $user->status = 'Inactive';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User deactivated successfully.');
+    }
+
+    public function activateScholar($id)
+    {
+        $user = User::findOrFail($id);
+        $user->scStatus = 'Active';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User activated successfully.');
+    }
+
+    public function deactivateScholar($id)
+    {
+        $user = User::findOrFail($id);
+        $user->scStatus = 'Inactive';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User deactivated successfully.');
+    }
+
+
+
+    public function showStaffInfo($id)
+    {
+        if (Auth::guard('staff')->check()) {
+            // Retrieve the user account by ID
+            $user = Staccount::findOrFail($id);
+
+            // Pass the user info to the view
+            return view('staff.admstaffinfo', compact('user'));
+        }
+
+        // Redirect the user if not authenticated
+        return redirect()->route('login');
+    }
+
+    public function showScholarInfo($id)
+    {
+        if (Auth::guard('staff')->check()) {
+            // Retrieve the user account by ID
+            $user = User::findOrFail($id);
+
+            // Pass the user info to the view
+            return view('staff.admscholarinfo', compact('user'));
+        }
+
+        // Redirect the user if not authenticated
         return redirect()->route('login');
     }
 }

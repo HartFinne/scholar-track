@@ -44,6 +44,24 @@
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($scholar as $index => $data)
+                        <tr>
+                            <td class="text-center align-middle">{{ $data->basicInfo->scLastname }},
+                                {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
+                            <td class="text-center align-middle">{{ $data->education->scYearLevel }}</td>
+                            <td class="text-center align-middle">NOT SET</td>
+                            <td class="text-center align-middle">NOT SET</td>
+                            <td class="text-center align-middle">NOT SET</td>
+                            <td class="text-center align-middle">NOT SET</td>
+                            <td class="text-center align-middle">NOT SET</td>
+                            <td class="text-center align-middle">NOT SET</td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('scholar-viewinfo', $data->id) }}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>

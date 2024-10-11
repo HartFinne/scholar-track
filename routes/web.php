@@ -66,6 +66,7 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/listcollege', 'showScholarsCollege')->name('scholars-college');
     Route::get('/listelementary', 'showScholarsElem')->name('scholars-elementary');
     Route::get('/listhighschool', 'showScholarsHS')->name('scholars-highschool');
+    Route::get('/scholar/{id}', 'showScholarProfile')->name('scholar-viewinfo');
     Route::get('/lte', 'showLTE')->name('lte');
     Route::get('/managecs', 'showCommunityService')->name('communityservice');
     Route::get('/managehc', 'showHumanitiesClass')->name('humanitiesclass');
@@ -82,13 +83,19 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/renewhighschool', 'showRenewalHS')->name('renewal-highschool');
     Route::get('/scholars', 'showScholars')->name('scholars-overview');
     Route::get('/specialallowance', 'showAllowanceSpecial')->name('allowancerequests-special');
+    // admin
     Route::get('/admdashboard', 'showDashboard')->name('dashboard');
     Route::get('/admscholars', 'showUsersScholar')->name('users-scholar');
     Route::get('/admstaff', 'showUserStaff')->name('users-staff');
-    Route::get('/admstaff/userinfo/{id}', 'showUserInfo')->name('staff.view');
     Route::get('/admapplicants', 'showUserApplicants')->name('users-applicant');
-    Route::post('/admstaff/activate/{id}', 'activateUser')->name('staff.activate');
-    Route::post('/admstaff/deactivate/{id}', 'deactivateUser')->name('staff.deactivate');
+    // user: staff
+    Route::get('/staffinfo/{id}', 'showStaffInfo')->name('staff.view');
+    Route::post('/staff/activate/{id}', 'activateStaff')->name('staff.activate');
+    Route::post('/staff/deactivate/{id}', 'deactivateStaff')->name('staff.deactivate');
+    // user: scholar
+    Route::get('/scholarinfo/{id}', 'showScholarInfo')->name('scholar.view');
+    Route::post('/scholar/activate/{id}', 'activateScholar')->name('scholar.activate');
+    Route::post('/scholar/deactivate/{id}', 'deactivateScholar')->name('scholar.deactivate');
 });
 
 Route::prefix('staff')->controller(StaffAuthController::class)->group(function () {
