@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('scSchoolName', 255);
             $table->string('scYearLevel', 50);
             $table->string('scCourseStrand', 50);
-            $table->string('scSemester', 50);
+            $table->string('scAcademicYear', 25);
 
             // Define foreign key constraint for 'caseCode' column
             $table->foreign('caseCode') // Column in the child table

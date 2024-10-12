@@ -105,3 +105,32 @@ function showCancelDialog() {
     closeDialog('confirmDialog');
     showDialog('cancelDialog');
 }
+
+window.onload = function() {
+    var ctx = document.getElementById('myLineChart').getContext('2d');
+    var myLineChart = new Chart(ctx, {
+        type: 'line', // Specify chart type as 'line'
+        data: {
+            labels: json($chartData['labels']), // Pass labels from chartData
+            datasets: [{
+                label: 'GWA',
+                data: json($chartData['grades']), // Pass grades from chartData
+                fill: false, // Don't fill under the line
+                borderColor: 'darkgreen', // Line color (changed to dark green)
+                tension: 0.1, // Curve tension for smoothness
+                pointBackgroundColor: 'darkgreen', // Color of the points
+                pointBorderColor: 'darkgreen', // Border color of the points
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    beginAtOne: false
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+};

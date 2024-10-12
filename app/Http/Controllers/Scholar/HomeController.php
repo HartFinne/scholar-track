@@ -53,6 +53,7 @@ class HomeController extends Controller
                 'nameOfSchool' => 'required|string|max:255',
                 'yearLevel' => 'required|string|max:50',
                 'courseSection' => 'required|string|max:50',
+                'academicYear' => 'required|string|max:25',
                 'guardianName' => 'required|string|max:50',
                 'relationToGuardian' => 'required|string|max:50',
                 'guardianEmailAddress' => 'required|email|max:100',
@@ -134,6 +135,7 @@ class HomeController extends Controller
                 'scSchoolName' => $request->nameOfSchool, // nameOfSchool -> scSchoolName
                 'scYearLevel' => $request->yearLevel, // yearLevel -> scYearLevel
                 'scCourseStrand' => $request->courseSection, // courseSection -> scCourseStrand
+                'scAcademicYear' => $request->academicYear,
             ]);
 
             // If everything is successful, commit the transaction

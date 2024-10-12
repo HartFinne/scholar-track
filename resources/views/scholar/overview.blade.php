@@ -40,10 +40,6 @@
                     <p class="fullname" id="fullname">
                         {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
                         {{ $user->basicInfo->scMiddlename }}</p>
-                    <p class="casecode" id="casecode">{{ $user->caseCode }}</p>
-                    <p class="fullname" id="fullname">
-                        {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
-                        {{ $user->basicInfo->scMiddlename }}</p>
                 </div>
                 <div class="text">
                     <p class="sc-status">Scholarship Status: <span>{{ $user->basicInfo->scScholarshipStatus }}</span>
@@ -56,12 +52,8 @@
                     <p class="school">{{ $user->education->scSchoolName }}</p>
                     <p class="yrlevel">{{ $user->education->scYearLevel }}</p>
                     <p class="course">{{ $user->education->scCourseStrand }}</p>
-                    <p class="school">{{ $user->education->scSchoolName }}</p>
-                    <p class="yrlevel">{{ $user->education->scYearLevel }}</p>
-                    <p class="course">{{ $user->education->scCourseStrand }}</p>
+                    <p class="academicYear">S.Y. {{ $user->education->scAcademicYear }}</p>
                 </div>
-
-
 
             </div>
         </div>
@@ -201,13 +193,10 @@
             var myLineChart = new Chart(ctx, {
                 type: 'line', // Specify chart type as 'line'
                 data: {
-                    labels: ['S.Y.2122 - 1st Sem', 'S.Y.2122 - 2nd Sem', 'S.Y.2223 - 1st Sem',
-                        'S.Y.2223 - 2nd Sem',
-                        'S.Y.2324 - 1st Sem', 'S.Y.2324 - 2nd Sem'
-                    ], // X-axis labels
+                    labels: @json($chartData['labels']), // Pass labels from chartData
                     datasets: [{
                         label: 'GWA',
-                        data: [1, 2, 1.5, 2.25, 1, 1.25], // Y-axis data points
+                        data: @json($chartData['grades']), // Pass grades from chartData
                         fill: false, // Don't fill under the line
                         borderColor: 'darkgreen', // Line color (changed to dark green)
                         tension: 0.1, // Curve tension for smoothness

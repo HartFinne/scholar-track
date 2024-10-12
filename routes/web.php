@@ -18,7 +18,6 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/csattendance', 'scholar.csattendance')->name('csattendance');
     Route::view('/csdashboard', 'scholar.csdashboard')->name('csdashboard');
     Route::view('/csdetails', 'scholar.csdetails')->name('csdetails');
-    Route::view('/gradesinfo', 'scholar.gradesinfo')->name('gradesinfo');
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/lteinfo', 'scholar.lteinfo')->name('lteinfo');
     Route::view('/schumanities', 'scholar.schumanities')->name('schumanities');
@@ -42,9 +41,13 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
 
     // fixed about 70%
     Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
+
+    // -------------------------------------------------------------------------------------------------------------------
     Route::get('/gradesub', [ScholarController::class, 'showGradeSubmission'])->name('gradesub');
-    // nag skip ako dito
     Route::post('/gradesub', [ScholarController::class, 'storeGradeSubmission'])->name('gradesub.post');
+    Route::get('/gradesinfo/{id}', [ScholarController::class, 'showGradeInfo'])->name('gradesinfo');
+    // fixed na gradesubmission sa page ----------------------------------------------------------------------------------
+    // pero dagdagan ng restriction pag nakapaginput na ng 1st sem 2nd sem sa isang academic year
 
 
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');

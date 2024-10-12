@@ -25,7 +25,7 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
-
+    <x-alert />
     <!-- MAIN -->
     <div class="ctn-main">
         <a href="" class="goback">&lt Go back</a>
@@ -34,17 +34,40 @@
             <p class="desc">Submit your GWA and the scanned copy of pdf file of your grades.</p>
         </div>
 
-        <form action="{{ route('gradesub.post') }}" class="grade-form text-center" method="POST">
+        <form action="{{ route('gradesub.post') }}" class="grade-form text-center" method="POST"
+            enctype="multipart/form-data">
             @csrf
-            <select class="sem" aria-label="qtrsem" required>
+
+            <!-- Display general error messages -->
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <span>{{ $error }}</span><br>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- Semester Selection -->
+            <select class="sem" aria-label="qtrsem" name="semester" required>
                 <option value="" disabled selected hidden>Semester</option>
-                <option value="">1ST SEMESTER</option>
-                <option value="">2ND SEMESTER</option>
+                <option value="1st Semester">1ST SEMESTER</option>
+                <option value="2nd Semester">2ND SEMESTER</option>
             </select>
-            <input type="text" class="gwa" id="gwa" placeholder="General Weighted Average">
-            <input type="file" class="file">
+
+            <!-- GWA Input -->
+            <input type="text" class="gwa" id="gwa" name="gwa" placeholder="General Weighted Average"
+                value="{{ old('gwa') }}">
+
+            <!-- Grade Image Input -->
+            <input type="file" class="file" name="gradeImage">
+
+            <!-- Submit Button -->
             <button type="submit" class="btn-submit fw-bold">Submit</button>
         </form>
+
+
 
         <div class="status">
             <p class="table-title">Grades Status</p>
@@ -68,12 +91,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>S.Y. 2022-2023</td>
-                        <td>1ST SEMESTER</td>
-                        <td>1.25</td>
-                        <td>PASSED</td>
-                        <td><a href="{{ route('gradesinfo') }}" id="view">View</a></td>
+                    @foreach ($grades as $grade)
+                        <tr>
+                            <td>S.Y. {{ $academicYear }}</td>
+                            <td>{{ $grade->scSemester }}</td>
+                            <td>{{ $grade->scGWA }}</td>
+                            <td>{{ $grade->scGradeStatus }}</td>
+                            <td><a href="{{ route('gradesinfo', $grade->gradeID) }}" id="view">View</a></td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

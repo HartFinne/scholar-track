@@ -216,6 +216,11 @@
                             placeholder="Ruby or Stem or Bachelor of Science in Information Technology"
                             name="courseSection" required>
                     </div>
+                    <div class="row">
+                        <label for="academicYear">Academic Year</label>
+                        <input type="text" id="academicYear" placeholder="2021-2022" name="academicYear"
+                            required>
+                    </div>
                 </fieldset>
 
                 <fieldset class="custom-fieldset">

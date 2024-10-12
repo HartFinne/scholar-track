@@ -13,17 +13,16 @@ return new class extends Migration
     {
         Schema::create('sc_grades', function (Blueprint $table) {
             $table->increments('gradeID')->primary();
-            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->string('scAcademicYear', 25);
+            $table->unsignedInteger('educationID');
             $table->string('scSemester', 25);
             $table->float('scGWA');
             $table->binary('scReportCard');
             $table->string('scGradeStatus', 50);
 
             // Define foreign key constraint for 'caseCode' column
-            $table->foreign('caseCode') // Column in the child table
-                ->references('caseCode') // Column in the parent table (sc_addressinfo)
-                ->on('users') // Parent table
+            $table->foreign('educationID') // Column in the child table
+                ->references('scEducationID') // Column in the parent table (sc_addressinfo)
+                ->on('sc_education') // Parent table
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });

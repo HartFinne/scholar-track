@@ -12,8 +12,10 @@ class ScGrade extends Model
 
     public $timestamps = false;
 
+    protected $primaryKey = 'gradeID';
+
     protected $fillable = [
-        'caseCode',
+        'educationID',
         'scAcademicYear',
         'scSemester',
         'scGWA',
@@ -23,6 +25,6 @@ class ScGrade extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+        return $this->belongsTo(ScEducation::class, 'educationID', 'scEducationID');
     }
 }

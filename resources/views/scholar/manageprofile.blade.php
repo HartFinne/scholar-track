@@ -148,6 +148,9 @@
 
                         <div class="label">Course/Strand</div>
                         <div class="value">: <span>{{ $data->education->scCourseStrand }}</span></div>
+
+                        <div class="label">Academic Year</div>
+                        <div class="value">: <span>{{ $data->education->scAcademicYear }}</span></div>
                     </div>
                 </div>
             </div>

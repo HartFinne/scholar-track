@@ -9,7 +9,7 @@ class ScPenalty extends Model
 {
     use HasFactory;
 
-    protected $table = 'sc_penalty';
+    protected $table = 'sc_penalties';
 
     public $timestamps = false;
 

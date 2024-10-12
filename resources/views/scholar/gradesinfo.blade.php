@@ -23,33 +23,34 @@
 
     <!-- MAIN -->
     <div class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
+        <a href="{{ route('gradesub') }}" class="goback">&lt Go back</a>
         <div class="text-center">
             <h1 class="sub-title">Grades Submission</h1>
         </div>
 
         <div class="grades-view">
             <div class="grade-status">
-                <h5 class="grade-stat">PASSED</h5>
+                <h5 class="grade-stat">{{ $grade->scGradeStatus }}</h5>
             </div>
 
             <div class="grades-info">
                 <h4>GRADES SUBMITTED</h4>
                 <div class="info">
                     <div class="label">GWA</div>
-                    <div class="value">: <span>1.25</span></div>
+                    <div class="value">: <span>{{ $grade->scGWA }}</span></div>
 
                     <div class="label">School Year</div>
-                    <div class="value">: <span>S.Y. 2022-2023</span></div>
+                    <div class="value">: <span>S.Y. {{ $academicYear->scAcademicYear }}</span></div>
 
                     <div class="label">Semester</div>
-                    <div class="value">: <span>1ST SEMESTER</span></div>
+                    <div class="value">: <span>{{ $grade->scSemester }}</span></div>
 
                     <div class="label">Grades</div>
                     <div class="value">: </div>
                 </div>
                 <div class="grades-img text-center">
-                    <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
+                    <img src="{{ asset('storage/' . $grade->scReportCard) }}" alt="Report Card"
+                        style="max-width: 100%; height: auto;">
                 </div>
             </div>
         </div>
