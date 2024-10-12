@@ -23,36 +23,6 @@ return new class extends Migration
             $table->string('password', 255);
             $table->timestamps();
         });
-
-        // Insert initial data
-        DB::table('staccounts')->insert([
-            [
-                'id' => 1,
-                'name' => 'System Admin',
-                'email' => 'scholartracksa@gmail.com',
-                'mobileno' => null,
-                'area' => 'Not Applicable',
-                'role' => 'System Admin',
-                'status' => 'Active',
-                // password: admin.scholartrack
-                'password' => '$2y$12$SRbHoV5XqspYZE3SBw1q/O/k0sRmqGzYQrKp5gGW0/vvoNRRSJn16',
-                'created_at' => '2024-10-10 07:31:14',
-                'updated_at' => '2024-10-10 07:31:14'
-            ],
-            [
-                'id' => 2,
-                'name' => 'Social Worker',
-                'email' => 'scholartracksw@gmail.com',
-                'mobileno' => null,
-                'area' => 'Minxi',
-                'role' => 'Social Worker',
-                'status' => 'Active',
-                // password: worker.scholartrack
-                'password' => '$2y$12$G.QSKZR4.iwju9bnfjtzF.sjZJeU2D4Ip3oqrkfINMty.5x822Kcy',
-                'created_at' => '2024-10-10 07:31:25',
-                'updated_at' => '2024-10-10 07:31:25'
-            ]
-        ]);
     }
 
     /**
