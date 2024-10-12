@@ -11,6 +11,8 @@ class ScBasicInfo extends Model
 
     protected $table = 'sc_basicinfo';
 
+    protected $primaryKey = 'scBasicInfoID';
+
     public $timestamps = false; // You have created_at and updated_at columns
 
     protected $fillable = [
