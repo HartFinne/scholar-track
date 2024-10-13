@@ -1,0 +1,101 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container-fluid{
+    padding: 20px 90px;
+}
+
+.mb-3 .title{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: bold;
+    margin: 25px 0;
+}
+.filter-btn {
+    border: 2px solid #bfbfbf;
+    padding: 5px 20px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.filter-btn:active {
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.btn-filter {
+    padding: 5px 35px;
+    border-radius: 14px;
+    font-size: 1.1rem;
+    background-color: #1a5319;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 10px 6px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+
+.btn-filter:hover {
+    background-color: #0d9128;
+    color: #fff;
+    transition: 0.5s ease-in-out;
+}
+
+.table-bordered th, .table-bordered td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-bordered th{
+    background-color: #1a5319;
+    color: #fff;
+}
+
+.table-success {
+    background-color: #c1ff72;
+    color: #fff;
+}
+
+.container-fluid .goback {
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 1.1rem;
+}
+
+.content {
+    padding: 20px 50px;
+}
+
+.d-flex {
+    display: flex;
+    gap: 15px;
+}
+
+.table-title{
+    font-weight: bold;
+    font-size: large;
+    padding: 0;
+}
+
+
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 10px 20px;
+    }
+
+    .btn-filter {
+        font-size: 0.9rem;
+        padding: 5px 25px;
+    }
+
+    .filter-btn {
+        font-size: 0.9rem;
+    }
+    
+}
+
