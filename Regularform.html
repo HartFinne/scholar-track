@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allowance Request Form</title>
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link rel="stylesheet" href="styles/special.css">
+        <link rel="stylesheet" href="styles/sidebar.css">
+        <link rel="stylesheet" href="styles/navbar.css">
+        <link rel="stylesheet" href="styles/regularform.css">
+        <link rel="stylesheet" href="styles/profile.css\">
+                
+</head>
+
+<body>
+
+    <!-- Sidebar and Navbar Integration -->
+    <button id="btn-showmenu" onclick="showsidebar()"><i class="fas fa-bars"></i></button>
+    <div class="ctn-sidebar" id="sidebar">
+        <div class="ctn-options">
+            <button id="btn-closemenu" onclick="hidesidebar()"><i class="fas fa-xmark"></i></button>
+            <div class="menuoptions">
+                <!-- Sidebar content (as per your original code) -->
+                <button type="button" onclick="window.location.href='schome.html';">Home</button>
+                <button type="button" onclick="togglesubopt1()" id="btnscholarship">Scholarship<i class="fa-solid fa-caret-right"></i></button>
+                <div class="subopt" id="subopt1" style="display: none;">
+                    <a href="overview.html">Overview</a>
+                    <a href="gradesub.html">Grades Submission</a>
+                    <a href="sclte.html">Letter of Explanation</a>
+                </div>
+                <button type="button" onclick="window.location.href='schumanities.html';">Humanities Class</button>
+                <button type="button" onclick="togglesubopt2()" id="btncs">Community Service<i class="fa-solid fa-caret-right"></i></button>
+                <div class="subopt" id="subopt2" style="display: none;">
+                    <a href="csdashboard.html">Dashboard</a>
+                    <a href="csactivities.html">Activities</a>
+                    <a href="csattendance.html">Attendance</a>
+                </div>
+                <button type="button" onclick="togglesubopt3()" id="btnrequests">Allowance Requests<i class="fa-solid fa-caret-right"></i></button>
+                <div class="subopt" id="subopt3" style="display: none;">
+                    <a href="Regular Allowance.html">Regular Allowance</a>
+                    <a href="Special Allowance.html">Special Allowance</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="togglesidebar.js" defer></script>
+
+    <!-- Navbar -->
+    <div class="ctn-navbar">
+        <div class="logo">
+            <img src="/imgs/logo.png" alt="Logo">
+            <h6 class="fw-bold">Tzu Chi Philippines<br>Educational Assistance Program</h6>
+        </div>
+        <button id="showprofmenu" onclick="showprofilemenu()"><i class="fas fa-user"></i></button> 
+    </div>
+    <div class="ctn-profilemenu" id="profilemenu" style="display: none;">
+        <a href="manageprofile.html"><i class="fa-solid fa-user"></i>Profile</a><br>
+        <a href="changepass.html"><i class="fa-solid fa-key"></i>Change Password</a><br>
+        <span><i class="fa-solid fa-language"></i>Language</span></a>
+        <button class="toggle-btn active">English</button>
+        <button class="toggle-btn">Tagalog</button><br>
+        <span><i class="fa-solid fa-bell"></i>Notification</span>
+        <button class="toggle-btn active">SMS</button>
+        <button class="toggle-btn">Email</button><br>
+        <hr>
+        <a href="" id="btn-signout"><i class="fa-solid fa-right-from-bracket"></i>Sign out</a>
+    </div>
+
+    <!-- Allowance Request Form Content -->
+
+    <div class="container mt-4">
+<div class="text-center mb-4">
+    <h5>佛教慈濟慈善事業基金會菲律濱分會</h5>
+    <h6>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</h6>
+    <h5><strong>Educational Assistance Program</strong></h5>
+</div>
+        <h1 class="text-center mb-4">Allowance Request Form</h1>
+
+        <form action="#" method="POST">
+            <!-- Personal Information -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="dateSubmitted" class="form-label">Date Submitted</label>
+                    <input type="date" id="dateSubmitted" name="dateSubmitted" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- School Information -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="school" class="form-label">School</label>
+                    <input type="text" id="school" name="school" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="contact" class="form-label">Contact No.</label>
+                    <input type="text" id="contact" name="contact" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="yearLevel" class="form-label">Year Level</label>
+                    <input type="text" id="yearLevel" name="yearLevel" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="course" class="form-label">Course</label>
+                    <input type="text" id="course" name="course" class="form-control" required>
+                </div>
+            </div>
+
+            <!-- Class Schedule -->
+            <h4>Class Schedule</h4>
+            <p><i>* Attach a photocopy of the official class schedule from the Registrar (Registration Form) </i></p>
+            <p><i>* Attached duly accomplished daily travel itinerary </i></p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                        <th>Sun</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" class="form-control" name="time1" placeholder="e.g. 8:00 AM"></td>
+                        <td><input type="text" class="form-control" name="mon1"></td>
+                        <td><input type="text" class="form-control" name="tue1"></td>
+                        <td><input type="text" class="form-control" name="wed1"></td>
+                        <td><input type="text" class="form-control" name="thu1"></td>
+                        <td><input type="text" class="form-control" name="fri1"></td>
+                        <td><input type="text" class="form-control" name="sat1"></td>
+                        <td><input type="text" class="form-control" name="sun1"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Add and Remove Buttons -->
+<div class="mt-3">
+    <button type="button" class="btn btn-success" onclick="addRow()">Add Row</button>
+    <button type="button" class="btn btn-danger" onclick="removeRow()">Remove Row</button>
+</div>
+
+<script src="regform.js"></script>
+
+
+<h4>TO BE FILLED BY TC-CHARITY STAFF</h4>
+<p><i>*Important note: The number of school days per month is 20 regardless of the scholars' class schedule for the computation of transportation and food allowances.</i></p>
+
+            <!-- Monthly Living Allowances and Special Allowances Table -->
+<h4>Monthly Living Allowances (MLA)</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Allowance Description</th>
+            <th>Computation</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Transportation</td>
+            <td><input type="text" class="form-control" name="transportation_comp"></td>
+            <td><input type="text" class="form-control" name="transportation_total"></td>
+        </tr>
+        <tr>
+            <td>Meal</td>
+            <td><input type="text" class="form-control" name="meal_comp"></td>
+            <td><input type="text" class="form-control" name="meal_total"></td>
+        </tr>
+        <tr>
+            <td>Lodging</td>
+            <td><input type="text" class="form-control" name="lodging_comp"></td>
+            <td><input type="text" class="form-control" name="lodging_total"></td>
+        </tr>
+        <tr>
+            <td>Mobile Data</td>
+            <td><input type="text" class="form-control" name="mobile_data_comp"></td>
+            <td><input type="text" class="form-control" name="mobile_data_total"></td>
+        </tr>
+    </tbody>
+</table>
+
+<h4>Special Allowances (SA)</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Allowance Description</th>
+            <th>Computation</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Book</td>
+            <td><input type="text" class="form-control" name="book_comp"></td>
+            <td><input type="text" class="form-control" name="book_total"></td>
+        </tr>
+        <tr>
+            <td>Thesis</td>
+            <td><input type="text" class="form-control" name="thesis_comp"></td>
+            <td><input type="text" class="form-control" name="thesis_total"></td>
+        </tr>
+        <tr>
+            <td>Project</td>
+            <td><input type="text" class="form-control" name="project_comp"></td>
+            <td><input type="text" class="form-control" name="project_total"></td>
+        </tr>
+        <tr>
+            <td>Uniform</td>
+            <td><input type="text" class="form-control" name="uniform_comp"></td>
+            <td><input type="text" class="form-control" name="uniform_total"></td>
+        </tr>
+        <tr>
+            <td>Graduation Fee</td>
+            <td><input type="text" class="form-control" name="grad_fee_comp"></td>
+            <td><input type="text" class="form-control" name="grad_fee_total"></td>
+        </tr>
+        <tr>
+            <td>Field Trips, Trainings, and Seminars</td>
+            <td><input type="text" class="form-control" name="field_trip_comp"></td>
+            <td><input type="text" class="form-control" name="field_trip_total"></td>
+        </tr>
+        <tr>
+            <td>Summer Tuition and Allowance</td>
+            <td><input type="text" class="form-control" name="summer_tuition_comp"></td>
+            <td><input type="text" class="form-control" name="summer_tuition_total"></td>
+        </tr>
+        <tr>
+            <td>On-the-Job or Practicum Allowance</td>
+            <td><input type="text" class="form-control" name="practicum_comp"></td>
+            <td><input type="text" class="form-control" name="practicum_total"></td>
+        </tr>
+    </tbody>
+    <tr>
+        <td colspan="2"><strong>Total</strong></td>
+        <td><input type="text" class="form-control" name="total_allowances"></td>
+    </tr>
+    </tbody>
+    </table>
+    
+    <!-- Reminder Section -->
+    <div class="reminder mt-4">
+        <p><strong>Reminder:</strong> 1. Students who are on OJT must attach a photocopy of the endorsement as well as the letter of acceptance from the company.</p>
+    </div>
+    
+    <!-- Signature Section -->
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="requested_by" class="form-label">Requested and submitted by:</label>
+            <input type="text" id="requested_by" name="requested_by" class="form-control">
+        </div>
+        <div class="col-md-6">
+            <label for="noted_by" class="form-label">Noted by:</label>
+            <input type="text" id="noted_by" name="noted_by" class="form-control">
+        </div>
+    </div>
+    
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="signature_requested_by" class="form-label">Signature Over Printed Name (Requested by):</label>
+            <input type="text" id="signature_requested_by" name="signature_requested_by" class="form-control">
+        </div>
+        <div class="col-md-6">
+            <label for="signature_noted_by" class="form-label">Signature Over Printed Name (Noted by):</label>
+            <input type="text" id="signature_noted_by" name="signature_noted_by" class="form-control">
+        </div>
+    </div>
+</table>
+<!-- Daily Travel Itinerary Form -->
+
+<!-- Daily Travel Itinerary Form (From House to School and Vice Versa) -->
+<h4>Daily Travel Itinerary Form (From House to School and Vice Versa)</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Destination (Vice Versa)</th>
+            <th>Estimated Travel Time</th>
+            <th>Type of Vehicle</th>
+            <th>Student Fare Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="from1" placeholder="From">
+                <input type="text" class="form-control mt-2" name="to1" placeholder="To">
+            </td>
+            <td><input type="text" class="form-control" name="travel_time1" placeholder="e.g. 30 mins"></td>
+            <td><input type="text" class="form-control" name="vehicle_type1" placeholder="e.g. Jeep"></td>
+            <td><input type="text" class="form-control" name="fare_rate1" placeholder="e.g. 20"></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="from2" placeholder="From">
+                <input type="text" class="form-control mt-2" name="to2" placeholder="To">
+            </td>
+            <td><input type="text" class="form-control" name="travel_time2"></td>
+            <td><input type="text" class="form-control" name="vehicle_type2"></td>
+            <td><input type="text" class="form-control" name="fare_rate2"></td>
+        </tr>
+        <!-- Add more rows as needed -->
+        <tr>
+            <td colspan="3" class="text-end"><strong>Total Costs per day</strong></td>
+            <td><input type="text" class="form-control" name="total_cost_per_day"></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- OJT Daily Travel Itinerary Form (From House to Assigned Company and Vice Versa) -->
+<h4>OJT Daily Travel Itinerary Form (From House to Assigned Company and Vice Versa)</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Destination (Vice Versa)</th>
+            <th>Estimated Travel Time</th>
+            <th>Type of Vehicle</th>
+            <th>Student Fare Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="from_ojt1" placeholder="From">
+                <input type="text" class="form-control mt-2" name="to_ojt1" placeholder="To">
+            </td>
+            <td><input type="text" class="form-control" name="travel_time_ojt1"></td>
+            <td><input type="text" class="form-control" name="vehicle_type_ojt1"></td>
+            <td><input type="text" class="form-control" name="fare_rate_ojt1"></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="from_ojt2" placeholder="From">
+                <input type="text" class="form-control mt-2" name="to_ojt2" placeholder="To">
+            </td>
+            <td><input type="text" class="form-control" name="travel_time_ojt2"></td>
+            <td><input type="text" class="form-control" name="vehicle_type_ojt2"></td>
+            <td><input type="text" class="form-control" name="fare_rate_ojt2"></td>
+        </tr>
+        <!-- Add more rows as needed -->
+        <tr>
+            <td colspan="3" class="text-end"><strong>Total Costs per day</strong></td>
+            <td><input type="text" class="form-control" name="total_cost_ojt_per_day"></td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!-- Lodging Information -->
+
+<h4>Lodging Information</h4>
+<table class="table table-bordered">
+    <tbody>
+        <tr>
+            <td><strong>Name of owner/landlady/landlord</strong></td>
+            <td><input type="text" class="form-control" name="landlord_name"></td>
+        </tr>
+        <tr>
+            <td><strong>Contact number</strong></td>
+            <td><input type="text" class="form-control" name="landlord_contact"></td>
+        </tr>
+        <tr>
+            <td><strong>Monthly rent</strong></td>
+            <td><input type="text" class="form-control" name="monthly_rent"></td>
+        </tr>
+        <tr>
+            <td><strong>Type of lodging</strong></td>
+            <td>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="lodging_type" value="Dorm" id="dorm">
+                    <label class="form-check-label" for="dorm">
+                        Dorm (inside the campus)
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="lodging_type" value="Boarding House" id="boarding">
+                    <label class="form-check-label" for="boarding">
+                        Boarding House
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="lodging_type" value="Bed space" id="bedspace">
+                    <label class="form-check-label" for="bedspace">
+                        Bed space
+                    </label>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- OJT Daily Travel Itinerary Form -->
+<h4>OJT Daily Travel Itinerary Form (From House to Assigned Company and Vice Versa)</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Destination (Vice Versa)</th>
+            <th>Estimated Travel Time</th>
+            <th>Type of Vehicle</th>
+            <th>Student Fare Rate</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="from_ojt1" placeholder="From">
+                <input type="text" class="form-control mt-2" name="to_ojt1" placeholder="To">
+            <td>
+                <input type="text" class="form-control" name="travel_time_ojt1"></td>
+            <td><input type="text" class="form-control" name="vehicle_type_ojt1"></td>
+            <td><input type="text" class="form-control" name="fare_rate_ojt1"></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="from_ojt1" placeholder="From">
+                <input type="text" class="form-control mt-2" name="to_ojt1" placeholder="To">
+            <td><input type="text" class="form-control" name="travel_time_ojt2"></td>
+            <td><input type="text" class="form-control" name="vehicle_type_ojt2"></td>
+            <td><input type="text" class="form-control" name="fare_rate_ojt2"></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" class="form-control" name="from_ojt1" placeholder="From">
+                <input type="text" class="form-control mt-2" name="to_ojt1" placeholder="To">
+            <td><input type="text" class="form-control" name="travel_time_ojt3"></td>
+            <td><input type="text" class="form-control" name="vehicle_type_ojt3"></td>
+            <td><input type="text" class="form-control" name="fare_rate_ojt3"></td>
+        </tr>
+        <tr>
+            <td colspan="3" class="text-end"><strong>Total Costs per day</strong></td>
+            <td><input type="text" class="form-control" name="total_cost_ojt_per_day"></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Certification Statement -->
+<p class="mt-4"><i>I HEREBY CERTIFY that the information provided in this form is complete, true, and correct to the best of my knowledge.</i></p>
+
+<!-- Final Signature Section -->
+<h4>Final Signatures</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Submitted by:</th>
+            <th>Noted by:</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><input type="text" class="form-control" name="final_submitted_by"></td>
+            <td><input type="text" class="form-control" name="final_noted_by"></td>
+        </tr>
+        <tr>
+            <td>Signature Over Printed Name</td>
+            <td>Signature Over Printed Name</td>
+        </tr>
+    </tbody>
+</table>
+
+
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Submit Form</button>
+        </form>
+    </div>
+
+
+   
+    <script src="toggleprofile.js"></script>
+</body>
+
+</html>
