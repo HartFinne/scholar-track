@@ -11,6 +11,16 @@ use App\Http\Controllers\StaffAuthController;
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
 
+
+//routing for applicant page
+Route::prefix('applicant')->group(function () {
+    Route::view('/appinstructions', 'applicant.appinstructions')->name('appinstructions');
+    Route::view('/applicationformC', 'applicant.applicationformC')->name('form-college');
+    Route::view('/applicationformHE', 'applicant.applicationformHE')->name('form-hselem');
+    Route::view('/appconfirmdialog', 'applicant.appconfirmdialog')->name('appconfirmdialog');
+    Route::view('/applicantportal', 'applicant.applicantportal')->name('applicantportal');
+});
+
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/csform', 'scholar.csform')->name('csform');

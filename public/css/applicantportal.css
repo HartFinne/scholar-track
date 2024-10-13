@@ -1,0 +1,476 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #eaeaea !important;
+}
+
+.ctn-main{
+    width: 90%;
+    margin: 30px auto;
+    font-family: 'Poppins', sans-serif;
+}
+
+.application-info{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px; 
+    align-items: center; 
+    padding: 10px;
+}
+
+.label {
+    font-weight: bold;
+    color: #1e5430;
+    text-align: left; 
+    margin-bottom: 5px;
+}
+
+.application-info span, .educbg span{
+    margin-left: 10px;
+}
+
+.appform-view{
+    font-family: 'Calibri';
+    font-size: 16px;
+    margin-bottom: 30px;
+    width: 90%;
+    margin: 50px auto;
+}
+
+.appform-view .sec-title{
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.page1, .page2{
+    background-color: #fff;
+    border: 1px solid;
+    width: 8.5in;
+    height: auto;
+    padding: 40px;
+    margin: 0 auto 10px;
+}
+
+.header{
+    display: flex;
+    gap: 20px;
+    text-align: center;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.header img{
+    width: auto;
+    height: 40px;
+}
+
+.app-title{
+    text-align: center;
+    margin: 20px 0 10px;
+}
+
+.personal-info .psec1{
+    display: flex;
+    gap: 100px;
+}
+
+.psec1-info{
+    display: flex;
+    gap: 50px;
+}
+
+.personal-info .psec2{
+    display: flex;
+    gap: 10px;
+}
+
+.psec2 img{
+    width: 1in;
+    height: 1in;
+}
+
+.fvalue, .elabel span{
+    font-weight: 600;
+}
+
+.esec2 .elabel{
+    padding-bottom: 7px;
+}
+
+.educbg-info{
+    display: flex;
+    gap: 10px;
+}
+
+.educbg-info p{
+    font-size: 14px;
+    font-weight: 600;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.group, .groupb1{
+    display: flex;
+    gap: 10px;
+}
+
+.page1 .table, .page2 .table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table td, .table th {
+    border: 1px solid black;
+}
+
+.table tr td {
+    padding: 2px;
+}
+
+.table td .flabel, .fvalue, .elabel, .evalue{
+    font-size: 14px;
+}
+
+.educbg .esec2{
+    padding: 5px;
+}
+
+.table thead tr th{
+    font-size: 13px;
+    padding: 5px;
+}
+
+.table thead tr th span{
+    font-size: 11px;
+}
+
+.table tbody tr td{
+    font-size: 13px;
+}
+
+#familyTableBody td{
+    text-align: center;
+}
+
+.other-info p{
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 10px;
+    text-decoration: underline;
+}
+
+.other-info span{
+    font-size: 14px;
+    text-align: justify;
+}
+
+.signature{
+    text-align: center;
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+#nameDate{
+    padding-top: 30px;
+}
+
+.sign{
+    text-decoration: overline;
+    font-weight: 600;
+}
+
+.page2 h2{
+    text-align: center;
+    padding-top: 20px;
+}
+
+.sketchome .sec-title{
+    padding: 10px 0;
+}
+
+.sketchimg{
+    width: 100%;
+    height: 250px;
+    border: 1px solid;
+}
+
+.instructions{
+    font-size: 13px;
+    padding-bottom: 10px;
+}
+
+.instructions ol li{
+    margin-left: 10px;
+}
+
+#reqs{
+    font-style: italic;
+    font-weight: 600;
+}
+
+#deadline{
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.fillstaff{
+    border-top: 1px solid;
+}
+
+.fillstaff .heading{
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.table3{
+    font-size: 13px;
+}
+
+.table3 tr td{
+    padding: 0 10px;
+}
+
+#natureOfneeds input{
+    margin-left: 10px;
+}
+
+.page2 .group{
+    gap: 20px;
+    padding-top: 10px;
+}
+
+.groupa span, .groupb span{
+    margin-left: 10px;
+    font-weight: 600;
+    /* text-decoration: underline; */
+}
+
+.groupa .slabel{
+    padding-bottom: 10px;
+}
+
+.page2 .groupa{
+    width: 500px;
+}
+
+.groupa .slabel, .groupb1 .slabel{
+    font-size: 14px;
+}
+
+.groupb1 .group1, .groupb1 .group2{
+    padding-bottom: 5px;
+}
+
+.note{
+    font-style: italic;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+
+/* NAVBAR */
+.ctn-navbar{
+    width: 100%;
+    padding: 20px 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;                
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo img{
+    width: auto;
+    height: 40px;
+}
+
+.logo h4{
+    color: #1a5319;
+    font-family: 'League Spartan', sans-serif;
+}
+
+.ctn-navbar h3{
+    color: #1a5319;
+}
+
+.ctn-navbar button {
+    height: 45px;
+    width: 45px;
+    border: 1px solid gray;
+    background-color: #1a5319;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.ctn-navbar i{
+    font-size: 1.3rem;
+    color: #fff;
+}
+
+.ctn-profilemenu {
+    position: absolute;
+    right: 50px;
+    top: 80px;
+    background-color: white;
+    border: 1px solid #1a5319;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 1000;
+    display: none;
+    width: 250px;
+    font-family: 'Poppins', sans-serif; 
+}
+
+.ctn-profilemenu a{
+    text-decoration: none;
+    color: #000;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.ctn-profilemenu i, span i{
+    width: 30px;
+    padding: 15px;
+    margin-right: 15px;
+}
+
+.ctn-profilemenu a:hover{
+    font-weight: 600;
+    color: #1a5319;
+    padding-left: 1rem;
+}
+
+.toggle-btn {
+    padding: 5px 15px;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 10px;
+}
+
+.toggle-btn.active {
+    background-color: #4CAF50;
+    color: white;
+}
+
+ /* ********************************************* */
+
+.sub-menu-wrap{
+    position: absolute;
+    top: 100%;
+    right: 5%;
+    width: 320px;
+    max-height: 0px;
+    overflow: hidden;
+    transition: max-height 0.4s;
+}
+
+.sub-menu-wrap.open-menu{
+    max-height: 400px;
+}
+
+.sub-menu{
+    background-color: #fff;
+    border: 1px solid #1a5319;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.sub-menu-link{
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin: 12px 0;
+    color: #000;
+    font-size: 1rem;
+    transition: 0.3s ease;
+}
+
+.sub-menu-link p{
+    width: 100%;
+}
+
+.sub-menu-link i{
+    width: 30px;
+    padding: 10px;
+    margin: 0 15px;
+}
+
+.sub-menu-link:hover{
+    font-weight: 600;
+    color: #fff;
+    padding-left: 1rem;
+    background-color: #2e7c55;
+}
+
+@media only screen and (max-width: 768px){
+    .ctn-navbar h3{
+        font-size: 18px;
+    }
+    .ctn-navbar button {
+        height: 40px;
+        width: 40px;
+    }
+    .ctn-navbar i{
+        font-size: 1rem;
+    }
+    .logo{
+        display: block;
+    }
+    .logo img{
+        height: 35px;
+    }
+    .logo h4{
+       display: none;
+    }
+    .ctn-profilemenu {
+        right: 20px;
+        top: 70px;
+        padding: 10px;
+        width: 90%;
+    }
+    .toggle-btn {
+        padding: 5px 10px;
+        margin-left: 5px;
+    }
+    .application-info{
+        font-size: 11px;
+        padding: 0;
+    }
+    .application-info span{
+        margin-left: 3px;
+    }
+    .appform-view{
+       transform: scale(0.5);
+       transform-origin: top left;
+       margin: auto 15px;
+    }
+}
+
+@media only screen and (max-width: 1024px){
+    .ctn-navbar{
+        padding: 20px;            
+    }
+    .application-info{
+        font-size: 12px;
+    }
+    .appform-view{
+        width: 100%;
+    }
+}
