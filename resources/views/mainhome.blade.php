@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="{{ asset('css/view.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/mainhome.css') }}">
 </head>
 
 <body>
@@ -28,22 +28,22 @@
             <h1 class="text-2">SCHOLAR</h1>
             <p>Tzu Chi strives to nurture the youth with aspirations, sound character, and healthy minds and bodies,
                 through the teaching of moral values and living skills, and providing a holistic education.</p>
-            <button type="button" id="app-instructions" class="fw-bold"><span>LEARN MORE</span></button>
+            <a href="{{ route('appinstructions') }}"><span>LEARN MORE</span></a>
         </div>
     </div>
 </body>
 <footer>
     <div class="main-1">
         <div class="text">
-            <h4><i>"Gratitude is the world's most<br>
+            <h5><i>"Gratitude is the world's most<br>
                     beautiful language and the most<br>
-                    genuine way for people to interact."</i></h4>
+                    genuine way for people to interact."</i></h5>
             <p>— Jing Si Aphorism by Master Cheng Yen</p>
         </div>
     </div>
     <div class="main-2">
         <div class="text">
-            <h2>Tzu Chi Philippines</h2>
+            <h3>Tzu Chi Philippines</h3>
             <p class="fw-bold">Buddhist Compassion Relief Tzu Chi Foundation, Philippines - Jing Si Hall</p>
             <p>1000 Cordillera cor. Lubiran Sts., Bacood, Sta. Mesa, Manila 1016</p>
             <p>(632) 8714 - 1188</p>

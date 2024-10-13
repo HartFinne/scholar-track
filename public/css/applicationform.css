@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ctn-main{
+    width: 90%;
+    margin: 30px auto;
+}
+
+.btn-back{
+    font-size: 14px;
+    padding: 5px 20px;
+    border-radius: 10px;
+    background-color: #80af81;
+    color: #fff;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.btn-back:hover{
+    background-color: #8eb79c;
+}
+
+.ctn-main .title{
+    width: 100%;
+    color: #2e7c55;
+    border-top: 3px solid #8eb79c;
+    border-bottom: 3px solid #8eb79c;
+    margin: 50px 0 0;
+    padding: 10px;
+}
+
+.description{
+    font-size: 15px;
+    text-align: justify;
+}
+
+.hide{
+    display: none;
+}
+
+.app-form{
+    width: 100%;
+    margin: auto;
+    font-size: 15px;
+}
+
+.custom-fieldset {
+    border: 2px solid #1a5319;
+    padding: 25px;
+    border-radius: 10px;
+    position: relative;
+    margin: 40px 0px;
+}
+
+.custom-fieldset legend {
+    color: #eaebea;
+    font-size: 16px;
+    font-weight: bold;
+    width: auto; 
+    padding: 0 10px; 
+    margin-bottom: 0;
+    margin-left: 20px;
+    border-bottom: none;
+    border-radius: 10px;
+    position: absolute;
+    top: -12px; 
+    left: 10px; 
+    background-color: #1e5430;
+}
+
+.custom-fieldset .family{
+    text-align: center;
+    margin-top: 25px;
+    text-decoration: underline;
+    color: #1a5319;
+    font-weight: 700;
+}
+
+.app-form .row{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+    grid-gap: 20px 30px;
+    margin-bottom: 20px;
+}
+
+.custom-fieldset label{
+    font-weight: bold;
+}
+
+.custom-fieldset input, select, textarea{
+    width: 100%;
+    padding: 5px;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #bfbfbf;
+    transition: border-color 0.3s ease-in-out;
+}
+
+input:focus, select:focus, textarea:focus{
+    border-color:#4CAF50;
+}
+
+.row-radio{
+    display: inline-flex;
+    align-items: center;
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.row-radio input[type="radio"] {
+    margin-left: 30px;
+    transform: scale(1.5);
+}
+
+.row-radio label {
+    margin-left: 15px;
+}
+
+.familyinfo{
+    font-weight: 700;
+    color: #1a5319;
+    font-size: 16px;
+}
+
+#addSibling, .removeSibling{
+    background-color: #2e7c55;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    transition: 0.3s ease;
+}
+
+.ctn-table{
+    font-size: 15px;
+}
+
+.ctn-table input{
+    padding: 5px;
+    border-radius: 10px;
+    outline: none;
+    border: 2px solid #bfbfbf;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.table thead tr th{
+    background-color: #1a5319;
+    color: #fff;
+}
+
+.table tr td{
+    text-align: center;
+}
+
+.table th span{
+    font-size: 13px;
+    font-style: italic;
+}
+
+.ctn-table input, select{
+    font-size: 13px;
+}
+
+.ctn-table .col3{
+    padding: 0 20px;
+}
+
+#addRowBtn, .removeRowBtn{
+    background-color: #2e7c55;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 5px 10px;
+    transition: 0.3s ease;
+}
+
+.removeRowBtn, .removeSibling{
+    background-color: rgba(170, 9, 9, 0.708);
+}
+
+.btn-submit{
+    background-color: #8bc34a;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 50px;
+    margin-bottom: 50px;
+    transition: 0.3s ease;
+}
+
+.btn-submit:hover, #addRowBtn:hover, #addSibling:hover{
+    background-color: #1a5319;
+}
+
+.removeRowBtn:hover, .removeSibling:hover{
+    background-color: red;
+}
+
+.agreement {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.agreement input[type="checkbox"] {
+    margin-right: 10px; 
+}
+
+
+@media only screen and (max-width: 768px) {
+    .custom-fieldset {
+        padding: 15px;
+    }
+    .custom-fieldset legend {
+        font-size: 14px;
+    }
+    .app-form, .description{
+        font-size: 13px;
+    }
+    .ctn-table{
+        margin-bottom: 10px;
+    }
+}

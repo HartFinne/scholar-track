@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    background: rgb(255,255,255);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,251,191,1) 35%);
+    height: 100vh;
+}
+
+.ctn-navbar{
+    width: 100%;
+    margin: auto;
+    padding: 30px;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+}
+
+.logo img{
+    width: auto;
+    height: 40px;
+}
+
+.logo h4{
+    color: #1a5319;
+    font-family: 'League Spartan';
+}
+
+.dialog{
+    width: 50%;
+    background-color: #fff;
+    margin: auto;
+    border: 1px solid #bfbfbf;
+    border-radius: 10px;
+    text-align: center;
+    padding: 30px;
+}
+
+.dialog i{
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #56a72e;
+}
+
+.dialog h3{
+    color: #1e5430;
+    margin-bottom: 15px;
+}
+
+.dialog p, ul, a{
+    font-size: 14px;
+}
+
+.dialog p, ul{
+    margin-bottom: 30px;
+}
+
+.dialog a{
+    color: #1e5430;
+    transition: 0.3s ease;
+}
+
+.dialog a:hover{
+    color: #56a72e;
+}
+
+ul{
+    list-style-position: inside; 
+    text-align: left;
+}
+
+@media only screen and (max-width: 768px){
+    .ctn-navbar{
+        padding: 30px 0;
+    }
+    .logo{
+        display: block;
+        text-align: center;
+    }
+    
+    .logo img{
+        padding-bottom: 10px;
+        height: 40px;
+    }
+    body .dialog{
+        width: 80%;
+        padding: 15px;
+    }
+    .dialog i{
+        margin-bottom: 10px;
+    }
+    .dialog p, ul, a{
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 1024px){
+    .dialog{
+        width: 70%;
+    }
+}

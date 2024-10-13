@@ -11,14 +11,14 @@
 body{
     height: 100vh;
     width: 100%;
-    background-image: url(/imgs/background.png);
+    background-image: url(../images/background.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
 }
 
 .navbar{
-    margin: 50px;
+    margin: 40px;
 }
 
 .logo{
@@ -29,12 +29,11 @@ body{
 
 .logo img{
     width: auto;
-    height: 50px;
+    height: 40px;
 }
 
 .logo h6{
     color: #1a5319;
-    font-size: 1.2rem;
 }
 
 .navbar a{
@@ -85,8 +84,9 @@ body{
     text-shadow: 1.3px 1.3px 1.3px rgba(7, 7, 7, 0.35);
 }
 
-.content button{
+.content a{
     font-size: 1rem;
+    font-weight: 600;
     color: #fff;
     background-color: #508d4e;
     border-radius: 10px;
@@ -97,14 +97,14 @@ body{
     box-shadow: rgba(7, 7, 7, 0.35) 15px 15px 15px 15px;
 }
 
-.content button span {
+.content a span {
     cursor: pointer;
     display: inline-block;
     position: relative;
     transition: 0.5s;
   }
   
-.content button span:after {
+.content a span:after {
     content: '\00bb';
     position: absolute;
     opacity: 0;
@@ -113,11 +113,11 @@ body{
     transition: 0.5s;
   }
   
-.content button:hover span {
+.content a:hover span {
     padding-right: 25px;
   }
   
-.content button:hover span:after {
+.content a:hover span:after {
     opacity: 1;
     right: 0;
   }
@@ -135,7 +135,7 @@ footer .text, h5{
 
 footer p{
     color: #898989;
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 footer a{
@@ -152,7 +152,7 @@ footer .main-1 p{
     margin: 30px 0px;
 }
 
-footer .main-2 h2{
+footer .main-2 h3{
     margin-bottom: 30px;
 }
 
@@ -168,44 +168,45 @@ footer .soc-med{
     margin-bottom: 30px;
 }
 
+footer .copyright{
+    font-size: 1rem;
+}
+
 @media only screen and (max-width: 768px) {
     .logo{
-        margin: 0 30px;
+        margin: 0 40px;
     }
     .logo img{
-        height: 20px;
+        height: 30px;
     }
     .logo h6{
         font-size: 0.9rem;
     }
     .navbar{
-        margin: 50px 0;
+        margin: 40px 0;
     }
     .navbar a{
-        font-size: 1rem;
+        font-size: 14px;
         margin: 20px auto 0;
     }
     .ctn-main .content{
         width: 100%;
         text-align: center;
     }
+    .content a{
+        font-size: 14px;
+    }
     .ctn-main .content .text-2{
         font-size: 3rem;
     }
+    footer .soc-med{
+        font-size: 1.3rem;
+    }
+    footer .copyright{
+        font-size: 14px;
+    }
 }
 @media only screen and (max-width: 1024px) {
-    .logo{
-        margin: 0 40px;
-    }
-    .logo img{
-        height: 40px;
-    }
-    .logo h6{
-        font-size: 1.1rem;
-    }
-    .navbar a{
-        font-size: 1rem;
-    }
     .content{
         width: 50%;
     }
@@ -215,13 +216,10 @@ footer .soc-med{
     .content .text-2{
         font-size: 4rem;
     }
-    footer p, h5{
-        font-size: 1.1rem;
+    footer p{
+        font-size: 14px;
     }
-    footer .main-1 h4{
-        font-size: 1.3rem;
-    }
-    footer .main-2 h2{
+    footer .main-2 h3{
         font-size: 1.6rem;
     }
 }
