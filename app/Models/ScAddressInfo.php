@@ -11,17 +11,11 @@ class ScAddressInfo extends Model
 
     protected $table = 'sc_addressinfo';
 
-    public $timestamps = false;
-
-
     protected $fillable = [
         'caseCode',
-        'scArea',
         'scResidential',
         'scBarangay',
         'scCity',
-        'scProvince',
-        'scRegion',
         'scPermanent'
     ];
 

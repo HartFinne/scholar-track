@@ -27,7 +27,7 @@
         <p class="mt-4 mb-5 description">Welcome to Tzu Chi Scholarship Registration Form. Please fill out the required
             fields
             in each section with true and correct information to complete your registration. If a field does not apply
-            to you, write <strong>N/A</strong>.
+            to you, write <strong>Not Applicable</strong>.
         </p>
 
 
@@ -48,19 +48,40 @@
             <form action="{{ route('registerScholar') }}" method="POST">
                 @csrf
                 <fieldset class="custom-fieldset">
-                    <legend>PERSONAL INFORMATION</legend>
+                    <legend>SCHOLARSHIP INFORMATION</legend>
                     <div class="row">
                         <label for="caseCode">Case Code</label>
-                        <input type="text" class="reg-input" id="caseCode" name="caseCode" required>
+                        <input type="text" class="reg-input" placeholder="ex: 2020-00001-MD" id="caseCode"
+                            name="caseCode" required>
                     </div>
                     <div class="row">
                         <label for="area">Assigned Area</label>
                         <select class="" aria-label="area" name="assignedArea" required>
+                            <option value="" hidden disbaled selected>Select area</option>
                             <option value="Mindong">Mindong</option>
                             <option value="Minxi">Minxi</option>
                             <option value="Minzhong">Minzhong</option>
                         </select>
                     </div>
+                    <div class="row">
+                        <label for="scholartype">Scholar Type</label>
+                        <select class="" aria-label="scholartype" name="scholartype" required>
+                            <option value="" hidden disbaled selected>Select type</option>
+                            <option value="Old Scholar">Old Scholar</option>
+                            <option value="New Scholar">New Scholar</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label for="caseCode">Start of Scholarship</label>
+                        <input type="date" class="reg-input" placeholder="" name="startdate" required>
+                    </div>
+                    <div class="row">
+                        <label for="caseCode">End of Scholarship</label>
+                        <input type="date" class="reg-input" placeholder="" name="enddate" required>
+                    </div>
+                </fieldset>
+                <fieldset class="custom-fieldset">
+                    <legend>PERSONAL INFORMATION</legend>
                     <div class="row">
                         <label for="fname">First Name</label>
                         <input type="text" id="fname" class="reg-input" placeholder="" name="firstName" required>
@@ -73,6 +94,11 @@
                     <div class="row">
                         <label for="lname">Last Name</label>
                         <input type="text" id="lname" class="reg-input" placeholder="" name="lastName" required>
+                    </div>
+                    <div class="row">
+                        <label for="lname">Chinese Name</label>
+                        <input type="text" id="cname" class="reg-input"
+                            placeholder="if none, input 'Not Applicable'" name="chineseName" required>
                     </div>
                     <div class="row">
                         <label for="date">Date of Birth</label>
@@ -101,8 +127,8 @@
                     </div>
                     <div class="row">
                         <label for="shoes">Shoe Size</label>
-                        <input type="number" id="shoes" name="shoes" min="6" max="12" step="0.5"
-                            placeholder="6-12" required>
+                        <input type="number" id="shoes" name="shoes" min="6" max="12"
+                            step="0.5" placeholder="6-12" required>
                     </div>
                     <div class="row">
                         <label for="slippers">Slippers Size</label>
@@ -139,11 +165,11 @@
                     </div>
                     <p>Are you a member of any indigenous group?</p>
                     <div class="row-checkbox">
-                        <input type="checkbox" name="isIndigenous" id="indigenousCheck" value="yes"
+                        <input type="checkbox" name="isIndigenous" id="indigenousCheck" value="Yes"
                             onclick="toggleInput()"> Yes
                         <input type="text" name="indigenousGroup" id="indigenousInput"
                             placeholder="If Yes, please specify" disabled>
-                        <input type="checkbox" name="isIndigenous" id="noCheck" value="no"
+                        <input type="checkbox" name="isIndigenous" id="noCheck" value="No"
                             onclick="disableInput()"> No
                     </div>
                     <p class="description"><i>If the scholar does not have any personal email or phone number, please
@@ -165,8 +191,8 @@
                     <legend>ADDRESS INFORMATION</legend>
                     <div class="row">
                         <label for="resAddress">Home Address</label>
-                        <input type="text" id="resAddress"
-                            placeholder="House #/Unit #/Floor/Bldg. Name/Street Name" name="homeAddress" required>
+                        <input type="text" id="resAddress" placeholder="please provide complete adddress"
+                            name="homeAddress" required>
                     </div>
                     <div class="row">
                         <label for="brgy">Barangay</label>
@@ -177,16 +203,9 @@
                         <input type="text" id="city" placeholder="" name="city" required>
                     </div>
                     <div class="row">
-                        <label for="province">Province</label>
-                        <input type="text" id="province" placeholder="" name="province" required>
-                    </div>
-                    <div class="row">
-                        <label for="region">Region</label>
-                        <input type="text" id="region" placeholder="" name="region" required>
-                    </div>
-                    <div class="row">
                         <label for="permAddress">Permanent Address</label>
-                        <input type="text" id="permAddress" placeholder="" name="permanentAddress" required>
+                        <input type="text" id="permAddress" placeholder="please provide complete adddress"
+                            name="permanentAddress" required>
                     </div>
                 </fieldset>
 
@@ -195,31 +214,49 @@
                     <div class="row">
                         <label for="schoolLevel">School Level</label>
                         <select class="" aria-label="schoolLevel" name="schoolLevel" required>
-                            {{-- <option value="" disabled selected hidden>Select school level</option>
+                            <option value="" disabled selected hidden>Select school level</option>
                             <option value="Elementary">Elementary</option>
-                            <option value="High School">High School</option> --}}
+                            <option value="Junior High School">Junior High School</option>
+                            <option value="Senior High School">Senior High School</option>
                             <option value="College">College</option>
                         </select>
                     </div>
                     <div class="row">
-                        <label for="school">Name of Elementary/High School/University</label>
+                        <label for="school">Name of School</label>
                         <input type="text" id="school" placeholder="" name="nameOfSchool" required>
                     </div>
                     <div class="row">
-                        <label for="yrLevel">Year Level</label>
-                        <input type="text" id="yrLevel" placeholder="Grade 6 or Grade 11 or First Year"
-                            name="yearLevel" required>
+                        <label for="yrLevel">Grade/Year Level</label>
+                        <select class="" aria-label="yrLevel" id="yrLevel" name="yearLevel" required>
+                            <option value="" disabled selected hidden>Select level</option>
+                            <option value="Grade 1">Grade 1</option>
+                            <option value="Grade 2">Grade 2</option>
+                            <option value="Grade 3">Grade 3</option>
+                            <option value="Grade 4">Grade 4</option>
+                            <option value="Grade 5">Grade 5</option>
+                            <option value="Grade 6">Grade 6</option>
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+                            <option value="First Year">First Year</option>
+                            <option value="Second Year">Second Year</option>
+                            <option value="Third Year">Third Year</option>
+                            <option value="Fourth Year">Fourth Year</option>
+                            <option value="Fifth Year">Fifth Year</option>
+                        </select>
                     </div>
                     <div class="row">
-                        <label for="course">Course/Strand & Section</label>
+                        <label for="course">Course/Strand/Section</label>
                         <input type="text" id="course"
-                            placeholder="Ruby or Stem or Bachelor of Science in Information Technology"
-                            name="courseSection" required>
+                            placeholder="ex: Bachelor of Science in Information Technology" name="courseSection"
+                            required>
                     </div>
                     <div class="row">
-                        <label for="academicYear">Academic Year</label>
-                        <input type="text" id="academicYear" placeholder="2021-2022" name="academicYear"
-                            required>
+                        <label for="acadyear">Academic Year</label>
+                        <input type="text" id="acadyear" placeholder="ex: 2024-2025" name="acadyear" required>
                     </div>
                 </fieldset>
 
@@ -235,8 +272,8 @@
                     </div>
                     <div class="row">
                         <label for="guardianEmail">Guardian's Email Address</label>
-                        <input type="email" id="guardianEmail" placeholder="" name="guardianEmailAddress"
-                            required>
+                        <input type="email" id="guardianEmail" placeholder="name@example.com"
+                            name="guardianEmailAddress" required>
                     </div>
                     <div class="row">
                         <label for="guardianNum">Guardian's Phone Number</label>
@@ -248,7 +285,8 @@
                     <legend>SET PASSWORD</legend>
                     <div class="row">
                         <label for="password">Password</label>
-                        <input type="password"id="password" placeholder="" name="password" required>
+                        <input type="password"id="password" placeholder="must be at least 8 characters"
+                            name="password" required>
                     </div>
                     <div class="row">
                         <label for="conPassword">Confirm Password</label>

@@ -20,8 +20,8 @@ class User extends Authenticatable
     protected $fillable = [
         'caseCode',
         'scEmail',
-        'password',
         'scPhoneNum',
+        'password',
         'scStatus',
     ];
 
@@ -48,7 +48,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function basicInfo()
+    public function scholarshipinfo()
+    {
+        return $this->hasOne(scholarshipinfo::class, 'caseCode', 'caseCode');
+    }
+
+    public function basicinfo()
     {
         return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
     }
@@ -58,17 +63,43 @@ class User extends Authenticatable
         return $this->hasOne(ScEducation::class, 'caseCode', 'caseCode');
     }
 
-    public function addressInfo()
+    public function grades()
+    {
+        return $this->hasOne(grades::class, 'caseCode', 'caseCode');
+    }
+
+    public function addressinfo()
     {
         return $this->hasOne(ScAddressInfo::class, 'caseCode', 'caseCode');
     }
-    public function clothingSize()
+
+    public function clothingsize()
     {
         return $this->hasOne(ScClothingSize::class, 'caseCode', 'caseCode');
     }
 
+    public function csattendance()
+    {
+        return $this->hasOne(csattendance::class, 'caseCode', 'caseCode');
+    }
+
+    public function csregistration()
+    {
+        return $this->hasOne(csregistration::class, 'caseCode', 'caseCode');
+    }
+
+    public function hcattendance()
+    {
+        return $this->hasOne(hcattendance::class, 'caseCode', 'caseCode');
+    }
+
+    public function lte()
+    {
+        return $this->hasOne(lte::class, 'caseCode', 'caseCode');
+    }
+
     public function penalty()
     {
-        return $this->hasOne(ScPenalty::class, 'caseCode', 'caseCode');
+        return $this->hasOne(penalty::class, 'caseCode', 'caseCode');
     }
 }

@@ -11,15 +11,12 @@ class ScBasicInfo extends Model
 
     protected $table = 'sc_basicinfo';
 
-    protected $primaryKey = 'scBasicInfoID';
-
-    public $timestamps = false; // You have created_at and updated_at columns
-
     protected $fillable = [
         'caseCode',
         'scFirstname',
         'scLastname',
         'scMiddlename',
+        'scChinesename',
         'scDateOfBirth',
         'scSex',
         'scGuardianName',
@@ -27,15 +24,11 @@ class ScBasicInfo extends Model
         'scGuardianEmailAddress',
         'scGuardianPhoneNumber',
         'scIsIndigenous',
-        'scScholarshipStatus'
+        'scIndigenousgroup'
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
-
-
-    // Define inverse relationship to account
-
 }

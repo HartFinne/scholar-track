@@ -9,6 +9,7 @@ use App\Models\ScAddressInfo;
 use App\Models\ScBasicInfo;
 use App\Models\ScClothingSize;
 use App\Models\ScEducation;
+use App\Models\scholarshipinfo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
@@ -28,32 +29,27 @@ class HomeController extends Controller
             [
                 // Basic validation for different fields
                 'caseCode' => 'required|regex:/^[0-9]{4}-[0-9]{5}-[A-Z]{2}$/',
-                'assignedArea' => 'required|string|max:255',
+                'startdate' => 'required|date',
+                'enddate' => 'required|date',
                 'firstName' => 'required|string|max:50',
                 'middleName' => 'required|string|max:50',
                 'lastName' => 'required|string|max:50',
+                'chineseName' => 'required|string|max:255',
                 'birthdate' => 'required|date',
                 'sex' => 'required|in:Male,Female',
-                'tshirt' => "required|in:$sizeOptions",  // Use predefined size options
                 'shoes' => 'required|integer|min:6|max:12',
                 'slippers' => 'required|integer|min:6|max:12',
-                'pants' => "required|in:$sizeOptions",
-                'joggingPants' => "required|in:$sizeOptions",
-                'isIndigenous' => 'required|in:yes,no',
-                'indigenousGroup' => 'required_if:isIndigenous,yes|string|max:50',
+                'isIndigenous' => 'required|in:Yes,No',
+                'indigenousGroup' => 'required_if:isIndigenous,yes|string|max:100',
                 'emailAddress' => 'required|email|max:255',
                 'phoneNumber' => 'required|regex:/^[0-9]{10,11}$/',
                 'homeAddress' => 'required|string|max:255',
                 'barangay' => 'required|string|max:50',
                 'city' => 'required|string|max:50',
-                'province' => 'required|string|max:50',
-                'region' => 'required|string|max:10',
                 'permanentAddress' => 'required|string|max:255',
-                'schoolLevel' => 'required|in:Elementary,Highschool,College',
                 'nameOfSchool' => 'required|string|max:255',
-                'yearLevel' => 'required|string|max:50',
                 'courseSection' => 'required|string|max:50',
-                'academicYear' => 'required|string|max:25',
+                'acadyear' => 'required|string|max:9',
                 'guardianName' => 'required|string|max:50',
                 'relationToGuardian' => 'required|string|max:50',
                 'guardianEmailAddress' => 'required|email|max:100',
@@ -65,12 +61,10 @@ class HomeController extends Controller
                 // Custom error messages
                 'caseCode.required' => 'The case code is required.',
                 'caseCode.regex' => 'The case code format is invalid.',
-                'sex.in' => 'Please select either Male or Female.',
                 'isIndigenous.in' => 'Invalid selection for indigenous group.',
                 'indigenousGroup.required_if' => 'Please specify the indigenous group if you selected Yes.',
                 'phoneNumber.regex' => 'Phone number must be 10 to 11 digits.',
                 'guardianPhoneNumber.regex' => 'Guardian’s phone number must be 10 to 11 digits.',
-                'schoolLevel.in' => 'Please select a valid school level (Elementary, High School, or College).',
                 'password.min' => 'Password must be at least 8 characters long.',
                 'password.confirmed' => 'Password confirmation does not match.',
                 'agreement.accepted' => 'You must agree to the terms and conditions before proceeding.',
@@ -83,59 +77,67 @@ class HomeController extends Controller
         try {
             // Insert data into sc_account
             $User = User::create([
-                'caseCode' => $request->caseCode,    // scholarID -> caseCode
-                'scEmail' => $request->emailAddress,  // emailAddress -> scEmail
-                'password' => Hash::make($request->password), // password -> scPassword (hashed)
-                'scPhoneNum' => $request->phoneNumber, // phoneNumber -> scPhoneNum
-                'scStatus' => $scStatus, // phoneNumber -> scPhoneNum
+                'caseCode' => $request->caseCode,
+                'scEmail' => $request->emailAddress,
+                'password' => Hash::make($request->password),
+                'scPhoneNum' => $request->phoneNumber,
+                'scStatus' => $scStatus,
+            ]);
+
+            // Insert data into scholarshipinfo
+            $scholarshipinfo = scholarshipinfo::create([
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
+                'area' => $request->assignedArea,
+                'scholartype' => $request->scholartype,
+                'startdate' => $request->startdate,
+                'enddate' => $request->enddate,
+                'scholarshipstatus' => $ScholarShipStatus,
             ]);
 
             // Insert data into sc_basicinfo
             $scBasicInfo = ScBasicInfo::create([
-                'caseCode' => $User->caseCode,  // Foreign key from sc_account
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
                 'scFirstname' => $request->firstName,
                 'scLastname' => $request->lastName,
                 'scMiddlename' => $request->middleName,
+                'scChinesename' => $request->chineseName,
                 'scDateOfBirth' => $request->birthdate,
                 'scSex' => $request->sex,
                 'scGuardianName' => $request->guardianName,
                 'scRelationToGuardian' => $request->relationToGuardian,
                 'scGuardianEmailAddress' => $request->guardianEmailAddress,
                 'scGuardianPhoneNumber' => $request->guardianPhoneNumber,
-                'scIsIndigenous' => $request->isIndigenous == 'yes' ? $request->indigenousGroup : 'no',
-                'scScholarshipStatus' => $ScholarShipStatus,
+                'scIsIndigenous' => $request->isIndigenous == 'Yes' ? $request->indigenousGroup : 'No',
+                'scIndigenousgroup' => $request->indigenousGroup,
             ]);
 
             // Insert data into sc_addressinfo
             $scAddressInfo = ScAddressInfo::create([
-                'caseCode' => $User->caseCode,  // Foreign key from sc_account
-                'scArea' => $request->assignedArea,  // assignedArea -> scArea
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
                 'scResidential' => $request->homeAddress, // homeAddress -> scResidential
                 'scBarangay' => $request->barangay, // barangay -> scBarangay
                 'scCity' => $request->city, // city -> scCity
-                'scProvince' => $request->province, // province -> scProvince
-                'scRegion' => $request->region, // region -> scRegion
                 'scPermanent' => $request->permanentAddress, // permanentAddress -> scPermanent
             ]);
 
             // Insert data into sc_clothingsize
             $scClothingSize = ScClothingSize::create([
-                'caseCode' => $User->caseCode,  // Foreign key from sc_account
-                'scTShirtSize' => $request->tshirt, // tshirt -> scTShirtSize
-                'scShoesSize' => $request->shoes, // shoes -> scShoesSize
-                'scSlipperSize' => $request->slippers, // slippers -> scSlipperSize
-                'scPantsSize' => $request->pants, // pants -> scPantsSize
-                'scJoggingPantSize' => $request->joggingPants, // joggingPants -> scJoggingPantSize
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
+                'scTShirtSize' => $request->tshirt,
+                'scShoesSize' => $request->shoes,
+                'scSlipperSize' => $request->slippers,
+                'scPantsSize' => $request->pants,
+                'scJoggingPantSize' => $request->joggingPants,
             ]);
 
             // Insert data into sc_education
             $scEducation = ScEducation::create([
-                'caseCode' => $User->caseCode,  // Foreign key from sc_account
-                'scSchoolLevel' => $request->schoolLevel, // schoolLevel -> scSchoolLevel
-                'scSchoolName' => $request->nameOfSchool, // nameOfSchool -> scSchoolName
-                'scYearLevel' => $request->yearLevel, // yearLevel -> scYearLevel
-                'scCourseStrand' => $request->courseSection, // courseSection -> scCourseStrand
-                'scAcademicYear' => $request->academicYear,
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
+                'scSchoolLevel' => $request->schoolLevel,
+                'scSchoolName' => $request->nameOfSchool,
+                'scYearGrade' => $request->yearLevel,
+                'scCourseStrandSec' => $request->courseSection,
+                'scAcademicYear' => $request->acadyear,
             ]);
 
             // If everything is successful, commit the transaction

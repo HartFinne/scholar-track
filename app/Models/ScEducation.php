@@ -12,16 +12,12 @@ class ScEducation extends Model
 
     protected $table = 'sc_education';
 
-    public $timestamps = false;
-
-    protected $primaryKey = 'scEducationID';
-
     protected $fillable = [
         'caseCode',
         'scSchoolLevel',
         'scSchoolName',
-        'scYearLevel',
-        'scCourseStrand',
+        'scYearGrade',
+        'scCourseStrandSec',
         'scAcademicYear'
     ];
 
@@ -29,10 +25,5 @@ class ScEducation extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
-    }
-
-    public function grades()
-    {
-        return $this->hasMany(ScGrade::class, 'educationID', 'scEducationID');
     }
 }

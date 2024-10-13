@@ -42,16 +42,17 @@
                         {{ $user->basicInfo->scMiddlename }}</p>
                 </div>
                 <div class="text">
-                    <p class="sc-status">Scholarship Status: <span>{{ $user->basicInfo->scScholarshipStatus }}</span>
+                    <p class="sc-status">Scholarship Status:
+                        <span>{{ $user->Scholarshipinfo->scholarshipstatus }}</span>
                     </p>
-                    <p class="sc-type">Old Scholar</p>
+                    <p class="sc-type">Scholar Type: <span>{{ $user->Scholarshipinfo->scholartype }}</span></p>
                 </div>
             </div>
             <div class="sc-info-2">
                 <div class="text">
                     <p class="school">{{ $user->education->scSchoolName }}</p>
-                    <p class="yrlevel">{{ $user->education->scYearLevel }}</p>
-                    <p class="course">{{ $user->education->scCourseStrand }}</p>
+                    <p class="yrlevel">{{ $user->education->scYearGrade }}</p>
+                    <p class="course">{{ $user->education->scCourseStrandSec }}</p>
                     <p class="academicYear">S.Y. {{ $user->education->scAcademicYear }}</p>
                 </div>
 
@@ -109,7 +110,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($penalties as $penalty)
+                    @foreach ($penalty as $penalty)
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($penalty->dateOfPenalty)->format('m/d/Y') }}</td>
                             <!-- Formatting the date -->
@@ -117,7 +118,7 @@
                             <td>{{ $penalty->penalty }}</td>
                         </tr>
                     @endforeach
-                    @foreach ($penalties as $penalty)
+                    @foreach ($penalty as $penalty)
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($penalty->dateOfPenalty)->format('m/d/Y') }}</td>
                             <!-- Formatting the date -->

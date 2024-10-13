@@ -15,11 +15,6 @@
 </head>
 
 <body>
-    {{-- @if (Auth::check())
-        <p>Your Scholar ID (Case Code): {{ Auth::user()->caseCode }}</p>
-    @else
-        <p>You are not logged in.</p>
-    @endif --}}
     <!-- Include Sidebar -->
     @include('partials._sidebar')
 

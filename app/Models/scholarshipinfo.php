@@ -5,22 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ScClothingSize extends Model
+class scholarshipinfo extends Model
 {
     use HasFactory;
 
-    protected $table = 'sc_clothingsize';
+    protected $table = 'scholarshipinfo';
 
     protected $fillable = [
         'caseCode',
-        'scTShirtSize',
-        'scShoesSize',
-        'scSlipperSize',
-        'scPantsSize',
-        'scJoggingPantSize'
+        'scholartype',
+        'area',
+        'startdate',
+        'enddate',
+        'scholarshipstatus'
     ];
 
-
+    // Define inverse relationship to account
     public function user()
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');

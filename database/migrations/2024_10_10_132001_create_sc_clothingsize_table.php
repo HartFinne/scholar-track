@@ -12,13 +12,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('sc_clothingsize', function (Blueprint $table) {
-            $table->increments('scClothingID')->primary();
+            $table->increments('cid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('scTShirtSize', 5);
             $table->integer('scShoesSize');
             $table->integer('scSlipperSize');
             $table->string('scPantsSize', 5);
             $table->string('scJoggingPantSize', 5);
+            $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
             $table->foreign('caseCode') // Column in the child table
