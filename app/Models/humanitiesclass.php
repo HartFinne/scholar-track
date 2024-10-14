@@ -11,10 +11,9 @@ class humanitiesclass extends Model
 
     protected $table = 'humanitiesclass';
 
+    protected $primaryKey = 'hcid';
+
     protected $fillable = [
-        'image1',
-        'image2',
-        'image3',
         'topic',
         'hcdate',
         'hcstarttime',

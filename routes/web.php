@@ -89,7 +89,6 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/accountsa', 'showAccountSA')->name('account-sa');
     Route::get('/applicants', 'showApplicants')->name('applicants');
     Route::get('/applicationforms', 'showApplicationForms')->name('applicationforms');
-    Route::get('/closedevents', 'showCSClosedEvents')->name('communityservice-closed');
     Route::get('/hcattendancesystem', 'showAttendanceSystem')->name('attendancesystem');
     Route::get('/home', 'showHome')->name('home-sw');
     Route::get('/login', 'showLogin')->name('login-sw');
@@ -98,9 +97,14 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/listhighschool', 'showScholarsHS')->name('scholars-highschool');
     Route::get('/scholar/{id}', 'showScholarProfile')->name('scholar-viewinfo');
     Route::get('/lte', 'showLTE')->name('lte');
+    // community service
     Route::get('/managecs', 'showCommunityService')->name('communityservice');
-    Route::get('/managehc', 'showHumanitiesClass')->name('humanitiesclass');
     Route::get('/openevents', 'showCSOpenEvents')->name('communityservice-open');
+    Route::get('/closedevents', 'showCSClosedEvents')->name('communityservice-closed');
+    Route::post('/managecs', 'createcsevent')->name('createcsevent');
+    Route::post('/event-info/{csid}', 'updatecsevent')->name('updatecsevent');
+    Route::get('/event-info/{csid}', 'showcseventinfo')->name('viewcseventinfo');
+    Route::get('/managehc', 'showHumanitiesClass')->name('humanitiesclass');
     Route::get('/penalty', 'showPenalty')->name('penalty');
     Route::get('/qualificationcollege', 'showQualiCollege')->name('qualification-college');
     Route::get('/qualificationelem', 'showQualiElem')->name('qualification-elementary');

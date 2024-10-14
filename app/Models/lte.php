@@ -11,6 +11,8 @@ class lte extends Model
 
     protected $table = 'lte';
 
+    protected $primaryKey = 'lit';
+
     protected $fillable = [
         'caseCode',
         'condition',

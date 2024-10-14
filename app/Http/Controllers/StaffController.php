@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\staccount;
 use App\Models\User;
+use App\Models\communityservice;
+use App\Models\csregistration;
 use Illuminate\Support\Facades\Auth;
+use Exception;
+use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
 {
@@ -46,14 +50,6 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
-    public function showCSClosedEvents()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.closedevents');
-        }
-
-        return redirect()->route('login');
-    }
     public function showAttendanceSystem()
     {
         if (Auth::guard('staff')->check()) {
@@ -119,28 +115,10 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
-    public function showCommunityService()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.managecs');
-        }
-
-        return redirect()->route('login');
-    }
-
     public function showHumanitiesClass()
     {
         if (Auth::guard('staff')->check()) {
             return view('staff.managehc');
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showCSOpenEvents()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.openevents');
         }
 
         return redirect()->route('login');
@@ -343,8 +321,6 @@ class StaffController extends Controller
         return redirect()->back()->with('success', 'User deactivated successfully.');
     }
 
-
-
     public function showStaffInfo($id)
     {
         if (Auth::guard('staff')->check()) {
@@ -371,5 +347,159 @@ class StaffController extends Controller
 
         // Redirect the user if not authenticated
         return redirect()->route('login');
+    }
+
+    public function showCommunityService()
+    {
+        if (Auth::guard('staff')->check()) {
+            // Retrieve all cs events
+            $events = communityservice::all();
+            // Fetch the total number of events
+            $totalevents = communityservice::count();
+
+            // Fetch the number of open events
+            $openevents = communityservice::where('eventstatus', 'Open')->count();
+
+            // Fetch the number of closed events
+            $closedevents = communityservice::where('eventstatus', 'Closed')->count();
+
+            return view('staff.managecs', compact('events', 'totalevents', 'openevents', 'closedevents'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showCSOpenEvents()
+    {
+        if (Auth::guard('staff')->check()) {
+            $events = communityservice::where('eventstatus', 'Open')->get();
+            // Fetch the total number of events
+            $totalevents = communityservice::count();
+
+            // Fetch the number of open events
+            $openevents = communityservice::where('eventstatus', 'Open')->count();
+
+            // Fetch the number of closed events
+            $closedevents = communityservice::where('eventstatus', 'Closed')->count();
+
+            return view('staff.openevents', compact('events', 'totalevents', 'openevents', 'closedevents'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showCSClosedEvents()
+    {
+        if (Auth::guard('staff')->check()) {
+            // Retrieve only community service events where the eventstatus is 'Open'
+            $events = communityservice::where('eventstatus', 'Closed')->get();
+            // Fetch the total number of events
+            $totalevents = communityservice::count();
+
+            // Fetch the number of open events
+            $openevents = communityservice::where('eventstatus', 'Open')->count();
+
+            // Fetch the number of closed events
+            $closedevents = communityservice::where('eventstatus', 'Closed')->count();
+
+            return view('staff.closedevents', compact('events', 'totalevents', 'openevents', 'closedevents'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showcseventinfo($csid)
+    {
+        if (Auth::guard('staff')->check()) {
+            // Retrieve all staff accounts
+            $event = communityservice::findOrFail($csid);
+            $volunteers = csregistration::where('csid', $csid)->get();
+            return view('staff.cseventinfo', compact('event', 'volunteers'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function createcsevent(Request $request)
+    {
+        try {
+            // Validate the request data
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'eventloc' => 'required|string|max:255',
+                'eventdate' => 'required|date',
+                'meetingplace' => 'required|string|max:255',
+                'calltime' => 'required',
+                'starttime' => 'required',
+                'facilitator' => 'required|string|max:255',
+                'slotnum' => 'required|integer|min:1',
+            ]);
+
+            // Set default values for volunteers number and event status
+            $volunteersnum = 0;
+            $eventstatus = 'Open';
+
+            // Create a new event record in the database
+            $event = communityservice::create([
+                'title' => $request->title,
+                'eventloc' => $request->eventloc,
+                'eventdate' => $request->eventdate,
+                'meetingplace' => $request->meetingplace,
+                'calltime' => $request->calltime,
+                'starttime' => $request->starttime,
+                'facilitator' => $request->facilitator,
+                'slotnum' => $request->slotnum,
+                'volunteersnum' => $volunteersnum,
+                'eventstatus' => $eventstatus
+            ]);
+
+            return redirect()->route('communityservice')->with('success', 'Activity created successfully.');
+        } catch (\Exception $e) {
+            return redirect()->route('communityservice')->with('error', 'Activity creation was unsuccessful. ' . $e->getMessage());
+        }
+    }
+
+    public function updatecsevent($csid, Request $request)
+    {
+        try {
+            // Validate the request data
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'eventloc' => 'required|string|max:255',
+                'eventdate' => 'required|date',
+                'meetingplace' => 'required|string|max:255',
+                'calltime' => 'required',
+                'starttime' => 'required',
+                'facilitator' => 'required|string|max:255',
+                'slotnum' => 'required|integer|min:1',
+                'eventstatus' => 'required',
+            ]);
+
+            // Fetch the event by csid (passed as a parameter)
+            $event = communityservice::where('csid', $csid)->first();
+
+            // Check if the event exists
+            if (!$event) {
+                return redirect()->back()->with('error', 'Event not found.');
+            }
+
+            // Update event details in the database
+            $event->update([
+                'title' => $request->title,
+                'eventloc' => $request->eventloc,
+                'eventdate' => $request->eventdate,
+                'meetingplace' => $request->meetingplace,
+                'calltime' => $request->calltime,
+                'starttime' => $request->starttime,
+                'facilitator' => $request->facilitator,
+                'slotnum' => $request->slotnum,
+                'volunteersnum' => $event->volunteersnum, // Keep the original value
+                'eventstatus' => $request->eventstatus
+            ]);
+
+            return redirect()->back()->with('success', 'Successfully updated activity details.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Updating activity details was unsuccessful. ' . $e->getMessage());
+        }
     }
 }

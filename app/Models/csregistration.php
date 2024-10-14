@@ -11,6 +11,8 @@ class csregistration extends Model
 
     protected $table = 'csregistration';
 
+    protected $primaryKey = 'csrid';
+
     protected $fillable = [
         'csid',
         'caseCode',

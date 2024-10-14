@@ -11,6 +11,8 @@ class grades extends Model
 
     protected $table = 'grades';
 
+    protected $primaryKey = 'gid';
+
     protected $fillable = [
         'caseCode',
         'AcademicYear',

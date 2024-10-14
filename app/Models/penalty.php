@@ -11,6 +11,8 @@ class penalty extends Model
 
     protected $table = 'penalty';
 
+    protected $primaryKey = 'pid';
+
     protected $fillable = [
         'caseCode',
         'condition',

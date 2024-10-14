@@ -11,6 +11,8 @@ class hcattendance extends Model
 
     protected $table = 'hcattendance';
 
+    protected $primaryKey = 'hcaid';
+
     protected $fillable = [
         'hcid',
         'caseCode',

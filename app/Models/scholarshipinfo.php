@@ -11,6 +11,8 @@ class scholarshipinfo extends Model
 
     protected $table = 'scholarshipinfo';
 
+    protected $primaryKey = 'sid';
+
     protected $fillable = [
         'caseCode',
         'scholartype',

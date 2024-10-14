@@ -11,6 +11,8 @@ class ScAddressInfo extends Model
 
     protected $table = 'sc_addressinfo';
 
+    protected $primaryKey = 'aid';
+
     protected $fillable = [
         'caseCode',
         'scResidential',

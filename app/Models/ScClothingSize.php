@@ -11,6 +11,8 @@ class ScClothingSize extends Model
 
     protected $table = 'sc_clothingsize';
 
+    protected $primaryKey = 'cid';
+
     protected $fillable = [
         'caseCode',
         'scTShirtSize',

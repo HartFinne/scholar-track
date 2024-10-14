@@ -11,6 +11,8 @@ class csattendance extends Model
 
     protected $table = 'csattendance';
 
+    protected $primaryKey = 'csaid';
+
     protected $fillable = [
         'csid',
         'caseCode',

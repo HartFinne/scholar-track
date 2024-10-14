@@ -14,9 +14,6 @@ return new class extends Migration
     {
         Schema::create('humanitiesclass', function (Blueprint $table) {
             $table->increments('hcid');
-            $table->binary('image1')->nullable();
-            $table->binary('image2')->nullable();
-            $table->binary('image3')->nullable();
             $table->string('topic', 255);
             $table->date('hcdate')->default(DB::raw('CURRENT_DATE'));
             $table->time('hcstarttime');

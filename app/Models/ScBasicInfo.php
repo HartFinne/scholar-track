@@ -11,6 +11,8 @@ class ScBasicInfo extends Model
 
     protected $table = 'sc_basicinfo';
 
+    protected $primaryKey = 'bid';
+
     protected $fillable = [
         'caseCode',
         'scFirstname',

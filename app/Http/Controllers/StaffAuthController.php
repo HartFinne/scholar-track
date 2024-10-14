@@ -49,7 +49,7 @@ class StaffAuthController extends Controller
     {
         try {
             // Validate the input data
-            $validated = $request->validate([
+            $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255|unique:staccounts,email',
                 'role' => 'required|string|max:25',

@@ -11,9 +11,9 @@ class communityservice extends Model
 
     protected $table = 'communityservice';
 
+    protected $primaryKey = 'csid';
+
     protected $fillable = [
-        'caseCode',
-        'image',
         'title',
         'eventloc',
         'eventdate',

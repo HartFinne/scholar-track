@@ -12,6 +12,8 @@ class ScEducation extends Model
 
     protected $table = 'sc_education';
 
+    protected $primaryKey = 'eid';
+
     protected $fillable = [
         'caseCode',
         'scSchoolLevel',

@@ -11,6 +11,8 @@ class renewal extends Model
 
     protected $table = 'renewal';
 
+    protected $primaryKey = 'rid';
+
     protected $fillable = [
         'caseCode',
         'picture',
