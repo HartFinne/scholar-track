@@ -5,20 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ScAddressInfo extends Model
+class csattendance extends Model
 {
     use HasFactory;
 
-    protected $table = 'sc_addressinfo';
+    protected $table = 'csattendance';
 
-    protected $primaryKey = 'aid';
+    protected $primaryKey = 'csaid';
 
     protected $fillable = [
+        'csid',
         'caseCode',
-        'scResidential',
-        'scBarangay',
-        'scCity',
-        'scPermanent'
+        'timein',
+        'timeout',
+        'tardinessduration',
+        'hoursspent',
+        'csastatus',
+        'attendanceproof'
     ];
 
     // Define inverse relationship to account

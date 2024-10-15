@@ -9,16 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('sc_education', function (Blueprint $table) {
-            $table->increments('eid');
+        Schema::create('scholarshipinfo', function (Blueprint $table) {
+            $table->increments('sid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->string('scSchoolLevel', 20);
-            $table->string('scSchoolName', 255);
-            $table->string('scYearGrade', 25);
-            $table->string('scCourseStrandSec', 100);
-            $table->string('scAcademicYear', 9);
+            $table->string('scholartype', 25);
+            $table->string('area', 25);
+            $table->date('startdate')->nullable();
+            $table->date('enddate')->nullable();
+            $table->string('scholarshipstatus', 25);
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -33,8 +33,8 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('sc_education');
+        Schema::dropIfExists('scholarshipinfo');
     }
 };

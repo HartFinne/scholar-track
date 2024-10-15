@@ -11,12 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sc_penalties', function (Blueprint $table) {
-            $table->increments('pID')->primary();
+        Schema::create('lte', function (Blueprint $table) {
+            $table->increments('lid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->string('pendCondition', 100);
-            $table->string('penalty', 50);
-            $table->date('dateOfPenalty');
+            $table->string('condition', 150);
+            $table->date('dateissued');
+            $table->date('deadline');
+            $table->date('datesubmitted')->nullable();
+            $table->string('reason', 150)->nullable();
+            $table->text('explanation')->nullable();
+            $table->binary('proof')->nullable();
+            $table->string('ltestatus', 25)->default('Pending');
+            $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
             $table->foreign('caseCode') // Column in the child table
@@ -32,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sc_penalties');
+        Schema::dropIfExists('lte');
     }
 };

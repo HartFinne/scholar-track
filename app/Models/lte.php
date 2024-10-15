@@ -5,20 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ScAddressInfo extends Model
+class lte extends Model
 {
     use HasFactory;
 
-    protected $table = 'sc_addressinfo';
+    protected $table = 'lte';
 
-    protected $primaryKey = 'aid';
+    protected $primaryKey = 'lit';
 
     protected $fillable = [
         'caseCode',
-        'scResidential',
-        'scBarangay',
-        'scCity',
-        'scPermanent'
+        'condition',
+        'dateissued',
+        'deadline',
+        'datesubmitted',
+        'reason',
+        'explanation',
+        'proof',
+        'ltestatus'
     ];
 
     // Define inverse relationship to account

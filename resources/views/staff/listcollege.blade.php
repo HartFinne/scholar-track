@@ -49,7 +49,7 @@
                         <tr>
                             <td class="text-center align-middle">{{ $data->basicInfo->scLastname }},
                                 {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
-                            <td class="text-center align-middle">{{ $data->education->scYearLevel }}</td>
+                            <td class="text-center align-middle">{{ $data->education->scYearGrade }}</td>
                             <td class="text-center align-middle">NOT SET</td>
                             <td class="text-center align-middle">NOT SET</td>
                             <td class="text-center align-middle">NOT SET</td>

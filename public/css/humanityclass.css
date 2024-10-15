@@ -49,12 +49,7 @@
     color: #2e7c55;
 }
 
-#btnattendance {
-    text-decoration: none;
-    width: 300px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+#btncreatehc {
     border: 1px solid #2e7c55;
     padding: 3px 15px;
     height: 35px;
@@ -65,7 +60,77 @@
     font-weight: bold;
 }
 
-#btnattendance:hover {
+#btncreatehc:hover {
     background-color: #2e7c55;
     color: #fff;
+}
+
+#ctncreatehc {
+    position: fixed;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    min-width: 300px;
+    background-color: #fff;
+    border: 2px solid #2e7c55;
+    display: none;
+    flex-direction: column;
+}
+
+.formheader {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    background-color: #2e7c55;
+    color: #fff;
+    font-weight: bold;
+}
+
+#btncloseform {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    padding: 0 5px;
+    transition: all ease 0.3s;
+}
+
+#btncloseform:hover {
+    color: #c21f1f;
+}
+
+.groupB {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    align-items: center;
+}
+
+.label {
+    width: 20%;
+    max-width: 300px;
+}
+
+.data {
+    padding: 3px 5px;
+    width: 70%;
+    min-width: 300px;
+    border: 1px solid #2e7c55;
+    outline: none;
+}
+
+#btnattendance {
+    color: #fff;
+    font-weight: bold;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 50px;
+    background-color: #119e22;
+    transition: all ease 0.3s;
+    margin: 0 10px 10px auto;
+}
+
+#btnattendance:hover {
+    background-color: #25d139;
 }

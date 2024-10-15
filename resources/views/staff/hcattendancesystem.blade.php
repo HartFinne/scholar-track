@@ -9,7 +9,16 @@
     <link rel="stylesheet" href="{{ asset('css/attendancesystem.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert('Error: ' + message + '\nSource: ' + source + '\nLine: ' + lineno);
+        };
+    </script>
 </head>
 
 <body style="background-color:#eaebea;">
@@ -29,13 +38,42 @@
         <div class="ctnmaintitle">
             <span class="maintitle">HUMANITIES CLASS ATTENDANCE</span>
         </div>
+
+        <div class="ctndatetime">
+            <span>Date: <strong>{{ $event->hcdate }}</strong></span>
+            <span>Start Time: <strong>{{ $event->hcstarttime }}</strong></span>
+
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
+
         <div class="ctnform">
-            <form action="#">
+            <form method="POST" action="{{ route('savehcattendance', $event->hcid) }}">
+                @csrf
                 <div class="searchbar">
                     <span id="searchlabel">Search Name</span>
-                    <input type="search" id="insearch" placeholder="Type here...">
+                    <select name="scholar" id="searchable-select" required>
+                        <option value="" disabled selected hidden>Select your name</option>
+                        @foreach ($scholars as $scholar)
+                            <option value="{{ $scholar->caseCode }}">
+                                {{ $scholar->basicInfo->scLastname }}, {{ $scholar->basicInfo->scFirstname }}
+                                ({{ $scholar->caseCode }})
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
-                <button type="submit" id="btnconfirm" onclick="toggleconfirmationdialog()">Confirm</button>
+                <button type="submit" id="btnconfirm">Confirm</button>
             </form>
         </div>
         <div class="ctnview">
@@ -43,7 +81,7 @@
         </div>
     </div>
 
-    <!-- CONFIRMATION DIALOG -->
+    {{-- <!-- CONFIRMATION DIALOG -->
     <div class="ctndialog" id="confirmdialog" style="display: none;">
         <div class="groupA">
             <i class="dialogicon1 fas fa-circle-question"></i>
@@ -56,7 +94,7 @@
                 <button id="btnyes">Yes</button>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- EXIT DIALOG -->
     <div class="ctndialog" id="exitdialog" style="display: none;">
@@ -102,6 +140,14 @@
     </div>
 
     <script src="{{ asset('js/hcattendancecontrol.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#searchable-select').select2({
+                placeholder: 'Last Name, First Name (Case Code)',
+                allowClear: true
+            });
+        });
+    </script>
 </body>
 
 </html>

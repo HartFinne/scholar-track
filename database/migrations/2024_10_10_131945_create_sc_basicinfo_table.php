@@ -12,19 +12,21 @@ return new class extends Migration
     public function up()
     {
         Schema::create('sc_basicinfo', function (Blueprint $table) {
-            $table->increments('scBasicInfoID')->primary();
+            $table->increments('bid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('scLastname', 50);
             $table->string('scFirstname', 50);
             $table->string('scMiddlename', 50);
+            $table->string('scChinesename', 255);
             $table->date('scDateOfBirth');
             $table->string('scSex', 10);
             $table->string('scGuardianName', 50);
             $table->string('scRelationToGuardian', 50);
-            $table->string('scGuardianEmailAddress', 100);
+            $table->string('scGuardianEmailAddress', 255);
             $table->string('scGuardianPhoneNumber', 11);
-            $table->string('scIsIndigenous', 30);
-            $table->string('scScholarshipStatus', 50);
+            $table->string('scIsIndigenous', 3);
+            $table->string('scIndigenousgroup', 100)->nullable();
+            $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
             $table->foreign('caseCode') // Column in the child table

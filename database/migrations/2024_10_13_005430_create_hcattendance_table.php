@@ -9,16 +9,16 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('sc_education', function (Blueprint $table) {
-            $table->increments('eid');
+        Schema::create('hcattendance', function (Blueprint $table) {
+            $table->increments('hcaid');
+            $table->unsignedInteger('hcid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->string('scSchoolLevel', 20);
-            $table->string('scSchoolName', 255);
-            $table->string('scYearGrade', 25);
-            $table->string('scCourseStrandSec', 100);
-            $table->string('scAcademicYear', 9);
+            $table->time('timein');
+            $table->time('timeout')->nullable();
+            $table->tinyInteger('tardinessduration')->default(0);
+            $table->string('hcastatus')->default('Present');
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -27,14 +27,16 @@ return new class extends Migration
                 ->on('users') // Parent table
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
+
+            $table->foreign('hcid')->references('hcid')->on('humanitiesclass')->onDelete('cascade');
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('sc_education');
+        Schema::dropIfExists('hcattendance');
     }
 };

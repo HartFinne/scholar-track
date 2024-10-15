@@ -33,28 +33,45 @@
             </div>
             <div class="profile-view">
                 <div class="profile-info">
-                    <h5>BASIC INFORMATION</h5>
+                    <h5>SCHOLARSHIP INFORMATION</h5>
                     <div class="info">
                         <div class="label">Case Code</div>
                         <div class="value">: <span>{{ $data->caseCode }}</span></div>
 
                         <div class="label">Assigned Area</div>
-                        <div class="value">: <span>{{ $data->addressInfo->scArea }}</span></div>
+                        <div class="value">: <span>{{ $data->scholarshipinfo->area }}</span></div>
 
+                        <div class="label">Scholar Type</div>
+                        <div class="value">: <span>{{ $data->scholarshipinfo->scholartype }}</span></div>
+
+                        <div class="label">Start of Scholarship</div>
+                        <div class="value">:
+                            <span>{{ \Carbon\Carbon::parse($data->scholarshipinfo->startdate)->format('m - d - Y') }}</span>
+                        </div>
+
+                        <div class="label">End of Scholarship</div>
+                        <div class="value">:
+                            <span>{{ \Carbon\Carbon::parse($data->scholarshipinfo->enddate)->format('m - d - Y') }}</span>
+                        </div>
+
+                        <div class="label">Scholarship Status</div>
+                        <div class="value">: <span>{{ $data->scholarshipinfo->scholarshipstatus }}</span></div>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h5>BASIC INFORMATION</h5>
+                    <div class="info">
                         <div class="label">Name</div>
                         <div class="value">: <span>{{ $data->basicInfo->scLastname }},
                                 {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</span></div>
 
                         <div class="label">Date of Birth</div>
                         <div class="value">:
-                            <span>{{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m/d/Y') }}</span>
+                            <span>{{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m - d - Y') }}</span>
                         </div>
 
                         <div class="label">Sex</div>
                         <div class="value">: <span>{{ $data->basicInfo->scSex }}</span></div>
-
-                        <div class="label">Start of Scholarship</div>
-                        <div class="value">: <span>Di ko pa nagagawa mga lodi</span></div>
 
                         <div class="label">T-Shirt Size</div>
                         <div class="value">: <span>{{ $data->clothingSize->scTShirtSize }}</span></div>
@@ -70,6 +87,12 @@
 
                         <div class="label">Jogging Pants Size</div>
                         <div class="value">: <span>{{ $data->clothingSize->scJoggingPantSize }}</span></div>
+
+                        <div class="label">Is Indigenous?</div>
+                        <div class="value">: <span>{{ $data->basicInfo->scIsIndigenous }}</span></div>
+
+                        <div class="label">Indigenous Group</div>
+                        <div class="value">: <span>{{ $data->basicInfo->scIndigenousgroup }}</span></div>
 
                         {{-- change --}}
                         <div class="label">Email Address</div>
@@ -102,8 +125,11 @@
                         <div class="value">: <input type="text" name="scResidential"
                                 value="{{ old('scEmail', $data->addressinfo->scResidential) }}"></div>
 
-                        <div class="label">Area Code</div>
-                        <div class="value">: <span>what do you mean area code bro?</span></div>
+                        <div class="label">Barangay</div>
+                        <div class="value">: <span>{{ $data->addressinfo->scBarangay }}</span></div>
+
+                        <div class="label">City/Municipality</div>
+                        <div class="value">: <span>{{ $data->addressinfo->scCity }}</span></div>
 
                         <div class="label">Permanent Address</div>
                         <div class="value">: <input type="text" name="scResidential"
@@ -144,10 +170,10 @@
                         <div class="value">: <span>{{ $data->education->scSchoolName }}</span></div>
 
                         <div class="label">Grade/Year Level</div>
-                        <div class="value">: <span>{{ $data->education->scYearLevel }}</span></div>
+                        <div class="value">: <span>{{ $data->education->scYearGrade }}</span></div>
 
                         <div class="label">Course/Strand</div>
-                        <div class="value">: <span>{{ $data->education->scCourseStrand }}</span></div>
+                        <div class="value">: <span>{{ $data->education->scCourseStrandSec }}</span></div>
 
                         <div class="label">Academic Year</div>
                         <div class="value">: <span>{{ $data->education->scAcademicYear }}</span></div>

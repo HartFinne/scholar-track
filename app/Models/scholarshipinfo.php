@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ScAddressInfo extends Model
+class scholarshipinfo extends Model
 {
     use HasFactory;
 
-    protected $table = 'sc_addressinfo';
+    protected $table = 'scholarshipinfo';
 
-    protected $primaryKey = 'aid';
+    protected $primaryKey = 'sid';
 
     protected $fillable = [
         'caseCode',
-        'scResidential',
-        'scBarangay',
-        'scCity',
-        'scPermanent'
+        'scholartype',
+        'area',
+        'startdate',
+        'enddate',
+        'scholarshipstatus'
     ];
 
     // Define inverse relationship to account

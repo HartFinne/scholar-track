@@ -9,16 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('sc_hcattendance', function (Blueprint $table) {
-            $table->increments('hcaID')->primary();
-            $table->integer('hcID');
+        Schema::create('csregistration', function (Blueprint $table) {
+            $table->increments('csrid');
+            $table->unsignedInteger('csid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->time('timeIN');
-            $table->time('timeOUT');
-            $table->integer('tardinessDuration');
-            $table->string('attendanceStatus', 50);
+            $table->string('registatus')->default('Going');
+            $table->timestamps();
+
+            // Define foreign key constraint for 'caseCode' column
+            $table->foreign('csid') // Column in the child table
+                ->references('csid') // Column in the parent table (sc_addressinfo)
+                ->on('communityservice') // Parent table
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
 
             // Define foreign key constraint for 'caseCode' column
             $table->foreign('caseCode') // Column in the child table
@@ -32,8 +37,8 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('sc_hcattendance');
+        Schema::dropIfExists('csregistration');
     }
 };

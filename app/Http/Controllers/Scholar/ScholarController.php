@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Scholar;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\ScEducation;
-use Illuminate\Support\Facades\DB;
-use App\Models\ScPenalty;
-use App\Models\ScGrade;
+use App\Models\penalty;
+use App\Models\grades;
 
 class ScholarController extends Controller
 {
@@ -21,7 +21,7 @@ class ScholarController extends Controller
     // for manage profile
     public function showProfile()
     {
-        $data = User::with(['basicInfo', 'education', 'addressInfo', 'clothingSize'])
+        $data = User::with(['basicInfo', 'education', 'addressInfo', 'clothingSize', 'scholarshipinfo'])
             ->where('id', Auth::id())
             ->first();
 
@@ -69,8 +69,6 @@ class ScholarController extends Controller
     // for viewing page the change password
     public function changePassword()
     {
-
-
         return view('scholar.changepassword');
     }
 
@@ -83,25 +81,25 @@ class ScholarController extends Controller
             ->first();
 
         // Fetch the penalties associated with the user
-        $penalties = ScPenalty::where('caseCode', $user->caseCode)->get();
+        $penalty = penalty::where('caseCode', $user->caseCode)->get();
 
         // Fetch grades associated with the user's education
         // Fetch academic performance data using a join
-        $academicData = ScEducation::join('sc_grades', 'sc_education.scEducationID', '=', 'sc_grades.educationID')
-            ->selectRaw("CONCAT(sc_education.scAcademicYear, ' - ', sc_grades.scSemester) AS period, sc_grades.scGWA")
+        $academicData = ScEducation::join('grades', 'sc_education.caseCode', '=', 'grades.caseCode')
+            ->selectRaw("CONCAT(grades.AcademicYear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
             ->where('sc_education.caseCode', $user->caseCode) // Filter by user's caseCode
-            ->orderBy('sc_education.scAcademicYear', 'asc')
-            ->orderBy('sc_grades.scSemester', 'asc')
+            ->orderBy('grades.AcademicYear', 'asc')
+            ->orderBy('grades.SemesterQuarter', 'asc')
             ->get();
 
         // Prepare data for the chart
         $chartData = [
             'labels' => $academicData->pluck('period')->toArray(),
-            'grades' => $academicData->pluck('scGWA')->toArray(), // Make sure to use the correct column name
+            'grades' => $academicData->pluck('GWA')->toArray(), // Make sure to use the correct column name
         ];
 
         // If the user is authenticated, show the overview page
-        return view('scholar.overview', compact('user', 'penalties', 'chartData'));
+        return view('scholar.overview', compact('user', 'penalty', 'chartData'));
     }
 
 
@@ -115,7 +113,7 @@ class ScholarController extends Controller
         $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
 
         // Fetch grades associated with the education entry
-        $grades = ScGrade::where('educationID', $scEducation->scEducationID)->get();
+        $grades = grades::where('caseCode', $scEducation->caseCode)->get();
 
         // Retrieve the academic year from the scEducation record
         $academicYear = $scEducation->scAcademicYear;
@@ -161,7 +159,7 @@ class ScholarController extends Controller
             }
 
             // Save the grade entry and link it to the educationID
-            ScGrade::create([
+            grades::create([
                 'educationID' => $scEducation->scEducationID, // Link the grade to the education entry
                 'scSemester' => $request->semester,
                 'scGWA' => $request->gwa,
@@ -182,7 +180,7 @@ class ScholarController extends Controller
     public function showGradeInfo($id)
     {
         // Find the grade using the correct primary key
-        $grade = ScGrade::findOrFail($id);
+        $grade = grades::findOrFail($id);
 
         // Fetch the associated education entry to get the academic year
         $academicYear = ScEducation::findOrFail($grade->educationID); // Assuming educationID is stored in ScGrade

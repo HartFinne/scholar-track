@@ -5,23 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ScPenalty extends Model
+class csregistration extends Model
 {
     use HasFactory;
 
-    protected $table = 'sc_penalties';
+    protected $table = 'csregistration';
 
-    public $timestamps = false;
-
+    protected $primaryKey = 'csrid';
 
     protected $fillable = [
+        'csid',
         'caseCode',
-        'pendCondition',
-        'penalty',
-        'scYearLevel',
-        'dateOfPenalty',
+        'registatus'
     ];
 
+    // Define inverse relationship to account
     public function user()
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');

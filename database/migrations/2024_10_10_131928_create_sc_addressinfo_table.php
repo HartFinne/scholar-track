@@ -12,15 +12,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('sc_addressinfo', function (Blueprint $table) {
-            $table->increments('scAddressID')->primary();
+            $table->increments('aid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('scResidential', 255);
             $table->string('scBarangay', 50);
             $table->string('scCity', 50);
-            $table->string('scProvince', 50);
-            $table->string('scRegion', 255);
-            $table->string('scArea', 255);
             $table->string('scPermanent', 255);
+            $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
             $table->foreign('caseCode') // Column in the child table
