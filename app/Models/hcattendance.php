@@ -27,4 +27,9 @@ class hcattendance extends Model
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
+
+    public function basicinfo()
+    {
+        return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
 }

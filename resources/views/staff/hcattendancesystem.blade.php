@@ -99,7 +99,8 @@
     <!-- EXIT DIALOG -->
     <div class="ctndialog" id="exitdialog" style="display: none;">
         <div class="groupA">
-            <form action="#">
+            <form method="POST" action="{{ route('exitattendancesystem', ['hcid' => $event->hcid]) }}">
+                @csrf
                 <i class="dialogicon1 fas fa-circle-question"></i>
                 <span id="label1">
                     Are you sure you want to exit?
@@ -107,7 +108,7 @@
                 <span id="label4">
                     Please enter your password to confirm.
                 </span>
-                <input type="password" placeholder="Password" id="inpassword1" class="inpassword" required>
+                <input type="password" placeholder="Password" name="password" class="inpassword" required>
                 <span id="label3">This action cannot be undone.</span>
 
                 <div class="groupA1">
@@ -119,17 +120,18 @@
     </div>
     </div>
 
-    <!-- SAVE DIALOG -->
+    <!-- VIEW ATTENDEES DIALOG -->
     <div class="ctndialog" id="savedialog" style="display: none;">
         <div class="groupA">
-            <form>
+            <form method="POST" action="{{ route('viewhcattendees', ['hcid' => $event->hcid]) }}">
+                @csrf
                 <i class="dialogicon2 fas fa-circle-exclamation"></i>
                 <span id="label2">
                     Restricted Section!
                 </span>
                 <span id="label4">This section is for authorized personnel only. Please enter your
                     password to continue.</span>
-                <input type="password" placeholder="Password" id="inpassword2" class="inpassword" required>
+                <input type="password" placeholder="Password" name="password" class="inpassword" required>
 
                 <div class="groupA1">
                     <button type="button" id="btncancel" onclick="toggleviewdialog()">Cancel</button>
@@ -146,6 +148,23 @@
                 placeholder: 'Last Name, First Name (Case Code)',
                 allowClear: true
             });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const successAlert = document.getElementById('success-alert');
+            const errorAlert = document.getElementById('error-alert');
+
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.style.display = 'none';
+                }, 3000);
+            }
+
+            if (errorAlert) {
+                setTimeout(() => {
+                    errorAlert.style.display = 'none';
+                }, 3000);
+            }
         });
     </script>
 </body>

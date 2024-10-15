@@ -10,11 +10,12 @@ use App\Models\csregistration;
 use App\Models\humanitiesclass;
 use App\Models\hcattendance;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-use App\Http\Controllers\DateTimeZone;
-use Exception;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Storage;
+// use App\Http\Controllers\DateTimeZone;
+// use Exception;
+// use Illuminate\Support\Facades\Redis;
+// use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
 {
@@ -510,7 +511,7 @@ class StaffController extends Controller
         ]);
 
         try {
-            $event = HumanitiesClass::findOrFail($hcid);
+            $event = humanitiesclass::findOrFail($hcid);
             $timeIn = Carbon::now(new \DateTimeZone('Asia/Manila'));
 
             if ($timeIn->greaterThan($event->hcstarttime)) {
@@ -530,6 +531,8 @@ class StaffController extends Controller
                 'hcastatus' => $hcstatus,
             ]);
 
+            humanitiesclass::where('hcid', $hcid)->increment('totalattendees', 1);
+
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance failed: Humanities class not found.');
@@ -542,6 +545,65 @@ class StaffController extends Controller
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance was unsuccessful: ' . $e->getMessage());
         } catch (\Exception $e) {
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance was unsuccessful: ' . $e->getMessage());
+        }
+    }
+
+    public function viewhcattendees($hcid, Request $request)
+    {
+        try {
+            // Authenticate the staff member
+            $worker = Auth::guard('staff')->user();
+
+            // Verify the password
+            if (!Hash::check($request->password, $worker->password)) {
+                return redirect()->route('attendancesystem', ['hcId' => $hcid])
+                    ->with('error', 'Incorrect password.');
+            }
+
+            // Retrieve the event details
+            return $this->viewattendeeslist($hcid);
+        } catch (\Exception $e) {
+            // Handle exceptions and redirect with error message
+            return redirect()->route('attendancesystem', ['hcId' => $hcid])
+                ->with('error', 'Access failed: ' . $e->getMessage());
+        }
+    }
+
+    public function viewattendeeslist($hcid)
+    {
+        if (Auth::guard('staff')->check()) {
+            // Retrieve the event details
+            $event = HumanitiesClass::findOrFail($hcid);
+
+            // Retrieve all attendees for the event
+            $attendees = HcAttendance::with(['basicInfo'])
+                ->where('hcId', $hcid)
+                ->get();
+
+            // Return the view with event and attendees data
+            return view('staff.viewhcattendeeslist', compact('event', 'attendees'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function exitattendancesystem($hcId, Request $request)
+    {
+        try {
+            // Authenticate the staff member
+            $worker = Auth::guard('staff')->user();
+
+            // Verify the password
+            if (!Hash::check($request->password, $worker->password)) {
+                return redirect()->route('attendancesystem', ['hcId' => $hcId])
+                    ->with('error', 'Incorrect password.');
+            }
+            // Return the view with event and attendees data
+            return redirect()->route('humanitiesclass');
+        } catch (\Exception $e) {
+            // Handle exceptions and redirect with error message
+            return redirect()->route('attendancesystem', ['hcId' => $hcId])
+                ->with('error', 'Access failed: ' . $e->getMessage());
         }
     }
 }

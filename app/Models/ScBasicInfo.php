@@ -33,4 +33,9 @@ class ScBasicInfo extends Model
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
+
+    public function hcattendance()
+    {
+        return $this->belongsTo(hcattendance::class, 'caseCode', 'caseCode');
+    }
 }

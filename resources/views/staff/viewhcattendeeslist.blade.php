@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/humanityclass.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -25,13 +24,13 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Manage Humanities Class</span>
+        <span class="pagetitle">Humanities Class Attendees</span>
         <div class="groupA">
             <form action="#" class="searchbar">
                 <input type="search" placeholder="Search" id="insearch" required>
                 <button type="submit" id="btnsearch"><i class="fas fa-magnifying-glass"></i></button>
             </form>
-            <button id="btncreatehc" onclick="toggleform()">Create an Event</button>
+            <a id="btngoback" href="{{ url()->previous() }}">Go back</a>
         </div>
 
         {{-- @if (session('success'))
@@ -48,27 +47,35 @@
             </div>
         @endif
 
+        <div>
+            <span class="label">Topic: </span><span class="data">{{ $event->topic }}</span><br>
+            <span class="label">Date: </span><span class="data">{{ $event->hcdate }}</span><br>
+            <span class="label">Start Time: </span><span class="data">{{ $event->hcstarttime }}</span><br>
+            <span class="label">Total Attendees: </span><span class="data">{{ $event->totalattendees }}</span>
+        </div>
+
         <div class="ctntable table-responsive">
             <table class="table table-bordered" id="tblpenalty">
                 <thead>
                     <tr>
                         <th class="text-center align-middle">#</th>
-                        <th class="text-center align-middle">Topic</th>
-                        <th class="text-center align-middle">Date</th>
-                        <th class="text-center align-middle">Number of Attendees</th>
+                        <th class="text-center align-middle">Name</th>
+                        <th class="text-center align-middle">Time In</th>
+                        <th class="text-center align-middle">Time Out</th>
+                        <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($classes as $index => $class)
+                    @foreach ($attendees as $index => $attendee)
                         <tr>
                             <td class="text-center align-middle">{{ $index + 1 }}</td>
-                            <td class="text-center align-middle">{{ $class->topic }}</td>
-                            <td class="text-center align-middle">{{ $class->hcdate }}</td>
-                            <td class="text-center align-middle">{{ $class->totalattendees }}</td>
+                            <td class="text-center align-middle">{{ $attendee->basicInfo->scLastname }}</td>
+                            <td class="text-center align-middle">{{ $attendee->timein }}</td>
+                            <td class="text-center align-middle">{{ $attendee->timeout }}</td>
+                            <td class="text-center align-middle">{{ $attendee->hcastatus }}</td>
                             <td class="text-center align-middle">
-                                <a href="{{ route('attendancesystem', $class->hcid) }}">Open Attendance System</a>
-                                <a href="{{ route('viewattendeeslist', $class->hcid) }}">View Attendees List</a>
+                                <button>Check-out</button>
                             </td>
                         </tr>
                     @endforeach
@@ -77,35 +84,7 @@
         </div>
     </div>
 
-    <form id="ctncreatehc" method="POST" action="{{ route('createhc') }}">
-        @csrf
-        <div class="formheader">
-            <span>Create new event</span>
-            <button type="button" id="btncloseform" onclick="toggleform()"><i class="fas fa-xmark"></i></button>
-        </div>
-        <div class="groupB">
-            <span class="label">Topic</span>
-            <input type="text" class="data" name="topic" required>
-        </div>
-        <div class="groupB">
-            <span class="label">Start Time</span>
-            <input type="time" class="data" name="hcstarttime" required>
-        </div>
-        <button type="submit" id="btnattendance">Create</button>
-    </form>
-
     <script src="{{ asset('js/headercontrol.js') }}"></script>
-    <script>
-        function toggleform() {
-            var ctn = document.getElementById('ctncreatehc');
-
-            if (ctn.style.display === 'flex') {
-                ctn.style.display = 'none';
-            } else {
-                ctn.style.display = 'flex';
-            }
-        }
-    </script>
 </body>
 
 </html>
