@@ -5,7 +5,8 @@
     <title>View LTE</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('css/scholar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/overview.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lteinfo.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -30,7 +31,7 @@
         </div>
 
         <div class="lte">
-            <h5 class="text-center fw-bold">Buddhist Compassion Relief Tzu Chi Foundation Philippines, Inc.</h5>
+            <h6 class="text-center fw-bold">Buddhist Compassion Relief Tzu Chi Foundation Philippines, Inc.</h6>
             <p class="text-center">Educational Assistance Program</p>
             <p class="date" id="lte-date">Date</p>
 

@@ -24,6 +24,7 @@ body {
     color: #fff;
     border: none;
     transition: 0.3s ease;
+    font-size: 15px;
 }
 
 .btn-back:hover{
@@ -31,17 +32,16 @@ body {
 }
 
 .header{
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .logo{
-    height: 50px;
+    height: 40px;
     width: auto;
 }
 
 .header h6{
     color: #1a5319;
-    font-size: 1.2rem;
 }
 
 .registration-form h1{
@@ -53,7 +53,7 @@ body {
 }
 
 .registration-form .description{
-    font-size: 1.125rem;
+    font-size: 15px;
     color: #1a5319;
 }
 
@@ -67,7 +67,7 @@ body {
 
 .custom-fieldset legend {
     color: #eaebea;
-    font-size: 1.3rem;
+    font-size: 17px;
     font-weight: bold;
     width: auto;
     padding: 0 10px;
@@ -84,13 +84,13 @@ body {
 .form{
     width: 95%;
     margin: auto;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .row{
     width: 100%;
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 250px 1fr;
     grid-gap: 10px; 
     align-items: center;
     margin: 20px 0;
@@ -98,12 +98,12 @@ body {
 
 .row-checkbox{
     margin: 20px 50px;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .row-checkbox input[type="text"]{
     width: 500px;
-    padding: 8px;
+    padding: 5px;
     margin: 0 20px;
     border: 2px solid #bfbfbf;
     border-radius: 5px;
@@ -112,7 +112,7 @@ body {
 
 .row input, .row select {
     width: 100%;
-    padding: 8px;
+    padding: 5px;
     border: 2px solid #bfbfbf;
     border-radius: 5px;
     outline: none;
@@ -127,7 +127,7 @@ input:focus, select:focus{
     display: flex;
     align-items: center;
     padding: 0 50px;
-    font-size: 1.1rem;
+    font-size: 15px;
     margin-bottom: 20px;
 }
 
@@ -154,8 +154,13 @@ input:focus, select:focus{
 }
 
 @media (max-width: 768px) {
+    .custom-fieldset legend{
+        font-size: 16px;
+    }
+    .form, .row-checkbox, .registration-form .description, .agreement{
+        font-size: 14px;
+    } 
     .registration-form .custom-fieldset legend{
-        font-size: 1.1rem;
         margin-left: 0;
     }
     .row {
@@ -182,20 +187,13 @@ input:focus, select:focus{
 }
 @media only screen and (max-width: 1024px) {
     .logo{
-        height: 40px;
+        height: 30px;
     }
-    
     .header h6{
-        font-size: 1.1rem;
+        font-size: 15px;
     }
     .registration-form h1{
         font-size: 2rem;
-    }
-    .custom-fieldset legend{
-        font-size: 1.2rem;
-    }
-    .form, .row-checkbox, .registration-form .description, .agreement{
-        font-size: 1rem;
     }
     .form .row{
         grid-template-columns: 200px 1fr;
@@ -203,6 +201,6 @@ input:focus, select:focus{
 }
 @media only screen and (max-width: 1200px) {
     .row{
-        grid-template-columns: 250px 1fr;
+        grid-template-columns: 200px 1fr;
     }
 }

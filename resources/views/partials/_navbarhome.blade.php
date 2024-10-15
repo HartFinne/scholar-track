@@ -1,8 +1,7 @@
 <!-- NAVBAR -->
 <div class="ctn-navbar">
     <div class="logo">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo">
-        <h6 class="fw-bold">Tzu Chi Philippines<br>Educational Assistance Program</h6>
+        <h4 class="fw-bold"></h4>
     </div>
     <button id="showprofmenu" onclick="showprofilemenu()"><i class="fas fa-user"></i></button>
 </div>

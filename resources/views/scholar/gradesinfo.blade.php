@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/scholar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/grades.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -30,11 +30,11 @@
 
         <div class="grades-view">
             <div class="grade-status">
-                <h5 class="grade-stat">{{ $grade->scGradeStatus }}</h5>
+                <h6 class="grade-stat">{{ $grade->scGradeStatus }}</h6>
             </div>
 
             <div class="grades-info">
-                <h4>GRADES SUBMITTED</h4>
+                <h5>GRADES SUBMITTED</h5>
                 <div class="info">
                     <div class="label">GWA</div>
                     <div class="value">: <span>{{ $grade->scGWA }}</span></div>

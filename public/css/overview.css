@@ -15,7 +15,7 @@
 .ctn-main .goback{
     text-decoration: none;
     color: #1a5319;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .ctn-main .title{
@@ -36,14 +36,14 @@
     align-items: center;
     gap: 20px;                   
     flex-wrap: wrap; 
-    padding: 20px 40px;
+    padding: 20px;
     background-color: #2e7c55;
     border-radius: 10px;
 }
 
 .sc-info-1 .text{
     color: #fff;
-    font-size: 1.3rem;
+    font-size: 20px;
     font-weight: bold;
 }
 
@@ -55,12 +55,12 @@
 }
 
 .sc-info-2{
-    padding: 20px 40px;
+    padding: 20px;
 }
 
 .sc-info-2 .text{
     color: #1a5319;
-    font-size: 1.2rem;
+    font-size: 15px;
 }
 
 .overview-graph{
@@ -75,14 +75,19 @@
 }
 
 .overview-graph .card1, .card2{
-    width: 600px;
+    width: 500px;
     background-color: #d6efd8;
     border: 1px solid #1a5319;
     border-radius: 10px;
     padding: 30px;
 }
 
-.open{
+.overview-graph p{
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.hide{
     display: none;
 }
 
@@ -96,6 +101,7 @@
 }
 
 .sc-renewal button{
+    font-size: 15px;
     padding: 7px 20px;
     border: none;
     border-radius: 10px;
@@ -112,8 +118,8 @@
 .sub-title{
     color: #1a5319;
     font-weight: bolder;
-    font-size: 1.6rem;
-    margin: 30px 0;
+    font-size: 17px;
+    margin: 30px 0 10px;
 }
 
 .status{
@@ -123,7 +129,8 @@
 
 .filter-btn{
     border: 2px solid #bfbfbf;
-    padding: 5px 20px;
+    padding: 5px 10px;
+    font-size: 14px;
     margin-bottom: 10px;
     border-radius: 20px;
     background-color: transparent;
@@ -137,7 +144,7 @@
 
 .ctn-table{
     margin-bottom: 50px;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .table thead tr th{
@@ -147,11 +154,11 @@
 
 .table tr td{
     text-align: center;
-    padding: 15px;
+    padding: 10px;
 }
 
 .table-title{
-    font-size: 1.2rem;
+    font-size: 17px;
     font-weight: bold;
 }
 
@@ -160,8 +167,9 @@
     color: #fff;
     border: none;
     border-radius: 10px;
-    padding: 10px 50px;
+    padding: 10px 30px;
     transition: 0.3s ease;
+    font-size: 15px;
 }
 
 .btn-submit:hover{
@@ -188,20 +196,28 @@
     }
     .sc-info-1, .sc-info-2{
         gap: 0;                   
-        padding: 20px;
+        padding: 15px;
     }
     .sc-info-1 .text, span{
-        font-size: 1.1rem;
+        font-size: 16px;
     }
     .sc-info-1 .text span{
         padding: 3px;
-        font-size: 1rem;
     }
     .sc-info-2 .text p, .filter-btn, .ctn-table{
-        font-size: 1rem;
+        font-size: 14px;
+    }
+    .overview-graph{
+        padding: 0;
+    }
+    .overview-graph .card1, .card2{
+        width: 85%;
+        padding: 15px;
+        margin: 0;
     }
     .sub-title{
-        font-size: 1.3rem;
+        font-size: 15px;
+        margin: 20px 0 10px;
     }
 }
 @media only screen and (max-width: 1024px) {

@@ -32,13 +32,13 @@
     
 }
 
-.ctn-navbar h3{
+.ctn-navbar h4{
     color: #1a5319;
 }
 
 .ctn-navbar button {
-    height: 50px;
-    width: 50px;
+    height: 45px;
+    width: 45px;
     border: 1px solid gray;
     background-color: #1a5319;
     border-radius: 50%;
@@ -47,7 +47,7 @@
 }
 
 .ctn-navbar i{
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: #fff;
 }
 
@@ -59,23 +59,29 @@
     border: 1px solid #1a5319;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px;
     z-index: 1000;
     display: none;
-    width: 380px;
+    width: 350px;
 }
 
 .ctn-profilemenu a{
     text-decoration: none;
     color: #000;
-    font-size: 1rem;
+    font-size: 14px;
     transition: 0.3s ease;
 }
 
 .ctn-profilemenu i, span i{
     width: 30px;
     padding: 15px;
+    font-size: 14px;
     margin-right: 15px;
+}
+
+.ctn-profilemenu span{
+    font-size: 14px;
+    margin-right: 0;
 }
 
 .ctn-profilemenu a:hover{
@@ -90,7 +96,7 @@
     background-color: #f0f0f0;
     border-radius: 15px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 13px;
     margin-left: 10px;
 }
 
@@ -196,7 +202,7 @@
 #btn-showmenu {
     margin: 10px;
     padding: 5px 10px;
-    font-size: 32px;
+    font-size: 30px;
     color: #1a5319;
     text-align: right;
     border-radius: 10px;

@@ -5,7 +5,7 @@
     <title>Profile</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('css/scholar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
             </div>
             <div class="profile-view">
                 <div class="profile-info">
-                    <h4>SCHOLARSHIP INFORMATION</h4>
+                    <h5>SCHOLARSHIP INFORMATION</h5>
                     <div class="info">
                         <div class="label">Case Code</div>
                         <div class="value">: <span>{{ $data->caseCode }}</span></div>
@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <div class="profile-info">
-                    <h4>BASIC INFORMATION</h4>
+                    <h5>BASIC INFORMATION</h5>
                     <div class="info">
                         <div class="label">Name</div>
                         <div class="value">: <span>{{ $data->basicInfo->scLastname }},
@@ -107,8 +107,8 @@
                                 value="{{ old('scPhoneNum', $data->scPhoneNum) }}"></div>
                     </div>
                 </div>
-                {{-- <div class="profile-info">
-                    <h4>ACCOUNT INFORMATION</h4>
+                <div class="profile-info">
+                    <h5>ACCOUNT INFORMATION</h5>
                     <div class="info">
                         <div class="label">Account Number</div>
                         <div class="value">: <span>wala eto sa database na ginawa ko pasensya na</span></div>
@@ -116,9 +116,9 @@
                         <div class="label">Card Number</div>
                         <div class="value">: <span>wala eto sa database na ginawa ko pasensya na</span></div>
                     </div>
-                </div> --}}
+                </div>
                 <div class="profile-info">
-                    <h4>ADDRESS INFORMATION</h4>
+                    <h5>ADDRESS INFORMATION</h5>
                     <div class="info">
                         {{-- change --}}
                         <div class="label">Home Address</div>
@@ -137,7 +137,7 @@
                     </div>
                 </div>
                 <div class="profile-info">
-                    <h4>EMERGENCY CONTACT</h4>
+                    <h5>EMERGENCY CONTACT</h5>
                     <div class="info">
                         {{-- change --}}
                         <div class="label">Name</div>
@@ -161,7 +161,7 @@
                     </div>
                 </div>
                 <div class="profile-info">
-                    <h4>EDUCATIONAL BACKGROUND</h4>
+                    <h5>EDUCATIONAL BACKGROUND</h5>
                     <div class="info">
                         <div class="label">School Level</div>
                         <div class="value">: <span>{{ $data->education->scSchoolLevel }}</span></div>

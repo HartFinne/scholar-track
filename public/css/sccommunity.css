@@ -15,7 +15,7 @@
 .ctn-main .goback{
     text-decoration: none;
     color: #1a5319;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .ctn-main .title{
@@ -25,7 +25,7 @@
 }
 
 .ctn-main .title-desc{
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .cs-dashboard{
@@ -70,15 +70,16 @@
     gap: 20px;
     flex-wrap: wrap; 
     padding: 20px 40px;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .cshours-graph .card1, .cshours-graph .card2{
-    width: 600px;
+    width: 500px;
+    font-size: 15px;
     background-color: #d6efd8;
     border: 1px solid #1a5319;
     border-radius: 10px;
-    padding: 30px;
+    padding: 20px;
 }
 
 #cancel{
@@ -106,9 +107,9 @@
 .dialog-content {
     position: relative;
     background-color: #fff;
-    padding: 30px;
+    padding: 20px;
     border-radius: 10px;
-    width: 450px;
+    width: 400px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -119,6 +120,7 @@
 
 .dialog-content p{
     margin-bottom: 50px;
+    font-size: 15px;
 }
 
 .dialog-actions {
@@ -131,6 +133,7 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    font-size: 15px;
     transition: 0.3s ease;
 }
 
@@ -167,15 +170,15 @@
 }
 
 .dialog .fa-circle-exclamation{
-    margin: 30px 0;
+    margin: 20px 0;
     color: #f15e5e;
-    font-size: 50px;
+    font-size: 40px;
 }
 
 .dialog .fa-circle-check{
-    margin: 30px 0;
+    margin: 20px 0;
     color: #6bdc6a;
-    font-size: 50px;
+    font-size: 40px;
 }
 
 .register .dialog-content{
@@ -194,12 +197,12 @@
     display: flex;
     justify-content: center; 
     margin-top: 20px; 
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .search-input, .cs-area {
     width: 30%; 
-    padding: 10px 40px 10px 15px; 
+    padding: 10px 20px; 
     margin-right: 30px;
     border: 2px solid #ccc; 
     border-radius: 10px; 
@@ -223,7 +226,7 @@
 }
 
 .card{
-    width: 325px;
+    width: 300px;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -250,6 +253,7 @@
 
 .card-content, .card-details-content{
     margin: 30px;
+    font-size: 14px;
 }
 
 .card-content i, .card-details-content i{
@@ -258,7 +262,7 @@
 
 .cs-title{
     margin-bottom: 20px;
-    font-size: 1.1rem;
+    font-size: 17px;
 }
 
 .num-vol{
@@ -269,7 +273,7 @@
 
 .num-vol p{
     margin-top: 5px;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .activity-details-container{
@@ -294,7 +298,7 @@
 
 .cs-stat{
     color: #56a72e;
-    font-size: 1.1rem;
+    font-size: 16px;
 }
 
 .no-vol{
@@ -316,6 +320,7 @@
     color: #fff;
     border: 1px solid #898989;
     transition: 0.3s ease;
+    font-size: 15px;
 }
 
 .btn-reg button:hover, .submit-attendance button:hover, .btn-submit:hover{
@@ -328,14 +333,14 @@
 }
 
 .activity-desc{
-    font-size: 1.1rem;
+    font-size: 15px;
     margin: 20px 30px 30px;
 }
 
 .cs-form{
     width: 95%;
     margin: auto;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .custom-fieldset {
@@ -348,7 +353,7 @@
 
 .custom-fieldset legend {
     color: #eaebea;
-    font-size: 1.2rem;
+    font-size: 17px;
     font-weight: bold;
     width: auto;
     padding: 0 10px;
@@ -388,25 +393,38 @@ input:focus, select:focus{
 }
 
 @media only screen and (max-width: 768px) {
+    .ctn-main .title{
+        margin: 15px 0;
+    }
     .cs-dashboard{
         flex-direction: column;
+        padding: 0;
+        gap: 0;
+    }
+    .cs-dashboard i{
+        margin-right: 10px;
     }
     .complete-hrs, .remaining-hrs{
         width: 100%;
         padding: 15px;
+        margin-bottom: 20px;
     }
     .cs-dashboard h5{
-        font-size: 1.1rem;
+        font-size: 16px;
     }
     .cs-dashboard h4{
-        font-size: 1.3rem;
+        font-size: 17px;
+    }
+    .ctn-main .cshours-graph{
+        padding: 0;
     }
     .ctn-main .cshours-graph .card1, .ctn-main .cshours-graph .card2{
         width: 100%;
         padding: 15px;
+        font-size: 14px;
     }
     table{
-        font-size: 1rem;
+        font-size: 14px;
     }
     .search-container{
         display: block;
@@ -437,15 +455,20 @@ input:focus, select:focus{
     }
     .dialog-actions button {
         margin: 5px;
+        font-size: 14px;
     }
     .register .dialog-content{
         width: 85%;
     }
     .custom-fieldset {
         padding: 12px;
+        margin: 30px 0;
+    }
+    .custom-fieldset legend{
+        font-size: 16px;
     }
     .cs-form input, .cs-form select{
-        font-size: 15px;
+        font-size: 14px;
     }
     .cs-form .row{
         grid-gap: 20px 0;
@@ -460,6 +483,9 @@ input:focus, select:focus{
         flex-direction: column;
         margin: auto;
     }
+    .cs-form{
+        width: 100%;
+    }
 }
 @media only screen and (max-width: 1200px) {
     .cs-dashboard{
@@ -471,7 +497,7 @@ input:focus, select:focus{
     }
     .cshours-graph .card1, .cshours-graph .card2{
         width: 450px;
-        padding: 30px;
+        padding: 15px;
     }
     .search-input, .cs-area {
         width: 90%; 

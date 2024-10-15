@@ -5,7 +5,7 @@
     <title>Scholarship Overview</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('css/scholar.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/overview.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -74,18 +74,18 @@
             </div>
         </div>
 
-        <div class="sc-renewal close">
+        <div class="sc-renewal ">
             <hr>
             <div class="text">
-                <h4>SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h4>
+                <h5>SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h5>
             </div>
             <hr>
         </div>
 
-        <div class="sc-renewal open">
+        <div class="sc-renewal hide">
             <hr>
             <div class="text">
-                <h4>SCHOLARSHIP RENEWAL IS NOW OPEN.</h4>
+                <h5>SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
                 <button onclick="window.location.href='screnewal.html'">Renew Scholarship</button>
             </div>
             <hr>
