@@ -43,7 +43,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 50px;
+    padding: 25px;
 }
 
 .maintitle {
@@ -52,6 +52,15 @@
     font-family: 'League Spartan', Arial;
     text-align: center;
     color: #1a5319;
+}
+
+.ctndatetime {
+    width: 75%;
+    min-width: 250px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
 }
 
 .ctnform form {
@@ -74,15 +83,6 @@
     font-weight: bold;
     font-size: 18px;
     color: #1a5319;
-}
-
-#insearch {
-    border: 1px solid #2e7c55;
-    outline: none;
-    padding: 5px 10px;
-    font-size: 16px;
-    min-width: 200px;
-    border-radius: 8px;
 }
 
 #btnconfirm {

@@ -7,19 +7,23 @@ use App\Models\staccount;
 use App\Models\User;
 use App\Models\communityservice;
 use App\Models\csregistration;
+use App\Models\humanitiesclass;
+use App\Models\hcattendance;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\Http\Controllers\DateTimeZone;
 use Exception;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
 {
     public function showAccountSW()
     {
-        if (Auth::guard('staff')->check()) { // Check if the user is authenticated using the staff guard
+        if (Auth::guard('staff')->check()) {
             return view('staff.accountsw');
         }
 
-        // Redirect the user if not authenticated
         return redirect()->route('login');
     }
 
@@ -50,19 +54,9 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
-    public function showAttendanceSystem()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.hcattendancesystem');
-        }
-
-        return redirect()->route('login');
-    }
-
     public function showScholarsCollege()
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve all scholars
             $scholar = User::with(['basicInfo', 'education', 'addressInfo'])->get();
 
             return view('staff.listcollege', compact('scholar'));
@@ -92,7 +86,6 @@ class StaffController extends Controller
     public function showScholarProfile($id)
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve scholar info
             $data = User::with(['basicInfo', 'education', 'addressInfo'])->findOrFail($id);
 
             return view('staff.scholarsinfo', compact('data'));
@@ -110,15 +103,6 @@ class StaffController extends Controller
     {
         if (Auth::guard('staff')->check()) {
             return view('staff.lte');
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showHumanitiesClass()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.managehc');
         }
 
         return redirect()->route('login');
@@ -235,7 +219,6 @@ class StaffController extends Controller
     public function showUsersScholar()
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve all scholars accounts
             $scholarAccounts = User::all();
 
             return view('staff.admscholars', compact('scholarAccounts'));
@@ -256,10 +239,8 @@ class StaffController extends Controller
     public function showUserStaff()
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve all staff accounts
             $staffAccounts = Staccount::all();
 
-            // Pass the staff accounts to the view
             return view('staff.admstaff', compact('staffAccounts'));
         }
 
@@ -284,7 +265,6 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
-    // Methods to activate and deactivate a user
     public function activateStaff($id)
     {
         $user = Staccount::findOrFail($id);
@@ -324,43 +304,31 @@ class StaffController extends Controller
     public function showStaffInfo($id)
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve the user account by ID
             $user = Staccount::findOrFail($id);
 
-            // Pass the user info to the view
             return view('staff.admstaffinfo', compact('user'));
         }
 
-        // Redirect the user if not authenticated
         return redirect()->route('login');
     }
 
     public function showScholarInfo($id)
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve the user account by ID
             $user = User::findOrFail($id);
 
-            // Pass the user info to the view
             return view('staff.admscholarinfo', compact('user'));
         }
 
-        // Redirect the user if not authenticated
         return redirect()->route('login');
     }
 
     public function showCommunityService()
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve all cs events
             $events = communityservice::all();
-            // Fetch the total number of events
             $totalevents = communityservice::count();
-
-            // Fetch the number of open events
             $openevents = communityservice::where('eventstatus', 'Open')->count();
-
-            // Fetch the number of closed events
             $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
             return view('staff.managecs', compact('events', 'totalevents', 'openevents', 'closedevents'));
@@ -373,13 +341,8 @@ class StaffController extends Controller
     {
         if (Auth::guard('staff')->check()) {
             $events = communityservice::where('eventstatus', 'Open')->get();
-            // Fetch the total number of events
             $totalevents = communityservice::count();
-
-            // Fetch the number of open events
             $openevents = communityservice::where('eventstatus', 'Open')->count();
-
-            // Fetch the number of closed events
             $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
             return view('staff.openevents', compact('events', 'totalevents', 'openevents', 'closedevents'));
@@ -391,15 +354,9 @@ class StaffController extends Controller
     public function showCSClosedEvents()
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve only community service events where the eventstatus is 'Open'
             $events = communityservice::where('eventstatus', 'Closed')->get();
-            // Fetch the total number of events
             $totalevents = communityservice::count();
-
-            // Fetch the number of open events
             $openevents = communityservice::where('eventstatus', 'Open')->count();
-
-            // Fetch the number of closed events
             $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
             return view('staff.closedevents', compact('events', 'totalevents', 'openevents', 'closedevents'));
@@ -411,7 +368,6 @@ class StaffController extends Controller
     public function showcseventinfo($csid)
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve all staff accounts
             $event = communityservice::findOrFail($csid);
             $volunteers = csregistration::where('csid', $csid)->get();
             return view('staff.cseventinfo', compact('event', 'volunteers'));
@@ -423,7 +379,6 @@ class StaffController extends Controller
     public function createcsevent(Request $request)
     {
         try {
-            // Validate the request data
             $request->validate([
                 'title' => 'required|string|max:255',
                 'eventloc' => 'required|string|max:255',
@@ -435,11 +390,9 @@ class StaffController extends Controller
                 'slotnum' => 'required|integer|min:1',
             ]);
 
-            // Set default values for volunteers number and event status
             $volunteersnum = 0;
             $eventstatus = 'Open';
 
-            // Create a new event record in the database
             $event = communityservice::create([
                 'title' => $request->title,
                 'eventloc' => $request->eventloc,
@@ -462,7 +415,6 @@ class StaffController extends Controller
     public function updatecsevent($csid, Request $request)
     {
         try {
-            // Validate the request data
             $request->validate([
                 'title' => 'required|string|max:255',
                 'eventloc' => 'required|string|max:255',
@@ -475,15 +427,12 @@ class StaffController extends Controller
                 'eventstatus' => 'required',
             ]);
 
-            // Fetch the event by csid (passed as a parameter)
             $event = communityservice::where('csid', $csid)->first();
 
-            // Check if the event exists
             if (!$event) {
                 return redirect()->back()->with('error', 'Event not found.');
             }
 
-            // Update event details in the database
             $event->update([
                 'title' => $request->title,
                 'eventloc' => $request->eventloc,
@@ -493,13 +442,106 @@ class StaffController extends Controller
                 'starttime' => $request->starttime,
                 'facilitator' => $request->facilitator,
                 'slotnum' => $request->slotnum,
-                'volunteersnum' => $event->volunteersnum, // Keep the original value
+                'volunteersnum' => $event->volunteersnum,
                 'eventstatus' => $request->eventstatus
             ]);
 
             return redirect()->back()->with('success', 'Successfully updated activity details.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Updating activity details was unsuccessful. ' . $e->getMessage());
+        }
+    }
+
+    public function showHumanitiesClass()
+    {
+        if (Auth::guard('staff')->check()) {
+            $classes = humanitiesclass::all();
+            return view('staff.managehc', compact('classes'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function createhc(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:255',
+            'hcstarttime' => 'required',
+        ]);
+
+        try {
+            $totalattendees = 0;
+            $hcendtime = null;
+            $hcdate = now();
+
+            // Creating the Humanities Class
+            $event = humanitiesclass::create([
+                'topic' => $request->topic,
+                'hcdate' => $hcdate,
+                'hcstarttime' => $request->hcstarttime,
+                'hcendtime' => $hcendtime,
+                'totalattendees' => $totalattendees,
+            ]);
+
+            // Assuming that $event is actually the class you just created
+            return redirect()->route('attendancesystem', $event->hcid); // Redirecting with the class ID
+        } catch (\Exception $e) {
+            // Error handling with a more descriptive message
+            return redirect()->route('humanitiesclass')->with('error', 'Activity creation was unsuccessful. ' . $e->getMessage());
+        }
+    }
+
+    public function showAttendanceSystem($hcid)
+    {
+        if (Auth::guard('staff')->check()) {
+            $event = humanitiesclass::findOrFail($hcid);
+            $scholars = User::with(['basicInfo'])->get();
+
+            return view('staff.hcattendancesystem', compact('scholars', 'event'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function saveattendance($hcid, Request $request)
+    {
+        $request->validate([
+            'scholar' => 'required',
+        ]);
+
+        try {
+            $event = HumanitiesClass::findOrFail($hcid);
+            $timeIn = Carbon::now(new \DateTimeZone('Asia/Manila'));
+
+            if ($timeIn->greaterThan($event->hcstarttime)) {
+                $tardinessDuration = $timeIn->diffInMinutes($event->hcstarttime, true);
+                $hcstatus = 'Late';
+            } else {
+                $tardinessDuration = 0;
+                $hcstatus = 'Present';
+            }
+
+            HCAttendance::create([
+                'hcid' => $hcid,
+                'caseCode' => $request->scholar,
+                'timein' => $timeIn->toTimeString(),
+                'timeout' => null,
+                'tardinessduration' => $tardinessDuration,
+                'hcastatus' => $hcstatus,
+            ]);
+
+            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance failed: Humanities class not found.');
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1062) {
+                // Customize this message to better fit your application context
+                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance failed: Duplicate entry.');
+            }
+            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance was unsuccessful: ' . $e->getMessage());
+        } catch (\Exception $e) {
+            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance was unsuccessful: ' . $e->getMessage());
         }
     }
 }

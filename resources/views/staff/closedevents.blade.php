@@ -78,7 +78,7 @@
                     <tr>
                         <th class="text-center align-middle">Activity</th>
                         <th class="text-center align-middle">Date</th>
-                        <th class="text-center align-middle">Remaining Slots</th>
+                        <th class="text-center align-middle">Registered Volunteers</th>
                         <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
@@ -88,7 +88,7 @@
                         <tr>
                             <td class="text-center align-middle">{{ $event->title }}</td>
                             <td class="text-center align-middle">{{ $event->eventdate }}</td>
-                            <td class="text-center align-middle">{{ $event->slotnum }}</td>
+                            <td class="text-center align-middle">{{ $event->volunteersnum }}</td>
                             <td class="text-center align-middle">{{ $event->eventstatus }}</td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('viewcseventinfo', $event->csid) }}" class="btn btn-primary">View</a>
