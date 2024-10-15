@@ -29,7 +29,7 @@
     @include('partials._sidebar')
 
     <!-- Include Navbar -->
-    @include('partials._navbar')
+    @include('partials._navbarhome')
 
     <!-- MAIN CONTENT -->
     <div class="header">
@@ -47,7 +47,7 @@
     </div>
 
     <div class="ctn-main">
-        <div class="mb-3">
+        <div class="mt-3 mb-3">
             <h2 id="announce-title" class="fw-bold announce-title">ANNOUNCEMENTS</h2>
             <div class="status">
                 <div class="filter">

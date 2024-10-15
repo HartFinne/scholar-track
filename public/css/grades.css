@@ -12,7 +12,7 @@
 .ctn-main .goback{
     text-decoration: none;
     color: #1a5319;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .sub-title{
@@ -71,14 +71,14 @@
     background-color: #eaebea;
     border-radius: 10px;
     margin: 50px 30px;
-    padding: 20px 30px;
+    padding: 20px;
 }
 
-.grades-info h4{
+.grades-info h5{
     background-color: #1a5319;
     color: #d6efd8;
     font-weight: bold;
-    padding: 10px;
+    padding: 8px;
 }
 
 .grades-info .info{
@@ -86,7 +86,8 @@
     grid-template-columns: auto 1fr;
     gap: 10px; 
     align-items: center; 
-    padding: 10px;
+    padding: 8px;
+    font-size: 15px;
 }
 
 .label {
@@ -108,22 +109,29 @@
     .ctn-main{
         width: 85%;
     }
+    .sub-title{
+        font-size: 1.3rem;
+        margin: 20px 0;
+    }
     .status{
         margin-top: 30px;
-        font-size: 1rem;
+        font-size: 13px;
         display: block;
     }
     .ctn-table, .grade-form{
-        font-size: 1rem;
+        font-size: 14px;
     }
-    .grade-stat, .grades-info h4{
+    .grade-stat, .grades-info h5{
         font-size: 1.1rem;
     }
     .ctn-main .grades-view{
         width: 100%;
     }
     .grades-info{
-        padding: 20px;
+        padding: 15px;
+    }
+    .grades-info span{
+        margin-left: 8px;
     }
     .label {
         font-size: 14px;
