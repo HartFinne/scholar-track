@@ -51,6 +51,7 @@
             <span class="label">Topic: </span><span class="data">{{ $event->topic }}</span><br>
             <span class="label">Date: </span><span class="data">{{ $event->hcdate }}</span><br>
             <span class="label">Start Time: </span><span class="data">{{ $event->hcstarttime }}</span><br>
+            <span class="label">End Time: </span><span class="data">{{ $event->hcendtime }}</span><br>
             <span class="label">Total Attendees: </span><span class="data">{{ $event->totalattendees }}</span>
         </div>
 
@@ -62,6 +63,7 @@
                         <th class="text-center align-middle">Name</th>
                         <th class="text-center align-middle">Time In</th>
                         <th class="text-center align-middle">Time Out</th>
+                        <th class="text-center align-middle">Tardiness Duration (Minutes)</th>
                         <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
@@ -70,9 +72,11 @@
                     @foreach ($attendees as $index => $attendee)
                         <tr>
                             <td class="text-center align-middle">{{ $index + 1 }}</td>
-                            <td class="text-center align-middle">{{ $attendee->basicInfo->scLastname }}</td>
+                            <td class="text-center align-middle">{{ $attendee->basicInfo->scLastname }},
+                                {{ $attendee->basicInfo->scFirstname }} {{ $attendee->basicInfo->scMiddlename }}</td>
                             <td class="text-center align-middle">{{ $attendee->timein }}</td>
                             <td class="text-center align-middle">{{ $attendee->timeout }}</td>
+                            <td class="text-center align-middle">{{ $attendee->tardinessduration }}</td>
                             <td class="text-center align-middle">{{ $attendee->hcastatus }}</td>
                             <td class="text-center align-middle">
                                 <button>Check-out</button>

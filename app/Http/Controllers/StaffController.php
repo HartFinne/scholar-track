@@ -12,6 +12,7 @@ use App\Models\hcattendance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 // use App\Http\Controllers\DateTimeZone;
 // use Exception;
 // use Illuminate\Support\Facades\Redis;
@@ -472,22 +473,18 @@ class StaffController extends Controller
 
         try {
             $totalattendees = 0;
-            $hcendtime = null;
             $hcdate = now();
 
-            // Creating the Humanities Class
             $event = humanitiesclass::create([
                 'topic' => $request->topic,
                 'hcdate' => $hcdate,
                 'hcstarttime' => $request->hcstarttime,
-                'hcendtime' => $hcendtime,
+                'hcendtime' => $request->hcendtime,
                 'totalattendees' => $totalattendees,
             ]);
 
-            // Assuming that $event is actually the class you just created
-            return redirect()->route('attendancesystem', $event->hcid); // Redirecting with the class ID
+            return redirect()->route('attendancesystem', $event->hcid);
         } catch (\Exception $e) {
-            // Error handling with a more descriptive message
             return redirect()->route('humanitiesclass')->with('error', 'Activity creation was unsuccessful. ' . $e->getMessage());
         }
     }
@@ -522,27 +519,44 @@ class StaffController extends Controller
                 $hcstatus = 'Present';
             }
 
-            HCAttendance::create([
-                'hcid' => $hcid,
-                'caseCode' => $request->scholar,
-                'timein' => $timeIn->toTimeString(),
-                'timeout' => null,
-                'tardinessduration' => $tardinessDuration,
-                'hcastatus' => $hcstatus,
-            ]);
+            try {
+                DB::beginTransaction();
 
-            humanitiesclass::where('hcid', $hcid)->increment('totalattendees', 1);
+                $existingAttendance = HCAttendance::where('hcid', $hcid)
+                    ->where('caseCode', $request->scholar)
+                    ->first();
+
+                if ($existingAttendance) {
+                    // Rollback the transaction
+                    DB::rollBack();
+
+                    // Redirect back with an error message about duplicate entry
+                    return redirect()->route('attendancesystem', ['hcid' => $hcid])
+                        ->with('error', 'Attendance was unsuccessful: Duplicate Entry.');
+                }
+
+                HCAttendance::create([
+                    'hcid' => $hcid,
+                    'caseCode' => $request->scholar,
+                    'timein' => $timeIn->toTimeString(),
+                    'timeout' => null,
+                    'tardinessduration' => $tardinessDuration,
+                    'hcastatus' => $hcstatus,
+                ]);
+
+                humanitiesclass::where('hcid', $hcid)->increment('totalattendees', 1);
+
+                DB::commit();
+
+                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Failed to submit attendance: ' . $e->getMessage());
+            }
 
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance failed: Humanities class not found.');
-        } catch (\Illuminate\Database\QueryException $e) {
-            $errorCode = $e->errorInfo[1];
-            if ($errorCode == 1062) {
-                // Customize this message to better fit your application context
-                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance failed: Duplicate entry.');
-            }
-            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance was unsuccessful: ' . $e->getMessage());
         } catch (\Exception $e) {
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance was unsuccessful: ' . $e->getMessage());
         }
@@ -551,19 +565,14 @@ class StaffController extends Controller
     public function viewhcattendees($hcid, Request $request)
     {
         try {
-            // Authenticate the staff member
             $worker = Auth::guard('staff')->user();
 
-            // Verify the password
             if (!Hash::check($request->password, $worker->password)) {
-                return redirect()->route('attendancesystem', ['hcId' => $hcid])
-                    ->with('error', 'Incorrect password.');
+                return redirect()->back()->with('error', 'Incorrect password.');
             }
 
-            // Retrieve the event details
             return $this->viewattendeeslist($hcid);
         } catch (\Exception $e) {
-            // Handle exceptions and redirect with error message
             return redirect()->route('attendancesystem', ['hcId' => $hcid])
                 ->with('error', 'Access failed: ' . $e->getMessage());
         }
@@ -572,15 +581,12 @@ class StaffController extends Controller
     public function viewattendeeslist($hcid)
     {
         if (Auth::guard('staff')->check()) {
-            // Retrieve the event details
             $event = HumanitiesClass::findOrFail($hcid);
 
-            // Retrieve all attendees for the event
             $attendees = HcAttendance::with(['basicInfo'])
                 ->where('hcId', $hcid)
                 ->get();
 
-            // Return the view with event and attendees data
             return view('staff.viewhcattendeeslist', compact('event', 'attendees'));
         }
 
@@ -590,18 +596,13 @@ class StaffController extends Controller
     public function exitattendancesystem($hcId, Request $request)
     {
         try {
-            // Authenticate the staff member
             $worker = Auth::guard('staff')->user();
 
-            // Verify the password
             if (!Hash::check($request->password, $worker->password)) {
-                return redirect()->route('attendancesystem', ['hcId' => $hcId])
-                    ->with('error', 'Incorrect password.');
+                return redirect()->back()->with('error', 'Incorrect password.');
             }
-            // Return the view with event and attendees data
             return redirect()->route('humanitiesclass');
         } catch (\Exception $e) {
-            // Handle exceptions and redirect with error message
             return redirect()->route('attendancesystem', ['hcId' => $hcId])
                 ->with('error', 'Access failed: ' . $e->getMessage());
         }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('csregistration', function (Blueprint $table) {
             $table->increments('csrid');
             $table->unsignedInteger('csid');
-            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
+            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
             $table->string('registatus')->default('Going');
             $table->timestamps();
 

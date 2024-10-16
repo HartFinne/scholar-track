@@ -68,7 +68,7 @@
                             <td class="text-center align-middle">{{ $class->totalattendees }}</td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('attendancesystem', $class->hcid) }}">Open Attendance System</a>
-                                <a href="{{ route('viewattendeeslist', $class->hcid) }}">View Attendees List</a>
+                                <a href="{{ route('viewattendeeslist', $class->hcid) }}">View Details</a>
                             </td>
                         </tr>
                     @endforeach
@@ -90,6 +90,10 @@
         <div class="groupB">
             <span class="label">Start Time</span>
             <input type="time" class="data" name="hcstarttime" required>
+        </div>
+        <div class="groupB">
+            <span class="label">End Time</span>
+            <input type="time" class="data" name="hcendtime" required>
         </div>
         <button type="submit" id="btnattendance">Create</button>
     </form>

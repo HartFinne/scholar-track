@@ -67,8 +67,8 @@
                         <option value="" disabled selected hidden>Select your name</option>
                         @foreach ($scholars as $scholar)
                             <option value="{{ $scholar->caseCode }}">
-                                {{ $scholar->basicInfo->scLastname }}, {{ $scholar->basicInfo->scFirstname }}
-                                ({{ $scholar->caseCode }})
+                                {{ $scholar->caseCode }} | {{ $scholar->basicInfo->scLastname }},
+                                {{ $scholar->basicInfo->scFirstname }}
                             </option>
                         @endforeach
                     </select>
