@@ -25,6 +25,12 @@ class User extends Authenticatable
         'scStatus',
     ];
 
+    // Instruct Laravel to use scEmail for notifications
+    public function routeNotificationForMail($notification)
+    {
+        return $this->scEmail;  // Use scEmail for notifications instead of emailq
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

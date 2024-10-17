@@ -10,8 +10,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 
 <body>
@@ -23,8 +21,9 @@
 
     <!-- MAIN -->
     <div class="ctn-main">
+
         <a href="{{ route('csactivities') }}" class="goback">&lt Go back</a>
-        <h1 class="title">TITLE</h1>
+        <h1 class="title">{{ $activity->title }}</h1>
 
         <div class="activity-details-container">
             <div class="cs-img">
@@ -32,23 +31,35 @@
             </div>
 
             <div class="card-details-content">
-                <p><i class="fa-solid fa-location-dot"></i>Activity Place</p>
-                <p><i class="fa-solid fa-calendar-days"></i>Date</p>
-                <p><i class="fa-solid fa-clock"></i>Time</p>
-                <p><i class="fa-solid fa-user"></i>Facilitator</p><br>
+                <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>
+                <p><i class="fa-solid fa-calendar-days"></i>{{ $activity->eventdate }}</p>
+                <p><i class="fa-solid fa-clock"></i>{{ $activity->starttime }}</p>
+                <p><i class="fa-solid fa-user"></i>{{ $activity->facilitator }}</p><br>
                 <p><i>Meeting Place & Call Time:</i></p>
-                <p><i class="fa-solid fa-map-pin"></i>Meeting Place</p>
-                <p><i class="fa-regular fa-clock"></i>Call Time</p>
+                <p><i class="fa-solid fa-map-pin"></i>{{ $activity->meetingplace }}</p>
+                <p><i class="fa-regular fa-clock"></i>{{ $activity->calltime }}</p>
 
                 <div class="cs-status">
                     <p class="text-center fw-bold cs-stat">Open</p>
-                    <p class="text-center fw-bold no-vol">No. of volunteers</p>
+                    <p class="text-center fw-bold no-vol">No. of volunteers {{ $activity->slotnum }}</p>
+
                 </div>
-                <div class="btn-reg">
-                    <button class="fw-bold" onclick="showDialog('confirmDialog')">Register</button>
-                </div>
+                <form action="{{ route('csdetails.post', ['csid' => $activity->csid]) }}" method="POST"
+                    id="registrationForm">
+                    @csrf
+                    <div class="btn-reg">
+                        @if ($isRegistered)
+                            <!-- If the user is already registered, show "Registered" and disable the button -->
+                            <button type="button" class="fw-bold" disabled>Registered</button>
+                        @else
+                            <!-- If the user is not registered, show the "Register" button -->
+                            <button type="submit" class="fw-bold">Register</button>
+                        @endif
+                    </div>
+                </form>
             </div>
         </div>
+
         <div class="activity-desc">
             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsam distinctio ex rem incidunt
                 numquam nesciunt vero asperiores est mollitia dicta, exercitationem blanditiis in, odio eum
@@ -58,7 +69,7 @@
                 voluptates velit eligendi molestiae nam.</p>
         </div>
 
-        <!-- Register Dialog -->
+        <!-- Register Dialog with remaining hours -->
         <div id="confirmDialog" class="register dialog hidden">
             <div class="dialog-content">
                 <span class="close-btn" onclick="closeDialog('confirmDialog')"><i class="fa-solid fa-x"></i></span>
@@ -70,9 +81,10 @@
             </div>
         </div>
 
+        <!-- Register Dialog with completed hours -->
         <div id="confirmDialog2" class="register dialog hidden">
             <div class="dialog-content">
-                <span class="close-btn" onclick="closeDialog('confirmDialog')"><i class="fa-solid fa-x"></i></span>
+                <span class="close-btn" onclick="closeDialog('confirmDialog2')"><i class="fa-solid fa-x"></i></span>
                 <i class="fa-solid fa-circle-check"></i>
                 <h2>Your registration has been submitted successfully.<br> Thank you for volunteering!</h2>
                 <p>Go to dashboard to view your scheduled community service activities.</p>
@@ -80,9 +92,40 @@
                     this academic year.</p>
             </div>
         </div>
-    </div>
 
-    <script src="{{ asset('js/scholar.js') }}"></script>
+        <!-- JavaScript to handle dialogs -->
+        <script>
+            function showRegistrationDialog() {
+                const remainingHours = parseInt(document.getElementById('remhrs').textContent);
+
+                if (remainingHours > 0) {
+                    openDialog('confirmDialog');
+                } else {
+                    openDialog('confirmDialog2');
+                }
+            }
+
+            function openDialog(dialogId) {
+                const dialog = document.getElementById(dialogId);
+                dialog.classList.remove('hidden'); // Show the dialog
+            }
+
+            function closeDialog(dialogId) {
+                const dialog = document.getElementById(dialogId);
+                dialog.classList.add('hidden'); // Hide the dialog
+            }
+        </script>
+
+        <!-- Trigger dialog if registration was successful -->
+        @if (session('success'))
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    showRegistrationDialog();
+                });
+            </script>
+        @endif
+
+        <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
 
 </html>

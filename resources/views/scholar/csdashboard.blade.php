@@ -70,27 +70,47 @@
                         <th class="text-center align-middle" style="width: 35%">Activity</th>
                         <th class="text-center align-middle" style="width: 35%">Location</th>
                         <th class="text-center align-middle" style="width: 20%">Schedule</th>
+                        <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
 
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Lorem ipsum, dolor sit amet consectetur adipisicing elit.</td>
-                        <td class="text-start"><b>Meeting Place:</b> Lorem ipsum, dolor sit amet consectetur adipisicing
-                            elit.<br><br>
-                            <b>Activity Place:</b> Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                        </td>
-                        <td class="text-start"><b>Call Time:</b> 08:00 AM<br><br>
-                            <b>Date:</b> 10/1/2024<br>
-                            <b>Time:</b> 10:00 AM
-                        </td>
-                        <td><button id="cancel" onclick="showDialog('confirmDialog')">Cancel</button></td>
+                    @foreach ($registrations as $registration)
+                        <tr>
+                            <td>{{ $registration->title }}</td>
+                            <td class="text-start"><b>Meeting Place:</b> {{ $registration->meetingplace }}<br><br>
+                                <b>Activity Place:</b>{{ $registration->eventloc }}
+                            </td>
+                            <td class="text-start"><b>Call Time:</b>
+                                {{ \Carbon\Carbon::parse($registration->calltime)->format('h:i A') }}<br><br>
+                                <b>Date:</b> {{ \Carbon\Carbon::parse($registration->eventdate)->format('m/d/Y') }}<br>
+                                <b>Time:</b> {{ \Carbon\Carbon::parse($registration->starttime)->format('h:i A') }}
+                            </td>
+                            <td>
+                                {{ $registration->registatus }}
+                            </td>
+                            <td>{{-- Cancel button form --}}
+                                @if ($registration->registatus == 'GOING')
+                                    <form action="{{ route('csdashboard.cancel', ['csid' => $registration->csid]) }}"
+                                        method="POST" id="cancel-form-{{ $registration->csid }}">
+                                        @csrf
+                                        <button type="button" class="btn btn-danger"
+                                            onclick="openConfirmDialog('{{ $registration->csid }}')">Cancel</button>
+                                    </form>
+                                @else
+                                    Cancelled
+                                @endif
+                            </td>
+
+                        </tr>
+                    @endforeach
+
                 </tbody>
             </table>
         </div>
 
-        <!-- Cancel registration -->
+        <!-- Cancel registration confirmation dialog -->
         <div id="confirmDialog" class="dialog hidden">
             <div class="dialog-content">
                 <span class="close-btn" onclick="closeDialog('confirmDialog')"><i class="fa-solid fa-x"></i></span>
@@ -99,11 +119,12 @@
                 <p>Do you really want to cancel your registration? This action cannot be undone.</p>
                 <div class="dialog-actions">
                     <button id="noBtn" onclick="closeDialog('confirmDialog')">No</button>
-                    <button id="yesBtn" onclick="showCancelDialog()">Yes</button>
+                    <button id="yesBtn">Yes</button>
                 </div>
             </div>
         </div>
 
+        <!-- Success dialog -->
         <div id="cancelDialog" class="dialog hidden">
             <div class="dialog-content">
                 <span class="close-btn" onclick="closeDialog('cancelDialog')"><i class="fa-solid fa-x"></i></span>
@@ -112,9 +133,47 @@
                 <p>Kindly submit a Letter of Explanation about your absence. Thank You.</p>
             </div>
         </div>
-    </div>
 
-    <script src="{{ asset('js/scholar.js') }}"></script>
+        <script>
+            function openConfirmDialog(csid) {
+                // Show the confirmation dialog
+                const confirmDialog = document.getElementById('confirmDialog');
+                confirmDialog.classList.remove('hidden');
+
+                // Handle the Yes button to submit the form
+                const yesBtn = document.getElementById('yesBtn');
+                yesBtn.onclick = function() {
+                    // Submit the cancel form for the specific registration
+                    document.getElementById(`cancel-form-${csid}`).submit();
+                };
+            }
+
+            function closeDialog(dialogId) {
+                // Hide the dialog by adding the 'hidden' class
+                const dialog = document.getElementById(dialogId);
+                dialog.classList.add('hidden');
+            }
+
+            function showCancelDialog() {
+                // Close the confirmation dialog
+                closeDialog('confirmDialog');
+
+                // Show the success dialog
+                const cancelDialog = document.getElementById('cancelDialog');
+                cancelDialog.classList.remove('hidden');
+            }
+        </script>
+
+        @if (session('success'))
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    // Automatically show the success dialog after page load if session success exists
+                    showCancelDialog();
+                });
+            </script>
+        @endif
+
+        <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
 
 </html>

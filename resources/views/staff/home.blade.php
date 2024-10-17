@@ -11,6 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -35,48 +36,43 @@
 
         <!-- ANNOUNCEMENTS CONTAINER -->
         <div class="group3">
+            @foreach ($announcements as $announcement)
+                <h1>{{ $announcement->title }}</h1>
+                <h2>{{ $announcement->description }}</h2>
+            @endforeach
+
         </div>
     </div>
 
     <!-- ANNOUNCEMENT FORM CONTAINER -->
     <div id="ctnannouncementform">
-        <form>
+        <form action="{{ route('home-sw.post') }}" method="post">
+            @csrf
             <div class="groupA" id="formheader">
                 <span>New announcement</span>
                 <button type="button" id="btnhideannouncement" onclick="hideannouncementform()">
                     <i class="fas fa-xmark"></i>
                 </button>
             </div>
+
             <div class="groupB">
-                <div class="groupB1">
-                    <label class="lbloption">Recipient</label>
-                    <div class="formoptions">
-                        <label for="radall">
-                            <input type="radio" id="radall" name="recipient" checked>
-                            All
-                        </label>
-                        <label for="radscholars">
-                            <input type="radio" id="radscholars" name="recipient">
-                            Scholars
-                        </label>
-                        <label for="radstaff"><input type="radio" id="radstaff" name="recipient">
-                            Staff</label>
-                        <label for="radspecific">
-                            <input type="radio" id="radspecific" name="recipient">
-                            Specific Person
-                        </label>
-                        <div>
-                            <input type="text" placeholder="enter name" id="inrcpname" required>
-                        </div>
-                    </div>
+                <!-- Multiple selection of recipients with Select2 -->
+                <div class="form-group">
+                    <label class="lbloption" for="recipients">Select Recipients:</label>
+                    <select class="form-control" name="recipients[]" id="recipients" multiple="multiple">
+                        <option value="all">All Users</option>
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->caseCode }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="groupB2">
                     <label class="lbloption">Subject</label>
-                    <input type="text" id="insubject" placeholder="enter subject" required>
+                    <input type="text" name="title" id="insubject" placeholder="enter subject" required>
                 </div>
                 <div class="groupB3">
                     <label class="lbloption">Message</label>
-                    <textarea id="inmessage" placeholder="type here..." required></textarea>
+                    <textarea id="inmessage" name="description" placeholder="type here..." required></textarea>
                 </div>
                 <div class="groupB3">
                     <button type="submit" id="btnpost">Post</button>
@@ -86,6 +82,17 @@
     </div>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/toggleannouncementform.js') }}"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        // Initialize Select2 on the recipients dropdown
+        $(document).ready(function() {
+            $('.form-control').select2();
+        });
+    </script>
 </body>
 
 </html>

@@ -249,15 +249,6 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
-    public function showHome()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.home');
-        }
-
-        return redirect()->route('login');
-    }
-
     public function showDashboard()
     {
         if (Auth::guard('staff')->check()) {

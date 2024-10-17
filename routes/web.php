@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Scholar\CommunityController;
 use App\Http\Controllers\Scholar\HomeController;
 use App\Http\Controllers\Scholar\LoginController;
 use Illuminate\Support\Facades\Route;
@@ -24,10 +26,7 @@ Route::prefix('applicant')->group(function () {
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/csform', 'scholar.csform')->name('csform');
-    Route::view('/csactivities', 'scholar.csactivities')->name('csactivities');
     Route::view('/csattendance', 'scholar.csattendance')->name('csattendance');
-    Route::view('/csdashboard', 'scholar.csdashboard')->name('csdashboard');
-    Route::view('/csdetails', 'scholar.csdetails')->name('csdetails');
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/lteinfo', 'scholar.lteinfo')->name('lteinfo');
     Route::view('/schumanities', 'scholar.schumanities')->name('schumanities');
@@ -59,15 +58,27 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     // fixed na gradesubmission sa page ----------------------------------------------------------------------------------
     // pero dagdagan ng restriction pag nakapaginput na ng 1st sem 2nd sem sa isang academic year
 
-
+    // fixed
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
 
+    // wala pa
     Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
+
+    // cs
+    Route::get('/csactivities', [CommunityController::class, 'showCSActivities'])->name('csactivities');
+    Route::get('/csdetails/{csid}', [CommunityController::class, 'showCSDetails'])->name('csdetails');
+    Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
+    Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
+    Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
+
+    // sa sms or email ba
+    Route::post('/update-notification-preference', [ScholarController::class, 'updateNotificationPreference'])->name('update.notification.preference');
 });
 
 
 Route::view('chartjs', 'chartjs');
+
 
 
 // routing still for scholars page forms with logic to send to the database
@@ -83,13 +94,18 @@ Route::prefix('scholar')->controller(LoginController::class)->group(function () 
 });
 
 
+// announcement
+Route::get('staff/home', [AnnouncementController::class, 'showHome'])->name('home-sw');
+Route::post('staff/home', [AnnouncementController::class, 'storeAnnouncement'])->name('home-sw.post');
+
+
 
 Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/accountsw', 'showAccountSW')->name('account-sw');
     Route::get('/accountsa', 'showAccountSA')->name('account-sa');
     Route::get('/applicants', 'showApplicants')->name('applicants');
     Route::get('/applicationforms', 'showApplicationForms')->name('applicationforms');
-    Route::get('/home', 'showHome')->name('home-sw');
+
     Route::get('/login', 'showLogin')->name('login-sw');
     Route::get('/listcollege', 'showScholarsCollege')->name('scholars-college');
     Route::get('/listelementary', 'showScholarsElem')->name('scholars-elementary');
