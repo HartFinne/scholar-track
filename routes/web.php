@@ -110,6 +110,8 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::post('/hcattendancesystem/{hcid}', 'saveattendance')->name('savehcattendance');
     Route::post('/humanitiesclass/{hcid}', 'viewhcattendees')->name('viewhcattendees');
     Route::get('/humanitiesclass/{hcid}-attendees', 'viewattendeeslist')->name('viewattendeeslist');
+    Route::get('/humanitiesclass/{hcaid}', 'checkouthc')->name('checkouthc');
+    Route::get('/humanitiesclass/save/{hcid}', 'savehc')->name('savehc');
     Route::post('/managehc/{hcid}', 'exitattendancesystem')->name('exitattendancesystem');
 
     Route::get('/penalty', 'showPenalty')->name('penalty');

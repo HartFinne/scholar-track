@@ -67,8 +67,10 @@
                             <td class="text-center align-middle">{{ $class->hcdate }}</td>
                             <td class="text-center align-middle">{{ $class->totalattendees }}</td>
                             <td class="text-center align-middle">
-                                <a href="{{ route('attendancesystem', $class->hcid) }}">Open Attendance System</a>
-                                <a href="{{ route('viewattendeeslist', $class->hcid) }}">View Details</a>
+                                <a href="{{ route('attendancesystem', $class->hcid) }} " class="btn btn-primary">Open
+                                    Attendance System</a>
+                                <a href="{{ route('viewattendeeslist', $class->hcid) }}" class="btn btn-primary">View
+                                    Details</a>
                             </td>
                         </tr>
                     @endforeach

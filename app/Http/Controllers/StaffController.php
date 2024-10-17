@@ -607,4 +607,54 @@ class StaffController extends Controller
                 ->with('error', 'Access failed: ' . $e->getMessage());
         }
     }
+
+    public function savehc($hcid)
+    {
+        try {
+            DB::beginTransaction();
+            // Perform a mass update directly
+            hcattendance::where('hcid', $hcid)
+                ->whereNull('timeout')
+                ->update(['timeout' => Carbon::now(new \DateTimeZone('Asia/Manila'))]);
+
+            DB::commit();
+
+            return $this->viewattendeeslist($hcid)->with('success', 'Checkout was successful.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->viewattendeeslist($hcid)->with('error', 'Checkout Failed: ' . $e->getMessage());
+        }
+    }
+
+    public function checkouthc($hcaid)
+    {
+        try {
+            DB::beginTransaction();
+
+            $attendee = hcattendance::findOrFail($hcaid);
+            $event = humanitiesclass::findOrFail($attendee->hcid);
+
+            if ($attendee->timeout == NULL) {
+
+                $timeout = Carbon::now(new \DateTimeZone('Asia/Manila'));
+                $newhcstatus = 'Left Early';
+                $tardinessduration = $timeout->diffInMinutes($event->hcendtime, true);
+
+                $attendee->update([
+                    'timeout' => $timeout,
+                    'tardinessduration' => $tardinessduration,
+                    'hcastatus' => $newhcstatus,
+                ]);
+
+                DB::commit();
+                return $this->viewattendeeslist($attendee->hcid)->with('success', 'Checkout was successful.');
+            } else {
+                return $this->viewattendeeslist($attendee->hcid)->with('error', 'Action cannot be done.');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return $this->viewattendeeslist($attendee->hcid)->with('error', 'Checkout Failed: ' . $e->getMessage());
+        }
+    }
 }

@@ -39,10 +39,7 @@
             <span class="maintitle">HUMANITIES CLASS ATTENDANCE</span>
         </div>
 
-        <div class="ctndatetime">
-            <span>Date: <strong>{{ $event->hcdate }}</strong></span>
-            <span>Start Time: <strong>{{ $event->hcstarttime }}</strong></span>
-
+        <div class="message">
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
                     {{ session('success') }}
@@ -60,6 +57,28 @@
 
         <div class="ctnform">
             <form method="POST" action="{{ route('savehcattendance', $event->hcid) }}">
+                <div class="groupB">
+                    <div class="groupB1">
+                        <div class="groupB2">
+                            <span class="infolabel">Topic</span>
+                            <span>: <strong>{{ $event->topic }}</strong></span>
+                        </div>
+                        <div class="groupB2">
+                            <span class="infolabel">Date</span>
+                            <span>: <strong>{{ $event->hcdate }}</strong></span>
+                        </div>
+                    </div>
+                    <div class="groupB1">
+                        <div class="groupB2">
+                            <span class="infolabel">Start Time</span>
+                            <span>: <strong>{{ $event->hcstarttime }}</strong></span>
+                        </div>
+                        <div class="groupB2">
+                            <span class="infolabel">End Time</span>
+                            <span>: <strong>{{ $event->hcendtime }}</strong></span>
+                        </div>
+                    </div>
+                </div>
                 @csrf
                 <div class="searchbar">
                     <span id="searchlabel">Search Name</span>

@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/hcdetails.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -30,15 +31,18 @@
                 <input type="search" placeholder="Search" id="insearch" required>
                 <button type="submit" id="btnsearch"><i class="fas fa-magnifying-glass"></i></button>
             </form>
-            <a id="btngoback" href="{{ url()->previous() }}">Go back</a>
+            <div>
+                <a id="btnsave" href="{{ route('savehc', $event->hcid) }}">Mark as Done</a>
+                <a id="btngoback" href="{{ route('attendancesystem', $event->hcid) }}">Go back</a>
+            </div>
         </div>
 
-        {{-- @if (session('success'))
+        @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        @endif --}}
+        @endif
 
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
@@ -47,12 +51,27 @@
             </div>
         @endif
 
-        <div>
-            <span class="label">Topic: </span><span class="data">{{ $event->topic }}</span><br>
-            <span class="label">Date: </span><span class="data">{{ $event->hcdate }}</span><br>
-            <span class="label">Start Time: </span><span class="data">{{ $event->hcstarttime }}</span><br>
-            <span class="label">End Time: </span><span class="data">{{ $event->hcendtime }}</span><br>
-            <span class="label">Total Attendees: </span><span class="data">{{ $event->totalattendees }}</span>
+        <div class="groupB">
+            <div class="groupB1">
+                <span class="label">Topic</span>
+                <span class="data">: {{ $event->topic }}</span>
+            </div>
+            <div class="groupB1">
+                <span class="label">Date</span>
+                <span class="data">: {{ $event->hcdate }}</span>
+            </div>
+            <div class="groupB1">
+                <span class="label">Start Time</span>
+                <span class="data">: {{ $event->hcstarttime }}</span>
+            </div>
+            <div class="groupB1">
+                <span class="label">End Time</span>
+                <span class="data">: {{ $event->hcendtime }}</span>
+            </div>
+            <div class="groupB1">
+                <span class="label">Total Attendees</span>
+                <span class="data">: {{ $event->totalattendees }}</span>
+            </div>
         </div>
 
         <div class="ctntable table-responsive">
@@ -79,7 +98,8 @@
                             <td class="text-center align-middle">{{ $attendee->tardinessduration }}</td>
                             <td class="text-center align-middle">{{ $attendee->hcastatus }}</td>
                             <td class="text-center align-middle">
-                                <button>Check-out</button>
+                                <a href="{{ route('checkouthc', $attendee->hcaid) }} "
+                                    class="btn btn-danger">Check-out</a>
                             </td>
                         </tr>
                     @endforeach
