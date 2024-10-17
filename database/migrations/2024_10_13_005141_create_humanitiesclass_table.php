@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('humanitiesclass', function (Blueprint $table) {
             $table->increments('hcid');
             $table->string('topic', 255);
-            $table->date('hcdate')->default(DB::raw('CURRENT_DATE'));
+            $table->date('hcdate');
             $table->time('hcstarttime');
             $table->time('hcendtime')->nullable();
             $table->smallInteger('totalattendees')->default(0);

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Scholar\CommunityController;
 use App\Http\Controllers\Scholar\HomeController;
 use App\Http\Controllers\Scholar\LoginController;
 use Illuminate\Support\Facades\Route;
@@ -24,10 +25,7 @@ Route::prefix('applicant')->group(function () {
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/csform', 'scholar.csform')->name('csform');
-    Route::view('/csactivities', 'scholar.csactivities')->name('csactivities');
     Route::view('/csattendance', 'scholar.csattendance')->name('csattendance');
-    Route::view('/csdashboard', 'scholar.csdashboard')->name('csdashboard');
-    Route::view('/csdetails', 'scholar.csdetails')->name('csdetails');
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/lteinfo', 'scholar.lteinfo')->name('lteinfo');
     Route::view('/schumanities', 'scholar.schumanities')->name('schumanities');
@@ -59,11 +57,19 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     // fixed na gradesubmission sa page ----------------------------------------------------------------------------------
     // pero dagdagan ng restriction pag nakapaginput na ng 1st sem 2nd sem sa isang academic year
 
-
+    // fixed
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
 
+    // wala pa
     Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
+
+    // cs
+    Route::get('/csactivities', [CommunityController::class, 'showCSActivities'])->name('csactivities');
+    Route::get('/csdetails/{csid}', [CommunityController::class, 'showCSDetails'])->name('csdetails');
+    Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
+    Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
+    Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
 });
 
 
