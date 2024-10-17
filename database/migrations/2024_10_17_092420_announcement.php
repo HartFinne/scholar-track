@@ -16,7 +16,7 @@ return new class extends Migration
             $table->increments(column: 'announcementID');
             $table->string('title', 100);
             $table->text('description');
-            $table->string('image', 255);
+            $table->string('image', 255)->nullable();  // Make the image field nullable
             $table->timestamps();
         });
     }

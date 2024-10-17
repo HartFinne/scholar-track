@@ -71,10 +71,14 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
     Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
     Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
+
+    // sa sms or email ba
+    Route::post('/update-notification-preference', [ScholarController::class, 'updateNotificationPreference'])->name('update.notification.preference');
 });
 
 
 Route::view('chartjs', 'chartjs');
+
 
 
 // routing still for scholars page forms with logic to send to the database
@@ -92,7 +96,7 @@ Route::prefix('scholar')->controller(LoginController::class)->group(function () 
 
 // announcement
 Route::get('staff/home', [AnnouncementController::class, 'showHome'])->name('home-sw');
-Route::post('staff/home', [AnnouncementController::class, 'storeAnnouncemnt'])->name('home-sw.post');
+Route::post('staff/home', [AnnouncementController::class, 'storeAnnouncement'])->name('home-sw.post');
 
 
 

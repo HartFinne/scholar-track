@@ -18,6 +18,28 @@ use App\Models\grades;
 class ScholarController extends Controller
 {
 
+    //for sms or email
+    public function updateNotificationPreference(Request $request)
+    {
+        $request->validate([
+            'notification_preference' => ['required', 'in:sms,email'],
+        ]);
+
+        // Check if the user is authenticated
+        $user = Auth::user(); // Ensure this returns an authenticated user instance
+        if ($user) {
+            // Update the notification_preference using the Query Builder
+            DB::table('users')
+                ->where('id', $user->id)
+                ->update(['notification_preference' => $request->notification_preference]);
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+    }
+
+
     // for manage profile
     public function showProfile()
     {
@@ -33,38 +55,47 @@ class ScholarController extends Controller
     {
         $validatedData = $request->validate([
             'scEmail' => 'required|email|max:255',
-            'scPhoneNum' => 'required|regex:/^[0-9]{10,11}$/',
+            'scPhoneNum' => 'required|regex:/^[0-9]{12}$/',
             'scResidential' => 'required|string|max:255',
             'scGuardianName' => 'required|string|max:255',
             'scRelationToGuardian' => 'required|string|max:255',
             'scGuardianEmailAddress' => 'required|email|max:255',
-            'scGuardianPhoneNumber' => 'required|regex:/^[0-9]{10,11}$/',
+            'scGuardianPhoneNumber' => 'required|regex:/^[0-9]{12}$/',
         ]);
 
-        // Get authenticated user
-        $user = User::with(['basicInfo', 'education', 'addressInfo'])
-            ->where('id', Auth::id())
-            ->first();
+        try {
+            // Get authenticated user
+            $user = User::with(['basicInfo', 'education', 'addressInfo'])
+                ->where('id', Auth::id())
+                ->first();
 
-        // Update user's email and phone number
-        $user->scEmail = $validatedData['scEmail'];
-        $user->scPhoneNum = $validatedData['scPhoneNum'];
-        $user->save(); // Save the User model
+            // Update user's email and phone number
+            $user->scEmail = $validatedData['scEmail'];
+            $user->scPhoneNum = $validatedData['scPhoneNum'];
+            $user->save(); // Save the User model
 
-        // Update address information
-        $user->addressInfo->scResidential = $validatedData['scResidential'];
-        $user->addressInfo->save(); // Save AddressInfo model
+            // Update address information
+            $user->addressInfo->scResidential = $validatedData['scResidential'];
+            $user->addressInfo->save(); // Save AddressInfo model
 
-        // Update basic info (Guardian details)
-        $user->basicInfo->scGuardianName = $validatedData['scGuardianName'];
-        $user->basicInfo->scRelationToGuardian = $validatedData['scRelationToGuardian'];
-        $user->basicInfo->scGuardianEmailAddress = $validatedData['scGuardianEmailAddress'];
-        $user->basicInfo->scGuardianPhoneNumber = $validatedData['scGuardianPhoneNumber'];
-        $user->basicInfo->save(); // Save BasicInfo model
+            // Update basic info (Guardian details)
+            $user->basicInfo->scGuardianName = $validatedData['scGuardianName'];
+            $user->basicInfo->scRelationToGuardian = $validatedData['scRelationToGuardian'];
+            $user->basicInfo->scGuardianEmailAddress = $validatedData['scGuardianEmailAddress'];
+            $user->basicInfo->scGuardianPhoneNumber = $validatedData['scGuardianPhoneNumber'];
+            $user->basicInfo->save(); // Save BasicInfo model
 
-        // Redirect with success message
-        return redirect()->route('manageprofile')->with('success', 'Profile updated successfully!');
+            // Redirect with success message
+            return redirect()->route('manageprofile')->with('success', 'Profile updated successfully!');
+        } catch (\Exception $e) {
+            // Log the error for debugging purposes
+            Log::error('Profile update failed: ' . $e->getMessage());
+
+            // Redirect with failure message
+            return redirect()->route('manageprofile')->with('failure', 'Failed to update profile: ' . $e->getMessage());
+        }
     }
+
 
     // for viewing page the change password
     public function changePassword()

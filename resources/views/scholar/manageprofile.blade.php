@@ -21,8 +21,19 @@
     <!-- Include Navbar -->
     @include('partials._navbar')
 
+    <x-alert></x-alert>
+    {{-- change --}}
     <!-- MAIN CONTENT -->
     <div class="ctn-main">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <a href="{{ route('schome') }}" class="goback">&lt Go back</a>
 
         <form action="{{ route('manageprofile.post') }}" method="POST">
@@ -94,7 +105,7 @@
                         <div class="label">Indigenous Group</div>
                         <div class="value">: <span>{{ $data->basicInfo->scIndigenousgroup }}</span></div>
 
-                        {{-- change --}}
+
                         <div class="label">Email Address</div>
                         <div class="value">:
                             <input type="email" name="scEmail" value="{{ old('scEmail', $data->scEmail) }}"
