@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Scholar\CommunityController;
 use App\Http\Controllers\Scholar\HomeController;
 use App\Http\Controllers\Scholar\LoginController;
@@ -89,13 +90,18 @@ Route::prefix('scholar')->controller(LoginController::class)->group(function () 
 });
 
 
+// announcement
+Route::get('staff/home', [AnnouncementController::class, 'showHome'])->name('home-sw');
+Route::post('staff/home', [AnnouncementController::class, 'storeAnnouncemnt'])->name('home-sw.post');
+
+
 
 Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/accountsw', 'showAccountSW')->name('account-sw');
     Route::get('/accountsa', 'showAccountSA')->name('account-sa');
     Route::get('/applicants', 'showApplicants')->name('applicants');
     Route::get('/applicationforms', 'showApplicationForms')->name('applicationforms');
-    Route::get('/home', 'showHome')->name('home-sw');
+
     Route::get('/login', 'showLogin')->name('login-sw');
     Route::get('/listcollege', 'showScholarsCollege')->name('scholars-college');
     Route::get('/listelementary', 'showScholarsElem')->name('scholars-elementary');
