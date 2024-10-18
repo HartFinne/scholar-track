@@ -15,19 +15,31 @@ class lte extends Model
 
     protected $fillable = [
         'caseCode',
-        'condition',
+        'conditionid',
+        'eventtype',
         'dateissued',
         'deadline',
         'datesubmitted',
         'reason',
         'explanation',
         'proof',
-        'ltestatus'
+        'ltestatus',
+        'workername'
     ];
 
     // Define inverse relationship to account
     public function user()
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
+
+    public function csattendance()
+    {
+        return $this->belongsTo(csattendance::class, 'conditionid', 'csaid');
+    }
+
+    public function hcattendance()
+    {
+        return $this->belongsTo(hcattendance::class, 'conditionid', 'hcaid');
     }
 }

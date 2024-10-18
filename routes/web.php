@@ -29,13 +29,19 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/csdashboard', 'scholar.csdashboard')->name('csdashboard');
     Route::view('/csdetails', 'scholar.csdetails')->name('csdetails');
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
-    Route::view('/lteinfo', 'scholar.lteinfo')->name('lteinfo');
-    Route::view('/schumanities', 'scholar.schumanities')->name('schumanities');
-    Route::view('/sclte', 'scholar.sclte')->name('sclte');
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
     Route::view('/schome', 'scholar.schome')->name('schome');
+
+    Route::get('/schumanities', [ScholarController::class, 'showHumanitiesClass'])->name('schumanities');
+
+    // LTE
+    Route::get('/sclte', [ScholarController::class, 'showLTE'])->name('sclte');
+    Route::get('/lteinfo/{lid}', [ScholarController::class, 'showLTEinfo'])->name('lteinfo');
+    // Route::get('/lteinfo-absent/{lid}', [ScholarController::class, 'showLTEinfoabsent'])->name('lteinfo-absent');
+    // Route::get('/lteinfo-late/{lid}', [ScholarController::class, 'showLTEinfolate'])->name('lteinfo-late');
+    // Route::get('/lteinfo-leftearly/{lid}', [ScholarController::class, 'showLTEinfoleftearly'])->name('lteinfo-leftearly');
 
     // fixed about 70%
     Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');

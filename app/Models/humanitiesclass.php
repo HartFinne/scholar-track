@@ -16,8 +16,13 @@ class humanitiesclass extends Model
     protected $fillable = [
         'topic',
         'hcdate',
+        'hclocation',
         'hcstarttime',
         'hcendtime',
         'totalattendees'
     ];
+    public function attendances()
+    {
+        return $this->hasMany(hcattendance::class, 'hcid', 'hcid');
+    }
 }

@@ -32,4 +32,14 @@ class hcattendance extends Model
     {
         return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
     }
+
+    public function humanitiesClass()
+    {
+        return $this->belongsTo(HumanitiesClass::class, 'hcid', 'hcid');
+    }
+
+    public function lte()
+    {
+        return $this->hasOne(lte::class, 'conditionid', 'hcaid');
+    }
 }

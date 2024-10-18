@@ -9,11 +9,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\ScEducation;
 use App\Models\penalty;
 use App\Models\grades;
+use App\Models\hcattendance;
+use App\Models\humanitiesclass;
+use App\Models\communityservice;
+use App\Models\csattendance;
+use App\Models\lte;
 
 class ScholarController extends Controller
 {
@@ -187,5 +193,62 @@ class ScholarController extends Controller
 
         // Pass the grade data and academic year to the view
         return view('scholar.gradesinfo', compact('grade', 'academicYear'));
+    }
+
+    // HUMANITIES CLASS
+    public function showHumanitiesClass()
+    {
+        $scholar = Auth::user();
+
+        $totalattendance = hcattendance::where('caseCode', $scholar->caseCode)->count();
+
+        $totaltardiness = hcattendance::where('caseCode', $scholar->caseCode)->sum('tardinessduration');
+
+        $totalabsences = hcattendance::where('caseCode', $scholar->caseCode)
+            ->where('hcastatus', 'Absent')
+            ->count();
+
+        $classes = HumanitiesClass::with(['attendances' => function ($query) use ($scholar) {
+            $query->where('caseCode', $scholar->caseCode);
+        }])->get();
+
+        return view('scholar.schumanities', compact('classes', 'totalattendance', 'totaltardiness', 'totalabsences'));
+    }
+
+    public function showLTE()
+    {
+        $scholar = Auth::user();
+        $noresponseletters = lte::with(['hcattendance', 'csattendance'])
+            ->where('caseCode', $scholar->caseCode)->where('ltestatus', "No Response")->get();
+        $letters = lte::where('caseCode', $scholar->caseCode)
+            ->whereIn('ltestatus', ['To Review', 'Excused', 'Unexcused'])
+            ->get();
+
+        return view('scholar.sclte', compact('noresponseletters', 'letters'));
+    }
+
+    public function showLTEinfo($lid)
+    {
+        $letter = lte::where('lid', $lid)->first();
+
+        $scholar = User::with(['basicInfo', 'education'])
+            ->where('id', Auth::id())
+            ->first();
+
+        if ($letter->eventtype == 'Humanities Class') {
+            $violation = hcattendance::where('hcaid', $letter->conditionid)->first();
+            $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
+
+            if ($violation->hcastatus == "Absent") {
+                return view('scholar.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
+            } elseif ($violation->hcastatus == "Late") {
+                return view('scholar.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
+            } elseif ($violation->hcastatus == "Left Early") {
+                return view('scholar.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+            }
+        }
+        // elseif ($letter->eventtype == 'Community Service') {
+        //     $violation = csattendance::where('csaid', $letter->conditionid);
+        // }
     }
 }

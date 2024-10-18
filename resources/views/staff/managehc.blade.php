@@ -86,8 +86,12 @@
             <button type="button" id="btncloseform" onclick="toggleform()"><i class="fas fa-xmark"></i></button>
         </div>
         <div class="groupB">
-            <span class="label">Topic</span>
-            <input type="text" class="data" name="topic" required>
+            <span class="label">Title</span>
+            <input type="text" class="data" name="topic" placeholder="ex: 1st Humanities Class" required>
+        </div>
+        <div class="groupB">
+            <span class="label">Location</span>
+            <input type="text" class="data" name="hclocation" required>
         </div>
         <div class="groupB">
             <span class="label">Start Time</span>

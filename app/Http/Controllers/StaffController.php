@@ -9,6 +9,7 @@ use App\Models\communityservice;
 use App\Models\csregistration;
 use App\Models\humanitiesclass;
 use App\Models\hcattendance;
+use App\Models\lte;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -468,7 +469,9 @@ class StaffController extends Controller
     {
         $request->validate([
             'topic' => 'required|string|max:255',
+            'hclocation' => 'required|string|max:255',
             'hcstarttime' => 'required',
+            'hcendtime' => 'required',
         ]);
 
         try {
@@ -478,6 +481,7 @@ class StaffController extends Controller
             $event = humanitiesclass::create([
                 'topic' => $request->topic,
                 'hcdate' => $hcdate,
+                'hclocation' => $request->hclocation,
                 'hcstarttime' => $request->hcstarttime,
                 'hcendtime' => $request->hcendtime,
                 'totalattendees' => $totalattendees,
@@ -547,6 +551,29 @@ class StaffController extends Controller
                 humanitiesclass::where('hcid', $hcid)->increment('totalattendees', 1);
 
                 DB::commit();
+
+                if ($hcstatus == 'Late') {
+                    $worker = Auth::guard('staff')->user();
+                    $attendee = hcattendance::where('hcid', $hcid)
+                        ->where('caseCode', $request->scholar)
+                        ->first();
+
+                    lte::create([
+                        'caseCode' => $attendee->caseCode,
+                        'conditionid' => $attendee->hcaid,
+                        'eventtype' => "Humanities Class",
+                        'dateissued' => $event->hcdate,
+                        'deadline' => Carbon::parse($event->hcdate)->addDays(3),
+                        'datesubmitted' => NULL,
+                        'reason' => NULL,
+                        'explanation' => NULL,
+                        'proof' => NULL,
+                        'ltestatus' => 'No Response',
+                        'workername' => strtoupper($worker->name) . ", RSW",
+                    ]);
+
+                    DB::commit();
+                }
 
                 return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
             } catch (\Exception $e) {
@@ -633,9 +660,9 @@ class StaffController extends Controller
 
             $attendee = hcattendance::findOrFail($hcaid);
             $event = humanitiesclass::findOrFail($attendee->hcid);
+            $worker = Auth::guard('staff')->user();
 
             if ($attendee->timeout == NULL) {
-
                 $timeout = Carbon::now(new \DateTimeZone('Asia/Manila'));
                 $newhcstatus = 'Left Early';
                 $tardinessduration = $timeout->diffInMinutes($event->hcendtime, true);
@@ -647,10 +674,27 @@ class StaffController extends Controller
                 ]);
 
                 DB::commit();
-                return $this->viewattendeeslist($attendee->hcid)->with('success', 'Checkout was successful.');
-            } else {
-                return $this->viewattendeeslist($attendee->hcid)->with('error', 'Action cannot be done.');
+
+                if ($attendee->hcastatus != 'Late') {
+                    lte::create([
+                        'caseCode' => $attendee->caseCode,
+                        'conditionid' => $attendee->hcaid,
+                        'eventtype' => "Humanities Class",
+                        'dateissued' => $event->hcdate,
+                        'deadline' => Carbon::parse($event->hcdate)->addDays(3),
+                        'datesubmitted' => NULL,
+                        'reason' => NULL,
+                        'explanation' => NULL,
+                        'proof' => NULL,
+                        'ltestatus' => 'No Response',
+                        'workername' => strtoupper($worker->name) . ", RSW",
+                    ]);
+                }
+
+                DB::commit();
             }
+
+            return $this->viewattendeeslist($attendee->hcid)->with('success', 'Checkout was successful.');
         } catch (\Exception $e) {
             DB::rollBack();
 

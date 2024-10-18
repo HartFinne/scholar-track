@@ -39,12 +39,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>09/11/2024</td>
-                        <td>Absent in Community Service</td>
-                        <td>09/14/2024</td>
-                        <td><a href="{{ route('lteinfo') }}" id="view">View</a></td>
-                    </tr>
+                    @foreach ($noresponseletters as $letter)
+                        <tr>
+                            <td>{{ $letter->dateissued }}</td>
+                            @if ($letter->eventtype == 'Humanities Class')
+                                <td>{{ $letter->hcattendance->hcastatus }} in {{ $letter->eventtype }}</td>
+                            @endif
+                            <td>{{ $letter->deadline }}</td>
+                            <td>
+                                <a href="{{ route('lteinfo', $letter->lid) }}" id="view">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -53,7 +59,7 @@
             <p class="table-title">Letter Status</p>
             <div class="filter">
                 <button class="filter-btn">All</button>
-                <button class="filter-btn">Pending</button>
+                <button class="filter-btn">To Review</button>
                 <button class="filter-btn">Excused</button>
                 <button class="filter-btn">Unexcused</button>
             </div>
@@ -70,12 +76,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>09/12/2024</td>
-                        <td>Absent in Humanities Class</td>
-                        <td>PENDING</td>
-                        <td><a href="{{ route('subtleinfo') }}" id="view">View</a></td>
-                    </tr>
+                    @foreach ($letters as $letter)
+                        <tr>
+                            <td>{{ $letter->datesubmitted }}</td>
+                            <td>{{ $letter->reason }}</td>
+                            <td>{{ $letter->ltestatus }}</td>
+                            <td><a href="{{ route('subtleinfo') }}" id="view">View</a></td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

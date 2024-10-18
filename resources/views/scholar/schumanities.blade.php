@@ -31,15 +31,15 @@
         <div class="attendance-dashboard">
             <div class="total-attendance">
                 <h5>TOTAL ATTENDANCE</h5>
-                <h4>0</h4>
+                <h4>{{ $totalattendance }}</h4>
             </div>
             <div class="total-tardiness">
                 <h5>TOTAL TARDINESS</h5>
-                <h4>0</h4>
+                <h4>{{ $totaltardiness }}</h4>
             </div>
             <div class="total-absences">
                 <h5>TOTAL ABSENCES</h5>
-                <h4>0</h4>
+                <h4>{{ $totalabsences }}</h4>
             </div>
         </div>
 
@@ -48,9 +48,10 @@
                 <p class="attendance-title">Attendance Status</p>
                 <div class="filter">
                     <button class="filter-btn">All</button>
-                    <button class="filter-btn">Pending</button>
-                    <button class="filter-btn">Excused</button>
-                    <button class="filter-btn">Unexcused</button>
+                    <button class="filter-btn">Present</button>
+                    <button class="filter-btn">Late</button>
+                    <button class="filter-btn">Left Early</button>
+                    <button class="filter-btn">Absent</button>
                 </div>
             </div>
             <div class="search-container">
@@ -58,29 +59,28 @@
                 <i class="fa-solid fa-magnifying-glass"></i>
             </div>
         </div>
-
-        <div class="attendance-card">
-            <div class="class-img">
-                <img src="{{ asset('images/account.png') }}" alt="">
-            </div>
-            <div class="attendance-details">
-                <div class="topic">
-                    <h5>TOPIC</h5>
-                    <hr>
-                </div>
-                <div class="details">
-                    <div class="date-time">
-                        <p>Date:</p>
-                        <p>Time:</p>
+        @foreach ($classes as $class)
+            @foreach ($class->attendances as $attendance)
+                <div class="attendance-card">
+                    <div class="attendance-details">
+                        <div class="topic">
+                            <h5>{{ $class->topic }}</h5>
+                            <hr>
+                        </div>
+                        <div class="details">
+                            <div class="date-time">
+                                <p>Date: {{ $class->hcdate }}</p>
+                                <p>Time: {{ $class->hcstarttime }}</p>
+                            </div>
+                            <div class="attendance-stat">
+                                <p>Time in: {{ $attendance->timein }}</p> <!-- Corrected from timeout to timein -->
+                                <p>Attendance Status: {{ $attendance->hcastatus }}</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="attendance-stat">
-                        <p>Time in:</p>
-                        <p>Attendance Status: <b>Present</b></p>
-                    </div>
                 </div>
-            </div>
-
-        </div>
+            @endforeach
+        @endforeach
     </div>
 
     <script src="{{ asset('js/scholar.js') }}"></script>

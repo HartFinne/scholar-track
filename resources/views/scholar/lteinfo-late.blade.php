@@ -27,18 +27,19 @@
         <a href="" class="goback">&lt Go back</a>
         <div class="text-center">
             <h1 class="sub-title">Letter of Explanation</h1>
-
         </div>
 
         <div class="lte">
             <h6 class="text-center fw-bold">Buddhist Compassion Relief Tzu Chi Foundation Philippines, Inc.</h6>
             <p class="text-center">Educational Assistance Program</p>
-            <p class="date" id="lte-date">Date</p>
+            <p class="date" id="lte-date">{{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}</p>
 
             <div class="receipient">
-                <p id="name">NAME</p>
-                <p id="casecode">CASE CODE</p>
-                <p id="school">SCHOOL</p>
+                <p id="name" style="line-height: 1;">{{ $scholar->basicInfo->scLastname }},
+                    {{ $scholar->basicInfo->scFirstname }}
+                    {{ $scholar->basicInfo->scMiddlename }}</p>
+                <p id="casecode" style="line-height: 0;">{{ $scholar->caseCode }}</p>
+                <p id="school" style="line-height: 1;">{{ $scholar->education->scSchoolName }}</p>
             </div>
 
             <div class="lte-subject">
@@ -50,8 +51,10 @@
             </div>
             <div class="lte-body">
                 <p>
-                    Last [DATE], was the [EVENT] that took place in the [LOCATION]. Upon checking the attendance,
-                    we noticed that you did not participate despite the Foundation's effort to inform you beforehand.
+                    Today, {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, the
+                    {{ $eventinfo->topic }} took place at {{ $eventinfo->hclocation }}. Upon reviewing the attendance,
+                    we noticed that you arrived late to the event, despite the Foundation's prior communications and
+                    efforts to ensure your timely participation.
                 </p>
                 <p>
                     In connection with this, you are advised to <b>submit your written explanation letter within
@@ -66,7 +69,7 @@
                     <div class="signature">
                         <p>SIGNATURE</p>
                     </div>
-                    <p><b>Social Worker's Name</b><br>Social Welfare Officer</p>
+                    <p><b>{{ $letter->workername }}</b><br>Social Welfare Officer</p>
                 </div>
                 <div class="closing-2">
                     <p>Noted by:</p>

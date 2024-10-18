@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('lte', function (Blueprint $table) {
             $table->increments('lid');
-            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->string('condition', 150);
+            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->unsignedInteger('conditionid');
+            $table->string('eventtype', 50);
             $table->date('dateissued');
             $table->date('deadline');
             $table->date('datesubmitted')->nullable();
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->text('explanation')->nullable();
             $table->binary('proof')->nullable();
             $table->string('ltestatus', 25)->default('Pending');
+            $table->string('workername', 255);
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
