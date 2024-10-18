@@ -21,6 +21,8 @@
     <!-- Include Navbar -->
     @include('partials._navbar')
 
+    <x-alert />
+
     <!-- MAIN -->
     <div class="ctn-main">
         <a href="{{ route('schome') }}" class="goback">&lt Go back</a>
@@ -38,61 +40,74 @@
         </div>
 
         <div class="activity-container">
-            <div class="card">
-                <a href="{{ route('csdetails') }}">
-                    <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
-                    <div class="card-content">
-                        <p class="text-center fw-bold cs-title">TITLE</p>
-                        <p><i class="fa-solid fa-location-dot"></i>Activity Place</p>
-                        <p><i class="fa-solid fa-calendar-days"></i>Date</p>
-                        <p><i class="fa-solid fa-clock"></i>Time</p>
-                        <p><i class="fa-solid fa-user"></i>Facilitator</p><br>
-                        <p><i>Meeting Place & Call Time:</i></p>
-                        <p><i class="fa-solid fa-map-pin"></i>Meeting Place</p>
-                        <p><i class="fa-regular fa-clock"></i>Call Time</p>
-                    </div>
-                    <div class="num-vol">
-                        <p class="text-center fw-bold">No. of volunteers needed</p>
-                    </div>
-                </a>
-            </div>
-            <div class="card">
-                <a href="">
-                    <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
-                    <div class="card-content">
-                        <p class="text-center fw-bold cs-title">TITLE</p>
-                        <p><i class="fa-solid fa-location-dot"></i>Activity Place</p>
-                        <p><i class="fa-solid fa-calendar-days"></i>Date</p>
-                        <p><i class="fa-solid fa-clock"></i>Time</p>
-                        <p><i class="fa-solid fa-user"></i>Facilitator</p><br>
-                        <p><i>Meeting Place & Call Time:</i></p>
-                        <p><i class="fa-solid fa-map-pin"></i>Meeting Place</p>
-                        <p><i class="fa-regular fa-clock"></i>Call Time</p>
-                    </div>
-                    <div class="num-vol">
-                        <p class="text-center fw-bold">No. of volunteers needed</p>
-                    </div>
-                </a>
-            </div>
-            <div class="card">
-                <a href="">
-                    <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
-                    <div class="card-content">
-                        <p class="text-center fw-bold cs-title">TITLE</p>
-                        <p><i class="fa-solid fa-location-dot"></i>Activity Place</p>
-                        <p><i class="fa-solid fa-calendar-days"></i>Date</p>
-                        <p><i class="fa-solid fa-clock"></i>Time</p>
-                        <p><i class="fa-solid fa-user"></i>Facilitator</p><br>
-                        <p><i>Meeting Place & Call Time:</i></p>
-                        <p><i class="fa-solid fa-map-pin"></i>Meeting Place</p>
-                        <p><i class="fa-regular fa-clock"></i>Call Time</p>
-                    </div>
-                    <div class="num-vol">
-                        <p class="text-center fw-bold">No. of volunteers needed</p>
-                    </div>
-                </a>
-            </div>
+            @foreach ($activities as $activity)
+                <div class="card">
+                    @if (isset($registrations[$activity->csid]))
+                        {{-- If the user is registered for this activity, check the registration status --}}
+                        @if ($registrations[$activity->csid]['registatus'] === 'Cancelled')
+                            {{-- If the registration is cancelled, show a message and make it non-clickable --}}
+                            <div>
+                                <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
+                                <div class="card-content">
+                                    <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
+                                    <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>
+                                    <p><i class="fa-solid fa-calendar-days"></i>{{ $activity->eventdate }}</p>
+                                    <p><i class="fa-solid fa-clock"></i>{{ $activity->starttime }}</p>
+                                    <p><i class="fa-solid fa-user"></i>{{ $activity->facilitator }}</p><br>
+                                    <p><i>Meeting Place & Call Time:</i></p>
+                                    <p><i class="fa-solid fa-map-pin"></i>{{ $activity->meetingplace }}</p>
+                                    <p><i class="fa-regular fa-clock"></i>{{ $activity->calltime }}</p>
+                                </div>
+
+                                <div class="num-vol">
+                                    <p class="text-center fw-bold">You cancelled your registration for this activity and
+                                        cannot register again.</p>
+                                </div>
+                            </div>
+                        @else
+                            {{-- If the user is actively registered, show a non-clickable card --}}
+                            <div>
+                                <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
+                                <div class="card-content">
+                                    <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
+                                    <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>
+                                    <p><i class="fa-solid fa-calendar-days"></i>{{ $activity->eventdate }}</p>
+                                    <p><i class="fa-solid fa-clock"></i>{{ $activity->starttime }}</p>
+                                    <p><i class="fa-solid fa-user"></i>{{ $activity->facilitator }}</p><br>
+                                    <p><i>Meeting Place & Call Time:</i></p>
+                                    <p><i class="fa-solid fa-map-pin"></i>{{ $activity->meetingplace }}</p>
+                                    <p><i class="fa-regular fa-clock"></i>{{ $activity->calltime }}</p>
+                                </div>
+
+                                <div class="num-vol">
+                                    <p class="text-center fw-bold">You are already registered for this activity!</p>
+                                </div>
+                            </div>
+                        @endif
+                    @else
+                        {{-- If the user is not registered, make the card clickable --}}
+                        <a href="{{ route('csdetails', ['csid' => $activity->csid]) }}">
+                            <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
+                            <div class="card-content">
+                                <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
+                                <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>
+                                <p><i class="fa-solid fa-calendar-days"></i>{{ $activity->eventdate }}</p>
+                                <p><i class="fa-solid fa-clock"></i>{{ $activity->starttime }}</p>
+                                <p><i class="fa-solid fa-user"></i>{{ $activity->facilitator }}</p><br>
+                                <p><i>Meeting Place & Call Time:</i></p>
+                                <p><i class="fa-solid fa-map-pin"></i>{{ $activity->meetingplace }}</p>
+                                <p><i class="fa-regular fa-clock"></i>{{ $activity->calltime }}</p>
+                            </div>
+
+                            <div class="num-vol">
+                                <p class="text-center fw-bold">No. of volunteers needed {{ $activity->slotnum }}</p>
+                            </div>
+                        </a>
+                    @endif
+                </div>
+            @endforeach
         </div>
+
     </div>
 
     <script src="{{ asset('js/scholar.js') }}"></script>
