@@ -107,25 +107,21 @@ Route::post('staff/home', [AnnouncementController::class, 'storeAnnouncement'])-
 
 
 Route::prefix('staff')->controller(StaffController::class)->group(function () {
-    Route::get('/accountsw', 'showAccountSW')->name('account-sw');
-    Route::get('/accountsa', 'showAccountSA')->name('account-sa');
-    Route::get('/applicants', 'showApplicants')->name('applicants');
-    Route::get('/applicationforms', 'showApplicationForms')->name('applicationforms');
-
     Route::get('/login', 'showLogin')->name('login-sw');
+    // SCHOLAR OVERVIEW
+    Route::get('/scholars', 'showScholarsoverview')->name('scholars-overview');
     Route::get('/listcollege', 'showScholarsCollege')->name('scholars-college');
     Route::get('/listelementary', 'showScholarsElem')->name('scholars-elementary');
     Route::get('/listhighschool', 'showScholarsHS')->name('scholars-highschool');
     Route::get('/scholar/{id}', 'showScholarProfile')->name('scholar-viewinfo');
-    Route::get('/lte', 'showLTE')->name('lte');
-    // community service
+    // COMMUNITY SERVICE
     Route::get('/managecs', 'showCommunityService')->name('communityservice');
     Route::get('/openevents', 'showCSOpenEvents')->name('communityservice-open');
     Route::get('/closedevents', 'showCSClosedEvents')->name('communityservice-closed');
     Route::post('/managecs', 'createcsevent')->name('createcsevent');
     Route::post('/event-info/{csid}', 'updatecsevent')->name('updatecsevent');
     Route::get('/event-info/{csid}', 'showcseventinfo')->name('viewcseventinfo');
-    // humanities class
+    // HUMANITIES CLASS
     Route::get('/managehc', 'showHumanitiesClass')->name('humanitiesclass');
     Route::post('/managehc', 'createhc')->name('createhc');
     Route::get('/hcattendancesystem/{hcid}', 'showAttendanceSystem')->name('attendancesystem');
@@ -135,32 +131,40 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/humanitiesclass/{hcaid}', 'checkouthc')->name('checkouthc');
     Route::get('/humanitiesclass/save/{hcid}', 'savehc')->name('savehc');
     Route::post('/managehc/{hcid}', 'exitattendancesystem')->name('exitattendancesystem');
-
+    // PENALTY | LTE
     Route::get('/penalty', 'showPenalty')->name('penalty');
+    Route::get('/lte', 'showLTE')->name('lte');
+    // ALLOWANCE REQUESTS
+    Route::get('/regularallowance', 'showAllowanceRegular')->name('allowancerequests-regular');
+    Route::get('/specialallowance', 'showAllowanceSpecial')->name('allowancerequests-special');
+    // APPLICATION CRITERIA
+    Route::get('/applicationforms', 'showApplicationForms')->name('applicationforms');
     Route::get('/qualificationcollege', 'showQualiCollege')->name('qualification-college');
     Route::get('/qualificationelem', 'showQualiElem')->name('qualification-elementary');
     Route::get('/qualificationjhs', 'showQualiJHS')->name('qualification-juniorhigh');
     Route::get('/qualificationshs', 'showQualiSHS')->name('qualification-seniorhigh');
-    Route::get('/regularallowance', 'showAllowanceRegular')->name('allowancerequests-regular');
+    // RENEWAL
     Route::get('/renewal', 'showRenewal')->name('scholarshiprenewal');
     Route::get('/renewcollege', 'showRenewalCollege')->name('renewal-college');
     Route::get('/renewelementary', 'showRenewalElem')->name('renewal-elementary');
     Route::get('/renewhighschool', 'showRenewalHS')->name('renewal-highschool');
-    Route::get('/scholars', 'showScholars')->name('scholars-overview');
-    Route::get('/specialallowance', 'showAllowanceSpecial')->name('allowancerequests-special');
-    // admin
+    // SYSTEM ADMIN
     Route::get('/admdashboard', 'showDashboard')->name('dashboard');
     Route::get('/admscholars', 'showUsersScholar')->name('users-scholar');
     Route::get('/admstaff', 'showUserStaff')->name('users-staff');
     Route::get('/admapplicants', 'showUserApplicants')->name('users-applicant');
-    // user: staff
+    // USER: STAFF
+    Route::get('/accountsw', 'showAccountSW')->name('account-sw');
     Route::get('/staffinfo/{id}', 'showStaffInfo')->name('staff.view');
     Route::post('/staff/activate/{id}', 'activateStaff')->name('staff.activate');
     Route::post('/staff/deactivate/{id}', 'deactivateStaff')->name('staff.deactivate');
-    // user: scholar
+    // USER: SCHOLAR
+    Route::get('/accountsa', 'showAccountSA')->name('account-sa');
     Route::get('/scholarinfo/{id}', 'showScholarInfo')->name('scholar.view');
     Route::post('/scholar/activate/{id}', 'activateScholar')->name('scholar.activate');
     Route::post('/scholar/deactivate/{id}', 'deactivateScholar')->name('scholar.deactivate');
+    // USER: APPLICANTS
+    Route::get('/applicants', 'showApplicants')->name('applicants');
 });
 
 Route::prefix('staff')->controller(StaffAuthController::class)->group(function () {

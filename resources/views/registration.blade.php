@@ -216,8 +216,8 @@
                         <select class="" aria-label="schoolLevel" name="schoolLevel" required>
                             <option value="" disabled selected hidden>Select school level</option>
                             <option value="Elementary">Elementary</option>
-                            <option value="Junior High School">Junior High School</option>
-                            <option value="Senior High School">Senior High School</option>
+                            <option value="Junior High">Junior High School</option>
+                            <option value="Senior High">Senior High School</option>
                             <option value="College">College</option>
                         </select>
                     </div>

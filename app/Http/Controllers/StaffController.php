@@ -10,6 +10,8 @@ use App\Models\csregistration;
 use App\Models\humanitiesclass;
 use App\Models\hcattendance;
 use App\Models\lte;
+use App\Models\ScEducation;
+use App\Models\scholarshipinfo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -210,10 +212,24 @@ class StaffController extends Controller
         return redirect()->route('login');
     }
 
-    public function showScholars()
+    public function showScholarsoverview()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.scholars');
+            $totalscholars = User::all()->count();
+            $totalnewscholars = scholarshipinfo::where('scholartype', 'New Scholar')->count();
+            $scholarsmd = scholarshipinfo::where('area', 'Mindong')->count();
+            $scholarsmx = scholarshipinfo::where('area', 'Minxi')->count();
+            $scholarsmz = scholarshipinfo::where('area', 'Minzhong')->count();
+            $college = ScEducation::where('scSchoolLevel', 'College')->count();
+            $shs = ScEducation::where('scSchoolLevel', 'Senior High')->count();
+            $jhs = ScEducation::where('scSchoolLevel', 'Junior High')->count();
+            $elem = ScEducation::where('scSchoolLevel', 'Elementary')->count();
+            // $scholarsperarea = [
+            //     ['label' => 'Mindong', 'value' => scholarshipinfo::where('area', 'Mindong')->count()],
+            //     ['label' => 'Minxi', 'value' => scholarshipinfo::where('area', 'Minxi')->count()],
+            //     ['label' => 'Minzhong', 'value' => scholarshipinfo::where('area', 'Minzhong')->count()],
+            // ];
+            return view('staff.scholars', compact('totalscholars', 'totalnewscholars', 'scholarsmd', 'scholarsmx', 'scholarsmz', 'college', 'shs', 'jhs', 'elem'));
         }
 
         return redirect()->route('login');
