@@ -23,7 +23,7 @@
     @include('partials._sidebar')
 
     <!-- Include Navbar -->
-    @include('partials._navbar')
+    @include('partials._navbarhome')
 
     <!-- MAIN CONTENT -->
     <div class="header">

@@ -1,0 +1,375 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main{
+    width: 90%;
+    margin: auto;
+}
+
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 15px;
+}
+
+.ctn-main .title{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: bold;
+    margin: 25px 0;
+}
+
+.status{
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    font-size: 14px;
+    border: 2px solid #bfbfbf;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.filter-btn:active {
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.table-title{
+    font-weight: bold;
+    padding: 0;
+}
+
+.table{
+    font-size: 15px;
+    margin-bottom: 50px;
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table th{
+    background-color: #1a5319;
+    color: #fff;
+}
+
+.btn-view{
+    text-decoration: none;
+    padding: 5px 15px;
+    background-color: #56a72e;
+    color: #fff;
+    border-radius: 20px;
+    transition: 0.3s ease;
+}
+
+.btn-view:hover, .btn-submit:hover{
+    background-color: #1a5319;
+
+}
+
+.btn-cancel{
+    background-color: red;
+    color: #fff;
+    border-radius: 20px;
+    padding: 5px 15px;
+    margin-top: 10px;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.btn-cancel:hover{
+    background-color: rgb(246, 81, 81);
+}
+
+.appointmentform {
+    width: 70%;
+    margin: auto;
+}
+
+.form-content {
+    border-radius: 10px;
+    border: 1px solid #2e7c55;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2e7c55;
+    padding: 5px;
+    color: white;
+    height: 40px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.form-body{
+    padding: 20px;
+}
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    font-weight: 600;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+}
+
+.time-selection {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 10px;
+}
+
+.time-selection .time{
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    font-size: 15px;
+    margin-bottom: 10px;
+    width: 300px;
+}
+
+.time-selection .time label{
+    margin-left: 10px;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.btn-submit {
+    padding: 5px 35px;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    background-color: #2e7c55;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.appointment-view{
+    width: 70%;
+    margin: auto;
+    border: 1px solid #fff;
+}
+
+.appointment-stat{
+    background-color: #ffde59;
+    font-weight: bold;
+    padding: 10px;
+    width: 150px;
+    text-align: center;
+    float: right;
+    border-radius: 10px;
+    margin: 0 30px;
+}
+
+.appointment-info{
+    border: 1px solid #8eb79c;
+    background-color: #eaebea;
+    border-radius: 10px;
+    margin: 50px 30px;
+    padding: 20px;
+}
+
+.appointment-info h5{
+    background-color: #1a5319;
+    color: #d6efd8;
+    font-weight: bold;
+    padding: 8px;
+}
+
+.appointment-info .info{
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px; 
+    align-items: center; 
+    padding: 10px;
+    font-size: 15px;
+}
+
+.label {
+    text-align: left; 
+    margin-bottom: 5px;
+}
+
+.appointment-info span{
+    color: #1e5430;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.dialog.hidden{
+    display: none;
+}
+
+.dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog-content {
+    position: relative;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 450px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-content h2 {
+    margin-bottom: 50px;
+}
+
+.dialog-content p{
+    margin-bottom: 50px;
+}
+
+.dialog-actions {
+    gap: 50px;
+}
+
+.dialog-actions button {
+    padding: 5px 40px;
+    margin: 5px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.dialog-actions button#noBtn {
+    background-color: #898989;
+    color: white;
+}
+
+.dialog-actions button#yesBtn {
+    background-color: #f15e5e;
+    color: white;
+}
+
+.dialog-actions button#yesBtn:hover{
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(240, 81, 81);
+}
+
+.dialog-actions button#noBtn:hover{
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgb(92, 87, 87);
+}
+
+.close-btn {
+    position: absolute;
+    text-align: center;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+}
+
+.dialog .fa-circle-exclamation{
+    margin: 30px 0;
+    color: #f15e5e;
+    font-size: 50px;
+}
+
+.dialog .fa-circle-check{
+    margin: 30px 0;
+    color: #6bdc6a;
+    font-size: 50px;
+}
+
+@media (max-width: 768px) {
+    .ctn-main{
+        width: 90%;
+    }
+    .appointmentform {
+        width: 100%;
+        font-size: 14px;
+    }
+    .time-selection {
+        display: block;
+    }
+    .status{
+        gap: 0;
+    }
+    .filter-btn {
+        font-size: 12px;
+        padding: 5px;
+    }
+    .table, .table-title{
+        font-size: 14px;
+    }
+    .appointment-view{
+        width: 100%;
+    }
+    .appointment-stat{
+        padding: 10px;
+        width: 100px;
+        margin: 0;
+    }
+    .appointment-info{
+        padding: 10px;
+        margin: 50px 0 0;
+    }
+    .appointment-info h5{
+        font-size: 17px;
+        padding: 8px;
+    }
+    .appointment-info .info{
+        display: block;
+        font-size: 14px;
+    }
+    .appointment-info span{
+        margin-left: 0;
+    }
+    .label {
+        margin-bottom: 0;
+    }
+    .value{
+        margin-bottom: 10px;
+    }
+    .dialog-content {
+        padding: 15px;
+        width: 85%;
+    }
+    .dialog-actions button {
+        margin: 5px;
+    }
+    
+}
+
