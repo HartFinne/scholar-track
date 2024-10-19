@@ -57,6 +57,7 @@
 
         <div class="ctnform">
             <form method="POST" action="{{ route('savehcattendance', $event->hcid) }}">
+                @csrf
                 <div class="groupB">
                     <div class="groupB1">
                         <div class="groupB2">
@@ -79,7 +80,6 @@
                         </div>
                     </div>
                 </div>
-                @csrf
                 <div class="searchbar">
                     <span id="searchlabel">Search Name</span>
                     <select name="scholar" id="searchable-select" required>

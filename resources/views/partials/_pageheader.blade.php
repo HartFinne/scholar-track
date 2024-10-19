@@ -49,10 +49,7 @@
             <div class="ctnsuboptions" id="subopt3" style="display: none;">
                 <a href="{{ route('applicants') }}" class="sbarsubopt">Applicants</a>
                 <a href="{{ route('applicationforms') }}" class="sbarsubopt">Application Forms</a>
-                <a href="{{ route('qualification-college') }}" class="sbarsubopt">College Qualification</a>
-                <a href="{{ route('qualification-seniorhigh') }}" class="sbarsubopt">Senior High Qualification</a>
-                <a href="{{ route('qualification-juniorhigh') }}" class="sbarsubopt">Junior High Qualification</a>
-                <a href="{{ route('qualification-elementary') }}" class="sbarsubopt">Elementary Qualification</a>
+                <a href="{{ route('qualification') }}" class="sbarsubopt">Application Qualification</a>
             </div>
         </div>
     </div>

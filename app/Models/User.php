@@ -108,4 +108,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(penalty::class, 'caseCode', 'caseCode');
     }
+
+    public function renewal()
+    {
+        return $this->belongsTo(renewal::class, 'caseCode', 'caseCode');
+    }
 }

@@ -139,10 +139,14 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::get('/specialallowance', 'showAllowanceSpecial')->name('allowancerequests-special');
     // APPLICATION CRITERIA
     Route::get('/applicationforms', 'showApplicationForms')->name('applicationforms');
-    Route::get('/qualificationcollege', 'showQualiCollege')->name('qualification-college');
-    Route::get('/qualificationelem', 'showQualiElem')->name('qualification-elementary');
-    Route::get('/qualificationjhs', 'showQualiJHS')->name('qualification-juniorhigh');
-    Route::get('/qualificationshs', 'showQualiSHS')->name('qualification-seniorhigh');
+    Route::get('/qualification', 'showQualification')->name('qualification');
+    Route::post('/updatecriteria', 'updatecriteria')->name('updatecriteria');
+    Route::post('/addinstitution', 'addinstitution')->name('addinstitution');
+    Route::post('/updateinstitution/{inid}', 'updateinstitution')->name('updateinstitution');
+    Route::post('/deleteinstitution/{inid}', 'deleteinstitution')->name('deleteinstitution');
+    Route::post('/addcourse/{level}', 'addcourse')->name('addcourse');
+    Route::post('/updatecourse/{coid}', 'updatecourse')->name('updatecourse');
+    Route::post('/deletecourse/{coid}', 'deletecourse')->name('deletecourse');
     // RENEWAL
     Route::get('/renewal', 'showRenewal')->name('scholarshiprenewal');
     Route::get('/renewcollege', 'showRenewalCollege')->name('renewal-college');

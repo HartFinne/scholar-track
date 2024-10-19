@@ -19,7 +19,7 @@
 
     <div class="ctnmain">
         <div class="header">
-            <span class="pagetitle">School Level: ELEMENTARY</span>
+            <span class="pagetitle">School Level: COLLEGE</span>
             <a href="{{ route('scholarshiprenewal') }}" id="btngoback">
                 <i class="fa-solid fa-arrow-left"></i>
             </a>
@@ -97,7 +97,7 @@
                 </thead>
                 <tbody>
                     @foreach ($renewals as $index->$renewal)
-                        @if ($renewals->caseCode == $scholars->CaseCode && $scholars->education->scSchoolLevel == 'Elementary')
+                        @if ($renewals->caseCode == $scholars->CaseCode && $scholars->education->scSchoolLevel == 'College')
                             <td class="text-center align-middle"> {{ $index + 1 }} </th>
                             <td class="text-center align-middle"> {{ $renewal->datesubmitted }} </td>
                             <td class="text-center align-middle"> {{ $scholar->basicInfo->scLastname }},

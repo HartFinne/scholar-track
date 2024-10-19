@@ -22,19 +22,19 @@
         <div class="groupA">
             <div class="groupA1">
                 <span class="label" id="lbltotalrenewal">Total Renewal Applications</span>
-                <span class="data" id="outtotalrenewal">0</span>
+                <span class="data" id="outtotalrenewal">{{ $totalrenew }}</span>
             </div>
             <div class="groupA1">
                 <span class="label" id="lbltotalrenewal">Pending Applications</span>
-                <span class="data" id="outpending">0</span>
+                <span class="data" id="outpending">{{ $pending }}</span>
             </div>
             <div class="groupA1">
                 <span class="label" id="lbltotalrenewal">Approved Applications</span>
-                <span class="data" id="outapproved">0</span>
+                <span class="data" id="outapproved">{{ $approved }}</span>
             </div>
             <div class="groupA1">
                 <span class="label" id="lbltotalrenewal">Rejected Applications</span>
-                <span class="data" id="outrejected">0</span>
+                <span class="data" id="outrejected">{{ $rejected }}</span>
             </div>
         </div>
         <div class="divider"></div>

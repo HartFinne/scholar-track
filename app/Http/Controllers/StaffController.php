@@ -10,8 +10,13 @@ use App\Models\csregistration;
 use App\Models\humanitiesclass;
 use App\Models\hcattendance;
 use App\Models\lte;
+use App\Models\penalty;
+use App\Models\renewal;
 use App\Models\ScEducation;
 use App\Models\scholarshipinfo;
+use App\Models\criteria;
+use App\Models\institutions;
+use App\Models\courses;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -107,7 +112,9 @@ class StaffController extends Controller
     public function showLTE()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.lte');
+            $lte = lte::with('hcattendance', 'csattendance')->get();
+            $scholars = User::with(['basicInfo'])->get();
+            return view('staff.lte', compact('lte', 'scholars'));
         }
 
         return redirect()->route('login');
@@ -116,43 +123,213 @@ class StaffController extends Controller
     public function showPenalty()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.penalty');
+            $penalties = penalty::all();
+            $scholars = User::with(['basicInfo'])->get();
+            return view('staff.penalty', compact('penalties', 'scholars'));
         }
 
         return redirect()->route('login');
     }
 
-    public function showQualiCollege()
+    // SCHOLARSHIP CRITERIA
+    public function showQualification()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.qualificationcollege');
+            $criteria = criteria::first();
+            $courses = courses::where('level', 'College')->get();
+            $strands = courses::where('level', 'Senior High')->get();
+            $institutions = institutions::all();
+            return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands'));
         }
 
         return redirect()->route('login');
     }
 
-    public function showQualiElem()
+    public function updaterequirements(Request $request) {}
+
+    public function addinstitution(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'institute' => 'required|string|max:255',
+            ]);
+
+            institutions::create([
+                'schoolname' => $request->institute
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Successfully added an institution.')->withFragment('confirmmsg2');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()->back()->with('error', 'Failed to add institution. ' . $e->getMessage())->withFragment('confirmmsg2');
+        }
+    }
+
+    public function updateinstitution($inid, Request $request)
+    {
+        $request->validate([
+            'newschoolname' => 'required|string|max:255',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $institution = institutions::findOrFail($inid);
+
+            $institution->update([
+                'schoolname' => $request->newschoolname
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Successfully updated the institution name.')->withFragment('confirmmsg2');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Failed to update institution name. ' . $e->getMessage())->withFragment('confirmmsg2');
+        }
+    }
+
+    public function deleteinstitution($inid)
+    {
+        DB::beginTransaction();
+        try {
+            $institution = institutions::findOrFail($inid);
+
+            $institution->delete();
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Successfully deleted the institution.')->withFragment('confirmmsg2');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Failed to delete institution. ' . $e->getMessage())->withFragment('confirmmsg2');
+        }
+    }
+
+    public function addcourse($level, Request $request)
+    {
+        DB::beginTransaction();
+        if ($level == 'College') {
+            try {
+                $request->validate([
+                    'course' => 'required|string|max:255',
+                ]);
+
+                courses::create([
+                    'level' => $level,
+                    'coursename' => $request->course
+                ]);
+
+                DB::commit();
+
+                return redirect()->back()->with('success', 'Successfully added a course.')->withFragment('confirmmsg2');
+            } catch (\Exception $e) {
+                DB::rollback();
+
+                return redirect()->back()->with('error', 'Failed to add course. ' . $e->getMessage())->withFragment('confirmmsg2');
+            }
+        } elseif ($level == 'Senior High') {
+            try {
+                $request->validate([
+                    'strand' => 'required|string|max:255',
+                ]);
+
+                courses::create([
+                    'level' => $level,
+                    'coursename' => $request->strand
+                ]);
+
+                DB::commit();
+
+                return redirect()->back()->with('success', 'Successfully added a strand.')->withFragment('confirmmsg2');
+            } catch (\Exception $e) {
+                DB::rollback();
+
+                return redirect()->back()->with('error', 'Failed to add strand. ' . $e->getMessage())->withFragment('confirmmsg2');
+            }
+        }
+    }
+
+    public function updatecourse($coid, Request $request)
+    {
+        $request->validate([
+            'newcoursename' => 'required|string|max:255',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $course = courses::findOrFail($coid);
+
+            $course->update([
+                'coursename' => $request->newcoursename
+            ]);
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Successfully updated the course name.')->withFragment('confirmmsg2');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Failed to update institution name. ' . $e->getMessage())->withFragment('confirmmsg2');
+        }
+    }
+
+    public function deletecourse($coid)
+    {
+        DB::beginTransaction();
+        try {
+            $course = courses::findOrFail($coid);
+
+            $course->delete();
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Successfully deleted the institution.')->withFragment('confirmmsg2');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Failed to delete institution. ' . $e->getMessage())->withFragment('confirmmsg2');
+        }
+    }
+
+    public function showRenewal()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.qualificationelem');
+            $totalrenew = renewal::all()->count();
+            $pending = renewal::where('status', 'Pending')->count();
+            $approved = renewal::where('status', 'Approved')->count();
+            $rejected = renewal::where('status', 'Rejected')->count();
+            return view('staff.renewal', compact('totalrenew', 'pending', 'approved', 'rejected'));
         }
 
         return redirect()->route('login');
     }
 
-    public function showQualiJHS()
+    public function showRenewalCollege()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.qualificationjhs');
+            $scholars = User::with('education', 'basicInfo');
+            $renewals = renewal::all();
+            return view('staff.renewcollege', compact('renewals', 'scholars'));
         }
 
         return redirect()->route('login');
     }
 
-    public function showQualiSHS()
+    public function showRenewalElem()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.qualificationshs');
+            $scholars = User::with('education', 'basicInfo');
+            $renewals = renewal::all();
+            return view('staff.renewelementary', compact('renewals', 'scholars'));
+        }
+
+        return redirect()->route('login');
+    }
+
+    public function showRenewalHS()
+    {
+        if (Auth::guard('staff')->check()) {
+            $scholars = User::with('education', 'basicInfo');
+            $renewals = renewal::all();
+            return view('staff.renewhighschool', compact('renewals', 'scholars'));
         }
 
         return redirect()->route('login');
@@ -162,42 +339,6 @@ class StaffController extends Controller
     {
         if (Auth::guard('staff')->check()) {
             return view('staff.regularallowance');
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showRenewal()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.renewal');
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showRenewalCollege()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.renewcollege');
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showRenewalElem()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.renewelementary');
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showRenewalHS()
-    {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.renewhighschool');
         }
 
         return redirect()->route('login');

@@ -95,6 +95,22 @@
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($renewals as $index->$renewal)
+                        @if (
+                            $renewals->caseCode == $scholars->CaseCode &&
+                                ($scholars->education->scSchoolLevel == 'Senior High' || $scholars->education->scSchoolLevel == 'Junior High'))
+                            <td class="text-center align-middle"> {{ $index + 1 }} </th>
+                            <td class="text-center align-middle"> {{ $renewal->datesubmitted }} </td>
+                            <td class="text-center align-middle"> {{ $scholar->basicInfo->scLastname }},
+                                {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}</td>
+                            <td class="text-center align-middle"> {{ $renewal->status }}</td>
+                            <td class="text-center align-middle">
+                                <a href="#">View</a>
+                            </td>
+                        @endif
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>

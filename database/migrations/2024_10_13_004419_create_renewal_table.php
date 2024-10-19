@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -14,6 +15,7 @@ return new class extends Migration
         Schema::create('renewal', function (Blueprint $table) {
             $table->increments('rid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
+            $table->date('datesubmitted')->default(DB::raw('CURRENT_DATE'));
             $table->binary('picture');
             $table->binary('reportcard');
             $table->binary('utilitybill');

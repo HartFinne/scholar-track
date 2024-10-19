@@ -25,6 +25,6 @@ class renewal extends Model
     // Define inverse relationship to account
     public function user()
     {
-        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+        return $this->hasOne(User::class, 'caseCode', 'caseCode');
     }
 }

@@ -91,6 +91,26 @@
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($penalties as $index => $penalty)
+                        <tr>
+                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                            @foreach ($scholars as $scholar)
+                                @if ($letter->caseCode == $scholar->caseCode)
+                                    <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
+                                        {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}
+                                    </td>
+                                @endif
+                            @endforeach
+                            <td class="text-center align-middle">{{ $penalty->condition }}</td>
+                            <td class="text-center align-middle">{{ $penalty->remark }}</td>
+                            <td class="text-center align-middle">{{ $penalty->dateofpenalty }}</td>
+                            <td class="text-center align-middle">
+                                <a href="#" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>

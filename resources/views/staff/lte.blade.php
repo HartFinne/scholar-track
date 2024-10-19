@@ -83,12 +83,36 @@
                         <th class="text-center align-middle">Date Issued</th>
                         <th class="text-center align-middle">Scholar's Name</th>
                         <th class="text-center align-middle">Date Submitted</th>
-                        <th class="text-center align-middle">Penalty</th>
+                        <th class="text-center align-middle">Concern</th>
                         <th class="text-center align-middle">Reason</th>
                         <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($lte as $index => $letter)
+                        <tr>
+                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                            <td class="text-center align-middle">{{ $letter->dateissued }}</td>
+                            @foreach ($scholars as $scholar)
+                                @if ($letter->caseCode == $scholar->caseCode)
+                                    <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
+                                        {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}
+                                    </td>
+                                @endif
+                            @endforeach
+                            <td class="text-center align-middle">{{ $letter->dateissued }}</td>
+                            <td class="text-center align-middle">{{ $letter->hcattendance->hcastatus }} in
+                                {{ $letter->eventtype }}
+                            </td>
+                            <td class="text-center align-middle">{{ $letter->reason ?? '--' }}</td>
+                            <td class="text-center align-middle">{{ $letter->ltestatus }}</td>
+                            <td class="text-center align-middle">
+                                <a href="#" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>
