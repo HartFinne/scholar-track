@@ -43,7 +43,7 @@
         <div class="groupA">
             <div class="groupA2">
                 <span class="label">Scholar's Community Service</span>
-                <span class="data" id="totalevents">REPLACE WITH GRAPH</span>
+                <canvas id="myChart1"></canvas>
             </div>
         </div>
         <div class="divider"></div>
@@ -147,6 +147,51 @@
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/toggleeventform.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx1 = document.getElementById('myChart1').getContext('2d');
+
+        // Data for the chart based on the scholars
+        const scholarsData = [{{ $scholarsWithCompletedHours }}, {{ $scholarsWithRemainingHours }}];
+
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['With Completed Hours', 'With Remaining Hours'], // Labels for each bar
+                datasets: [{
+                    label: 'No. of Scholars',
+                    data: scholarsData, // Number of scholars for each category
+                    borderWidth: 1,
+                    borderColor: 'darkgreen', // Bar border color set to dark green
+                    backgroundColor: 'rgba(0, 100, 0, 0.8)', // Bar fill color set to dark green with transparency
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'No. of Scholars'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Status'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Number of Scholars with Completed Hours and Remaining Hours in Community Service'
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

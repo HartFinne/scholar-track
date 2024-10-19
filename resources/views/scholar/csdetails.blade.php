@@ -76,10 +76,12 @@
                 <i class="fa-solid fa-circle-check"></i>
                 <h2>Your registration has been submitted successfully.<br> Thank you for volunteering!</h2>
                 <p>Go to dashboard to view your scheduled community service activities.</p>
-                <p><strong>REMINDER:</strong> You have <span id="remhrs" class="fw-bold">2 hours</span> of community
+                <p><strong>REMINDER:</strong> You have <span id="remhrs" class="fw-bold">{{ $remainingHours }}
+                        {{ $remainingHours == 1 ? 'hour' : 'hours' }}</span> of community
                     service left.</p>
             </div>
         </div>
+
 
         <!-- Register Dialog with completed hours -->
         <div id="confirmDialog2" class="register dialog hidden">

@@ -40,7 +40,7 @@
         </div>
 
         <div class="activity-container">
-            @foreach ($activities as $activity)
+            @foreach ($filteredActivities as $activity)
                 <div class="card">
                     @if (isset($registrations[$activity->csid]))
                         {{-- If the user is registered for this activity, check the registration status --}}
@@ -107,6 +107,7 @@
                 </div>
             @endforeach
         </div>
+
 
     </div>
 

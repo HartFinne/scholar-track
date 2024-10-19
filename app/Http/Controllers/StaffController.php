@@ -336,12 +336,31 @@ class StaffController extends Controller
     public function showCommunityService()
     {
         if (Auth::guard('staff')->check()) {
+            communityservice::where('slotnum', 0)
+                ->where('eventstatus', '!=', 'Closed') // Only update if not already closed
+                ->update(['eventstatus' => 'Closed']);
             $events = communityservice::all();
             $totalevents = communityservice::count();
             $openevents = communityservice::where('eventstatus', 'Open')->count();
             $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
-            return view('staff.managecs', compact('events', 'totalevents', 'openevents', 'closedevents'));
+            // Define the required hours (e.g., 8 hours of community service needed)
+            $requiredHours = 8;
+
+            // Calculate the total hours completed by each scholar
+            $scholarsWithCompletedHours = DB::table('csattendance')
+                ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
+                ->groupBy('caseCode')
+                ->having('total_hours', '>=', $requiredHours)
+                ->count();
+
+            $scholarsWithRemainingHours = DB::table('csattendance')
+                ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
+                ->groupBy('caseCode')
+                ->having('total_hours', '<', $requiredHours)
+                ->count();
+
+            return view('staff.managecs', compact('events', 'totalevents', 'openevents', 'closedevents', 'scholarsWithCompletedHours', 'scholarsWithRemainingHours'));
         }
 
         return redirect()->route('login');
@@ -355,7 +374,10 @@ class StaffController extends Controller
             $openevents = communityservice::where('eventstatus', 'Open')->count();
             $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
-            return view('staff.openevents', compact('events', 'totalevents', 'openevents', 'closedevents'));
+            return view(
+                'staff.openevents',
+                compact('events', 'totalevents', 'openevents', 'closedevents')
+            );
         }
 
         return redirect()->route('login');
@@ -364,16 +386,29 @@ class StaffController extends Controller
     public function showCSClosedEvents()
     {
         if (Auth::guard('staff')->check()) {
+            // Update events where slotnum is zero to set eventstatus to 'Closed'
+
+
+            // Fetch all closed events
             $events = communityservice::where('eventstatus', 'Closed')->get();
             $totalevents = communityservice::count();
             $openevents = communityservice::where('eventstatus', 'Open')->count();
             $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
-            return view('staff.closedevents', compact('events', 'totalevents', 'openevents', 'closedevents'));
+            return view(
+                'staff.closedevents',
+                compact(
+                    'events',
+                    'totalevents',
+                    'openevents',
+                    'closedevents'
+                )
+            );
         }
 
         return redirect()->route('login');
     }
+
 
     public function showcseventinfo($csid)
     {

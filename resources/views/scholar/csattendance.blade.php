@@ -44,15 +44,15 @@
         <div class="attendance-dashboard">
             <div class="total-attendance">
                 <h5>TOTAL ATTENDANCE</h5>
-                <h4>0</h4>
+                <h4>{{ $totalAttendance }}</h4>
             </div>
             <div class="total-tardiness">
                 <h5>TOTAL TARDINESS</h5>
-                <h4>0</h4>
+                <h4>{{ $totalTardiness }}</h4>
             </div>
             <div class="total-absences">
                 <h5>TOTAL ABSENCES</h5>
-                <h4>0</h4>
+                <h4>{{ $totalAbsences }}</h4>
             </div>
         </div>
 
@@ -72,32 +72,36 @@
             </div>
         </div>
 
-        <div class="attendance-card">
-            <div class="class-img">
-                <img src="{{ asset('images/account.png') }}" alt="">
-            </div>
-            <div class="attendance-details">
-                <div class="topic">
-                    <h5>ACTIVITY</h5>
-                    <hr>
+        @foreach ($attendances as $attendance)
+            <div class="attendance-card">
+                <div class="class-img">
+                    <img src="{{ asset('images/account.png') }}" alt="">
                 </div>
-                <div class="details">
-                    <div class="date-time">
-                        <p>Location:</p>
-                        <p>Date:</p>
-                        <p>Time:</p>
-                        <p>Facilitator:</p>
-                        <p>Hours Completed:</p>
+                <div class="attendance-details">
+                    <div class="topic">
+                        <h5>ACTIVITY: {{ $attendance->activity_title }}</h5>
+                        <hr>
                     </div>
-                    <div class="attendance-stat">
-                        <p>Time in:</p>
-                        <p>Time out:</p><br><br>
-                        <p>Attendance Status: <b>Present</b></p>
+                    <div class="details">
+                        <div class="date-time">
+                            <p>Location: {{ $attendance->location }}</p>
+                            <p>Date: {{ \Carbon\Carbon::parse($attendance->date)->format('F j, Y') }}</p>
+                            <p>Time: {{ \Carbon\Carbon::parse($attendance->time)->format('H:i') }}</p>
+                            <p>Facilitator: {{ $attendance->facilitator }}</p>
+                            <p>Hours Completed: {{ $attendance->hoursspent }} hours</p>
+                        </div>
+                        <div class="attendance-stat">
+                            <p>Time in: {{ $attendance->timein }}</p>
+                            <p>Time out: {{ $attendance->timeout }}</p><br><br>
+                            <p>Attendance Status: <b>{{ $attendance->csastatus }}</b></p>
+                            <p>Status: <b>{{ $attendance->status }}</b></p>
+                        </div>
                     </div>
                 </div>
             </div>
+        @endforeach
 
-        </div>
+
     </div>
     <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
