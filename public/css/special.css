@@ -7,18 +7,66 @@
     box-sizing: border-box;
 }
 
-.container-fluid{
-    padding: 20px 90px;
+.ctn-main{
+    width: 90%;
+    margin: auto;
 }
 
-.mb-3 .title{
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 15px;
+}
+
+.ctn-main .title{
     font-family: 'League Spartan', sans-serif;
     font-weight: bold;
     margin: 25px 0;
 }
+
+.sallowance{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    align-items: center;
+}
+
+.btn-request{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    height: 100px;
+    width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    background-color: #749871;
+    box-shadow: 0 10px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    transition:0.3s ease;
+}
+
+.btn-request:hover {
+    background-color: #56a72e;
+}
+
+.status{
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
 .filter-btn {
+    font-size: 14px;
     border: 2px solid #bfbfbf;
-    padding: 5px 20px;
+    padding: 3px 10px;
     margin-bottom: 10px;
     border-radius: 20px;
     background-color: transparent;
@@ -30,27 +78,15 @@
     color: #fff;
 }
 
-
-.btn-filter {
-    padding: 5px 35px;
-    border-radius: 14px;
-    font-size: 1.1rem;
-    background-color: #1a5319;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 10px 6px rgba(0, 0, 0, 0.1);
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+.table{
+    font-size: 15px;
+    margin-bottom: 50px;
 }
 
-.btn-filter:hover {
-    background-color: #0d9128;
-    color: #fff;
-    transition: 0.5s ease-in-out;
+.table-title{
+    font-weight: bold;
+    font-size: large;
+    padding: 0;
 }
 
 .table-bordered th, .table-bordered td {
@@ -63,44 +99,121 @@
     color: #fff;
 }
 
-.table-success {
-    background-color: #0f440c;
-    color: #fff;
-}
-
-.container-fluid .goback {
+.btn-view{
     text-decoration: none;
-    color: #1a5319;
-    font-size: 1.1rem;
+    padding: 5px 15px;
+    background-color: #56a72e;
+    color: #fff;
+    border-radius: 20px;
+    transition: 0.3s ease;
 }
 
-.content {
-    padding: 20px 50px;
+.btn-view:hover{
+    background-color: #1a5319;
 }
 
-.table-title{
+.request-view{
+    width: 70%;
+    margin: auto;
+    border: 1px solid #fff;
+}
+
+.request-stat{
+    background-color: #ffde59;
     font-weight: bold;
-    font-size: large;
-    padding: 0;
+    padding: 10px;
+    width: 150px;
+    text-align: center;
+    float: right;
+    border-radius: 10px;
+    margin: 0 30px;
 }
 
+.request-info{
+    border: 1px solid #8eb79c;
+    background-color: #eaebea;
+    border-radius: 10px;
+    margin: 50px 30px;
+    padding: 20px;
+}
 
-@media (max-width: 768px) {
-    .container-fluid{
-        padding: 10px 20px;
+.request-info h5{
+    background-color: #1a5319;
+    color: #d6efd8;
+    font-weight: bold;
+    padding: 8px;
+}
+
+.request-info .info{
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 10px; 
+    align-items: center; 
+    padding: 10px;
+    font-size: 15px;
+}
+
+.label {
+    text-align: left; 
+    margin-bottom: 5px;
+}
+
+.request-info span{
+    color: #1e5430;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+@media only screen and (max-width: 768px) {
+    .ctn-main{
+        width: 90%;
     }
-
-    .btn-filter {
-        font-size: 0.9rem;
-        padding: 5px 25px;
+    .status{
+        gap: 0;
     }
-
     .filter-btn {
-        font-size: 0.9rem;
+        font-size: 13px;
     }
-    .d-flex {
-        flex-direction: column;
-        gap: 10px; /* Optional: Adjust gap between buttons */
-        align-items: row; /* Center buttons horizontally */
+    .table{
+        font-size: 14px;
+    }
+    .btn-request{
+        padding: 5px 10px;
+        height: auto;
+        width: 100%;
+        font-size: 15px;
+    }
+    .request-stat{
+        padding: 10px;
+        width: 100px;
+        margin: 0;
+    }
+    .request-info{
+        padding: 10px;
+        margin: 50px 0;
+    }
+    .request-info h5{
+        font-size: 17px;
+        padding: 8px;
+    }
+    .request-info .info{
+        display: block;
+        font-size: 14px;
+    }
+    .request-info span{
+        margin-left: 0;
+    }
+    .label {
+        margin-bottom: 0;
+    }
+    .value{
+        margin-bottom: 10px;
     }
 }
+@media only screen and (max-width: 1024px) {
+    .request-view{
+        width: 100%;
+    }
+}
+
+

@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main{
+    width: 90%;
+    margin: auto;
+}
+
+.ctn-main .goback{
+    text-decoration: none;
+    color: #1a5319;
+    font-size: 15px;
+}
+
+.ctn-main .title{
+    font-family: 'League Spartan', sans-serif;
+    font-weight: bold;
+    margin: 25px 0;
+}
+
+.instructions {
+    background-color: rgb(191, 191, 191, .2);
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 50px;
+}
+
+.instructions h6 {
+    font-weight: 600;
+}
+
+.instructions p {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.reminder{
+    margin: 20px 0;
+}
+
+.reminder .reminder1{
+    color: red;
+}
+
+.file-download {
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.download-btn{
+    color: #1a5319;
+}
+
+.download-btn i{
+    margin-left: 8px;
+} 
+
+.form-btn{
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: #8bc34a;
+    color: #fff;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.form-btn:hover{
+    background-color: #1a5319;
+}
+
+
+@media (max-width: 768px) {
+    .ctn-main .title{
+        text-align: center;
+        margin: 15px 0;
+    }
+    .instructions p, .ctn-main .goback, .file-download, .form-btn {
+        font-size: 14px;
+    }
+}
+
+

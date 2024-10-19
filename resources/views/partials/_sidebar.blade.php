@@ -28,9 +28,11 @@
             <button type="button" onclick="togglesubopt3()" id="btnrequests">Allowance Requests<i
                     class="fa-solid fa-caret-right"></i></button>
             <div class="subopt" id="subopt3" style="display: none;">
-                <a href="">Regular Allowance</a>
-                <a href="">Special Allowance</a>
+                <a href="{{ route('scregular') }}">Regular Allowance</a>
+                <a href="{{ route('scspecial') }}">Special Allowance</a>
             </div>
+            <!-- Appointment System -->
+            <button type="button" onclick="window.location.href='{{ route('appointment') }}';">Appointment System</button>
         </div>
     </div>
 </div>

@@ -32,6 +32,35 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
     Route::view('/schome', 'scholar.schome')->name('schome');
+    // Allowance Requests
+    Route::view('/scregular', 'scholar.scregular')->name('scregular');
+    Route::view('/scspecial', 'scholar.scspecial')->name('scspecial');
+    Route::view('/transporeq', 'scholar.transporeq')->name('transpo');
+    Route::view('/transpoform', 'scholar.transpoform')->name('transpoform');
+    Route::view('/transpoinfo', 'scholar.transpoinfo')->name('transpoinfo');
+    Route::view('/bookreq', 'scholar.bookreq')->name('book');
+    Route::view('/bookform', 'scholar.bookform')->name('bookform');
+    Route::view('/bookinfo', 'scholar.bookinfo')->name('bookinfo');
+    Route::view('/thesisreq', 'scholar.thesisreq')->name('thesis');
+    Route::view('/thesisform', 'scholar.thesisform')->name('thesisform');
+    Route::view('/thesisinfo', 'scholar.thesisinfo')->name('thesisinfo');
+    Route::view('/projectreq', 'scholar.projectreq')->name('project');
+    Route::view('/projectform', 'scholar.projectform')->name('projectform');
+    Route::view('/projectinfo', 'scholar.projectinfo')->name('projectinfo');
+    Route::view('/uniformreq', 'scholar.uniformreq')->name('uniform');
+    Route::view('/uniformform', 'scholar.uniformform')->name('uniformform');
+    Route::view('/uniforminfo', 'scholar.uniforminfo')->name('uniforminfo');
+    Route::view('/gradreq', 'scholar.gradreq')->name('grad');
+    Route::view('/gradform', 'scholar.gradform')->name('gradform');
+    Route::view('/gradinfo', 'scholar.gradinfo')->name('gradinfo');
+    Route::view('/fieldtripreq', 'scholar.fieldtripreq')->name('fieldtrip');
+    Route::view('/fieldtripform', 'scholar.fieldtripform')->name('fieldtripform');
+    Route::view('/fieldtripinfo', 'scholar.fieldtripinfo')->name('fieldtripinfo');
+
+    // Appointment system
+    Route::view('/appointmentsystem', 'scholar.appointmentsystem')->name('appointment');
+    Route::view('/appointmentinfo', 'scholar.appointmentinfo')->name('appointmentinfo');
+
 
     Route::get('/schumanities', [ScholarController::class, 'showHumanitiesClass'])->name('schumanities');
 
