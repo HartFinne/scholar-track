@@ -49,7 +49,7 @@ class CommunityController extends Controller
         // dd($filteredActivities);
 
         // Step 5: Pass the filtered activities and registrations to the view
-        return view('scholar.csactivities', compact('filteredActivities', 'registrations'));
+        return view('scholar.communityservice.csactivities', compact('filteredActivities', 'registrations'));
     }
 
     // cs details
@@ -75,7 +75,7 @@ class CommunityController extends Controller
         $remainingHours = max($totalRequiredHours - $totalHoursSpent, 0);
 
         // Pass the activity, registration status, and remaining hours to the view
-        return view('scholar.csdetails', compact('activity', 'isRegistered', 'remainingHours'));
+        return view('scholar.communityservice.csdetails', compact('activity', 'isRegistered', 'remainingHours'));
     }
 
 
@@ -139,7 +139,7 @@ class CommunityController extends Controller
         $remainingHours = max($totalRequiredHours - $totalHoursSpent, 0);
 
         // Pass the data to the view
-        return view('scholar.csdashboard', compact('registrations', 'totalHoursSpent', 'remainingHours', 'hoursPerActivity', 'hoursPerMonth'));
+        return view('scholar.communityservice.csdashboard', compact('registrations', 'totalHoursSpent', 'remainingHours', 'hoursPerActivity', 'hoursPerMonth'));
     }
 
 
@@ -212,7 +212,7 @@ class CommunityController extends Controller
             ->get();
 
         // Pass the data to the view
-        return view('scholar.csattendance', compact('totalAttendance', 'totalTardiness', 'totalAbsences', 'attendances'));
+        return view('scholar.communityservice.csattendance', compact('totalAttendance', 'totalTardiness', 'totalAbsences', 'attendances'));
     }
 
 
@@ -229,7 +229,7 @@ class CommunityController extends Controller
             ->select('communityservice.*')
             ->get();
 
-        return view('scholar.csform', compact('data', 'csRecord'));
+        return view('scholar.communityservice.csform', compact('data', 'csRecord'));
     }
 
     // store the cs form 

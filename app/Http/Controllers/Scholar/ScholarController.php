@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Scholar;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\ScEducation;
@@ -17,8 +14,7 @@ use App\Models\penalty;
 use App\Models\grades;
 use App\Models\hcattendance;
 use App\Models\humanitiesclass;
-use App\Models\communityservice;
-use App\Models\csattendance;
+
 use App\Models\lte;
 
 class ScholarController extends Controller
@@ -53,7 +49,7 @@ class ScholarController extends Controller
             ->where('id', Auth::id())
             ->first();
 
-        return view('scholar.manageprofile', compact('data'));
+        return view('scholar.scholarship.manageprofile', compact('data'));
     }
 
     // for updating the profile
@@ -106,7 +102,7 @@ class ScholarController extends Controller
     // for viewing page the change password
     public function changePassword()
     {
-        return view('scholar.changepassword');
+        return view('scholar.scholarship.changepassword');
     }
 
     // for the show of basic info in scholarship overview
@@ -136,7 +132,7 @@ class ScholarController extends Controller
         ];
 
         // If the user is authenticated, show the overview page
-        return view('scholar.overview', compact('user', 'penalty', 'chartData'));
+        return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData'));
     }
 
 
@@ -156,7 +152,7 @@ class ScholarController extends Controller
         $academicYear = $scEducation->scAcademicYear;
 
         // Pass the grades and academic year to the view
-        return view('scholar.gradesub', compact('grades', 'academicYear'));
+        return view('scholar.scholarship.gradesub', compact('grades', 'academicYear'));
     }
 
     public function storeGradeSubmission(Request $request)
@@ -223,7 +219,7 @@ class ScholarController extends Controller
         $academicYear = ScEducation::findOrFail($grade->educationID); // Assuming educationID is stored in ScGrade
 
         // Pass the grade data and academic year to the view
-        return view('scholar.gradesinfo', compact('grade', 'academicYear'));
+        return view('scholar.scholarship.gradesinfo', compact('grade', 'academicYear'));
     }
 
     // HUMANITIES CLASS
@@ -243,7 +239,7 @@ class ScholarController extends Controller
             $query->where('caseCode', $scholar->caseCode);
         }])->get();
 
-        return view('scholar.schumanities', compact('classes', 'totalattendance', 'totaltardiness', 'totalabsences'));
+        return view('scholar.scholarship.schumanities', compact('classes', 'totalattendance', 'totaltardiness', 'totalabsences'));
     }
 
     public function showLTE()
@@ -255,7 +251,7 @@ class ScholarController extends Controller
             ->whereIn('ltestatus', ['To Review', 'Excused', 'Unexcused'])
             ->get();
 
-        return view('scholar.sclte', compact('noresponseletters', 'letters'));
+        return view('scholar.scholarship.sclte', compact('noresponseletters', 'letters'));
     }
 
     public function showLTEinfo($lid)
@@ -271,11 +267,11 @@ class ScholarController extends Controller
             $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
 
             if ($violation->hcastatus == "Absent") {
-                return view('scholar.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
+                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
             } elseif ($violation->hcastatus == "Late") {
-                return view('scholar.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
+                return view('scholar.scholarship.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
             } elseif ($violation->hcastatus == "Left Early") {
-                return view('scholar.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
             }
         }
         // elseif ($letter->eventtype == 'Community Service') {
