@@ -25,8 +25,7 @@ Route::prefix('applicant')->group(function () {
 
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
-    Route::view('/csform', 'scholar.csform')->name('csform');
-    Route::view('/csattendance', 'scholar.csattendance')->name('csattendance');
+
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
@@ -106,6 +105,10 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
     Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
     Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
+
+    Route::get('/csattendance', [CommunityController::class, 'showCSAttendance'])->name('csattendance');
+    Route::get('/csform', [CommunityController::class, 'showCSForm'])->name('csform');
+    Route::post('/csform', [CommunityController::class, 'storeCSForm'])->name('csform.post');
 
     // sa sms or email ba
     Route::post('/update-notification-preference', [ScholarController::class, 'updateNotificationPreference'])->name('update.notification.preference');

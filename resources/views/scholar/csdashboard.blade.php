@@ -44,20 +44,22 @@
         <div class="cs-dashboard">
             <div class="complete-hrs">
                 <h5><i class="fa-solid fa-circle-check"></i>TOTAL HOURS COMPLETED</h5>
-                <h4>0</h4>
+                <h4>{{ $totalHoursSpent }}</h4>
             </div>
             <div class="remaining-hrs">
                 <h5><i class="fa-solid fa-clock-rotate-left"></i>REMAINING HOURS</h5>
-                <h4>0</h4>
+                <h4>{{ $remainingHours }}</h4>
             </div>
         </div>
 
         <div class="cshours-graph">
             <div class="card1">
                 <p>Number of Hours Completed per Month</p>
+                <canvas id="myChart1"></canvas>
             </div>
             <div class="card2">
                 <p>Number of Hours Completed per Activity</p>
+                <canvas id="myChart"></canvas>
             </div>
         </div>
 
@@ -99,7 +101,6 @@
                                             onclick="openConfirmDialog('{{ $registration->csid }}')">Cancel</button>
                                     </form>
                                 @else
-                                    Cancelled
                                 @endif
                             </td>
 
@@ -174,6 +175,80 @@
         @endif
 
         <script src="{{ asset('js/scholar.js') }}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            const ctx1 = document.getElementById('myChart1').getContext('2d');
+            const months = @json($hoursPerMonth->pluck('month'));
+            const monthlyHoursData = @json($hoursPerMonth->pluck('total_hours'));
+
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: months, // Month names on the x-axis (e.g., 'January', 'February')
+                    datasets: [{
+                        label: 'Hours',
+                        data: monthlyHoursData, // Hours data for each month
+                        borderWidth: 1,
+                        borderColor: 'darkblue', // Bar border color changed to dark blue
+                        backgroundColor: 'rgba(0, 0, 139, 0.8)', // Bar fill color set to dark blue with transparency
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+
+        <script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const activityTitles = @json($hoursPerActivity->pluck('title'));
+            const hoursData = @json($hoursPerActivity->pluck('total_hours'));
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: activityTitles, // Activity titles on the x-axis
+                    datasets: [{
+                        label: 'Hours',
+                        data: hoursData, // Hours data for each activity
+                        borderWidth: 1,
+                        borderColor: 'darkgreen', // Bar border color changed to dark green
+                        backgroundColor: 'rgba(0, 100, 0, 0.8)', // Bar fill color set to a dark green with transparency
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
 </body>
 
 </html>

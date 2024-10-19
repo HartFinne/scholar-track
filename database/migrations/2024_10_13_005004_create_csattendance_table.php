@@ -21,18 +21,19 @@ return new class extends Migration
             $table->tinyInteger('hoursspent');
             $table->string('csastatus');
             $table->binary('attendanceproof');
+            $table->string('status')->default('PENDING'); // Set default value to 'pending'
             $table->timestamps();
 
-            // Define foreign key constraint for 'caseCode' column
+            // Define foreign key constraint for 'csid' column
             $table->foreign('csid') // Column in the child table
-                ->references('csid') // Column in the parent table (sc_addressinfo)
+                ->references('csid') // Column in the parent table
                 ->on('communityservice') // Parent table
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
             // Define foreign key constraint for 'caseCode' column
             $table->foreign('caseCode') // Column in the child table
-                ->references('caseCode') // Column in the parent table (sc_addressinfo)
+                ->references('caseCode') // Column in the parent table
                 ->on('users') // Parent table
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
