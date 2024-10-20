@@ -26,14 +26,14 @@ return new class extends Migration
 
         Schema::create('institutions', function (Blueprint $table) {
             $table->increments('inid');
-            $table->string('schoolname', 255);
+            $table->string('schoolname', 255)->unique();
             $table->timestamps();
         });
 
         Schema::create('courses', function (Blueprint $table) {
             $table->increments('coid');
             $table->string('level', 15);
-            $table->string('coursename', 255);
+            $table->string('coursename', 255)->unique();
             $table->timestamps();
         });
     }

@@ -10,6 +10,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            alert('Error: ' + message + '\nSource: ' + source + '\nLine: ' + lineno);
+        };
+    </script>
 </head>
 
 <body>
@@ -21,6 +27,20 @@
         <h1 class="title text-center fw-bold app-close hide">APPLICATION IS NOT YET OPEN.</h1>
         <div class="">
             <h1 class="title text-center fw-bold app-open">TZU CHI PHILIPPINES<br>SCHOLARSHIP APPLICATION FORM</h1>
+            <div class="row">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+            </div>
             <p class="mt-4 mb-5 description">Welcome to Tzu Chi Scholarship Application Form <strong>(College)</strong>.
                 Before you proceed, kindly read and understand the following statements:
             <ol>
@@ -48,8 +68,9 @@
             </p>
         </div>
 
+
         <div class="app-form">
-            <form action="">
+            <form method="POST" action="{{ route('saveapplicant') }}">
                 <fieldset class="custom-fieldset">
                     <legend>Personal Information</legend>
                     <div class="row">
@@ -91,11 +112,11 @@
                     <div class="row">
                         <div class="column">
                             <label for="brgy">Barangay</label>
-                            <input type="text" name="barangay" value="" name="brgy" required>
+                            <input type="text" name="barangay" value="" required>
                         </div>
                         <div class="column">
                             <label for="city">City</label>
-                            <input type="text" name="city" value="" name="city" required>
+                            <input type="text" name="city" value=""required>
                         </div>
                     </div>
                     <div class="row">
@@ -105,7 +126,7 @@
                         </div>
                         <div class="column">
                             <label for="phoneNum">Cellphone No./Landline</label>
-                            <input type="tel" name="phoneNum" value="" required>
+                            <input type="tel" name="phonenum" value="" required>
                         </div>
                     </div>
                     <div class="row">
@@ -120,18 +141,20 @@
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="fbName">Facebook Link</label>
+                            <label for="fblink">Facebook Link</label>
                             <input type="text" name="fblink" value="" required>
                         </div>
                         <div class="column">
                             <p>Are you a member of any indigenous group?</p>
                             <div class="row-radio">
-                                <input type="radio" name="isIndigenous" value="Yes" onclick="toggleInput()">
+                                <input type="radio" id="indigenousCheck" name="isIndigenous" value="Yes"
+                                    onclick="toggleInput()">
                                 <label for="indigenousCheck">Yes</label>
-                                <input type="radio" name="isIndigenous" value="No" onclick="disableInput()">
+                                <input type="radio" id="noCheck" name="isIndigenous" value="No"
+                                    onclick="disableInput()">
                                 <label for="noCheck">No</label>
                             </div>
-                            <input type="text" name="indigenousgroup"
+                            <input type="text" name="indigenousgroup" id="indigenousInput"
                                 placeholder="Please specify the group you belong to" disabled>
                         </div>
                     </div>
@@ -143,17 +166,12 @@
                     <div class="row">
                         <div class="column">
                             <label for="school">Name of University</label>
-                            <select name="school" id="school">
+                            <select name="schoolname" id="school">
                                 <option value="" selected hidden>Select school</option>
-                                <option value="Pamantasan ng Lungsod ng Maynila">Pamantasan ng Lungsod ng Maynila
-                                </option>
-                                <option value="Philippine Normal University">Philippine Normal University</option>
-                                <option value="Polytechnic University of the Philippines">Polytechnic University of the
-                                    Philippines</option>
-                                <option value="Technological University of the Philippines">Technological University of
-                                    the Philippines</option>
-                                <option value="Universidad De Manila">Universidad De Manila</option>
-                                <option value="University of the Philippines">University of the Philippines</option>
+                                @foreach ($institutions as $insti)
+                                    <option value="{{ $insti->schoolname }}">{{ $insti->schoolname }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -177,12 +195,14 @@
                             <label for="course">Course</label>
                             <select name="course" id="course">
                                 <option value="" selected hidden>Select course</option>
-                                <option value="">Bachelor of Science in Information Technology</option>
+                                @foreach ($courses as $course)
+                                    <option value="{{ $course->coursename }}">{{ $course->coursename }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="column">
                             <label for="gwa">General Average Last Sem</label>
-                            <input type="text" id="gwa" required>
+                            <input type="text" name="gwa" required>
                         </div>
                     </div>
                 </fieldset>
@@ -194,15 +214,15 @@
                         <div class="row">
                             <div class="column">
                                 <label for="fName">Name (Last Name, First Name)</label>
-                                <input type="text" id="fName" value="" name="fName" required>
+                                <input type="text" id="fName" value="" name="fname" required>
                             </div>
                             <div class="column">
                                 <label for="fAge">Age</label>
-                                <input type="text" id="fAge" value="" name="fAge" required>
+                                <input type="text" id="fAge" value="" name="fage" required>
                             </div>
                             <div class="column">
                                 <label for="fSex">Sex</label>
-                                <select name="" id="fSex">
+                                <select name="" id="fsex">
                                     <option value="" disabled selected hidden></option>
                                     <option value="F">F</option>
                                     <option value="M">M</option>
@@ -212,36 +232,36 @@
                         <div class="row">
                             <div class="column">
                                 <label for="fBirthdate">Birthdate</label>
-                                <input type="date" id="fBirthdate" value="" name="fBirthdate" required>
+                                <input type="date" id="fBirthdate" value="" name="fbirthdate" required>
                             </div>
                             <div class="column">
                                 <label for="fRelationship">Relationship</label>
-                                <input type="text" id="fRelationship" value="Father" name="fRelationship"
+                                <input type="text" id="fRelationship" value="Father" name="frelationship"
                                     readonly>
                             </div>
                             <div class="column">
                                 <label for="fReligion">Religion</label>
-                                <input type="text" id="fReligion" value="" name="fReligion" required>
+                                <input type="text" id="fReligion" value="" name="freligion" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fAttainment">Educational Attainment</label>
-                                <input type="text" id="fAttainment" value="" name="fAttainment" required>
+                                <input type="text" id="fAttainment" value="" name="fattainment" required>
                             </div>
                             <div class="column">
                                 <label for="fSchoolOcc">School/Occupation</label>
-                                <input type="text" id="fSchoolOcc" value="" name="fSchoolOcc" required>
+                                <input type="text" id="fSchoolOcc" value="" name="foccupation" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fCompany">Company</label>
-                                <input type="text" id="fCompany" value="" name="fCompany" required>
+                                <input type="text" id="fCompany" value="" name="fcompany" required>
                             </div>
                             <div class="column">
                                 <label for="fIncome">Income</label>
-                                <input type="text" id="fIncome" value="" name="fIncome" required>
+                                <input type="text" id="fIncome" value="" name="fincome" required>
                             </div>
                         </div>
                     </div>
@@ -249,16 +269,16 @@
                         <p class="family">MOTHER INFORMATION</p>
                         <div class="row">
                             <div class="column">
-                                <label for="fName">Name (Last Name, First Name)</label>
-                                <input type="text" id="fName" value="" name="fName" required>
+                                <label for="mname">Name (Last Name, First Name)</label>
+                                <input type="text" id="fName" value="" name="mname" required>
                             </div>
                             <div class="column">
-                                <label for="fAge">Age</label>
-                                <input type="text" id="fAge" value="" name="fAge" required>
+                                <label for="mage">Age</label>
+                                <input type="text" id="fAge" value="" name="mage" required>
                             </div>
                             <div class="column">
-                                <label for="fSex">Sex</label>
-                                <select name="" id="fSex">
+                                <label for="msex">Sex</label>
+                                <select name="msex" id="fSex">
                                     <option value="" disabled selected hidden></option>
                                     <option value="F">F</option>
                                     <option value="M">M</option>
@@ -268,36 +288,36 @@
                         <div class="row">
                             <div class="column">
                                 <label for="fBirthdate">Birthdate</label>
-                                <input type="date" id="fBirthdate" value="" name="fBirthdate" required>
+                                <input type="date" id="fBirthdate" value="" name="mbirthdate" required>
                             </div>
                             <div class="column">
                                 <label for="fRelationship">Relationship</label>
-                                <input type="text" id="fRelationship" value="Mother" name="fRelationship"
+                                <input type="text" id="fRelationship" value="Mother" name="mrelationship"
                                     readonly>
                             </div>
                             <div class="column">
                                 <label for="fReligion">Religion</label>
-                                <input type="text" id="fReligion" value="" name="fReligion" required>
+                                <input type="text" id="fReligion" value="" name="mreligion" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fAttainment">Educational Attainment</label>
-                                <input type="text" id="fAttainment" value="" name="fAttainment" required>
+                                <input type="text" id="fAttainment" value="" name="mattainment" required>
                             </div>
                             <div class="column">
                                 <label for="fSchoolOcc">School/Occupation</label>
-                                <input type="text" id="fSchoolOcc" value="" name="fSchoolOcc" required>
+                                <input type="text" id="fSchoolOcc" value="" name="moccupation" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fCompany">Company</label>
-                                <input type="text" id="fCompany" value="" name="fCompany" required>
+                                <input type="text" id="fCompany" value="" name="mcompany" required>
                             </div>
                             <div class="column">
                                 <label for="fIncome">Income</label>
-                                <input type="text" id="fIncome" value="" name="fIncome" required>
+                                <input type="text" id="fIncome" value="" name="mincome" required>
                             </div>
                         </div>
                     </div>
@@ -306,16 +326,16 @@
                             <p class="family">SIBLING INFORMATION</p>
                             <div class="row">
                                 <div class="column">
-                                    <label for="fName">Name (Last Name, First Name)</label>
-                                    <input type="text" id="fName" value="" name="fName" required>
+                                    <label for="sname[]">Name (Last Name, First Name)</label>
+                                    <input type="text" id="fName" value="" name="sname[]" required>
                                 </div>
                                 <div class="column">
-                                    <label for="fAge">Age</label>
-                                    <input type="text" id="fAge" value="" name="fAge" required>
+                                    <label for="sage[]">Age</label>
+                                    <input type="text" id="fAge" value="" name="sage[]" required>
                                 </div>
                                 <div class="column">
-                                    <label for="fSex">Sex</label>
-                                    <select name="" id="fSex">
+                                    <label for="ssex[]">Sex</label>
+                                    <select name="ssex[]" id="ssex">
                                         <option value="" disabled selected hidden></option>
                                         <option value="F">F</option>
                                         <option value="M">M</option>
@@ -324,44 +344,45 @@
                             </div>
                             <div class="row">
                                 <div class="column">
-                                    <label for="fBirthdate">Birthdate</label>
-                                    <input type="date" id="fBirthdate" value="" name="fBirthdate" required>
-                                </div>
-                                <div class="column">
-                                    <label for="fRelationship">Relationship</label>
-                                    <input type="text" id="fRelationship" value="Sibling" name="fRelationship"
-                                        readonly>
-                                </div>
-                                <div class="column">
-                                    <label for="fReligion">Religion</label>
-                                    <input type="text" id="fReligion" value="" name="fReligion" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="column">
-                                    <label for="fAttainment">Educational Attainment</label>
-                                    <input type="text" id="fAttainment" value="" name="fAttainment"
+                                    <label for="sbirthdate[]">Birthdate</label>
+                                    <input type="date" id="fBirthdate" value="" name="sbirthdate[]"
                                         required>
                                 </div>
                                 <div class="column">
-                                    <label for="fSchoolOcc">School/Occupation</label>
-                                    <input type="text" id="fSchoolOcc" value="" name="fSchoolOcc" required>
+                                    <label for="srelationship[]">Relationship</label>
+                                    <input type="text" id="fRelationship" value="Sibling" name="srelationship[]"
+                                        readonly>
+                                </div>
+                                <div class="column">
+                                    <label for="sreligion[]">Religion</label>
+                                    <input type="text" id="fReligion" value="" name="sreligion[]" required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="column">
-                                    <label for="fCompany">Company</label>
-                                    <input type="text" id="fCompany" value="" name="fCompany" required>
+                                    <label for="sattainment[]">Educational Attainment</label>
+                                    <input type="text" id="fAttainment" value="" name="sattainment[]"
+                                        required>
                                 </div>
                                 <div class="column">
-                                    <label for="fIncome">Income</label>
-                                    <input type="text" id="fIncome" value="" name="fIncome" required>
+                                    <label for="soccupation[]">School/Occupation</label>
+                                    <input type="text" id="fSchoolOcc" value="" name="soccupation[]"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column">
+                                    <label for="fCompany[]">Company</label>
+                                    <input type="text" id="fCompany" value="" name="scompany[]" required>
+                                </div>
+                                <div class="column">
+                                    <label for="fIncome[]">Income</label>
+                                    <input type="text" id="fIncome" value="" name="sincome[]" required>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <button id="addSibling">Add Sibling</button>
-
                 </fieldset>
 
                 <fieldset class="custom-fieldset">
@@ -377,13 +398,13 @@
                         <div class="column">
                             <label for="talents">Talents & Skills/ Honor and Recognition/ Extracurricular/Community
                                 Involvement/Employment</label>
-                            <textarea id="talents" name="talents" rows="2" cols="50" placeholder="Input your answer here..."></textarea>
+                            <textarea id="talents" name="talent" rows="2" cols="50" placeholder="Input your answer here..."></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="expectations">What are your expectations from Tzu Chi Foundation?</label>
-                            <textarea id="expectations" name="expectations" rows="2" cols="50"
+                            <textarea id="expectations" name="expectation" rows="2" cols="50"
                                 placeholder="Input your answer here..."></textarea>
                         </div>
                     </div>
@@ -393,60 +414,65 @@
                     <legend>Requirements Submission</legend>
                     <div class="row">
                         <div class="column">
-                            <label for="idPic">1x1 ID Picture (Format: JPG or JPEG)</label>
-                            <input type="file" id="idPic" required>
+                            <label for="idPic">1x1 ID Picture</label>
+                            <input type="file" name="idpic" required>
                         </div>
                         <div class="column">
                             <label for="grades">Scanned copy of latest Report Card</label>
-                            <input type="file" id="grades" required>
+                            <input type="file" name="reportcard" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="regForm">Scanned copy of latest Registration Form</label>
-                            <input type="file" id="regForm" required>
+                            <input type="file" name="regiform" required>
                         </div>
                         <div class="column">
                             <label for="autobiography">Autobiography</label>
-                            <input type="file" id="autobiography" required>
+                            <input type="file" name="autobiography" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="famPic">Family Picture (Format: JPG or JPEG)</label>
-                            <input type="file" id="famPic" required>
+                            <label for="famPic">Family Picture</label>
+                            <input type="file" name="familypic" required>
                         </div>
                         <div class="column">
-                            <label for="housePic">Picture of the inside and outside of the house (Format: JPG or
-                                JPEG)</label>
-                            <input type="file" id="famPic" required>
+                            <label for="housePic">Picture of the inside of the house</label>
+                            <input type="file" name="insidehouse" required>
                         </div>
                     </div>
                     <div class="row">
+                        <div class="column">
+                            <label for="housePic">Picture of the outside of the house</label>
+                            <input type="file" name="outsidehouse" required>
+                        </div>
                         <div class="column">
                             <label for="utility">Scanned copy of latest Utility Bills</label>
-                            <input type="file" id="utility" required>
-                        </div>
-                        <div class="column">
-                            <label for="sketchMap">Detailed Sketch Map of Home Address</label>
-                            <input type="file" id="sketchMap" required>
+                            <input type="file" name="utility" required>
                         </div>
                     </div>
                     <div class="row">
+                        <div class="column">
+                            <label for="sketchMap">Detailed Sketch Map of Home Address</label>
+                            <input type="file" name="sketchmap" required>
+                        </div>
                         <div class="column">
                             <label for="paySlip">Scanned copy latest ITR/ Official Pay Slip of parent/s (if
                                 applicable)</label>
-                            <input type="file" id="paySlip">
+                            <input type="file" name="payslip">
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="column">
                             <label for="brgyCert">Barangay Certificate of Indigency</label>
-                            <input type="file" id="brgyCert" required>
+                            <input type="file" name="indigencycert" required>
                         </div>
                     </div>
                 </fieldset>
 
                 <div class="agreement">
-                    <input type="checkbox" value="" id="agreement">
+                    <input type="checkbox" value="" name="agreement" id="agreement">
                     <label for="agreement">
                         <i>I hereby attest that the information I have provided is true and correct. I also
                             consents Tzu Chi Foundation to obtain and retain my personal information for the purpose of

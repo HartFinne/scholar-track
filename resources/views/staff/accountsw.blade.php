@@ -25,23 +25,24 @@
                     <span class="subtitle">Account Information</span>
                     <div class="groupA3">
                         <span style="width: 150px;">Staff Name</span>
-                        <input type="text" id="inname" class="inacctinfo" required>
+                        <input type="text" name="name" class="inacctinfo" value="{{ $worker->name }}" required>
                     </div>
                     <div class="groupA3">
                         <span style="width: 150px;">Email Address</span>
-                        <input type="email" id="incontactno" class="inacctinfo" required>
+                        <input type="email" name="email" class="inacctinfo" value="{{ $worker->email }}" required>
                     </div>
                     <div class="groupA3">
                         <span style="width: 150px;">Mobile No.</span>
-                        <input type="number" id="incontactno" class="inacctinfo" required>
+                        <input type="tel" name="contactno" class="inacctinfo" value="{{ $worker->mobileno }}"
+                            placeholder="Please set your mobile number" required>
                     </div>
                     <div class="groupA3">
                         <span style="width: 150px;">Area</span>
-                        <input type="text" id="inarea" class="inacctinfo" required>
+                        <input type="text" name="area" class="inacctinfo" value="{{ $worker->area }}" required>
                     </div>
                     <div class="groupA3">
                         <span style="width: 150px;">Role</span>
-                        <input type="text" id="inrole" class="inacctinfo" required>
+                        <input type="text" name="role" class="inacctinfo" value="{{ $worker->role }}" required>
                     </div>
                     <button type="submit" id="btnupdateacct" class="button">Save</button>
                 </form>

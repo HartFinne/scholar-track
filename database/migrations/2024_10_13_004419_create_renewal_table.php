@@ -21,6 +21,7 @@ return new class extends Migration
             $table->binary('utilitybill');
             $table->binary('sketchaddress');
             $table->binary('reflectionpaper');
+            $table->string('status', 25);
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column

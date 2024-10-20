@@ -31,7 +31,8 @@ class StaffController extends Controller
     public function showAccountSW()
     {
         if (Auth::guard('staff')->check()) {
-            return view('staff.accountsw');
+            $worker = Auth::guard('staff')->user();
+            return view('staff.accountsw', compact('worker'));
         }
 
         return redirect()->route('login');

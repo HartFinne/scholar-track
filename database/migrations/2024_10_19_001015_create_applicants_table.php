@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('applicants', function (Blueprint $table) {
             $table->increments('apid');
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('name', 255);
             $table->string('chinesename', 255);
             $table->string('sex', 6);
@@ -29,23 +30,30 @@ return new class extends Migration
             $table->string('isIndigenous', 3);
             $table->string('Indigenousgroup', 100)->nullable();
             $table->string('applicationstatus', 25);
+            $table->unsignedTinyInteger('prioritylevel');
             $table->timestamps();
         });
 
         Schema::create('apceducation', function (Blueprint $table) {
             $table->increments('apcid');
-            $table->unsignedInteger('apid')->unique();
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('univname', 255);
             $table->string('collegedept', 255);
             $table->string('inyear', 10);
             $table->string('course', 255);
             $table->float('gwa');
             $table->timestamps();
+
+            $table->foreign('casecode')
+                ->references('casecode')
+                ->on('applicants')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
         });
 
         Schema::create('apeheducation', function (Blueprint $table) {
             $table->increments('apehid');
-            $table->unsignedInteger('apid')->unique();
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('schoolname', 255);
             $table->string('ingrade', 255);
             $table->string('strand', 150)->nullable();
@@ -55,65 +63,54 @@ return new class extends Migration
             $table->float('chinesegwa')->nullable();
             $table->string('chinesegwaconduct', 50)->nullable();
             $table->timestamps();
+
+            $table->foreign('casecode')
+                ->references('casecode')
+                ->on('applicants')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
         });
 
-        Schema::create('apfather', function (Blueprint $table) {
+        Schema::create('apfamilyinfo', function (Blueprint $table) {
             $table->increments('apfid');
-            $table->unsignedInteger('apid')->unique();
-            $table->string('fathername', 255);
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->string('name', 255);
             $table->integer('age');
             $table->string('sex', 6);
             $table->date('birthdate');
+            $table->string('relationship', 25);
             $table->string('religion', 100);
             $table->string('educattainment', 100);
             $table->string('occupation', 100);
             $table->string('company', 100);
             $table->integer('income');
             $table->timestamps();
-        });
 
-        Schema::create('apmother', function (Blueprint $table) {
-            $table->increments('apmid');
-            $table->unsignedInteger('apid')->unique();
-            $table->string('mothername', 255);
-            $table->integer('age');
-            $table->string('sex', 6);
-            $table->date('birthdate');
-            $table->string('religion', 100);
-            $table->string('educattainment', 100);
-            $table->string('occupation', 100);
-            $table->string('company', 100);
-            $table->integer('income');
-            $table->timestamps();
-        });
-
-        Schema::create('apsiblings', function (Blueprint $table) {
-            $table->increments('apsid');
-            $table->unsignedInteger('apid');
-            $table->string('siblingname', 255);
-            $table->integer('age');
-            $table->string('sex', 6);
-            $table->date('birthdate');
-            $table->string('religion', 100);
-            $table->string('educattainment', 100);
-            $table->string('occupation', 100);
-            $table->string('company', 100);
-            $table->integer('income');
-            $table->timestamps();
+            $table->foreign('casecode')
+                ->references('casecode')
+                ->on('applicants')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
         });
 
         Schema::create('apotherinfo', function (Blueprint $table) {
             $table->increments('apoid');
-            $table->unsignedInteger('apid')->unique();
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('grant', 255);
             $table->string('talent', 255);
-            $table->string('expectatiions', 255);
+            $table->string('expectations', 255);
             $table->timestamps();
+
+            $table->foreign('casecode')
+                ->references('casecode')
+                ->on('applicants')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
         });
 
         Schema::create('aprequirements', function (Blueprint $table) {
             $table->increments('aprid');
-            $table->unsignedInteger('apid')->unique();
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->binary('idpic');
             $table->binary('reportcard');
             $table->binary('regiform');
@@ -126,11 +123,17 @@ return new class extends Migration
             $table->binary('payslip');
             $table->binary('indigencycert');
             $table->timestamps();
+
+            $table->foreign('casecode')
+                ->references('casecode')
+                ->on('applicants')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
         });
 
         Schema::create('apcasedetails', function (Blueprint $table) {
             $table->increments('apcdid');
-            $table->unsignedInteger('apid')->unique();
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('natureofneeds', 50);
             $table->string('problemstatement', 50);
             $table->string('receivedby', 255);
@@ -143,6 +146,12 @@ return new class extends Migration
             $table->binary('applicantsign');
             $table->date('datereported');
             $table->timestamps();
+
+            $table->foreign('casecode')
+                ->references('casecode')
+                ->on('applicants')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
         });
     }
 
@@ -151,14 +160,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('applicants');
         Schema::dropIfExists('apceducation');
         Schema::dropIfExists('apeheducation');
-        Schema::dropIfExists('apfather');
-        Schema::dropIfExists('apmother');
-        Schema::dropIfExists('apsiblings');
+        Schema::dropIfExists('apfamilyinfo');
         Schema::dropIfExists('apotherinfo');
         Schema::dropIfExists('aprequirements');
-        Schema::dropIfExists('apdetails');
+        Schema::dropIfExists('apcasedetails');
+        Schema::dropIfExists('applicants');
     }
 };

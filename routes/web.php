@@ -8,15 +8,18 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Scholar\ScholarController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffAuthController;
+use App\Http\Controllers\ApplicationController;
 
 
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
 
+
 //routing for applicant page
 Route::prefix('applicant')->group(function () {
     Route::view('/appinstructions', 'applicant.appinstructions')->name('appinstructions');
-    Route::view('/applicationformC', 'applicant.applicationformC')->name('form-college');
+    Route::get('/applicationformC', [ApplicationController::class, 'showcollegeapplication'])->name('applicationformC');
+    Route::get('/save-applicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
     Route::view('/applicationformHE', 'applicant.applicationformHE')->name('form-hselem');
     Route::view('/appconfirmdialog', 'applicant.appconfirmdialog')->name('appconfirmdialog');
     Route::view('/applicantportal', 'applicant.applicantportal')->name('applicantportal');
@@ -24,13 +27,37 @@ Route::prefix('applicant')->group(function () {
 
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
-
+    Route::view('/csform', 'scholar.csform')->name('csform');
+    Route::view('/csattendance', 'scholar.csattendance')->name('csattendance');
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
     Route::view('/schome', 'scholar.schome')->name('schome');
-
+    // Allowance Requests
+    Route::view('/scregular', 'scholar.scregular')->name('scregular');
+    Route::view('/scspecial', 'scholar.scspecial')->name('scspecial');
+    Route::view('/transporeq', 'scholar.transporeq')->name('transpo');
+    Route::view('/transpoform', 'scholar.transpoform')->name('transpoform');
+    Route::view('/transpoinfo', 'scholar.transpoinfo')->name('transpoinfo');
+    Route::view('/bookreq', 'scholar.bookreq')->name('book');
+    Route::view('/bookform', 'scholar.bookform')->name('bookform');
+    Route::view('/bookinfo', 'scholar.bookinfo')->name('bookinfo');
+    Route::view('/thesisreq', 'scholar.thesisreq')->name('thesis');
+    Route::view('/thesisform', 'scholar.thesisform')->name('thesisform');
+    Route::view('/thesisinfo', 'scholar.thesisinfo')->name('thesisinfo');
+    Route::view('/projectreq', 'scholar.projectreq')->name('project');
+    Route::view('/projectform', 'scholar.projectform')->name('projectform');
+    Route::view('/projectinfo', 'scholar.projectinfo')->name('projectinfo');
+    Route::view('/uniformreq', 'scholar.uniformreq')->name('uniform');
+    Route::view('/uniformform', 'scholar.uniformform')->name('uniformform');
+    Route::view('/uniforminfo', 'scholar.uniforminfo')->name('uniforminfo');
+    Route::view('/gradreq', 'scholar.gradreq')->name('grad');
+    Route::view('/gradform', 'scholar.gradform')->name('gradform');
+    Route::view('/gradinfo', 'scholar.gradinfo')->name('gradinfo');
+    Route::view('/fieldtripreq', 'scholar.fieldtripreq')->name('fieldtrip');
+    Route::view('/fieldtripform', 'scholar.fieldtripform')->name('fieldtripform');
+    Route::view('/fieldtripinfo', 'scholar.fieldtripinfo')->name('fieldtripinfo');
 
     // Appointment system
     Route::view('/appointmentsystem', 'scholar.appointmentsystem')->name('appointment');
@@ -38,24 +65,26 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
 
 
     Route::get('/schumanities', [ScholarController::class, 'showHumanitiesClass'])->name('schumanities');
-});
 
-// cs folder
-Route::prefix('scholar/communityservice')->middleware('scholar')->group(function () {
-    // cs
-    Route::get('/csactivities', [CommunityController::class, 'showCSActivities'])->name('csactivities');
-    Route::get('/csdetails/{csid}', [CommunityController::class, 'showCSDetails'])->name('csdetails');
-    Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
-    Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
-    Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
+    // LTE
+    Route::get('/sclte', [ScholarController::class, 'showLTE'])->name('sclte');
+    Route::get('/lteinfo/{lid}', [ScholarController::class, 'showLTEinfo'])->name('lteinfo');
+    // Route::get('/lteinfo-absent/{lid}', [ScholarController::class, 'showLTEinfoabsent'])->name('lteinfo-absent');
+    // Route::get('/lteinfo-late/{lid}', [ScholarController::class, 'showLTEinfolate'])->name('lteinfo-late');
+    // Route::get('/lteinfo-leftearly/{lid}', [ScholarController::class, 'showLTEinfoleftearly'])->name('lteinfo-leftearly');
 
-    Route::get('/csattendance', [CommunityController::class, 'showCSAttendance'])->name('csattendance');
-    Route::get('/csform', [CommunityController::class, 'showCSForm'])->name('csform');
-    Route::post('/csform', [CommunityController::class, 'storeCSForm'])->name('csform.post');
-});
+    // fixed about 70%
+    Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
+    Route::get('/gradesub', [ScholarController::class, 'showGradeSubmission'])->name('gradesub');
+    // nag skip ako dito
+    Route::post('/gradesub', [ScholarController::class, 'storeGradeSubmission'])->name('gradesub.post');
 
-// scholarship folder
-Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
+
+    Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
+    Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
+
+    Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
+
     // fixed about 70%
     Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
 
@@ -66,14 +95,6 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
     // fixed na gradesubmission sa page ----------------------------------------------------------------------------------
     // pero dagdagan ng restriction pag nakapaginput na ng 1st sem 2nd sem sa isang academic year
 
-
-    // LTE
-    Route::get('/sclte', [ScholarController::class, 'showLTE'])->name('sclte');
-    Route::get('/lteinfo/{lid}', [ScholarController::class, 'showLTEinfo'])->name('lteinfo');
-    // Route::get('/lteinfo-absent/{lid}', [ScholarController::class, 'showLTEinfoabsent'])->name('lteinfo-absent');
-    // Route::get('/lteinfo-late/{lid}', [ScholarController::class, 'showLTEinfolate'])->name('lteinfo-late');
-    // Route::get('/lteinfo-leftearly/{lid}', [ScholarController::class, 'showLTEinfoleftearly'])->name('lteinfo-leftearly');
-
     // fixed
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
@@ -81,35 +102,15 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
     // wala pa
     Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
 
+    // cs
+    Route::get('/csactivities', [CommunityController::class, 'showCSActivities'])->name('csactivities');
+    Route::get('/csdetails/{csid}', [CommunityController::class, 'showCSDetails'])->name('csdetails');
+    Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
+    Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
+    Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
+
     // sa sms or email ba
     Route::post('/update-notification-preference', [ScholarController::class, 'updateNotificationPreference'])->name('update.notification.preference');
-});
-
-Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function () {
-    // Allowance Requests
-    Route::view('/scregular', 'scholar.allowancerequest.scregular')->name('scregular');
-    Route::view('/scspecial', 'scholar.allowancerequest.scspecial')->name('scspecial');
-    Route::view('/transporeq', 'scholar.allowancerequest.transporeq')->name('transpo');
-    Route::view('/transpoform', 'scholar.allowancerequest.transpoform')->name('transpoform');
-    Route::view('/transpoinfo', 'scholar.allowancerequest.transpoinfo')->name('transpoinfo');
-    Route::view('/bookreq', 'scholar.allowancerequest.bookreq')->name('book');
-    Route::view('/bookform', 'scholar.allowancerequest.bookform')->name('bookform');
-    Route::view('/bookinfo', 'scholar.allowancerequest.bookinfo')->name('bookinfo');
-    Route::view('/thesisreq', 'scholar.allowancerequest.thesisreq')->name('thesis');
-    Route::view('/thesisform', 'scholar.allowancerequest.thesisform')->name('thesisform');
-    Route::view('/thesisinfo', 'scholar.allowancerequest.thesisinfo')->name('thesisinfo');
-    Route::view('/projectreq', 'scholar.allowancerequest.projectreq')->name('project');
-    Route::view('/projectform', 'scholar.allowancerequest.projectform')->name('projectform');
-    Route::view('/projectinfo', 'scholar.allowancerequest.projectinfo')->name('projectinfo');
-    Route::view('/uniformreq', 'scholar.allowancerequest.uniformreq')->name('uniform');
-    Route::view('/uniformform', 'scholar.allowancerequest.uniformform')->name('uniformform');
-    Route::view('/uniforminfo', 'scholar.allowancerequest.uniforminfo')->name('uniforminfo');
-    Route::view('/gradreq', 'scholar.allowancerequest.gradreq')->name('grad');
-    Route::view('/gradform', 'scholar.allowancerequest.gradform')->name('gradform');
-    Route::view('/gradinfo', 'scholar.allowancerequest.gradinfo')->name('gradinfo');
-    Route::view('/fieldtripreq', 'scholar.allowancerequest.fieldtripreq')->name('fieldtrip');
-    Route::view('/fieldtripform', 'scholar.allowancerequest.fieldtripform')->name('fieldtripform');
-    Route::view('/fieldtripinfo', 'scholar.allowancerequest.fieldtripinfo')->name('fieldtripinfo');
 });
 
 
