@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
+
 <body>
     <div class="ctn-navbar">
         <div class="logo">
@@ -24,11 +26,14 @@
         <p>You have successfully submitted your scholarship application.</p>
         <p>To monitor the status of your application, login to your account using the credentials below:</p>
         <ul>
-            <li>Applicant ID: </li>
-            <li>Password: Lastname.TZUCHI (e.g., Cruz.TZUCHI)</li>
+            <li>Applicant ID: <strong>{{ $applicant->casecode }}</strong></li>
+            <li>Password: <strong>Lastname.tzuchi (ex: Cruz.tzuchi)</strong></li>
         </ul>
-        <a href="">CLick here to login!</a>
+        <p>For your security, please change your password immediately after logging into your account. We recommend
+            keeping your password confidential to prevent unauthorized access.</p>
+        <a href="{{ route('login-applicant') }}">CLick here to login!</a>
     </div>
 
 </body>
+
 </html>

@@ -15,6 +15,7 @@ class applicants extends Model
 
     protected $fillable = [
         'casecode',
+        'password',
         'name',
         'chinesename',
         'age',

@@ -18,10 +18,11 @@ Route::view('roleselection', 'roleselection')->name('roleselection');
 //routing for applicant page
 Route::prefix('applicant')->group(function () {
     Route::view('/appinstructions', 'applicant.appinstructions')->name('appinstructions');
-    Route::get('/applicationformC', [ApplicationController::class, 'showcollegeapplication'])->name('applicationformC');
-    Route::post('/save-applicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
+    Route::get('/applicationformC', [ApplicationController::class, 'showcollegeapplication'])->name('form-college');
+    Route::post('/saveapplicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
     Route::view('/applicationformHE', 'applicant.applicationformHE')->name('form-hselem');
-    Route::view('/appconfirmdialog', 'applicant.appconfirmdialog')->name('appconfirmdialog');
+    Route::get('/application-success/{casecode}', [ApplicationController::class, 'showconfirmation'])->name('showconfirmation');
+    Route::view('/login', 'applicant.login')->name('login-applicant');
     Route::view('/applicantportal', 'applicant.applicantportal')->name('applicantportal');
 });
 

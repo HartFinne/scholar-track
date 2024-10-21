@@ -23,7 +23,7 @@
             <span style="color: #2e7c55;">Tzu Chi Philippines</span>
             <span style="color: #1a5319;">Educational Assistance Program</span>
         </div>
-        <a href="{{ route('mainhome') }}" id="btnexit"><i class="fas fa-arrow-left"></i></a>
+        <a href="{{ route('roleselection') }}" id="btnexit"><i class="fas fa-arrow-left"></i></a>
     </div>
 
     <!-- MAIN CONTENT -->

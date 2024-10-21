@@ -17,7 +17,8 @@
     <!-- MAIN -->
     <div class="ctn-main">
         <a href="">
-            <button class="btn-back fw-bold">&lt Go back</button>
+            <a href="{{ route('appinstructions') }}" class="btn-back fw-bold" style="text-decoration: none">&lt Go
+                back</a>
         </a>
         <h1 class="title text-center fw-bold app-close hide">APPLICATION IS NOT YET OPEN.</h1>
         <div class="">
@@ -58,6 +59,19 @@
                 <li>
                     Please upload the necessary documents below and submit the hard copy <strong> on or before
                         DUE DATE</strong>.
+                </li>
+                <li>
+                    Late applicants will not be entertained.
+                </li>
+                <li>
+                    All applications are subject for home visit and approval.
+                </li>
+                <li>
+                    The applicants will be notified on the acceptance or rejection of the application.
+                </li>
+                <li>
+                    For inquiries, you may contact the Educational Assistance Program Staff with number
+                    <strong>09953066694</strong>.
                 </li>
             </ol>
             </p>

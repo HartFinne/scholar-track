@@ -34,6 +34,9 @@
                     <form action="{{ route('login-sw') }}" method="get">
                         <button class="btn btn-outline-secondary bnt-lg w-100 m-2" type="submit">Admin</button>
                     </form>
+                    <form action="{{ route('login-applicant') }}" method="get">
+                        <button class="btn btn-outline-secondary bnt-lg w-100 m-2" type="submit">Applicant</button>
+                    </form>
 
 
                     <div class="text-center mt-5">

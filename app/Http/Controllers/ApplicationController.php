@@ -13,6 +13,7 @@ use App\Models\apfamilyinfo;
 use App\Models\apcasedetails;
 use App\Models\aprequirements;
 use App\Models\criteria;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -204,8 +205,12 @@ class ApplicationController extends Controller
 
             $prioritylevel = $this->determineprioritylevel($request->incomingyear, $request->income, $request->fincome, $request->mincome, $sincome, $request->gwa);
 
+            $fullname = explode(',', $request->name);
+            $password = trim($fullname[0] . '.tzuchi');
+
             applicants::create([
                 'casecode' => $casecode,
+                'password' => Hash::make($password),
                 'name' => $request->scholarname,
                 'chinesename' => $request->chinesename,
                 'sex' => $request->sex,
@@ -343,7 +348,9 @@ class ApplicationController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Your application has been submitted.');
+
+            return redirect()->route('showconfirmation', $casecode);
+            // return redirect()->back()->with('success', 'Your application has been submitted');
         } catch (ValidationException $e) {
             DB::rollback();
             $errors = $e->errors();
@@ -359,6 +366,13 @@ class ApplicationController extends Controller
             DB::rollback();
             return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage());
         }
+    }
+
+    public function showconfirmation($casecode)
+    {
+        $applicant = applicants::where('casecode', $casecode)->first();
+
+        return view('applicant.appconfirmdialog', compact('applicant'));
     }
 
     public function generatecasecode($incomingyear)

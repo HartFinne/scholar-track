@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('applicants', function (Blueprint $table) {
             $table->increments('apid');
             $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
+            $table->string('password', 255);
             $table->string('name', 255);
             $table->string('chinesename', 255);
             $table->string('sex', 6);
