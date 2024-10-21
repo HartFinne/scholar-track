@@ -11,25 +11,26 @@ body {
     background: #eaeaea !important;
 }
 
-.ctn-main{
+.ctn-main {
     width: 90%;
     margin: 30px auto;
     font-family: 'Calibri';
 }
 
-.appform-view{
+.appform-view {
     font-size: 16px;
     margin-bottom: 30px;
     width: 90%;
     margin: 50px auto;
 }
 
-.appform-view .sec-title{
+.appform-view .sec-title {
     text-decoration: underline;
     font-weight: 600;
 }
 
-.page1, .page2{
+.page1,
+.page2 {
     background-color: #fff;
     border: 1px solid;
     width: 8.5in;
@@ -38,7 +39,7 @@ body {
     margin: 0 auto 10px;
 }
 
-.header{
+.header {
     display: flex;
     gap: 20px;
     text-align: center;
@@ -46,182 +47,194 @@ body {
     justify-content: center;
 }
 
-.header img{
+.header img {
     width: auto;
     height: 40px;
 }
 
-.app-title{
+.app-title {
     text-align: center;
     margin: 20px 0 10px;
 }
 
-.personal-info .psec1{
+.personal-info .psec1 {
     display: flex;
     gap: 100px;
 }
 
-.psec1-info{
+.psec1-info {
     display: flex;
     gap: 50px;
 }
 
-.personal-info .psec2{
+.personal-info .psec2 {
     display: flex;
     gap: 10px;
 }
 
-.psec2 img{
+.psec2 img {
     width: 1in;
     height: 1in;
 }
 
-.fvalue, .elabel span{
+.fvalue,
+.elabel span {
     font-weight: 600;
 }
 
-.esec2 .elabel{
+.esec2 .elabel {
     padding-bottom: 7px;
 }
 
-.educbg-info{
+.educbg-info {
     display: flex;
     gap: 10px;
 }
 
-.educbg-info p{
+.educbg-info p {
     font-size: 14px;
     font-weight: 600;
     margin: 5px 0;
     text-align: center;
 }
 
-.group{
+.group {
     display: flex;
     gap: 10px;
 }
 
-.page1 .table, .page2 .table{
+.page1 .table,
+.page2 .table {
     width: 100%;
-    border-collapse: collapse;
 }
 
-.table td, .table th {
-    border: 1px solid black;
+.table td,
+.table th {
+    border: 1px solid black !important;
 }
 
 .table tr td {
     padding: 2px;
 }
 
-.table td .flabel, .fvalue, .elabel, .evalue{
+.table td .flabel,
+.fvalue,
+.elabel,
+.evalue {
     font-size: 14px;
 }
 
-.educbg .esec2{
+.educbg .esec2 {
     padding: 5px;
 }
 
-.table thead tr th{
+.table thead tr th {
     font-size: 13px;
     padding: 5px;
 }
 
-.table thead tr th span{
+.table thead tr th span {
     font-size: 11px;
 }
 
-.table tbody tr td{
+.table tbody tr td {
     font-size: 13px;
 }
 
-#familyTableBody td{
+#familyTableBody td {
     text-align: center;
 }
 
-.other-info p{
+.other-info p {
     font-size: 14px;
     font-weight: 600;
     margin-top: 10px;
     text-decoration: underline;
 }
 
-.other-info span{
+.other-info span {
     font-size: 14px;
     text-align: justify;
 }
 
-.signature{
+.signature {
     text-align: center;
     font-size: 12px;
     margin-top: 20px;
 }
 
-#nameDate{
+#nameDate {
     padding-top: 30px;
 }
 
-.sign{
+.sign {
     text-decoration: overline;
     font-weight: 600;
 }
 
-.page2 h2{
+.page2 h2 {
     text-align: center;
     padding-top: 20px;
 }
 
-.sketchome .sec-title{
+.sec-title {
     padding: 10px 0;
 }
 
-.sketchimg{
+.sketchimg {
     width: 100%;
     height: 250px;
     border: 1px solid;
+    padding: 0;
+    display: flex;
+    justify-content: space-evenly;
 }
 
-.instructions{
+#sketchmap {
+    height: 100%;
+}
+
+.instructions {
     font-size: 13px;
     padding-bottom: 10px;
 }
 
-.instructions ol li{
+.instructions ol li {
     margin-left: 10px;
 }
 
-#reqs{
+#reqs {
     font-style: italic;
     font-weight: 600;
 }
 
-#deadline{
+#deadline {
     font-weight: 600;
     text-decoration: underline;
 }
 
-.fillstaff{
+.fillstaff {
     border-top: 1px solid;
 }
 
-.fillstaff .heading{
+.fillstaff .heading {
     font-weight: 600;
     font-size: 12px;
 }
 
-.table3{
+.table3 {
     font-size: 13px;
 }
 
-.table3 tr td{
+.table3 tr td {
     padding: 0 10px;
 }
 
-#natureOfneeds input{
+#natureOfneeds input {
     margin-left: 10px;
 }
 
-.table3 textarea{
+.table3 textarea {
     width: 100%;
     resize: none;
     border-radius: 10px;
@@ -231,12 +244,12 @@ body {
     font-family: 'Calibri';
 }
 
-.page2 .group{
+.page2 .group {
     gap: 10px;
     padding-top: 10px;
 }
 
-.group input{
+.group input {
     /* border-radius: 10px; */
     border: none;
     border-bottom: 1px solid;
@@ -246,33 +259,39 @@ body {
     font-family: 'Calibri';
 }
 
-.group input[type="text"]{
+.group input[type="text"] {
     width: 150px;
 }
 
-.groupa .slabel{
+.groupa .slabel {
     padding-bottom: 5px;
 }
 
-.page2 .groupa{
+.page2 .groupa {
     width: 580px;
 }
 
-.groupa .slabel, .groupb1 .slabel{
+.groupa .slabel,
+.groupb1 .slabel {
     font-size: 14px;
 }
 
-.groupb1{
+.groupb1 {
     display: flex;
     gap: 3px;
 }
 
-.groupb1 .group1, .groupb1 .group2{
+.groupb1 .group1,
+.groupb1 .group2 {
     padding-bottom: 5px;
 }
 
-.note{
+.note {
     font-style: italic;
     font-size: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+}
+
+.casedeets {
+    font-size: 13px;
 }

@@ -45,7 +45,7 @@
         @endif
 
         <div class="form">
-            <form action="{{ route('registerScholar') }}" method="POST">
+            <form action="{{ route('registerScholar') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <fieldset class="custom-fieldset">
                     <legend>SCHOLARSHIP INFORMATION</legend>

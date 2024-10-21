@@ -42,19 +42,20 @@
         <h2 class="mb-4">Scholarship Criteria</h2>
         <div class="row" id="confirmmsg1">
             @if (session('critsuccess'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('critsuccess') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
 
             @if (session('criterror'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('criterror') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
         </div>
+
         <div class="row">
             <fieldset class="col-12">
                 <form method="POST" action="{{ route('updatecriteria') }}">
@@ -70,46 +71,46 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="collegeGwa" class="form-label">College GWA</label>
-                                <input type="text" class="form-control" id="collegeGwa" name="collegeGwa"
+                                <label for="cgwa" class="form-label">College GWA</label>
+                                <input type="text" class="form-control" id="cgwa" name="cgwa"
                                     value="{{ $criteria->cgwa ?? '--' }}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="seniorHighGwa" class="form-label">Senior High GWA</label>
-                                <input type="text" class="form-control" id="seniorHighGwa" name="seniorHighGwa"
+                                <label for="shsgwa" class="form-label">Senior High GWA</label>
+                                <input type="text" class="form-control" id="shsgwa" name="shsgwa"
                                     value="{{ $criteria->shsgwa ?? '--' }}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="juniorHighGwa" class="form-label">Junior High GWA</label>
-                                <input type="text" class="form-control" id="juniorHighGwa" name="juniorHighGwa"
+                                <label for="jhsgwa" class="form-label">Junior High GWA</label>
+                                <input type="text" class="form-control" id="jhsgwa" name="jhsgwa"
                                     value="{{ $criteria->jhsgwa ?? '--' }}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="elementaryGwa" class="form-label">Elementary GWA</label>
-                                <input type="text" class="form-control" id="elementaryGwa" name="elementaryGwa"
+                                <label for="elemgwa" class="form-label">Elementary GWA</label>
+                                <input type="text" class="form-control" id="elemgwa" name="elemgwa"
                                     value="{{ $criteria->elemgwa ?? '--' }}" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="fatherIncome" class="form-label">Father's Income</label>
-                                <input type="text" class="form-control" id="fatherIncome" name="fatherIncome"
+                                <label for="fincome" class="form-label">Father's Income</label>
+                                <input type="text" class="form-control" id="fincome" name="fincome"
                                     value="{{ $criteria->fincome ?? '--' }}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="motherIncome" class="form-label">Mother's Income</label>
-                                <input type="text" class="form-control" id="motherIncome" name="motherIncome"
+                                <label for="mincome" class="form-label">Mother's Income</label>
+                                <input type="text" class="form-control" id="mincome" name="mincome"
                                     value="{{ $criteria->mincome ?? '--' }}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="siblingsIncome" class="form-label">Siblings' Income</label>
-                                <input type="text" class="form-control" id="siblingsIncome" name="siblingsIncome"
+                                <label for="sincome" class="form-label">Siblings' Income</label>
+                                <input type="text" class="form-control" id="sincome" name="sincome"
                                     value="{{ $criteria->sincome ?? '--' }}" required>
                             </div>
                             <div class="mb-3">
-                                <label for="applicantIncome" class="form-label">Applicant's Income</label>
-                                <input type="text" class="form-control" id="applicantIncome"
-                                    name="applicantIncome" value="{{ $criteria->aincome ?? '--' }}" required>
+                                <label for="aincome" class="form-label">Applicant's Income</label>
+                                <input type="text" class="form-control" id="aincome" name="aincome"
+                                    value="{{ $criteria->aincome ?? '--' }}" required>
                             </div>
                         </div>
                     </div>

@@ -19,7 +19,7 @@ Route::view('roleselection', 'roleselection')->name('roleselection');
 Route::prefix('applicant')->group(function () {
     Route::view('/appinstructions', 'applicant.appinstructions')->name('appinstructions');
     Route::get('/applicationformC', [ApplicationController::class, 'showcollegeapplication'])->name('applicationformC');
-    Route::get('/save-applicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
+    Route::post('/save-applicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
     Route::view('/applicationformHE', 'applicant.applicationformHE')->name('form-hselem');
     Route::view('/appconfirmdialog', 'applicant.appconfirmdialog')->name('appconfirmdialog');
     Route::view('/applicantportal', 'applicant.applicantportal')->name('applicantportal');
@@ -200,6 +200,7 @@ Route::prefix('staff')->controller(StaffController::class)->group(function () {
     Route::post('/scholar/deactivate/{id}', 'deactivateScholar')->name('scholar.deactivate');
     // USER: APPLICANTS
     Route::get('/applicants', 'showApplicants')->name('applicants');
+    Route::get('/appformview/{casecode}', 'showapplicantinfo')->name('applicantinfo');
 });
 
 Route::prefix('staff')->controller(StaffAuthController::class)->group(function () {

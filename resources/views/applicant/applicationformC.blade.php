@@ -11,11 +11,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>
-        window.onerror = function(message, source, lineno, colno, error) {
-            alert('Error: ' + message + '\nSource: ' + source + '\nLine: ' + lineno);
-        };
-    </script>
 </head>
 
 <body>
@@ -27,7 +22,7 @@
         <h1 class="title text-center fw-bold app-close hide">APPLICATION IS NOT YET OPEN.</h1>
         <div class="">
             <h1 class="title text-center fw-bold app-open">TZU CHI PHILIPPINES<br>SCHOLARSHIP APPLICATION FORM</h1>
-            <div class="row">
+            <div class="row mt-4">
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
                         {{ session('success') }}
@@ -36,12 +31,12 @@
                 @endif
                 @if (session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                        {{ session('error') }}
+                        {!! session('error') !!}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
             </div>
-            <p class="mt-4 mb-5 description">Welcome to Tzu Chi Scholarship Application Form <strong>(College)</strong>.
+            <p class="mt-2 mb-1">Welcome to Tzu Chi Scholarship Application Form <strong>(College)</strong>.
                 Before you proceed, kindly read and understand the following statements:
             <ol>
                 <li>
@@ -68,108 +63,111 @@
             </p>
         </div>
 
-
         <div class="app-form">
-            <form method="POST" action="{{ route('saveapplicant') }}">
+            <form method="POST" action="{{ route('saveapplicant') }}" enctype="multipart/form-data">
+                @csrf
                 <fieldset class="custom-fieldset">
                     <legend>Personal Information</legend>
                     <div class="row">
                         <div class="column">
-                            <label for="fullName">Name</label>
-                            <input type="text" name="scholarname" value=""
+                            <label for="scholarname">Name</label>
+                            <input type="text" name="scholarname" value="{{ old('scholarname') }}"
                                 placeholder="(Last Name, First Name, Middle Name)" required>
                         </div>
                         <div class="column">
-                            <label for="cName">Chinese Name</label>
-                            <input type="text" name="chinesename" value="" required>
+                            <label for="chinesename">Chinese Name</label>
+                            <input type="text" name="chinesename" value="{{ old('chinesename') }}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="gender">Sex</label>
-                            <select name="sex">
-                                <option value="" selected hidden>Select gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
+                            <label for="sex">Sex</label>
+                            <select name="sex" value="{{ old('sex') }}">
+                                <option value="" disabled>Select gender</option>
+                                <option value="Male" {{ old('sex') == 'Male' ? 'selected' : '' }}>Male</option>
+                                <option value="Female" {{ old('sex') == 'Female' ? 'selected' : '' }}>Female</option>
                             </select>
                         </div>
                         <div class="column">
                             <label for="age">Age</label>
-                            <input type="number" name="age" value="" required>
+                            <input type="number" name="age" value="{{ old('age') }}" required>
                         </div>
                         <div class="column">
-                            <label for="birthDate">Birthdate</label>
-                            <input type="date" name="birthdate" value="" required>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="column">
-                            <label for="resAddress">Home Address</label>
-                            <input type="text" name="homeaddress" value=""
-                                placeholder="(House #/Unit #/Floor/Bldg. Name/Street Name)" name="residential" required>
+                            <label for="birthdate">Birthdate</label>
+                            <input type="date" name="birthdate" value="{{ old('birthdate') }}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="brgy">Barangay</label>
-                            <input type="text" name="barangay" value="" required>
+                            <label for="homeaddress">Home Address</label>
+                            <input type="text" name="homeaddress" value="{{ old('homeaddress') }}"
+                                placeholder="(House #/Unit #/Floor/Bldg. Name/Street Name)" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="column">
+                            <label for="barangay">Barangay</label>
+                            <input type="text" name="barangay" value="{{ old('barangay') }}" required>
                         </div>
                         <div class="column">
                             <label for="city">City</label>
-                            <input type="text" name="city" value=""required>
+                            <input type="text" name="city" value="{{ old('city') }}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="email">Email Address</label>
-                            <input type="email" name="email" value="" required>
+                            <input type="email" name="email" value="{{ old('email') }}" required>
                         </div>
                         <div class="column">
-                            <label for="phoneNum">Cellphone No./Landline</label>
-                            <input type="tel" name="phonenum" value="" required>
+                            <label for="phonenum">Cellphone No./Landline</label>
+                            <input type="tel" name="phonenum" value="{{ old('phonenum') }}" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="occupation">Occupation</label>
-                            <input type="text" name="occupation" value="" required>
+                            <input type="text" name="occupation" value="{{ old('occupation') }}" required>
                         </div>
                         <div class="column">
                             <label for="income">Income</label>
-                            <input type="number" name="income" value="" required>
+                            <input type="number" name="income" value="{{ old('income') }}"
+                                placeholder="If none, input number zero" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="fblink">Facebook Link</label>
-                            <input type="text" name="fblink" value="" required>
+                            <input type="text" name="fblink" value="{{ old('fblink') }}" required>
                         </div>
                         <div class="column">
                             <p>Are you a member of any indigenous group?</p>
                             <div class="row-radio">
                                 <input type="radio" id="indigenousCheck" name="isIndigenous" value="Yes"
-                                    onclick="toggleInput()">
+                                    onclick="toggleInput()" {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }}>
                                 <label for="indigenousCheck">Yes</label>
                                 <input type="radio" id="noCheck" name="isIndigenous" value="No"
-                                    onclick="disableInput()">
+                                    onclick="disableInput()" {{ old('isIndigenous') == 'No' ? 'checked' : '' }}>
                                 <label for="noCheck">No</label>
                             </div>
                             <input type="text" name="indigenousgroup" id="indigenousInput"
-                                placeholder="Please specify the group you belong to" disabled>
+                                placeholder="Please specify the group you belong to" disabled
+                                value="{{ old('indigenousgroup') }}">
                         </div>
                     </div>
-
                 </fieldset>
 
                 <fieldset class="custom-fieldset">
                     <legend>Educational Background</legend>
                     <div class="row">
                         <div class="column">
-                            <label for="school">Name of University</label>
-                            <select name="schoolname" id="school">
-                                <option value="" selected hidden>Select school</option>
+                            <label for="schoolname">Name of University</label>
+                            <select name="schoolname" id="schoolname">
+                                <option value="" hidden>Select school</option>
                                 @foreach ($institutions as $insti)
-                                    <option value="{{ $insti->schoolname }}">{{ $insti->schoolname }}
+                                    <option value="{{ $insti->schoolname }}"
+                                        {{ old('schoolname') == $insti->schoolname ? 'selected' : '' }}>
+                                        {{ $insti->schoolname }}
                                     </option>
                                 @endforeach
                             </select>
@@ -177,16 +175,19 @@
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="collegeDept">College Department</label>
-                            <input type="text" name="collegedept" value="" required>
+                            <label for="collegedept">College Department</label>
+                            <input type="text" name="collegedept" value="{{ old('collegedept') }}" required>
                         </div>
                         <div class="column">
-                            <label for="yrLevel">Incoming Year Level</label>
+                            <label for="incomingyear">Incoming Year Level</label>
                             <select name="incomingyear">
-                                <option value="" selected hidden>Select year level</option>
-                                <option value="First Year">First Year</option>
-                                <option value="Second Year">Second Year</option>
-                                <option value="Third Year">Third Year</option>
+                                <option value="" hidden>Select year level</option>
+                                <option value="First Year"
+                                    {{ old('incomingyear') == 'First Year' ? 'selected' : '' }}>First Year</option>
+                                <option value="Second Year"
+                                    {{ old('incomingyear') == 'Second Year' ? 'selected' : '' }}>Second Year</option>
+                                <option value="Third Year"
+                                    {{ old('incomingyear') == 'Third Year' ? 'selected' : '' }}>Third Year</option>
                             </select>
                         </div>
                     </div>
@@ -194,15 +195,18 @@
                         <div class="column">
                             <label for="course">Course</label>
                             <select name="course" id="course">
-                                <option value="" selected hidden>Select course</option>
+                                <option value="" hidden>Select course</option>
                                 @foreach ($courses as $course)
-                                    <option value="{{ $course->coursename }}">{{ $course->coursename }}</option>
+                                    <option value="{{ $course->coursename }}"
+                                        {{ old('course') == $course->coursename ? 'selected' : '' }}>
+                                        {{ $course->coursename }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="column">
                             <label for="gwa">General Average Last Sem</label>
-                            <input type="text" name="gwa" required>
+                            <input type="text" name="gwa" value="{{ old('gwa') }}" required>
                         </div>
                     </div>
                 </fieldset>
@@ -213,55 +217,62 @@
                         <p class="family">FATHER INFORMATION</p>
                         <div class="row">
                             <div class="column">
-                                <label for="fName">Name (Last Name, First Name)</label>
-                                <input type="text" id="fName" value="" name="fname" required>
+                                <label for="fname">Name (Last Name, First Name)</label>
+                                <input type="text" id="fname" value="{{ old('fname') }}" name="fname"
+                                    required>
                             </div>
                             <div class="column">
-                                <label for="fAge">Age</label>
-                                <input type="text" id="fAge" value="" name="fage" required>
+                                <label for="fage">Age</label>
+                                <input type="text" id="fage" value="{{ old('fage') }}" name="fage"
+                                    required>
                             </div>
                             <div class="column">
-                                <label for="fSex">Sex</label>
-                                <select name="" id="fsex">
-                                    <option value="" disabled selected hidden></option>
+                                <label for="fsex">Sex</label>
+                                <select name="fsex" id="fsex">
                                     <option value="F">F</option>
-                                    <option value="M">M</option>
+                                    <option value="M" selected>M</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="fBirthdate">Birthdate</label>
-                                <input type="date" id="fBirthdate" value="" name="fbirthdate" required>
+                                <label for="fbirthdate">Birthdate</label>
+                                <input type="date" id="fbirthdate" value="{{ old('fbirthdate') }}"
+                                    name="fbirthdate" required>
                             </div>
                             <div class="column">
-                                <label for="fRelationship">Relationship</label>
-                                <input type="text" id="fRelationship" value="Father" name="frelationship"
+                                <label for="frelationship">Relationship</label>
+                                <input type="text" id="frelationship" value="Father" name="frelationship"
                                     readonly>
                             </div>
                             <div class="column">
-                                <label for="fReligion">Religion</label>
-                                <input type="text" id="fReligion" value="" name="freligion" required>
+                                <label for="freligion">Religion</label>
+                                <input type="text" id="freligion" value="{{ old('freligion') }}"
+                                    name="freligion" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="fAttainment">Educational Attainment</label>
-                                <input type="text" id="fAttainment" value="" name="fattainment" required>
+                                <label for="fattainment">Educational Attainment</label>
+                                <input type="text" id="fattainment" value="{{ old('fattainment') }}"
+                                    name="fattainment" required>
                             </div>
                             <div class="column">
-                                <label for="fSchoolOcc">School/Occupation</label>
-                                <input type="text" id="fSchoolOcc" value="" name="foccupation" required>
+                                <label for="foccupation">School/Occupation</label>
+                                <input type="text" id="foccupation" value="{{ old('foccupation') }}"
+                                    name="foccupation" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="fCompany">Company</label>
-                                <input type="text" id="fCompany" value="" name="fcompany" required>
+                                <label for="fcompany">Company</label>
+                                <input type="text" id="fcompany" value="{{ old('fcompany') }}" name="fcompany"
+                                    required>
                             </div>
                             <div class="column">
-                                <label for="fIncome">Income</label>
-                                <input type="text" id="fIncome" value="" name="fincome" required>
+                                <label for="fincome">Income</label>
+                                <input type="text" id="fincome" value="{{ old('fincome') }}" name="fincome"
+                                    placeholder="If none, input number zero" required>
                             </div>
                         </div>
                     </div>
@@ -270,54 +281,61 @@
                         <div class="row">
                             <div class="column">
                                 <label for="mname">Name (Last Name, First Name)</label>
-                                <input type="text" id="fName" value="" name="mname" required>
+                                <input type="text" id="mname" value="{{ old('mname') }}" name="mname"
+                                    required>
                             </div>
                             <div class="column">
                                 <label for="mage">Age</label>
-                                <input type="text" id="fAge" value="" name="mage" required>
+                                <input type="text" id="mage" value="{{ old('mage') }}" name="mage"
+                                    required>
                             </div>
                             <div class="column">
                                 <label for="msex">Sex</label>
-                                <select name="msex" id="fSex">
-                                    <option value="" disabled selected hidden></option>
-                                    <option value="F">F</option>
+                                <select name="msex" id="msex">
+                                    <option value="F" selected>F</option>
                                     <option value="M">M</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="fBirthdate">Birthdate</label>
-                                <input type="date" id="fBirthdate" value="" name="mbirthdate" required>
+                                <label for="mbirthdate">Birthdate</label>
+                                <input type="date" id="mbirthdate" value="{{ old('mbirthdate') }}"
+                                    name="mbirthdate" required>
                             </div>
                             <div class="column">
-                                <label for="fRelationship">Relationship</label>
-                                <input type="text" id="fRelationship" value="Mother" name="mrelationship"
+                                <label for="mrelationship">Relationship</label>
+                                <input type="text" id="mrelationship" value="Mother" name="mrelationship"
                                     readonly>
                             </div>
                             <div class="column">
-                                <label for="fReligion">Religion</label>
-                                <input type="text" id="fReligion" value="" name="mreligion" required>
+                                <label for="mreligion">Religion</label>
+                                <input type="text" id="mreligion" value="{{ old('mreligion') }}"
+                                    name="mreligion" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="fAttainment">Educational Attainment</label>
-                                <input type="text" id="fAttainment" value="" name="mattainment" required>
+                                <label for="mattainment">Educational Attainment</label>
+                                <input type="text" id="mattainment" value="{{ old('mattainment') }}"
+                                    name="mattainment" required>
                             </div>
                             <div class="column">
-                                <label for="fSchoolOcc">School/Occupation</label>
-                                <input type="text" id="fSchoolOcc" value="" name="moccupation" required>
+                                <label for="moccupation">School/Occupation</label>
+                                <input type="text" id="moccupation" value="{{ old('moccupation') }}"
+                                    name="moccupation" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="fCompany">Company</label>
-                                <input type="text" id="fCompany" value="" name="mcompany" required>
+                                <label for="mcompany">Company</label>
+                                <input type="text" id="mcompany" value="{{ old('mcompany') }}" name="mcompany"
+                                    required>
                             </div>
-                            <div class="column">
-                                <label for="fIncome">Income</label>
-                                <input type="text" id="fIncome" value="" name="mincome" required>
+                            <div the="column">
+                                <label for="mincome">Income</label>
+                                <input type="text" id="mincome" value="{{ old('mincome') }}" name="mincome"
+                                    placeholder="If none, input number zero" required>
                             </div>
                         </div>
                     </div>
@@ -327,15 +345,15 @@
                             <div class="row">
                                 <div class="column">
                                     <label for="sname[]">Name (Last Name, First Name)</label>
-                                    <input type="text" id="fName" value="" name="sname[]" required>
+                                    <input type="text" id="sname[]" value="" name="sname[]" required>
                                 </div>
                                 <div class="column">
                                     <label for="sage[]">Age</label>
-                                    <input type="text" id="fAge" value="" name="sage[]" required>
+                                    <input type="text" id="sage[]" value="" name="sage[]" required>
                                 </div>
                                 <div class="column">
                                     <label for="ssex[]">Sex</label>
-                                    <select name="ssex[]" id="ssex">
+                                    <select name="ssex[]" id="ssex[]">
                                         <option value="" disabled selected hidden></option>
                                         <option value="F">F</option>
                                         <option value="M">M</option>
@@ -345,39 +363,41 @@
                             <div class="row">
                                 <div class="column">
                                     <label for="sbirthdate[]">Birthdate</label>
-                                    <input type="date" id="fBirthdate" value="" name="sbirthdate[]"
+                                    <input type="date" id="sbirthdate[]" value="" name="sbirthdate[]"
                                         required>
                                 </div>
                                 <div class="column">
                                     <label for="srelationship[]">Relationship</label>
-                                    <input type="text" id="fRelationship" value="Sibling" name="srelationship[]"
-                                        readonly>
+                                    <input type="text" id="srelationship[]" value="Sibling"
+                                        name="srelationship[]" readonly>
                                 </div>
                                 <div class="column">
                                     <label for="sreligion[]">Religion</label>
-                                    <input type="text" id="fReligion" value="" name="sreligion[]" required>
+                                    <input type="text" id="sreligion[]" value="" name="sreligion[]"
+                                        required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="column">
                                     <label for="sattainment[]">Educational Attainment</label>
-                                    <input type="text" id="fAttainment" value="" name="sattainment[]"
+                                    <input type="text" id="sattainment[]" value="" name="sattainment[]"
                                         required>
                                 </div>
                                 <div class="column">
                                     <label for="soccupation[]">School/Occupation</label>
-                                    <input type="text" id="fSchoolOcc" value="" name="soccupation[]"
+                                    <input type="text" id="soccupation[]" value="" name="soccupation[]"
                                         required>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="column">
-                                    <label for="fCompany[]">Company</label>
-                                    <input type="text" id="fCompany" value="" name="scompany[]" required>
+                                    <label for="scompany[]">Company</label>
+                                    <input type="text" id="scompany[]" value="" name="scompany[]" required>
                                 </div>
                                 <div class="column">
-                                    <label for="fIncome[]">Income</label>
-                                    <input type="text" id="fIncome" value="" name="sincome[]" required>
+                                    <label for="sincome[]">Income</label>
+                                    <input type="text" id="sincome[]" value="" name="sincome[]"
+                                        placeholder="If none, input number zero" required>
                                 </div>
                             </div>
                         </div>
@@ -391,21 +411,23 @@
                         <div class="column">
                             <label for="grant">Grant/Assistance from other Government and Non-Government
                                 scholarships, School Discount (How much per sem?)</label>
-                            <textarea id="grant" name="grant" rows="2" cols="50" placeholder="Input your answer here..."></textarea>
+                            <textarea id="grant" name="grant" rows="2" cols="50" placeholder="Input your answer here..."
+                                required>{{ old('grant') }}</textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="talents">Talents & Skills/ Honor and Recognition/ Extracurricular/Community
+                            <label for="talent">Talents & Skills/ Honor and Recognition/ Extracurricular/Community
                                 Involvement/Employment</label>
-                            <textarea id="talents" name="talent" rows="2" cols="50" placeholder="Input your answer here..."></textarea>
+                            <textarea id="talent" name="talent" rows="2" cols="50" placeholder="Input your answer here..."
+                                required>{{ old('talent') }}</textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="expectations">What are your expectations from Tzu Chi Foundation?</label>
-                            <textarea id="expectations" name="expectation" rows="2" cols="50"
-                                placeholder="Input your answer here..."></textarea>
+                            <label for="expectation">What are your expectations from Tzu Chi Foundation?</label>
+                            <textarea id="expectation" name="expectation" rows="2" cols="50" placeholder="Input your answer here..."
+                                required>{{ old('expectation') }}</textarea>
                         </div>
                     </div>
                 </fieldset>
@@ -414,17 +436,17 @@
                     <legend>Requirements Submission</legend>
                     <div class="row">
                         <div class="column">
-                            <label for="idPic">1x1 ID Picture</label>
+                            <label for="idpic">1x1 ID Picture</label>
                             <input type="file" name="idpic" required>
                         </div>
                         <div class="column">
-                            <label for="grades">Scanned copy of latest Report Card</label>
+                            <label for="reportcard">Scanned copy of latest Report Card</label>
                             <input type="file" name="reportcard" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="regForm">Scanned copy of latest Registration Form</label>
+                            <label for="regiform">Scanned copy of latest Registration Form</label>
                             <input type="file" name="regiform" required>
                         </div>
                         <div class="column">
@@ -434,17 +456,17 @@
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="famPic">Family Picture</label>
+                            <label for="familypic">Family Picture</label>
                             <input type="file" name="familypic" required>
                         </div>
                         <div class="column">
-                            <label for="housePic">Picture of the inside of the house</label>
+                            <label for="insidehouse">Picture of the inside of the house</label>
                             <input type="file" name="insidehouse" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="housePic">Picture of the outside of the house</label>
+                            <label for="outsidehouse">Picture of the outside of the house</label>
                             <input type="file" name="outsidehouse" required>
                         </div>
                         <div class="column">
@@ -454,18 +476,18 @@
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="sketchMap">Detailed Sketch Map of Home Address</label>
+                            <label for="sketchmap">Detailed Sketch Map of Home Address</label>
                             <input type="file" name="sketchmap" required>
                         </div>
                         <div class="column">
-                            <label for="paySlip">Scanned copy latest ITR/ Official Pay Slip of parent/s (if
+                            <label for="payslip">Scanned copy latest ITR/ Official Pay Slip of parent/s (if
                                 applicable)</label>
                             <input type="file" name="payslip">
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="brgyCert">Barangay Certificate of Indigency</label>
+                            <label for="indigencycert">Barangay Certificate of Indigency</label>
                             <input type="file" name="indigencycert" required>
                         </div>
                     </div>
@@ -480,8 +502,7 @@
                     </label>
                 </div>
                 <div class="submit text-center">
-                    <button type="submit" class="btn-submit fw-bold"
-                        onclick="window.location.href='appconfirmdialog.html'">Submit</button>
+                    <button type="submit" class="btn-submit fw-bold">Submit</button>
                 </div>
             </form>
 

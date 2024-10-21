@@ -12,6 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 </head>
 
 <body>
@@ -23,35 +24,36 @@
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total Applicants</span>
-                <span class="data">0</span>
+                <span class="data">{{ $totalapplicants }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Pending</span>
-                <span class="data">0</span>
+                <span class="data">{{ $pending }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Accepted</span>
-                <span class="data">0</span>
+                <span class="data">{{ $accepted }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Rejected</span>
-                <span class="data">0</span>
+                <span class="data">{{ $rejected }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Withdrawn</span>
-                <span class="data">0</span>
+                <span class="data">{{ $withdrawn }}</span>
             </div>
         </div>
         <div class="groupA">
             <div class="groupA2">
                 <span class="label">Applicants per School Level</span>
-                <span class="data">REPLACE WITH GRAPH</span>
+                <canvas id="applicantsgraph" height="300px"></canvas>
             </div>
         </div>
 
         <div class="divider"></div>
 
         <div class="ctnfilter">
+            <span class="pagetitle">List of Applicants</span>
             <form action="#" class="filterform">
                 <span class="filtertitle">Filter Result</span>
                 <div class="filtermenu">
@@ -122,11 +124,46 @@
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($applicants as $index => $applicant)
+                        <tr>
+                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                            <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}</td>
+                            <td class="text-center align-middle">{{ $applicant->name }}</td>
+                            <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('applicantinfo', $applicant->casecode) }}"
+                                    class="btn btn-success">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new Chart("applicantsgraph", {
+                type: "bar",
+                data: {
+                    labels: ["College", "Senior High", "Junior High", "Elementary"],
+                    datasets: [{
+                        backgroundColor: "#1a5319",
+                        data: [{{ $college }}, {{ $shs }}, {{ $jhs }},
+                            {{ $elem }}, 0
+                        ]
+                    }]
+                },
+                options: {
+                    legend: {
+                        display: false
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

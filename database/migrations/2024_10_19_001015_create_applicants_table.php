@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('univname', 255);
             $table->string('collegedept', 255);
-            $table->string('inyear', 10);
+            $table->string('inyear', 15);
             $table->string('course', 255);
             $table->float('gwa');
             $table->timestamps();
@@ -111,17 +111,17 @@ return new class extends Migration
         Schema::create('aprequirements', function (Blueprint $table) {
             $table->increments('aprid');
             $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->binary('idpic');
-            $table->binary('reportcard');
-            $table->binary('regiform');
-            $table->binary('autobio');
-            $table->binary('familypic');
-            $table->binary('houseinside');
-            $table->binary('houseoutside');
-            $table->binary('utilitybill');
-            $table->binary('sketchmap');
-            $table->binary('payslip');
-            $table->binary('indigencycert');
+            $table->string('idpic', 100);
+            $table->string('reportcard', 100);
+            $table->string('regiform', 100);
+            $table->string('autobio', 100);
+            $table->string('familypic', 100);
+            $table->string('houseinside', 100);
+            $table->string('houseoutside', 100);
+            $table->string('utilitybill', 100);
+            $table->string('sketchmap', 100);
+            $table->string('payslip', 100);
+            $table->string('indigencycert', 100);
             $table->timestamps();
 
             $table->foreign('casecode')
@@ -143,7 +143,6 @@ return new class extends Migration
             $table->string('referredby', 255);
             $table->string('referphonenum', 11);
             $table->string('relationship', 50);
-            $table->binary('applicantsign');
             $table->date('datereported');
             $table->timestamps();
 
