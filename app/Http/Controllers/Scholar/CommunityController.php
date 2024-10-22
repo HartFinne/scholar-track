@@ -107,9 +107,36 @@ class CommunityController extends Controller
     public function showCSDashboard()
     {
         $user = Auth::user(); // Get the authenticated user
-        $caseCode = $user->caseCode; // Get user's caseCode (or other identifier)
+        $caseCode = $user->caseCode; // Get user's caseCode
+
+        // Get today's date in the Philippines time zone
+        $today = Carbon::now('Asia/Manila')->toDateString();
 
         // Fetch the activities the user is registered for, join with communityservice table to get activity details
+        $registrations = csregistration::where('caseCode', $caseCode)
+            ->join('communityservice', 'csregistration.csid', '=', 'communityservice.csid')
+            ->select('communityservice.*', 'csregistration.created_at as registration_date', 'csregistration.registatus', 'csregistration.csid')
+            ->get();
+
+        // Loop through the registrations to check if any "GOING" status needs to be updated
+        foreach ($registrations as $registration) {
+            // Check if the event date is in the past and the status is "GOING"
+            if ($registration->registatus === 'GOING' && Carbon::parse($registration->eventdate)->toDateString() < $today) {
+                // Check if there is no attendance record for this activity
+                $attendanceExists = csattendance::where('caseCode', $caseCode)
+                    ->where('csid', $registration->csid)
+                    ->exists();
+
+                if (!$attendanceExists) {
+                    // Update the status to "ABSENT"
+                    csregistration::where('caseCode', $caseCode)
+                        ->where('csid', $registration->csid)
+                        ->update(['registatus' => 'ABSENT']);
+                }
+            }
+        }
+
+        // Refresh the registrations after updating statuses
         $registrations = csregistration::where('caseCode', $caseCode)
             ->join('communityservice', 'csregistration.csid', '=', 'communityservice.csid')
             ->select('communityservice.*', 'csregistration.created_at as registration_date', 'csregistration.registatus')
@@ -139,8 +166,18 @@ class CommunityController extends Controller
         $remainingHours = max($totalRequiredHours - $totalHoursSpent, 0);
 
         // Pass the data to the view
-        return view('scholar.communityservice.csdashboard', compact('registrations', 'totalHoursSpent', 'remainingHours', 'hoursPerActivity', 'hoursPerMonth'));
+        return view(
+            'scholar.communityservice.csdashboard',
+            compact(
+                'registrations',
+                'totalHoursSpent',
+                'remainingHours',
+                'hoursPerActivity',
+                'hoursPerMonth'
+            )
+        );
     }
+
 
 
     // cancel registration
