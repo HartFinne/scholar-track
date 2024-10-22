@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
-class ScholarAuth
+class staff
 {
     /**
      * Handle an incoming request.
@@ -16,13 +16,9 @@ class ScholarAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-
-        if (!Auth::check()) {
-            // Redirect to the scholar login page if not authenticated
-            return redirect()->route('scholar-login');
+        if (!Auth::guard('staff')->check()) {
+            return redirect()->route('login-sw')->with('error', 'Access denied. Please log in to your account first.');;
         }
-
-        // Proceed with the request
         return $next($request);
     }
 }

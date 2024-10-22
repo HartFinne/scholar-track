@@ -36,7 +36,7 @@
         @endif
 
         <!-- Update the form action and method -->
-        <form class="groupA" method="POST" action="{{ route('login') }}">
+        <form class="groupA" method="POST" action="{{ route('log-worker') }}">
             @csrf <!-- Add CSRF token for security -->
             <span id="formtitle">Staff Portal</span>
             <span id="formsubtitle">Sign in to start your session.</span>

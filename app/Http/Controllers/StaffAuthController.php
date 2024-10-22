@@ -9,25 +9,19 @@ use Illuminate\Support\Facades\Auth;
 
 class StaffAuthController extends Controller
 {
+    public function showLogin()
+    {
+        return view('staff.login');
+    }
+
     public function login(Request $request)
     {
-        // Validate the input fields
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        // Attempt to authenticate the user
         if (Auth::guard('staff')->attempt($request->only('email', 'password'))) {
-            // Authentication successful, get the authenticated user
             $user = Auth::guard('staff')->user();
 
-            // Check user account status
             if ($user->status === 'Active') {
-                // Regenerate the session to avoid session fixation
                 $request->session()->regenerate();
 
-                // Check user role and redirect accordingly
                 switch ($user->role) {
                     case 'Social Worker':
                         return redirect()->route('home-sw');
@@ -37,10 +31,9 @@ class StaffAuthController extends Controller
                         return redirect()->back()->with('error', 'Unknown role. Access denied.');
                 }
             } else {
-                return redirect()->back()->with('error', 'Your account has been deactivated. If this was an error, please contact us at support@example.com or call us at +1 234 567 8901 for assistance.');
+                return redirect()->back()->with('error', 'Your account has been deactivated. If this was an error, please contact us at inquiriescholartrack@gmail.com for assistance.');
             }
         } else {
-            // Authentication failed
             return redirect()->back()->with('error', 'Invalid email or password.');
         }
     }
@@ -48,7 +41,6 @@ class StaffAuthController extends Controller
     public function createAccount(Request $request)
     {
         try {
-            // Validate the input data
             $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255|unique:staccounts,email',
@@ -57,17 +49,13 @@ class StaffAuthController extends Controller
                 'mobileno' => 'nullable|string|max:11|unique:staccounts,mobileno',
             ]);
 
-            // Mobileno default value
             $mobileno = null;
 
-            // Status default value
             $status = "Active";
 
-            // Generate the password
             $nameParts = explode(' ', strtolower($request->name));
             $password = end($nameParts) . '.scholartrack';
 
-            // Create the account
             Staccount::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -75,7 +63,7 @@ class StaffAuthController extends Controller
                 'area' => $request->area,
                 'role' => $request->role,
                 'status' => $status,
-                'password' => Hash::make($password), // hash the password
+                'password' => Hash::make($password),
             ]);
 
             return redirect()->route('users-staff')->with('success', 'Account created successfully.');

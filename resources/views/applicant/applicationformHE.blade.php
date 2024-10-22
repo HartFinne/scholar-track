@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -22,12 +23,14 @@
         <h1 class="title text-center fw-bold app-close">APPLICATION IS NOT YET OPEN.</h1>
         <div class="hide">
             <h1 class="title text-center fw-bold app-open">TZU CHI PHILIPPINES<br>SCHOLARSHIP APPLICATION FORM</h1>
-            <p class="mt-4 mb-5 description">Welcome to Tzu Chi Scholarship Application Form <strong>(Elementary/High School)</strong>. Please fill out the required fields
-                in each section with true and correct information to complete your application. If a field does not apply, write <strong>N/A</strong>.
+            <p class="mt-4 mb-5 description">Welcome to Tzu Chi Scholarship Application Form <strong>(Elementary/High
+                    School)</strong>. Please fill out the required fields
+                in each section with true and correct information to complete your application. If a field does not
+                apply, write <strong>N/A</strong>.
             </p>
         </div>
-        
-        
+
+
         <div class="app-form hide">
             <form action="">
                 <fieldset class="custom-fieldset">
@@ -35,7 +38,8 @@
                     <div class="row">
                         <div class="column">
                             <label for="fullName">Name</label>
-                            <input type="text" id="fullName" value="" placeholder="(Last Name, First Name, Middle Name)" required>
+                            <input type="text" id="fullName" value=""
+                                placeholder="(Last Name, First Name, Middle Name)" required>
                         </div>
                         <div class="column">
                             <label for="cName">Chinese Name</label>
@@ -59,18 +63,19 @@
                     <div class="row">
                         <div class="column">
                             <label for="resAddress">Home Address</label>
-                            <input type="text" id="resAddress" value="" placeholder="(House #/Unit #/Floor/Bldg. Name/Street Name)" name="residential" required>
+                            <input type="text" id="resAddress" value=""
+                                placeholder="(House #/Unit #/Floor/Bldg. Name/Street Name)" name="residential" required>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="brgy">Barangay</label>
-                        <input type="text" id="brgy" value="" name="brgy" required>
+                            <input type="text" id="brgy" value="" name="brgy" required>
                         </div>
                         <div class="column">
                             <label for="city">City</label>
                             <input type="text" id="city" value="" name="city" required>
-                        </div>                        
+                        </div>
                     </div>
                     <div class="row">
                         <div class="column">
@@ -100,15 +105,17 @@
                         <div class="column">
                             <p>Are you a member of any indigenous group?</p>
                             <div class="row-radio">
-                                <input type="radio" id="indigenousCheck" name="indigenous" value="yes" onclick="toggleInput()">
+                                <input type="radio" id="indigenousCheck" name="indigenous" value="yes"
+                                    onclick="toggleInput()">
                                 <label for="indigenousCheck">Yes</label>
-                                <input type="radio" id="noCheck" name="indigenous" value="no" onclick="disableInput()">
+                                <input type="radio" id="noCheck" name="indigenous" value="no"
+                                    onclick="disableInput()">
                                 <label for="noCheck">No</label>
                             </div>
                             <input type="text" id="indigenousInput" placeholder="If Yes, please specify" disabled>
                         </div>
                     </div>
-                    
+
                 </fieldset>
 
                 <fieldset class="custom-fieldset">
@@ -121,7 +128,7 @@
                                 <option value="">Pamantasan ng Lungsad ng Maynila</option>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                     <div class="row">
                         <div class="column">
                             <label for="yrLevel">Incoming Year Level</label>
@@ -136,12 +143,16 @@
                             <select name="yrLevel" id="yrLevel">
                                 <option value="" selected hidden>Select strand</option>
                                 <option value="N/A">N/A</option>
-                                <option value="Accountancy, Business and Management (ABM) Strand">Accountancy, Business and Management (ABM) Strand</option>
-                                <option value="Science, Technology, Engineering, and Mathematics (STEM) Strand">Science, Technology, Engineering, and Mathematics (STEM) Strand</option>
-                                <option value="Humanities and Social Science (HUMSS) Strand">Humanities and Social Science (HUMSS) Strand</option>
+                                <option value="Accountancy, Business and Management (ABM) Strand">Accountancy, Business
+                                    and Management (ABM) Strand</option>
+                                <option value="Science, Technology, Engineering, and Mathematics (STEM) Strand">
+                                    Science, Technology, Engineering, and Mathematics (STEM) Strand</option>
+                                <option value="Humanities and Social Science (HUMSS) Strand">Humanities and Social
+                                    Science (HUMSS) Strand</option>
                                 <option value="General Academic Strand (GAS)">General Academic Strand (GAS)</option>
                                 <option value="Arts and Design Track">Arts and Design Track</option>
-                                <option value="Technical-Vocational-Livelihood (TVL) Track">Technical-Vocational-Livelihood (TVL) Track</option>
+                                <option value="Technical-Vocational-Livelihood (TVL) Track">
+                                    Technical-Vocational-Livelihood (TVL) Track</option>
                             </select>
                         </div>
                     </div>
@@ -193,35 +204,36 @@
                             <div class="column">
                                 <label for="fBirthdate">Birthdate</label>
                                 <input type="date" id="fBirthdate" value="" name="fBirthdate" required>
-                            </div> 
+                            </div>
                             <div class="column">
                                 <label for="fRelationship">Relationship</label>
-                            <input type="text" id="fRelationship" value="Father" name="fRelationship" readonly>
+                                <input type="text" id="fRelationship" value="Father" name="fRelationship"
+                                    readonly>
                             </div>
                             <div class="column">
                                 <label for="fReligion">Religion</label>
                                 <input type="text" id="fReligion" value="" name="fReligion" required>
-                            </div>                        
+                            </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fAttainment">Educational Attainment</label>
-                            <input type="text" id="fAttainment" value="" name="fAttainment" required>
+                                <input type="text" id="fAttainment" value="" name="fAttainment" required>
                             </div>
                             <div class="column">
                                 <label for="fSchoolOcc">School/Occupation</label>
                                 <input type="text" id="fSchoolOcc" value="" name="fSchoolOcc" required>
-                            </div>                        
+                            </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fCompany">Company</label>
-                            <input type="text" id="fCompany" value="" name="fCompany" required>
+                                <input type="text" id="fCompany" value="" name="fCompany" required>
                             </div>
                             <div class="column">
                                 <label for="fIncome">Income</label>
                                 <input type="text" id="fIncome" value="" name="fIncome" required>
-                            </div>                        
+                            </div>
                         </div>
                     </div>
                     <div class="motherinfo">
@@ -251,32 +263,33 @@
                             </div>
                             <div class="column">
                                 <label for="fRelationship">Relationship</label>
-                            <input type="text" id="fRelationship" value="Mother" name="fRelationship" readonly>
+                                <input type="text" id="fRelationship" value="Mother" name="fRelationship"
+                                    readonly>
                             </div>
                             <div class="column">
                                 <label for="fReligion">Religion</label>
                                 <input type="text" id="fReligion" value="" name="fReligion" required>
-                            </div>                        
+                            </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fAttainment">Educational Attainment</label>
-                            <input type="text" id="fAttainment" value="" name="fAttainment" required>
+                                <input type="text" id="fAttainment" value="" name="fAttainment" required>
                             </div>
                             <div class="column">
                                 <label for="fSchoolOcc">School/Occupation</label>
                                 <input type="text" id="fSchoolOcc" value="" name="fSchoolOcc" required>
-                            </div>                        
+                            </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fCompany">Company</label>
-                            <input type="text" id="fCompany" value="" name="fCompany" required>
+                                <input type="text" id="fCompany" value="" name="fCompany" required>
                             </div>
                             <div class="column">
                                 <label for="fIncome">Income</label>
                                 <input type="text" id="fIncome" value="" name="fIncome" required>
-                            </div>                        
+                            </div>
                         </div>
                     </div>
                     <div id="siblings-container">
@@ -307,22 +320,24 @@
                                 </div>
                                 <div class="column">
                                     <label for="fRelationship">Relationship</label>
-                                    <input type="text" id="fRelationship" value="Sibling" name="fRelationship" readonly>
+                                    <input type="text" id="fRelationship" value="Sibling" name="fRelationship"
+                                        readonly>
                                 </div>
                                 <div class="column">
                                     <label for="fReligion">Religion</label>
                                     <input type="text" id="fReligion" value="" name="fReligion" required>
-                                </div>                        
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="column">
                                     <label for="fAttainment">Educational Attainment</label>
-                                    <input type="text" id="fAttainment" value="" name="fAttainment" required>
+                                    <input type="text" id="fAttainment" value="" name="fAttainment"
+                                        required>
                                 </div>
                                 <div class="column">
                                     <label for="fSchoolOcc">School/Occupation</label>
                                     <input type="text" id="fSchoolOcc" value="" name="fSchoolOcc" required>
-                                </div>                        
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="column">
@@ -332,12 +347,12 @@
                                 <div class="column">
                                     <label for="fIncome">Income</label>
                                     <input type="text" id="fIncome" value="" name="fIncome" required>
-                                </div>                        
+                                </div>
                             </div>
                         </div>
                     </div>
                     <button id="addSibling">Add Sibling</button>
-                    
+
                 </fieldset>
 
                 <p class="familyinfo">Family Information</p>
@@ -345,7 +360,8 @@
                     <table class="table table-bordered" id="table">
                         <thead>
                             <tr>
-                                <th class="text-center align-middle col1">Name <br><span>(Last Name, First Name)</span></th>
+                                <th class="text-center align-middle col1">Name <br><span>(Last Name, First Name)</span>
+                                </th>
                                 <th class="text-center align-middle col2">Age</th>
                                 <th class="text-center align-middle col3">Sex</th>
                                 <th class="text-center align-middle col4">Birthdate <br><span></span></th>
@@ -386,22 +402,25 @@
                     <legend>Other Information</legend>
                     <div class="row">
                         <div class="column">
-                            <label for="grant">Grant/Assistance from other Government and Non-Government scholarships, School Discount (How much per sem?)</label>
+                            <label for="grant">Grant/Assistance from other Government and Non-Government
+                                scholarships, School Discount (How much per sem?)</label>
                             <textarea id="grant" name="grant" rows="2" cols="50" placeholder="Input your answer here..."></textarea>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="talents">Talents & Skills/ Honor and Recognition/ Extracurricular/Community Involvement/Employment</label>
-                            <textarea id="talents" name="talents" rows="2" cols="50" placeholder="Input your answer here..."></textarea>     
-                        </div>                
-                    </div>  
+                            <label for="talents">Talents & Skills/ Honor and Recognition/ Extracurricular/Community
+                                Involvement/Employment</label>
+                            <textarea id="talents" name="talents" rows="2" cols="50" placeholder="Input your answer here..."></textarea>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="column">
                             <label for="expectations">What are your expectations from Tzu Chi Foundation?</label>
-                            <textarea id="expectations" name="expectations" rows="2" cols="50" placeholder="Input your answer here..."></textarea>     
-                        </div>                
-                    </div> 
+                            <textarea id="expectations" name="expectations" rows="2" cols="50"
+                                placeholder="Input your answer here..."></textarea>
+                        </div>
+                    </div>
                 </fieldset>
 
                 <fieldset class="custom-fieldset">
@@ -432,7 +451,8 @@
                             <input type="file" id="famPic" required>
                         </div>
                         <div class="column">
-                            <label for="housePic">Picture of the inside and outside of the house (Format: JPG or JPEG)</label>
+                            <label for="housePic">Picture of the inside and outside of the house (Format: JPG or
+                                JPEG)</label>
                             <input type="file" id="famPic" required>
                         </div>
                     </div>
@@ -448,7 +468,8 @@
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="paySlip">Scanned copy latest ITR/ Official Pay Slip of parent/s (if applicable)</label>
+                            <label for="paySlip">Scanned copy latest ITR/ Official Pay Slip of parent/s (if
+                                applicable)</label>
                             <input type="file" id="paySlip">
                         </div>
                         <div class="column">
@@ -461,17 +482,19 @@
                 <div class="agreement">
                     <input type="checkbox" value="" id="agreement">
                     <label for="agreement">
-                        <i>I hereby attest that the information I have provided is true and correct. I also 
-                            consents Tzu Chi Foundation to obtain and retain my personal information for the purpose of this application.</i>
+                        <i>I hereby attest that the information I have provided is true and correct. I also
+                            consents Tzu Chi Foundation to obtain and retain my personal information for the purpose of
+                            this application.</i>
                     </label>
                 </div>
                 <div class="submit text-center">
-                    <button type="submit" class="btn-submit fw-bold" onclick="window.location.href='appconfirmdialog.html'">Submit</button>
+                    <button type="submit" class="btn-submit fw-bold"
+                        onclick="window.location.href='appconfirmdialog.html'">Submit</button>
                 </div>
-            </form>  
+            </form>
         </div>
     </div>
-    
+
     <script src="{{ asset('js/applicant.js') }}"></script>
 </body>
 

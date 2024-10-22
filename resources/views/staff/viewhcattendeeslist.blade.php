@@ -13,11 +13,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>
-        window.onerror = function(message, source, lineno, colno, error) {
-            alert('Error: ' + message + '\nSource: ' + source + '\nLine: ' + lineno);
-        };
-    </script>
 </head>
 
 <body>
@@ -51,26 +46,26 @@
             </div>
         @endif
 
-        <div class="groupB">
-            <div class="groupB1">
-                <span class="label">Topic</span>
-                <span class="data">: {{ $event->topic }}</span>
+        <div class="column">
+            <div class="row">
+                <span class="col-md-2">Topic</span>
+                <span class="col-md-9">: <strong>{{ $event->topic }}</strong></span>
             </div>
-            <div class="groupB1">
-                <span class="label">Date</span>
-                <span class="data">: {{ $event->hcdate }}</span>
+            <div class="row">
+                <span class="col-md-2">Date</span>
+                <span class="col-md-9">: <strong>{{ $event->hcdate }}</strong></span>
             </div>
-            <div class="groupB1">
-                <span class="label">Start Time</span>
-                <span class="data">: {{ $event->hcstarttime }}</span>
+            <div class="row">
+                <span class="col-md-2">Start Time</span>
+                <span class="col-md-9">: <strong>{{ $event->hcstarttime }}</strong></span>
             </div>
-            <div class="groupB1">
-                <span class="label">End Time</span>
-                <span class="data">: {{ $event->hcendtime }}</span>
+            <div class="row">
+                <span class="col-md-2">End Time</span>
+                <span class="col-md-9">: <strong>{{ $event->hcendtime }}</strong></span>
             </div>
-            <div class="groupB1">
-                <span class="label">Total Attendees</span>
-                <span class="data">: {{ $event->totalattendees }}</span>
+            <div class="row">
+                <span class="col-md-2">Total Attendees</span>
+                <span class="col-md-9">: <strong>{{ $event->totalattendees }}</strong></span>
             </div>
         </div>
 

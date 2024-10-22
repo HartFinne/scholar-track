@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('Indigenousgroup', 100)->nullable();
             $table->string('applicationstatus', 25);
             $table->unsignedTinyInteger('prioritylevel');
+            $table->string('accountstatus', 10)->default('Active');
             $table->timestamps();
         });
 

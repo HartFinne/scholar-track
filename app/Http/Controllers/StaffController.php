@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Middleware\applicant;
 use Illuminate\Http\Request;
 use App\Models\staccount;
 use App\Models\User;
@@ -26,154 +27,103 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\UsesTrait;
 
 class StaffController extends Controller
 {
     public function showAccountSW()
     {
-        if (Auth::guard('staff')->check()) {
-            $worker = Auth::guard('staff')->user();
-            return view('staff.accountsw', compact('worker'));
-        }
-
-        return redirect()->route('login');
+        $worker = Auth::guard('staff')->user();
+        return view('staff.profile-socialworker', compact('worker'));
     }
 
     public function showAccountSA()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.accountsa');
-        }
-
-        return redirect()->route('login');
+        $worker = Auth::guard('staff')->user();
+        return view('staff.profile-admin', compact('worker'));
     }
 
     public function showApplicants()
     {
-        if (Auth::guard('staff')->check()) {
-            $totalapplicants = applicants::get()->count();
-            $applicants = applicants::get();
-            $pending = applicants::whereNotIn('applicationstatus', ['Accepted', 'Rejected', 'Withdrawn'])->count();
-            $accepted = applicants::where('applicationstatus', 'Accepted')->count();
-            $rejected = applicants::where('applicationstatus', 'Rejected')->count();
-            $withdrawn = applicants::where('applicationstatus', 'Withdrawn')->count();
-            $college = apceducation::get()->count();
-            $shs = apeheducation::whereIN('ingrade', ['Grade 11', 'Grade 12'])->get()->count();
-            $jhs = apeheducation::whereIN('ingrade', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'])->get()->count();
-            $elem = apeheducation::whereIN('ingrade', ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'])->get()->count();
-            return view('staff.applicants', compact('totalapplicants', 'applicants', 'pending', 'accepted', 'rejected', 'withdrawn', 'college', 'shs', 'jhs', 'elem'));
-        }
-
-        return redirect()->route('login');
+        $totalapplicants = applicants::get()->count();
+        $applicants = applicants::get();
+        $pending = applicants::whereNotIn('applicationstatus', ['Accepted', 'Rejected', 'Withdrawn'])->count();
+        $accepted = applicants::where('applicationstatus', 'Accepted')->count();
+        $rejected = applicants::where('applicationstatus', 'Rejected')->count();
+        $withdrawn = applicants::where('applicationstatus', 'Withdrawn')->count();
+        $college = apceducation::get()->count();
+        $shs = apeheducation::whereIN('ingrade', ['Grade 11', 'Grade 12'])->get()->count();
+        $jhs = apeheducation::whereIN('ingrade', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'])->get()->count();
+        $elem = apeheducation::whereIN('ingrade', ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'])->get()->count();
+        return view('staff.applicants', compact('totalapplicants', 'applicants', 'pending', 'accepted', 'rejected', 'withdrawn', 'college', 'shs', 'jhs', 'elem'));
     }
 
     public function showapplicantinfo($casecode)
     {
-        if (Auth::guard('staff')->check()) {
-            $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
-                ->where('casecode', $casecode)
-                ->first();
-            $father = apfamilyinfo::where('casecode', $casecode)
-                ->where('relationship', 'Father')->first();
-            $mother = apfamilyinfo::where('casecode', $casecode)
-                ->where('relationship', 'Mother')->first();
-            $siblings = apfamilyinfo::where('casecode', $casecode)
-                ->where('relationship', 'Sibling')->get();
-            $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
-            return view('staff.appformview', compact('applicant', 'father', 'mother', 'siblings', 'iscollege'));
-        }
-
-        return redirect()->route('login');
+        $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
+            ->where('casecode', $casecode)
+            ->first();
+        $father = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Father')->first();
+        $mother = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Mother')->first();
+        $siblings = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Sibling')->get();
+        $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
+        return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege'));
     }
 
     public function showApplicationForms()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.applicationforms');
-        }
-
-        return redirect()->route('login');
+        return view('staff.applicationforms');
     }
 
     public function showScholarsCollege()
     {
-        if (Auth::guard('staff')->check()) {
-            $scholar = User::with(['basicInfo', 'education', 'addressInfo'])->get();
+        $scholar = User::with(['basicInfo', 'education', 'addressInfo'])->get();
 
-            return view('staff.listcollege', compact('scholar'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.listcollege', compact('scholar'));
     }
 
     public function showScholarsElem()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.listelementary');
-        }
-
-        return redirect()->route('login');
+        return view('staff.listelementary');
     }
 
     public function showScholarsHS()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.listhighschool');
-        }
-
-        return redirect()->route('login');
+        return view('staff.listhighschool');
     }
 
     public function showScholarProfile($id)
     {
-        if (Auth::guard('staff')->check()) {
-            $data = User::with(['basicInfo', 'education', 'addressInfo'])->findOrFail($id);
+        $data = User::with(['basicInfo', 'education', 'addressInfo'])->findOrFail($id);
 
-            return view('staff.scholarsinfo', compact('data'));
-        }
-
-        return redirect()->route('login');
-    }
-
-    public function showLogin()
-    {
-        return view('staff.login');
+        return view('staff.scholarsinfo', compact('data'));
     }
 
     public function showLTE()
     {
-        if (Auth::guard('staff')->check()) {
-            $lte = lte::with('hcattendance', 'csattendance')->get();
-            $scholars = User::with(['basicInfo'])->get();
-            return view('staff.lte', compact('lte', 'scholars'));
-        }
-
-        return redirect()->route('login');
+        $lte = lte::with('hcattendance', 'csattendance')->get();
+        $scholars = User::with(['basicInfo'])->get();
+        return view('staff.lte', compact('lte', 'scholars'));
     }
 
     public function showPenalty()
     {
-        if (Auth::guard('staff')->check()) {
-            $penalties = penalty::all();
-            $scholars = User::with(['basicInfo'])->get();
-            return view('staff.penalty', compact('penalties', 'scholars'));
-        }
-
-        return redirect()->route('login');
+        $penalties = penalty::all();
+        $scholars = User::with(['basicInfo'])->get();
+        return view('staff.penalty', compact('penalties', 'scholars'));
     }
 
     // SCHOLARSHIP CRITERIA
     public function showQualification()
     {
-        if (Auth::guard('staff')->check()) {
-            $criteria = criteria::first();
-            $courses = courses::where('level', 'College')->get();
-            $strands = courses::where('level', 'Senior High')->get();
-            $institutions = institutions::all();
-            return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands'));
-        }
-
-        return redirect()->route('login');
+        $criteria = criteria::first();
+        $courses = courses::where('level', 'College')->get();
+        $strands = courses::where('level', 'Senior High')->get();
+        $institutions = institutions::all();
+        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands'));
     }
 
     public function updatecriteria(Request $request)
@@ -387,124 +337,87 @@ class StaffController extends Controller
 
     public function showRenewal()
     {
-        if (Auth::guard('staff')->check()) {
-            $totalrenew = renewal::all()->count();
-            $pending = renewal::where('status', 'Pending')->count();
-            $approved = renewal::where('status', 'Approved')->count();
-            $rejected = renewal::where('status', 'Rejected')->count();
-            return view('staff.renewal', compact('totalrenew', 'pending', 'approved', 'rejected'));
-        }
-
-        return redirect()->route('login');
+        $totalrenew = renewal::all()->count();
+        $pending = renewal::where('status', 'Pending')->count();
+        $approved = renewal::where('status', 'Approved')->count();
+        $rejected = renewal::where('status', 'Rejected')->count();
+        return view('staff.renewal', compact('totalrenew', 'pending', 'approved', 'rejected'));
     }
 
     public function showRenewalCollege()
     {
-        if (Auth::guard('staff')->check()) {
-            $scholars = User::with('education', 'basicInfo');
-            $renewals = renewal::all();
-            return view('staff.renewcollege', compact('renewals', 'scholars'));
-        }
-
-        return redirect()->route('login');
+        $scholars = User::with('education', 'basicInfo');
+        $renewals = renewal::all();
+        return view('staff.renewcollege', compact('renewals', 'scholars'));
     }
 
     public function showRenewalElem()
     {
-        if (Auth::guard('staff')->check()) {
-            $scholars = User::with('education', 'basicInfo');
-            $renewals = renewal::all();
-            return view('staff.renewelementary', compact('renewals', 'scholars'));
-        }
-
-        return redirect()->route('login');
+        $scholars = User::with('education', 'basicInfo');
+        $renewals = renewal::all();
+        return view('staff.renewelementary', compact('renewals', 'scholars'));
     }
 
     public function showRenewalHS()
     {
-        if (Auth::guard('staff')->check()) {
-            $scholars = User::with('education', 'basicInfo');
-            $renewals = renewal::all();
-            return view('staff.renewhighschool', compact('renewals', 'scholars'));
-        }
-
-        return redirect()->route('login');
+        $scholars = User::with('education', 'basicInfo');
+        $renewals = renewal::all();
+        return view('staff.renewhighschool', compact('renewals', 'scholars'));
     }
 
     public function showAllowanceRegular()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.regularallowance');
-        }
-
-        return redirect()->route('login');
+        return view('staff.regularallowance');
     }
 
     public function showAllowanceSpecial()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.specialallowance');
-        }
-
-        return redirect()->route('login');
+        return view('staff.specialallowance');
     }
 
     public function showScholarsoverview()
     {
-        if (Auth::guard('staff')->check()) {
-            $totalscholars = User::all()->count();
-            $totalnewscholars = scholarshipinfo::where('scholartype', 'New Scholar')->count();
-            $scholarsmd = scholarshipinfo::where('area', 'Mindong')->count();
-            $scholarsmx = scholarshipinfo::where('area', 'Minxi')->count();
-            $scholarsmz = scholarshipinfo::where('area', 'Minzhong')->count();
-            $college = ScEducation::where('scSchoolLevel', 'College')->count();
-            $shs = ScEducation::where('scSchoolLevel', 'Senior High')->count();
-            $jhs = ScEducation::where('scSchoolLevel', 'Junior High')->count();
-            $elem = ScEducation::where('scSchoolLevel', 'Elementary')->count();
-            return view('staff.scholars', compact('totalscholars', 'totalnewscholars', 'scholarsmd', 'scholarsmx', 'scholarsmz', 'college', 'shs', 'jhs', 'elem'));
-        }
-
-        return redirect()->route('login');
+        $totalscholars = User::all()->count();
+        $totalnewscholars = scholarshipinfo::where('scholartype', 'New Scholar')->count();
+        $scholarsmd = scholarshipinfo::where('area', 'Mindong')->count();
+        $scholarsmx = scholarshipinfo::where('area', 'Minxi')->count();
+        $scholarsmz = scholarshipinfo::where('area', 'Minzhong')->count();
+        $college = ScEducation::where('scSchoolLevel', 'College')->count();
+        $shs = ScEducation::where('scSchoolLevel', 'Senior High')->count();
+        $jhs = ScEducation::where('scSchoolLevel', 'Junior High')->count();
+        $elem = ScEducation::where('scSchoolLevel', 'Elementary')->count();
+        return view('staff.scholars', compact('totalscholars', 'totalnewscholars', 'scholarsmd', 'scholarsmx', 'scholarsmz', 'college', 'shs', 'jhs', 'elem'));
     }
 
     public function showUsersScholar()
     {
-        if (Auth::guard('staff')->check()) {
-            $scholarAccounts = User::all();
+        $scholarAccounts = User::all();
 
-            return view('staff.admscholars', compact('scholarAccounts'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.users-scholar', compact('scholarAccounts'));
     }
 
     public function showUserApplicants()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.admapplicants');
-        }
+        $applicants = applicants::all();
 
-        return redirect()->route('login');
+        return view('staff.users-applicant', compact('applicants'));
     }
 
     public function showUserStaff()
     {
-        if (Auth::guard('staff')->check()) {
-            $staffAccounts = Staccount::all();
+        $staffAccounts = Staccount::all();
 
-            return view('staff.admstaff', compact('staffAccounts'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.users-staff', compact('staffAccounts'));
     }
 
     public function showDashboard()
     {
-        if (Auth::guard('staff')->check()) {
-            return view('staff.admdashboard');
-        }
+        $totalscholar = user::all()->count();
+        $totalstaff = staccount::all()->count();
+        $totalapplicant = applicants::all()->count();
+        $totalusers = $totalapplicant + $totalstaff + $totalscholar;
 
-        return redirect()->route('login');
+        return view('staff.dashboard-admin', compact('totalscholar', 'totalstaff', 'totalapplicant', 'totalusers'));
     }
 
     public function activateStaff($id)
@@ -520,6 +433,24 @@ class StaffController extends Controller
     {
         $user = Staccount::findOrFail($id);
         $user->status = 'Inactive';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User deactivated successfully.');
+    }
+
+    public function activateapplicant($apid)
+    {
+        $user = applicants::findOrFail($apid);
+        $user->accountstatus = 'Active';
+        $user->save();
+
+        return redirect()->back()->with('success', 'User activated successfully.');
+    }
+
+    public function deactivateapplicant($apid)
+    {
+        $user = applicants::findOrFail($apid);
+        $user->accountstatus = 'Inactive';
         $user->save();
 
         return redirect()->back()->with('success', 'User deactivated successfully.');
@@ -545,106 +476,89 @@ class StaffController extends Controller
 
     public function showStaffInfo($id)
     {
-        if (Auth::guard('staff')->check()) {
-            $user = Staccount::findOrFail($id);
+        $user = Staccount::findOrFail($id);
 
-            return view('staff.admstaffinfo', compact('user'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.admstaffinfo', compact('user'));
     }
 
     public function showScholarInfo($id)
     {
-        if (Auth::guard('staff')->check()) {
-            $user = User::findOrFail($id);
+        $user = User::findOrFail($id);
 
-            return view('staff.admscholarinfo', compact('user'));
-        }
+        return view('staff.admscholarinfo', compact('user'));
+    }
 
-        return redirect()->route('login');
+    public function showapplicantaccount($apid)
+    {
+        $user = applicants::findOrFail($apid);
+
+        return view('staff.admapplicantinfo', compact('user'));
     }
 
     public function showCommunityService()
     {
-        if (Auth::guard('staff')->check()) {
-            communityservice::where('slotnum', 0)
-                ->where('eventstatus', '!=', 'Closed')
-                ->update(['eventstatus' => 'Closed']);
-            $events = communityservice::all();
-            $totalevents = communityservice::count();
-            $openevents = communityservice::where('eventstatus', 'Open')->count();
-            $closedevents = communityservice::where('eventstatus', 'Closed')->count();
+        communityservice::where('slotnum', 0)
+            ->where('eventstatus', '!=', 'Closed')
+            ->update(['eventstatus' => 'Closed']);
+        $events = communityservice::all();
+        $totalevents = communityservice::count();
+        $openevents = communityservice::where('eventstatus', 'Open')->count();
+        $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
-            $requiredHours = 8;
+        $requiredHours = 8;
 
-            $scholarsWithCompletedHours = DB::table('csattendance')
-                ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
-                ->groupBy('caseCode')
-                ->having('total_hours', '>=', $requiredHours)
-                ->count();
+        $scholarsWithCompletedHours = DB::table('csattendance')
+            ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
+            ->groupBy('caseCode')
+            ->having('total_hours', '>=', $requiredHours)
+            ->count();
 
-            $scholarsWithRemainingHours = DB::table('csattendance')
-                ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
-                ->groupBy('caseCode')
-                ->having('total_hours', '<', $requiredHours)
-                ->count();
+        $scholarsWithRemainingHours = DB::table('csattendance')
+            ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
+            ->groupBy('caseCode')
+            ->having('total_hours', '<', $requiredHours)
+            ->count();
 
-            return view('staff.managecs', compact('events', 'totalevents', 'openevents', 'closedevents', 'scholarsWithCompletedHours', 'scholarsWithRemainingHours'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.managecs', compact('events', 'totalevents', 'openevents', 'closedevents', 'scholarsWithCompletedHours', 'scholarsWithRemainingHours'));
     }
 
     public function showCSOpenEvents()
     {
-        if (Auth::guard('staff')->check()) {
-            $events = communityservice::where('eventstatus', 'Open')->get();
-            $totalevents = communityservice::count();
-            $openevents = communityservice::where('eventstatus', 'Open')->count();
-            $closedevents = communityservice::where('eventstatus', 'Closed')->count();
+        $events = communityservice::where('eventstatus', 'Open')->get();
+        $totalevents = communityservice::count();
+        $openevents = communityservice::where('eventstatus', 'Open')->count();
+        $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
-            return view(
-                'staff.openevents',
-                compact('events', 'totalevents', 'openevents', 'closedevents')
-            );
-        }
-
-        return redirect()->route('login');
+        return view(
+            'staff.openevents',
+            compact('events', 'totalevents', 'openevents', 'closedevents')
+        );
     }
 
     public function showCSClosedEvents()
     {
-        if (Auth::guard('staff')->check()) {
-            $events = communityservice::where('eventstatus', 'Closed')->get();
-            $totalevents = communityservice::count();
-            $openevents = communityservice::where('eventstatus', 'Open')->count();
-            $closedevents = communityservice::where('eventstatus', 'Closed')->count();
+        $events = communityservice::where('eventstatus', 'Closed')->get();
+        $totalevents = communityservice::count();
+        $openevents = communityservice::where('eventstatus', 'Open')->count();
+        $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
-            return view(
-                'staff.closedevents',
-                compact(
-                    'events',
-                    'totalevents',
-                    'openevents',
-                    'closedevents'
-                )
-            );
-        }
-
-        return redirect()->route('login');
+        return view(
+            'staff.closedevents',
+            compact(
+                'events',
+                'totalevents',
+                'openevents',
+                'closedevents'
+            )
+        );
     }
 
 
     public function showcseventinfo($csid)
     {
-        if (Auth::guard('staff')->check()) {
-            $event = communityservice::findOrFail($csid);
-            $volunteers = csregistration::where('csid', $csid)->get();
-            return view('staff.cseventinfo', compact('event', 'volunteers'));
-        }
-
-        return redirect()->route('login');
+        $event = communityservice::findOrFail($csid);
+        $volunteers = csregistration::where('csid', $csid)->get();
+        return view('staff.cseventinfo', compact('event', 'volunteers'));
     }
 
     public function createcsevent(Request $request)
@@ -731,12 +645,8 @@ class StaffController extends Controller
 
     public function showHumanitiesClass()
     {
-        if (Auth::guard('staff')->check()) {
-            $classes = humanitiesclass::all();
-            return view('staff.managehc', compact('classes'));
-        }
-
-        return redirect()->route('login');
+        $classes = humanitiesclass::all();
+        return view('staff.managehc', compact('classes'));
     }
 
     public function createhc(Request $request)
@@ -772,14 +682,10 @@ class StaffController extends Controller
 
     public function showAttendanceSystem($hcid)
     {
-        if (Auth::guard('staff')->check()) {
-            $event = humanitiesclass::findOrFail($hcid);
-            $scholars = User::with(['basicInfo'])->get();
+        $event = humanitiesclass::findOrFail($hcid);
+        $scholars = User::with(['basicInfo'])->get();
 
-            return view('staff.hcattendancesystem', compact('scholars', 'event'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.hcattendancesystem', compact('scholars', 'event'));
     }
 
     public function saveattendance($hcid, Request $request)
@@ -853,7 +759,7 @@ class StaffController extends Controller
                 return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
             } catch (\Exception $e) {
                 DB::rollBack();
-                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Failed to submit attendance.');
+                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Failed to submit attendance.', $e->getMessage());
             }
 
             return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
@@ -885,17 +791,13 @@ class StaffController extends Controller
 
     public function viewattendeeslist($hcid)
     {
-        if (Auth::guard('staff')->check()) {
-            $event = HumanitiesClass::findOrFail($hcid);
+        $event = HumanitiesClass::findOrFail($hcid);
 
-            $attendees = HcAttendance::with(['basicInfo'])
-                ->where('hcId', $hcid)
-                ->get();
+        $attendees = HcAttendance::with(['basicInfo'])
+            ->where('hcId', $hcid)
+            ->get();
 
-            return view('staff.viewhcattendeeslist', compact('event', 'attendees'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.viewhcattendeeslist', compact('event', 'attendees'));
     }
 
     public function exitattendancesystem($hcId, Request $request)

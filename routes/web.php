@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\ApplicantAuthController;
 use App\Http\Controllers\Scholar\CommunityController;
 use App\Http\Controllers\Scholar\HomeController;
 use App\Http\Controllers\Scholar\LoginController;
@@ -10,10 +11,8 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\ApplicationController;
 
-
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
-
 
 //routing for applicant page
 Route::prefix('applicant')->group(function () {
@@ -21,9 +20,11 @@ Route::prefix('applicant')->group(function () {
     Route::get('/applicationformC', [ApplicationController::class, 'showcollegeapplication'])->name('form-college');
     Route::post('/saveapplicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
     Route::view('/applicationformHE', 'applicant.applicationformHE')->name('form-hselem');
-    Route::get('/application-success/{casecode}', [ApplicationController::class, 'showconfirmation'])->name('showconfirmation');
-    Route::view('/login', 'applicant.login')->name('login-applicant');
-    Route::view('/applicantportal', 'applicant.applicantportal')->name('applicantportal');
+    Route::get('/application-success/{casecode}/{password}', [ApplicationController::class, 'showconfirmation'])->name('showconfirmation');
+    Route::get('/login', [ApplicantAuthController::class, 'showlogin'])->name('login-applicant');
+    Route::post('/login', [ApplicantAuthController::class, 'login'])->name('log-applicant');
+    Route::get('/logout', [ApplicantAuthController::class, 'logout'])->name('logout-applicant');
+    Route::get('/applicant-portal/{casecode}', [ApplicantAuthController::class, 'showportal'])->middleware('applicant')->name('applicantportal');
 });
 
 // routing for scholars page just for viewing the page no logic used here
@@ -59,153 +60,119 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/fieldtripreq', 'scholar.fieldtripreq')->name('fieldtrip');
     Route::view('/fieldtripform', 'scholar.fieldtripform')->name('fieldtripform');
     Route::view('/fieldtripinfo', 'scholar.fieldtripinfo')->name('fieldtripinfo');
-
     // Appointment system
     Route::view('/appointmentsystem', 'scholar.appointmentsystem')->name('appointment');
     Route::view('/appointmentinfo', 'scholar.appointmentinfo')->name('appointmentinfo');
-
-
+    // Humanities Class
     Route::get('/schumanities', [ScholarController::class, 'showHumanitiesClass'])->name('schumanities');
-
     // LTE
     Route::get('/sclte', [ScholarController::class, 'showLTE'])->name('sclte');
     Route::get('/lteinfo/{lid}', [ScholarController::class, 'showLTEinfo'])->name('lteinfo');
-    // Route::get('/lteinfo-absent/{lid}', [ScholarController::class, 'showLTEinfoabsent'])->name('lteinfo-absent');
-    // Route::get('/lteinfo-late/{lid}', [ScholarController::class, 'showLTEinfolate'])->name('lteinfo-late');
-    // Route::get('/lteinfo-leftearly/{lid}', [ScholarController::class, 'showLTEinfoleftearly'])->name('lteinfo-leftearly');
-
-    // fixed about 70%
+    // Scholarship
     Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
-    Route::get('/gradesub', [ScholarController::class, 'showGradeSubmission'])->name('gradesub');
-    // nag skip ako dito
-    Route::post('/gradesub', [ScholarController::class, 'storeGradeSubmission'])->name('gradesub.post');
-
-
-    Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
-    Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
-
-    Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
-
-    // fixed about 70%
-    Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
-
-    // -------------------------------------------------------------------------------------------------------------------
     Route::get('/gradesub', [ScholarController::class, 'showGradeSubmission'])->name('gradesub');
     Route::post('/gradesub', [ScholarController::class, 'storeGradeSubmission'])->name('gradesub.post');
     Route::get('/gradesinfo/{id}', [ScholarController::class, 'showGradeInfo'])->name('gradesinfo');
-    // fixed na gradesubmission sa page ----------------------------------------------------------------------------------
-    // pero dagdagan ng restriction pag nakapaginput na ng 1st sem 2nd sem sa isang academic year
-
-    // fixed
+    // Account Management | Scholar
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
-
-    // wala pa
     Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
-
-    // cs
+    // Community Service
     Route::get('/csactivities', [CommunityController::class, 'showCSActivities'])->name('csactivities');
     Route::get('/csdetails/{csid}', [CommunityController::class, 'showCSDetails'])->name('csdetails');
     Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
     Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
     Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
-
-    // sa sms or email ba
+    // Announcement
     Route::post('/update-notification-preference', [ScholarController::class, 'updateNotificationPreference'])->name('update.notification.preference');
 });
 
-
 Route::view('chartjs', 'chartjs');
 
-
-
-// routing still for scholars page forms with logic to send to the database
-
-// route to registration
+// route to registration for existing scholars
 Route::view('/registration', 'registration')->name('registration');
 Route::post('/registerScholar', [HomeController::class, 'registerScholar'])->name('registerScholar');
-
+// Login-Logout | Scholar
 Route::prefix('scholar')->controller(LoginController::class)->group(function () {
     Route::get('/scholar-login', 'viewLogin')->name('scholar-login');
     Route::post('/scholar-login', 'authLogin')->name('scholar-login.post'); // For handling the form submission
     Route::post('/logout', 'logout')->name('logout');
 });
 
-
-// announcement
-Route::get('staff/home', [AnnouncementController::class, 'showHome'])->name('home-sw');
-Route::post('staff/home', [AnnouncementController::class, 'storeAnnouncement'])->name('home-sw.post');
-
-
-
-Route::prefix('staff')->controller(StaffController::class)->group(function () {
-    Route::get('/login', 'showLogin')->name('login-sw');
+Route::prefix('staff')->middleware('staff')->group(function () {
+    // ANNOUNCEMENTS
+    Route::get('/home', [AnnouncementController::class, 'showHome'])->name('home-sw');
+    Route::post('/home', [AnnouncementController::class, 'storeAnnouncement'])->name('home-sw.post');
     // SCHOLAR OVERVIEW
-    Route::get('/scholars', 'showScholarsoverview')->name('scholars-overview');
-    Route::get('/listcollege', 'showScholarsCollege')->name('scholars-college');
-    Route::get('/listelementary', 'showScholarsElem')->name('scholars-elementary');
-    Route::get('/listhighschool', 'showScholarsHS')->name('scholars-highschool');
-    Route::get('/scholar/{id}', 'showScholarProfile')->name('scholar-viewinfo');
+    Route::get('/scholars', [StaffController::class, 'showScholarsoverview'])->name('scholars-overview');
+    Route::get('/scholars-college', [StaffController::class, 'showScholarsCollege'])->name('scholars-college');
+    Route::get('/scholars-elementary', [StaffController::class, 'showScholarsElem'])->name('scholars-elementary');
+    Route::get('/scholars-highschool', [StaffController::class, 'showScholarsHS'])->name('scholars-highschool');
+    Route::get('/scholar/{id}', [StaffController::class, 'showScholarProfile'])->name('scholar-viewinfo');
     // COMMUNITY SERVICE
-    Route::get('/managecs', 'showCommunityService')->name('communityservice');
-    Route::get('/openevents', 'showCSOpenEvents')->name('communityservice-open');
-    Route::get('/closedevents', 'showCSClosedEvents')->name('communityservice-closed');
-    Route::post('/managecs', 'createcsevent')->name('createcsevent');
-    Route::post('/event-info/{csid}', 'updatecsevent')->name('updatecsevent');
-    Route::get('/event-info/{csid}', 'showcseventinfo')->name('viewcseventinfo');
+    Route::get('/community-service-overview', [StaffController::class, 'showCommunityService'])->name('communityservice');
+    Route::get('/community-service-open', [StaffController::class, 'showCSOpenEvents'])->name('communityservice-open');
+    Route::get('/community-service-closed', [StaffController::class, 'showCSClosedEvents'])->name('communityservice-closed');
+    Route::post('/createcsevent', [StaffController::class, 'createcsevent'])->name('createcsevent');
+    Route::post('/updatecsevent/{csid}', [StaffController::class, 'updatecsevent'])->name('updatecsevent');
+    Route::get('/community-service-info/{csid}', [StaffController::class, 'showcseventinfo'])->name('viewcseventinfo');
     // HUMANITIES CLASS
-    Route::get('/managehc', 'showHumanitiesClass')->name('humanitiesclass');
-    Route::post('/managehc', 'createhc')->name('createhc');
-    Route::get('/hcattendancesystem/{hcid}', 'showAttendanceSystem')->name('attendancesystem');
-    Route::post('/hcattendancesystem/{hcid}', 'saveattendance')->name('savehcattendance');
-    Route::post('/humanitiesclass/{hcid}', 'viewhcattendees')->name('viewhcattendees');
-    Route::get('/humanitiesclass/{hcid}-attendees', 'viewattendeeslist')->name('viewattendeeslist');
-    Route::get('/humanitiesclass/{hcaid}', 'checkouthc')->name('checkouthc');
-    Route::get('/humanitiesclass/save/{hcid}', 'savehc')->name('savehc');
-    Route::post('/managehc/{hcid}', 'exitattendancesystem')->name('exitattendancesystem');
+    Route::get('/humanities-class', [StaffController::class, 'showHumanitiesClass'])->name('humanitiesclass');
+    Route::post('/createhc', [StaffController::class, 'createhc'])->name('createhc');
+    Route::get('/humanities-class-attendance-system/{hcid}', [StaffController::class, 'showAttendanceSystem'])->name('attendancesystem');
+    Route::post('/saveattendance/{hcid}', [StaffController::class, 'saveattendance'])->name('savehcattendance');
+    Route::post('/viewhcattendees/{hcid}', [StaffController::class, 'viewhcattendees'])->name('viewhcattendees');
+    Route::get('/humanities-class/{hcid}-attendees', [StaffController::class, 'viewattendeeslist'])->name('viewattendeeslist');
+    Route::get('/humanities-class/{hcaid}', [StaffController::class, 'checkouthc'])->name('checkouthc');
+    Route::get('/humanities-class/save/{hcid}', [StaffController::class, 'savehc'])->name('savehc');
+    Route::post('/exitattendancesystem/{hcid}', [StaffController::class, 'exitattendancesystem'])->name('exitattendancesystem');
     // PENALTY | LTE
-    Route::get('/penalty', 'showPenalty')->name('penalty');
-    Route::get('/lte', 'showLTE')->name('lte');
+    Route::get('/penalty', [StaffController::class, 'showPenalty'])->name('penalty');
+    Route::get('/letter-of-explanation', [StaffController::class, 'showLTE'])->name('lte');
     // ALLOWANCE REQUESTS
-    Route::get('/regularallowance', 'showAllowanceRegular')->name('allowancerequests-regular');
-    Route::get('/specialallowance', 'showAllowanceSpecial')->name('allowancerequests-special');
+    Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');
+    Route::get('/allowance-requests-', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
     // APPLICATION CRITERIA
-    Route::get('/applicationforms', 'showApplicationForms')->name('applicationforms');
-    Route::get('/qualification', 'showQualification')->name('qualification');
-    Route::post('/updatecriteria', 'updatecriteria')->name('updatecriteria');
-    Route::post('/addinstitution', 'addinstitution')->name('addinstitution');
-    Route::post('/updateinstitution/{inid}', 'updateinstitution')->name('updateinstitution');
-    Route::post('/deleteinstitution/{inid}', 'deleteinstitution')->name('deleteinstitution');
-    Route::post('/addcourse/{level}', 'addcourse')->name('addcourse');
-    Route::post('/updatecourse/{coid}', 'updatecourse')->name('updatecourse');
-    Route::post('/deletecourse/{coid}', 'deletecourse')->name('deletecourse');
+    Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
+    Route::get('/application-qualification', [StaffController::class, 'showQualification'])->name('qualification');
+    Route::post('/updatecriteria', [StaffController::class, 'updatecriteria'])->name('updatecriteria');
+    Route::post('/addinstitution', [StaffController::class, 'addinstitution'])->name('addinstitution');
+    Route::post('/updateinstitution/{inid}', [StaffController::class, 'updateinstitution'])->name('updateinstitution');
+    Route::post('/deleteinstitution/{inid}', [StaffController::class, 'deleteinstitution'])->name('deleteinstitution');
+    Route::post('/addcourse/{level}', [StaffController::class, 'addcourse'])->name('addcourse');
+    Route::post('/updatecourse/{coid}', [StaffController::class, 'updatecourse'])->name('updatecourse');
+    Route::post('/deletecourse/{coid}', [StaffController::class, 'deletecourse'])->name('deletecourse');
     // RENEWAL
-    Route::get('/renewal', 'showRenewal')->name('scholarshiprenewal');
-    Route::get('/renewcollege', 'showRenewalCollege')->name('renewal-college');
-    Route::get('/renewelementary', 'showRenewalElem')->name('renewal-elementary');
-    Route::get('/renewhighschool', 'showRenewalHS')->name('renewal-highschool');
+    Route::get('/renewal', [StaffController::class, 'showRenewal'])->name('scholarshiprenewal');
+    Route::get('/renewal-college', [StaffController::class, 'showRenewalCollege'])->name('renewal-college');
+    Route::get('/renewal-elementary', [StaffController::class, 'showRenewalElem'])->name('renewal-elementary');
+    Route::get('/renewal-highschool', [StaffController::class, 'showRenewalHS'])->name('renewal-highschool');
     // SYSTEM ADMIN
-    Route::get('/admdashboard', 'showDashboard')->name('dashboard');
-    Route::get('/admscholars', 'showUsersScholar')->name('users-scholar');
-    Route::get('/admstaff', 'showUserStaff')->name('users-staff');
-    Route::get('/admapplicants', 'showUserApplicants')->name('users-applicant');
+    Route::get('/dashboard-admin', [StaffController::class, 'showDashboard'])->name('dashboard');
+    Route::get('/users-scholar', [StaffController::class, 'showUsersScholar'])->name('users-scholar');
+    Route::get('/users-staff', [StaffController::class, 'showUserStaff'])->name('users-staff');
+    Route::get('/users-applicants', [StaffController::class, 'showUserApplicants'])->name('users-applicant');
     // USER: STAFF
-    Route::get('/accountsw', 'showAccountSW')->name('account-sw');
-    Route::get('/staffinfo/{id}', 'showStaffInfo')->name('staff.view');
-    Route::post('/staff/activate/{id}', 'activateStaff')->name('staff.activate');
-    Route::post('/staff/deactivate/{id}', 'deactivateStaff')->name('staff.deactivate');
+    Route::get('/account-socialworker', [StaffController::class, 'showAccountSW'])->name('account-sw');
+    Route::get('/staff-account-info/{id}', [StaffController::class, 'showStaffInfo'])->name('staff.view');
+    Route::post('/staff/activate/{id}', [StaffController::class, 'activateStaff'])->name('staff.activate');
+    Route::post('/staff/deactivate/{id}', [StaffController::class, 'deactivateStaff'])->name('staff.deactivate');
     // USER: SCHOLAR
-    Route::get('/accountsa', 'showAccountSA')->name('account-sa');
-    Route::get('/scholarinfo/{id}', 'showScholarInfo')->name('scholar.view');
-    Route::post('/scholar/activate/{id}', 'activateScholar')->name('scholar.activate');
-    Route::post('/scholar/deactivate/{id}', 'deactivateScholar')->name('scholar.deactivate');
+    Route::get('/account-admin', [StaffController::class, 'showAccountSA'])->name('account-sa');
+    Route::get('/scholar-account-info/{id}', [StaffController::class, 'showScholarInfo'])->name('scholar.view');
+    Route::post('/scholar/activate/{id}', [StaffController::class, 'activateScholar'])->name('scholar.activate');
+    Route::post('/scholar/deactivate/{id}', [StaffController::class, 'deactivateScholar'])->name('scholar.deactivate');
     // USER: APPLICANTS
-    Route::get('/applicants', 'showApplicants')->name('applicants');
-    Route::get('/appformview/{casecode}', 'showapplicantinfo')->name('applicantinfo');
+    Route::get('/applicants', [StaffController::class, 'showApplicants'])->name('applicants');
+    Route::get('/applicant-info/{casecode}', [StaffController::class, 'showapplicantinfo'])->name('applicantinfo');
+    Route::get('/applicant-account-info/{apid}', [StaffController::class, 'showapplicantaccount'])->name('applicant.view');
+    Route::post('/applicant/activate/{apid}', [StaffController::class, 'activateapplicant'])->name('applicant.activate');
+    Route::post('/applicant/deactivate/{apid}', [StaffController::class, 'deactivateapplicant'])->name('applicant.deactivate');
 });
 
 Route::prefix('staff')->controller(StaffAuthController::class)->group(function () {
-    Route::post('/login', 'login')->name('login');
+    Route::get('/login', 'showLogin')->name('login-sw');
+    Route::post('/login', 'login')->name('log-worker');
     Route::get('/logout', 'logout')->name('logout-sw');
-    Route::post('/admstaff', 'createAccount')->name('staccount.create');
+    Route::post('/create-staff', 'createAccount')->name('staccount.create');
 });

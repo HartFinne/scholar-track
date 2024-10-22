@@ -19,32 +19,32 @@
     @include('partials._adminpageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Scholar Account Information</span>
+        <span class="pagetitle">Applicant Account Information</span>
 
         <!-- User Info Table -->
         <table class="table table-bordered" id="tbluserinfo">
             <tbody>
                 <tr>
                     <th class="text-right">Case Code:</th>
-                    <td>{{ $user->caseCode }}</td>
+                    <td>{{ $user->casecode }}</td>
                 </tr>
                 <tr>
                     <th class="text-right">Email:</th>
-                    <td>{{ $user->scEmail }}</td>
+                    <td>{{ $user->email }}</td>
                 </tr>
                 <tr>
                     <th class="text-right">Mobile Number:</th>
-                    <td>{{ $user->scPhoneNum ?? 'N/A' }}</td>
+                    <td>{{ $user->phonenum ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <th class="text-right">Status:</th>
-                    <td>{{ $user->scStatus }}</td>
+                    <td>{{ $user->accountstatus }}</td>
                 </tr>
             </tbody>
         </table>
 
         <!-- Back Button -->
-        <a href="{{ route('users-scholar') }}" class="btn btn-primary">Back to List</a>
+        <a href="{{ route('users-applicant') }}" class="btn btn-primary">Back to List</a>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>

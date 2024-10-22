@@ -4,28 +4,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Application Form</title>
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <title>Applicant Portal</title>
     <link rel="stylesheet" href="{{ asset('css/appformview.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <style>
-        .casedeets-input {
-            border: none;
-            border-bottom: 1px solid #303030;
-            border-radius: 0;
-            outline: none;
-        }
-
-        .casedeets-input:focus {
-            box-shadow: none;
-            border-color: #0056b3;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <!-- PAGE HEADER -->
-    @include('partials._pageheader')
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="col-md-11 d-flex align-items-center">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" style="width: 8%;">
+            <div class="d-flex flex-column">
+                <span class="navtitle" style="color: #2e7c55;">Tzu Chi Philippines</span>
+                <span class="navtitle" style="color: #1a5319;">Educational Assistance Program</span>
+            </div>
+        </div>
+        <div class="col-md-1 d-flex align-items-center">
+            <button class="btn btn-success" onclick="showprofilemenu()"
+                style="width: 40px; height: 40px; border-radius: 40px">
+                <i class="fas fa-user" style="color: #fff"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="ctn-profilemenu" id="profilemenu" style="display: none;">
+        <a href="changepass.html" id="btnchangepass"><i class="fa-solid fa-key"></i>Change Password</a><br>
+        <a href="{{ route('logout-applicant') }}" id="btnsignout"><i class="fa-solid fa-right-from-bracket"></i>Sign
+            out</a>
+    </div>
+
+    <!-- MAIN -->
     <div class="ctnmain">
         <div class="appform-view">
             <div class="appinfo">
@@ -41,18 +50,12 @@
                     <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $applicant->casecode }}"
                         readonly>
                 </div>
-                <form class="row my-2" method="POST" action="">
+                <div class="row my-2">
                     <span class="col-md-3 label">Application Status</span>
                     <span class="col-md-1 label">: </span>
-                    <select name="applicationstatus" class="col-md-8" style="max-width: 35%; padding: 2px 5px;">
-                        <option value="" selected hidden>{{ $applicant->applicationstatus }}</option>
-                        <option value="UNDER REVIEW">UNDER REVIEW</option>
-                        <option value="ACCEPTED">ACCEPTED</option>
-                        <option value="REJECTED">REJECTED</option>
-                        <option value="WITHDRAWN">WITHDRAWN</option>
-                    </select>
-                    <button class="btn mx-3" id="btnupdate">Save</button>
-                </form>
+                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;"
+                        value="{{ $applicant->applicationstatus }}" readonly>
+                </div>
             </div>
             <div class="page1">
                 <div class="header">
@@ -121,7 +124,7 @@
                                     </td>
                                     <td>
                                         <span class="flabel">Occupation and Income</span><br>
-                                        <span class="fvalue" id="occupation">{{ $applicant->occupation }}</span>,
+                                        <span class="fvalue" id="occupation">{{ $applicant->occupation }}</span>,<br>
                                         <span class="fvalue" id="income">Php {{ $applicant->income }}</span>
                                     </td>
                                     <td colspan="2">
@@ -432,23 +435,25 @@
                         <td>
                             <span class="slabel">Nature of Needs</span><br>
                             <span class="svalue" id="natureOfneeds">
-                                <input type="radio" id="financial" name="needs" value="Financial">
+                                <input type="radio" id="financial" name="needs" value="Financial" readonly>
                                 <label for="financial">Financial</label><br>
-                                <input type="radio" id="medical" name="needs" value="Medical">
+                                <input type="radio" id="medical" name="needs" value="Medical" readonly>
                                 <label for="medical">Medical</label><br>
-                                <input type="radio" id="food" name="needs" value="Food">
+                                <input type="radio" id="food" name="needs" value="Food" readonly>
                                 <label for="food">Food</label><br>
-                                <input type="radio" id="material" name="needs" value="Material">
+                                <input type="radio" id="material" name="needs" value="Material" readonly>
                                 <label for="material">Material</label><br>
-                                <input type="radio" id="educ" name="needs" value="Education" checked>
+                                <input type="radio" id="educ" name="needs" value="Education" readonly
+                                    checked>
                                 <label for="educ"> Education</label><br>
-                                <input type="radio" id="others" name="needs" value="Others">
+                                <input type="radio" id="others" name="needs" value="Others" readonly>
                                 <label for="others"> Others</label><br>
                             </span>
                         </td>
                         <td style="width: 600px;">
                             <span class="slabel"><strong>Problem Statement</strong></span><br>
-                            <textarea name="problemstatement" id="" rows="5" cols="6" placeholder="Type here..." required></textarea>
+                            <textarea name="problemstatement" id="" rows="5" cols="6"
+                                placeholder="{{ $applicant->casedetails->problemstatement ?? '' }}" readonly></textarea>
                         </td>
                     </tr>
                 </table>
@@ -458,22 +463,22 @@
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Received By:
                         <input class="casedeets-input text-center" style="width: 65% !important" type="text"
-                            name="receiveby" required>
+                            name="receiveby" value="{{ $applicant->casedetails->receiveby ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Date Receive:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="datereceived" required placeholder="MM DD, YYYY">
+                            name="datereceived" value="{{ $applicant->casedetails->datereceived ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Assigned District:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="district" required>
+                            name="district" value="{{ $applicant->casedetails->district ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Assigned Volunteer:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="volunteer" required>
+                            name="volunteer" value="{{ $applicant->casedetails->volunteer ?? '' }}" readonly>
                     </div>
                 </div>
                 <div class="column col-md-7">
@@ -488,17 +493,19 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Case Referred By:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="referredby" required>
+                                name="referredby" value="{{ $applicant->casedetails->referredby ?? '' }}" readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Referral Contact no.:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="tel"
-                                name="referphonenum" required>
+                                name="referphonenum" value="{{ $applicant->casedetails->referphonenum ?? '' }}"
+                                readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
                             Beneficiary:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="relationship" required>
+                                name="relationship" value="{{ $applicant->casedetails->relationship ?? '' }}"
+                                readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Applicant's Signature:
@@ -507,14 +514,16 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Date Reported:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="datereported" required placeholder="MM DD, YYYY">
+                                name="datereported" value="{{ $applicant->casedetails->datereported ?? '' }}"
+                                readonly>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="{{ asset('js/headercontrol.js') }}"></script>
+
+    <script src="{{ asset('js/applicant.js') }}"></script>
 </body>
 
 </html>

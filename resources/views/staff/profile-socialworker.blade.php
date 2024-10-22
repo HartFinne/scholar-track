@@ -19,7 +19,7 @@
 
     <div class="mainctn">
         <div class="groupA">
-            <span id="outusername">Juan Dela Cruz</span>
+            <span id="outusername">{{ $worker->name }}</span>
             <div class="groupA1">
                 <form class="groupA2" style="width: 525px;" action="#">
                     <span class="subtitle">Account Information</span>
@@ -42,7 +42,7 @@
                     </div>
                     <div class="groupA3">
                         <span style="width: 150px;">Role</span>
-                        <input type="text" name="role" class="inacctinfo" value="{{ $worker->role }}" required>
+                        <input type="text" name="role" class="inacctinfo" value="{{ $worker->role }}" readonly>
                     </div>
                     <button type="submit" id="btnupdateacct" class="button">Save</button>
                 </form>

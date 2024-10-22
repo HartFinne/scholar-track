@@ -28,15 +28,13 @@
                         <p class="text-secondary">Please click or tap you destination.</p>
                     </div>
 
-                    <form action="{{ route('scholar-login') }}" method="get">
-                        <button class="btn btn-outline-secondary bnt-lg w-100 m-2" type="submit">Scholar</button>
-                    </form>
-                    <form action="{{ route('login-sw') }}" method="get">
-                        <button class="btn btn-outline-secondary bnt-lg w-100 m-2" type="submit">Admin</button>
-                    </form>
-                    <form action="{{ route('login-applicant') }}" method="get">
-                        <button class="btn btn-outline-secondary bnt-lg w-100 m-2" type="submit">Applicant</button>
-                    </form>
+                    <a href="{{ route('scholar-login') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2"
+                        type="submit">Scholar</a>
+                    <a href="{{ route('login-sw') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2"
+                        type="submit">Admin</a>
+
+                    <a href="{{ route('login-applicant') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2"
+                        type="submit">Applicant</a>
 
 
                     <div class="text-center mt-5">

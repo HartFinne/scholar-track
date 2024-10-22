@@ -205,8 +205,8 @@ class ApplicationController extends Controller
 
             $prioritylevel = $this->determineprioritylevel($request->incomingyear, $request->income, $request->fincome, $request->mincome, $sincome, $request->gwa);
 
-            $fullname = explode(',', $request->name);
-            $password = trim($fullname[0] . '.tzuchi');
+            $parts = explode(' ', strtolower($request->scholarname));
+            $password = end($parts) . '.tzuchi';
 
             applicants::create([
                 'casecode' => $casecode,
@@ -294,7 +294,6 @@ class ApplicationController extends Controller
                 'expectations' => $request->expectation,
             ]);
 
-            $baseFileName = "case-{$casecode}";
             // get the files from form
             $idpic = $request->file('idpic');
             $reportcard = $request->file('reportcard');
@@ -349,8 +348,7 @@ class ApplicationController extends Controller
 
             DB::commit();
 
-            return redirect()->route('showconfirmation', $casecode);
-            // return redirect()->back()->with('success', 'Your application has been submitted');
+            return redirect()->route('showconfirmation', ['casecode' => $casecode, 'password' => $password]);
         } catch (ValidationException $e) {
             DB::rollback();
             $errors = $e->errors();
@@ -368,11 +366,9 @@ class ApplicationController extends Controller
         }
     }
 
-    public function showconfirmation($casecode)
+    public function showconfirmation($casecode, $password)
     {
-        $applicant = applicants::where('casecode', $casecode)->first();
-
-        return view('applicant.appconfirmdialog', compact('applicant'));
+        return view('applicant.appconfirmdialog', compact('casecode', 'password'));
     }
 
     public function generatecasecode($incomingyear)

@@ -49,24 +49,6 @@
     color: #2e7c55;
 }
 
-.groupB {
-    display: flex;
-    flex-direction: column;
-    row-gap: 5px;
-}
-
-.groupB1 {
-    display: flex;
-    justify-content: space-between;
-    width: 20%;
-    min-width: 300px;
-}
-
-.data {
-    width: 100px;
-    font-weight: bold;
-}
-
 #btnsave {
     border: 2px solid #8eb79c;
     border-radius: 6px;

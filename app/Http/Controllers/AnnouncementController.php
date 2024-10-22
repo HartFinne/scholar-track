@@ -20,15 +20,10 @@ class AnnouncementController extends Controller
 
     public function showHome()
     {
-        if (Auth::guard('staff')->check()) {
+        $users = User::all();
+        $announcements = Announcement::all();
 
-            $users = User::all();
-            $announcements = Announcement::all();
-
-            return view('staff.home', compact('users', 'announcements'));
-        }
-
-        return redirect()->route('login');
+        return view('staff.home', compact('users', 'announcements'));
     }
 
     // storeannouncement

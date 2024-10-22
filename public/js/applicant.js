@@ -70,47 +70,6 @@ document.getElementById('addSibling').addEventListener('click', function (event)
    document.getElementById('siblings-container').appendChild(clone);
 });
 
-
-// // Function to add a new row
-// document.getElementById('addRowBtn').addEventListener('click', function (event) {
-//    event.preventDefault();
-
-//    // Get the table body
-//    var tableBody = document.getElementById('familyTableBody');
-
-//    // Create a new row
-//    var newRow = document.createElement('tr');
-
-//    // Add columns with input fields and a remove button to the row
-//    newRow.innerHTML = `
-//        <td><input type="text" required></td>
-//        <td><input type="text" required></td>
-//        <td>
-//            <select required>
-//                <option value="" disabled selected hidden></option>
-//                <option value="F">F</option>
-//                <option value="M">M</option>
-//            </select>
-//        </td>
-//        <td><input type="date" required></td>
-//        <td><input type="text" required></td>
-//        <td><input type="text" required></td>
-//        <td><input type="text" required></td>
-//        <td><input type="text" required></td>
-//        <td><input type="text" required></td>
-//        <td><input type="text" required></td>
-//        <td><button class="removeRowBtn">x</button></td>
-//    `;
-
-//    // Append the new row to the table body
-//    tableBody.appendChild(newRow);
-
-//    // Add event listener to the "Remove" button in the new row
-//    newRow.querySelector('.removeRowBtn').addEventListener('click', function () {
-//       newRow.remove(); // Remove the row
-//    });
-// });
-
 // Function to toggle profile
 function showprofilemenu() {
    const profileMenu = document.getElementById('profilemenu');
