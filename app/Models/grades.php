@@ -14,8 +14,7 @@ class grades extends Model
     protected $primaryKey = 'gid';
 
     protected $fillable = [
-        'caseCode',
-        'AcademicYear',
+        'eid',
         'SemesterQuarter',
         'GWA',
         'ReportCard',

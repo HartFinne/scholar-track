@@ -171,7 +171,9 @@
                 borderColor: '#36A2EB',
                 datasets: [{
                     label: 'Hours',
-                    data: [1, 2],
+                    data: [{{ $communityServiceChart['completed'] }},
+                        {{ $communityServiceChart['remaining'] }}
+                    ],
                     borderWidth: 1,
                     borderColor: 'darkgreen', // Bar border color changed to dark green
                     backgroundColor: 'rgba(0, 100, 0, 0.8)', // Bar fill color set to a dark green with transparency

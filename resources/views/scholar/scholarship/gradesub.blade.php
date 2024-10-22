@@ -90,12 +90,13 @@
                     @foreach ($grades as $grade)
                         <tr>
                             <td>S.Y. {{ $academicYear }}</td>
-                            <td>{{ $grade->scSemester }}</td>
-                            <td>{{ $grade->scGWA }}</td>
-                            <td>{{ $grade->scGradeStatus }}</td>
-                            <td><a href="{{ route('gradesinfo', $grade->gradeID) }}" id="view">View</a></td>
+                            <td>{{ $grade->SemesterQuarter }}</td>
+                            <td>{{ $grade->GWA }}</td>
+                            <td>{{ $grade->GradeStatus }}</td>
+                            <td><a href="{{ route('gradesinfo', ['id' => $grade->gid]) }}" id="view">View</a></td>
                         </tr>
                     @endforeach
+
                 </tbody>
             </table>
         </div>

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\csattendance;
 use App\Models\User;
 use App\Models\ScEducation;
 use App\Models\penalty;
@@ -118,10 +119,10 @@ class ScholarController extends Controller
 
         // Fetch grades associated with the user's education
         // Fetch academic performance data using a join
-        $academicData = ScEducation::join('grades', 'sc_education.caseCode', '=', 'grades.caseCode')
-            ->selectRaw("CONCAT(grades.AcademicYear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
+        $academicData = ScEducation::join('grades', 'sc_education.eid', '=', 'grades.eid')
+            ->selectRaw("CONCAT(sc_education.scAcademicYear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
             ->where('sc_education.caseCode', $user->caseCode) // Filter by user's caseCode
-            ->orderBy('grades.AcademicYear', 'asc')
+            ->orderBy('sc_education.scAcademicYear', 'asc')
             ->orderBy('grades.SemesterQuarter', 'asc')
             ->get();
 
@@ -131,8 +132,25 @@ class ScholarController extends Controller
             'grades' => $academicData->pluck('GWA')->toArray(), // Make sure to use the correct column name
         ];
 
+        // Fetch the community service activities and calculate hours
+        $communityServiceData = csattendance::where('caseCode', $user->caseCode)
+            ->join('communityservice', 'csattendance.csid', '=', 'communityservice.csid')
+            ->select(DB::raw('SUM(csattendance.hoursspent) as total_hours'))
+            ->first();
+
+        // Set the total required hours (example value)
+        $totalRequiredHours = 8;
+        $completedHours = $communityServiceData->total_hours ?? 0;
+        $remainingHours = max($totalRequiredHours - $completedHours, 0);
+
+        // Pass the community service data to the view
+        $communityServiceChart = [
+            'completed' => $completedHours,
+            'remaining' => $remainingHours,
+        ];
+
         // If the user is authenticated, show the overview page
-        return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData'));
+        return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart'));
     }
 
 
@@ -146,19 +164,19 @@ class ScholarController extends Controller
         $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
 
         // Fetch grades associated with the education entry
-        $grades = grades::where('caseCode', $scEducation->caseCode)->get();
+        $grades = grades::where('eid', $scEducation->eid)->get();
 
         // Retrieve the academic year from the scEducation record
         $academicYear = $scEducation->scAcademicYear;
 
         // Pass the grades and academic year to the view
-        return view('scholar.scholarship.gradesub', compact('grades', 'academicYear'));
+        return view('scholar/scholarship.gradesub', compact('grades', 'academicYear'));
     }
 
     public function storeGradeSubmission(Request $request)
     {
         // Validate the form data
-        $validated = $request->validate([
+        $request->validate([
             'semester' => ['required'],
             'gwa' => [
                 'required',
@@ -177,6 +195,7 @@ class ScholarController extends Controller
 
             // Find the corresponding sc_education entry based on caseCode
             $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
+            Log::info('scEducation ID: ' . $scEducation->eid);
 
             // Handle file upload
             if ($request->hasFile('gradeImage')) {
@@ -193,11 +212,11 @@ class ScholarController extends Controller
 
             // Save the grade entry and link it to the educationID
             grades::create([
-                'educationID' => $scEducation->scEducationID, // Link the grade to the education entry
-                'scSemester' => $request->semester,
-                'scGWA' => $request->gwa,
-                'scReportCard' => $filePath, // Store the file path
-                'scGradeStatus' => 'Pending' // Default status or modify based on your logic
+                'eid' => $scEducation->eid, // Link the grade to the education entry
+                'SemesterQuarter' => $request->semester,
+                'GWA' => $request->gwa,
+                'ReportCard' => $filePath, // Store the file path
+                'GradeStatus' => 'Pending' // Default status or modify based on your logic
             ]);
 
             // Redirect on success and pass the grades data
@@ -214,9 +233,8 @@ class ScholarController extends Controller
     {
         // Find the grade using the correct primary key
         $grade = grades::findOrFail($id);
-
         // Fetch the associated education entry to get the academic year
-        $academicYear = ScEducation::findOrFail($grade->educationID); // Assuming educationID is stored in ScGrade
+        $academicYear = ScEducation::findOrFail($grade->eid); // Assuming educationID is stored in ScGrade
 
         // Pass the grade data and academic year to the view
         return view('scholar.scholarship.gradesinfo', compact('grade', 'academicYear'));
