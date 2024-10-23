@@ -13,13 +13,19 @@ return new class extends Migration
     {
         Schema::create('grades', function (Blueprint $table) {
             $table->increments('gid');
-            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
-            $table->integer('AcademicYear');
+            $table->unsignedInteger('eid'); // Foreign key reference to sc_education.eids
             $table->string('SemesterQuarter');
             $table->float('GWA');
             $table->binary('ReportCard');
             $table->string('GradeStatus')->nullable();
             $table->timestamps();
+
+            // Set up the foreign key constraint with cascading delete
+            $table->foreign('eid')
+                ->references('eid')
+                ->on('sc_education')
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

@@ -126,6 +126,7 @@ class ScholarController extends Controller
             ->orderBy('grades.SemesterQuarter', 'asc')
             ->get();
 
+
         // Prepare data for the chart
         $chartData = [
             'labels' => $academicData->pluck('period')->toArray(),
@@ -195,7 +196,19 @@ class ScholarController extends Controller
 
             // Find the corresponding sc_education entry based on caseCode
             $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
+            $academicYear = $scEducation->scAcademicYear; // Retrieve the academic year from sc_education
             Log::info('scEducation ID: ' . $scEducation->eid);
+            Log::info('scEducation ID: ' .  $academicYear);
+
+            // Check if an entry for the same academic year and semester already exists
+            $existingGrade = grades::where('eid', $scEducation->eid)
+                ->where('SemesterQuarter', $request->semester)
+                ->first();
+
+
+            if ($existingGrade) {
+                return redirect()->back()->withErrors(['error' => 'A grade for this semester in the academic year ' . $academicYear . ' has already been submitted.'])->withInput();
+            }
 
             // Handle file upload
             if ($request->hasFile('gradeImage')) {
@@ -229,6 +242,7 @@ class ScholarController extends Controller
             return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later.'])->withInput();
         }
     }
+
     public function showGradeInfo($id)
     {
         // Find the grade using the correct primary key
