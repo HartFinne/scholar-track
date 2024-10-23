@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="ctn-table table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered">
                 <thead class="table-success">
                     <tr>
                         <th class="text-center align-middle">ID</th>

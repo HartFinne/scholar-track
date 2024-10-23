@@ -76,6 +76,9 @@
                         <div class="value">: <span>{{ $data->basicInfo->scLastname }},
                                 {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</span></div>
 
+                        <div class="label">Chinese Name</div>
+                        <div class="value">: <span>{{ $data->basicInfo->scChinesename }}</span></div>
+
                         <div class="label">Date of Birth</div>
                         <div class="value">:
                             <span>{{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m - d - Y') }}</span>

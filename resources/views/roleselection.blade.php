@@ -20,10 +20,10 @@
             <div class="row align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
                 <div class="col col-sm-7 col-lg-9 col-xl-9">
                     <a href="#" class="d-flex justify-content-center mb-4">
-                        <img src="{{ asset('images/logo.png') }}" alt="" width="150">
+                        <img src="{{ asset('images/logo.png') }}" alt="" width="130">
                     </a>
 
-                    <div class="text-center mb-3">
+                    <div class="text-center mb-2">
                         <h2 class="fw-bold">Welcome to Tzu Chi PH!</h2>
                         <p class="text-secondary">Please click or tap you destination.</p>
                     </div>
@@ -37,7 +37,7 @@
                         type="submit">Applicant</a>
 
 
-                    <div class="text-center mt-5">
+                    <div class="text-center mt-3">
                         <p id="footer">By using this service, you understood and agree to the Tzu Chi Online Services
                             <a href="#">Terms of Use</a> and <a href="#">Privacy Statement</a>.
                         </p>

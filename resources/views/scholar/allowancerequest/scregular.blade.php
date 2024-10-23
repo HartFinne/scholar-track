@@ -27,27 +27,16 @@
             <a href="" class="goback">&lt Go back</a>
             <h1 class="title">Regular Allowance</h1>
 
-            <a href="Regularform.html" class="btn-request fw-bold">Request Regular Allowance</a>
+            <a href="{{ route ('regularform') }}" class="btn-request fw-bold">Request Regular Allowance</a>
             
-            <div class="status">
-                <p class="table-title">STATUS: </p>
-                <div class="filter">
-                    <button class="filter-btn">All</button>
-                    <button class="filter-btn">Pending</button>
-                    <button class="filter-btn">Accepted</button>
-                    <button class="filter-btn">Completed</button>
-                    <button class="filter-btn">Rejected</button>
-                </div>
-            </div>   
-        
+            <p class="table-title"> My Requests </p>
             <div class="ctn-table table-responsive">
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered">
                     <thead class="table-success">
                         <tr>
                             <th class="text-center align-middle">ID</th>
-                            <th class="text-center align-middle">Type of Request</th>
+                            <th class="text-center align-middle">Semester</th>
                             <th class="text-center align-middle">Date of Request</th>
-                            <th class="text-center align-middle">Status</th>
                             <th class="text-center align-middle">Date of Release</th>
                             <th class="text-center align-middle">Action</th>
                         </tr>
@@ -55,11 +44,10 @@
                     <tbody>
                         <tr>
                             <td>1</td>
-                            <td>Lodging Allowance</td>
+                            <td>1st Semester</td>
                             <td>01/03/2024</td>
-                            <td>Completed</td>
                             <td>01/05/2024</td>
-                            <td><a href="rallowanceinfo.html" class="btn-view">View</td>
+                            <td><a href="{{ route ('regularforminfo') }}" class="btn-view">View</td>
                         </tr>
                     </tbody>
                 </table>

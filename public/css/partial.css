@@ -13,7 +13,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;                   
+    gap: 20px;
+    font-family: 'Poppins', Arial;
 }
 
 .logo{
@@ -63,6 +64,7 @@
     z-index: 1000;
     display: none;
     width: 350px;
+    font-family: 'Poppins', Arial;
 }
 
 .ctn-profilemenu a{
@@ -115,6 +117,7 @@
     max-height: 0px;
     overflow: hidden;
     transition: max-height 0.4s;
+    
 }
 
 .sub-menu-wrap.open-menu{
@@ -190,14 +193,7 @@
     }
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', Arial;
-}
+/* SIDEBAR */
 
 #btn-showmenu {
     margin: 10px;
@@ -273,6 +269,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: 'Poppins', Arial;
 }
 
 .ctn-options button.active {
@@ -288,6 +285,7 @@
 .subopt {
     display: flex;
     flex-direction: column;
+    font-family: 'Poppins', Arial;
 }
 
 .subopt a {

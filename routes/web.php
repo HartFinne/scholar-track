@@ -90,6 +90,9 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
 Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function () {
     // Allowance Requests
     Route::view('/scregular', 'scholar.allowancerequest.scregular')->name('scregular');
+    Route::view('/regularform', 'scholar.allowancerequest.regularform')->name('regularform');
+    Route::view('/regularforminfo', 'scholar.allowancerequest.regularforminfo')->name('regularforminfo');
+
     Route::view('/scspecial', 'scholar.allowancerequest.scspecial')->name('scspecial');
     Route::view('/transporeq', 'scholar.allowancerequest.transporeq')->name('transpo');
     Route::view('/transpoform', 'scholar.allowancerequest.transpoform')->name('transpoform');

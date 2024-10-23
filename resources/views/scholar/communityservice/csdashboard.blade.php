@@ -82,7 +82,7 @@
                         <tr>
                             <td>{{ $registration->title }}</td>
                             <td class="text-start"><b>Meeting Place:</b> {{ $registration->meetingplace }}<br><br>
-                                <b>Activity Place:</b>{{ $registration->eventloc }}
+                                <b>Activity Place:</b> {{ $registration->eventloc }}
                             </td>
                             <td class="text-start"><b>Call Time:</b>
                                 {{ \Carbon\Carbon::parse($registration->calltime)->format('h:i A') }}<br><br>

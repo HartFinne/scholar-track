@@ -134,3 +134,115 @@ window.onload = function() {
         }
     });
 };
+
+// Fucntion to add and remove sibling
+document.getElementById('addSibling').addEventListener('click', function(event) {
+    event.preventDefault();
+    
+    var originalDiv = document.querySelector('.siblingsinfo');
+ 
+    var clone = originalDiv.cloneNode(true);
+ 
+    clone.querySelectorAll('input').forEach(input => input.value = '');
+ 
+    if (clone.querySelector('.removeSibling')) {
+        clone.querySelector('.removeSibling').remove();
+    }
+ 
+    var removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.classList.add('removeSibling');
+ 
+    clone.appendChild(removeButton);
+ 
+    removeButton.addEventListener('click', function() {
+        clone.remove();
+    });
+ 
+    document.getElementById('siblings-container').appendChild(clone);
+ });
+
+
+// Fucntion to add and remove destination
+document.getElementById('addDestination').addEventListener('click', function(event) {
+    event.preventDefault();
+    
+    var originalDiv = document.querySelector('.destination-info');
+ 
+    var clone = originalDiv.cloneNode(true);
+ 
+    clone.querySelectorAll('input').forEach(input => input.value = '');
+ 
+    
+    if (clone.querySelector('.removeDestination')) {
+        clone.querySelector('.removeDestination').remove();
+    }
+ 
+    var removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.classList.add('removeDestination');
+ 
+    clone.appendChild(removeButton);
+ 
+    removeButton.addEventListener('click', function() {
+        clone.remove();
+    });
+ 
+    document.getElementById('destination-container').appendChild(clone);
+ });
+
+
+ // Fucntion to add and remove destination (OJT)
+document.getElementById('addDestination1').addEventListener('click', function(event) {
+    event.preventDefault();
+    
+    var originalDiv = document.querySelector('.destination-info1');
+ 
+    var clone = originalDiv.cloneNode(true);
+ 
+    clone.querySelectorAll('input').forEach(input => input.value = '');
+ 
+    if (clone.querySelector('.removeDestination')) {
+        clone.querySelector('.removeDestination').remove();
+    }
+ 
+    var removeButton = document.createElement('button');
+    removeButton.textContent = 'Remove';
+    removeButton.classList.add('removeDestination');
+ 
+    clone.appendChild(removeButton);
+ 
+    removeButton.addEventListener('click', function() {
+        clone.remove();
+    });
+   
+    document.getElementById('destination-container1').appendChild(clone);
+ });
+
+
+ // Function to add a new row (class sched)
+document.getElementById('addRowBtn').addEventListener('click', function(event) {
+    event.preventDefault();
+ 
+    var tableBody = document.getElementById('tableBody');
+ 
+    var newRow = document.createElement('tr');
+ 
+    newRow.innerHTML = `
+        <td><input type="text" id="time" name="time" placeholder="ex: 7:00 AM - 8:00 AM" required></td>
+        <td><input type="text" class="sub" id="mon" name="mon" placeholder="Course Code"></td>
+        <td><input type="text" class="sub" id="tue" name="tue" placeholder="Course Code"></td>
+        <td><input type="text" class="sub" id="wed" name="wed" placeholder="Course Code"></td>
+        <td><input type="text" class="sub" id="thu" name="thu" placeholder="Course Code"></td>
+        <td><input type="text" class="sub" id="fri" name="fri" placeholder="Course Code"></td>
+        <td><input type="text" class="sub" id="sat" name="sat" placeholder="Course Code"></td>
+        <td><input type="text" class="sub" id="sun" name="sun" placeholder="Course Code"></td>
+        <td class="remove"><button class="removeRowBtn"><i class="fa-solid fa-xmark"></i></button></td>
+    `;
+ 
+    tableBody.appendChild(newRow);
+ 
+    newRow.querySelector('.removeRowBtn').addEventListener('click', function() {
+        newRow.remove();
+    });
+ });

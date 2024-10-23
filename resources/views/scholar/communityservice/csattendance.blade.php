@@ -60,10 +60,11 @@
             <div class="filter-status">
                 <p class="attendance-title">Attendance Status</p>
                 <div class="filter">
-                    <button class="filter-btn">All</button>
-                    <button class="filter-btn">Pending</button>
-                    <button class="filter-btn">Excused</button>
-                    <button class="filter-btn">Unexcused</button>
+                <button class="filter-btn">All</button>
+                    <button class="filter-btn">Present</button>
+                    <button class="filter-btn">Late</button>
+                    <button class="filter-btn">Left Early</button>
+                    <button class="filter-btn">Absent</button>
                 </div>
             </div>
             <div class="submit-attendance">

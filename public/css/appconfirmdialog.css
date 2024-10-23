@@ -11,7 +11,7 @@
 body{
     background: rgb(255,255,255);
     background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,251,191,1) 35%);
-    height: 100vh;
+    height: auto;
 }
 
 .ctn-navbar{

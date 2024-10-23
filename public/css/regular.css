@@ -5,6 +5,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', Arial;
 }
 
 .ctn-main{
@@ -69,7 +70,7 @@
 .table-title{
     font-weight: bold;
     font-size: large;
-    padding: 0;
+    padding: 20px 0 0;
 }
 
 .table{

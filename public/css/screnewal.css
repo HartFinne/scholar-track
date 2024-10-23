@@ -15,7 +15,7 @@
 .ctn-main .goback{
     text-decoration: none;
     color: #1a5319;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .ctn-main .title{
@@ -27,7 +27,7 @@
 .renewal-form{
     width: 100%;
     margin: auto;
-    font-size: 1.1rem;
+    font-size: 15px;
 }
 
 .custom-fieldset {
@@ -40,7 +40,7 @@
 
 .custom-fieldset legend {
     color: #eaebea;
-    font-size: 1.2rem;
+    font-size: 17px;
     font-weight: bold;
     width: auto; 
     padding: 0 10px; 
@@ -70,17 +70,21 @@
     margin-bottom: 20px;
 }
 
-label{
+.custom-fieldset label{
     font-weight: bold;
 }
 
-input, select, textarea{
+.custom-fieldset input, select, textarea{
     width: 100%;
     padding: 5px;
     border-radius: 10px;
     outline: none;
     border: 2px solid #bfbfbf;
     transition: border-color 0.3s ease-in-out;
+}
+
+.custom-fieldset textarea{
+    resize: none;
 }
 
 input:focus, select:focus, textarea:focus{
@@ -103,55 +107,20 @@ input:focus, select:focus, textarea:focus{
     margin-left: 15px;
 }
 
-.familyinfo{
-    font-weight: 700;
-    color: #1a5319;
-    font-size: 1.1rem;
-}
-
-.ctn-table{
-    margin-bottom: 50px;
-    font-size: 1.1rem;
-}
-
-.table thead tr th{
-    background-color: #1a5319;
+#addSibling, .removeSibling{
+    background-color: #2e7c55;
     color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    transition: 0.3s ease;
 }
 
-.table tr td{
-    text-align: center;
+.removeSibling{
+    background-color: rgba(170, 9, 9, 0.708);
 }
-
-.table th span{
-    font-size: 0.9rem;
-    font-style: italic;
-}
-
-.ctn-table input, select{
-    font-size: 0.9rem;
-}
-
-.ctn-table .col1{
-    width: 250px;
-}
-
-.ctn-table .col2{
-    width: 50px;
-}
-
-.ctn-table .col3{
-    width: 70px;
-}
-
-/* .ctn-table .col7{
-    width: 200px;
-}
-
-.ctn-table .col6,  .col9, .col10{
-    width: 150px;
-}
- */
 
 .btn-submit{
     background-color: #8bc34a;
@@ -163,10 +132,25 @@ input:focus, select:focus, textarea:focus{
     transition: 0.3s ease;
 }
 
-.btn-submit:hover{
+.btn-submit:hover, #addSibling:hover{
     background-color: #1a5319;
 }
 
+.removeSibling:hover{
+    background-color: red;
+}
+
+.agreement {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.agreement input[type="checkbox"] {
+    margin-right: 10px; 
+}
+
+/* VIEW */
 .ren-stat{
     background-color: #c1ff72;
     font-weight: bold;
@@ -230,10 +214,10 @@ input:focus, select:focus, textarea:focus{
         padding: 15px;
     }
     .custom-fieldset legend {
-        font-size: 1.1rem;
+        font-size: 15px;
     }
     .renewal-form{
-        font-size: 1rem;
+        font-size: 14px;
     }
     .ren-info .info{
         display: block;
