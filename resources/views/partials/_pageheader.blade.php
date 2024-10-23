@@ -51,6 +51,8 @@
                 <a href="{{ route('applicationforms') }}" class="sbarsubopt">Application Forms</a>
                 <a href="{{ route('qualification') }}" class="sbarsubopt">Application Qualification</a>
             </div>
+            <a id="btnhc" class="sbarmainopt" href='{{ route('generatescholarshipreport') }}'
+                target="_blank">Generate Report</a>
         </div>
     </div>
 

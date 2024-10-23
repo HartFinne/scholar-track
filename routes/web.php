@@ -10,6 +10,7 @@ use App\Http\Controllers\Scholar\ScholarController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\PDFController;
 
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
@@ -206,4 +207,8 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
     Route::post('/login', 'login')->name('log-worker');
     Route::get('/logout', 'logout')->name('logout-sw');
     Route::post('/create-staff', 'createAccount')->name('staccount.create');
+});
+
+Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
+    Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
 });
