@@ -25,15 +25,15 @@
 
     <!-- TRANSPORTATION REIMBURSEMENT REQUEST -->
     <div class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
+        <a href="{{ route('scspecial') }}" class="goback">&lt Go back</a>
         <h2 class="title">Transportation Reimbursement Request</h2>
         <div class="instructions">
             <h6>Step 1:</h6>
             <p>I-download at I-print ang Transportation Reimbursement Form at ipa- sign sa Staff/Volunteer.</p>
 
             <h6>Step 2:</h6>
-            <p>Ihanda ang Scanned Copy o malinaw na picture ng Transportation Reimbursement Form. 
-                Siguraduhin na malinaw at nakikita ang detalye sa Destination, Type of Vehicle, Cost of Fare, 
+            <p>Ihanda ang Scanned Copy o malinaw na picture ng Transportation Reimbursement Form.
+                Siguraduhin na malinaw at nakikita ang detalye sa Destination, Type of Vehicle, Cost of Fare,
                 Total, at Pirma.</p>
 
             <h6>Step 3:</h6>
@@ -41,26 +41,32 @@
 
             <div class="reminder">
                 <div class="reminder1">
-                    <p><strong> Reminder: DO NOT DISCARD OR MISPLACE THE HARDCOPY OF THE RECEIPTS AND DOCUMENTS</strong></p>
-                    <p><strong><em>PAALALA: HUWAG ITAPON O IWALA ANG MGA ORIHINAL NA RESIBO AT DOKUMENTO.</em></strong></p>
+                    <p><strong> Reminder: DO NOT DISCARD OR MISPLACE THE HARDCOPY OF THE RECEIPTS AND DOCUMENTS</strong>
+                    </p>
+                    <p><strong><em>PAALALA: HUWAG ITAPON O IWALA ANG MGA ORIHINAL NA RESIBO AT DOKUMENTO.</em></strong>
+                    </p>
                 </div>
-                
+
                 <div class="reminder2">
                     <p>Failure to do so may result in a delay or non-processing of your special allowance request.</p>
-                    <p><em>Ang hindi paggawa nito ay maaaring magresulta sa pagkaantala o hindi pagproseso ng iyong request para sa special allowance.</em></p>
+                    <p><em>Ang hindi paggawa nito ay maaaring magresulta sa pagkaantala o hindi pagproseso ng iyong
+                            request para sa special allowance.</em></p>
                 </div>
             </div>
 
             <h6 class="text-center pt-2">Downloadable files:</h6>
             <div class="file-download">
-                <a href="" class="download-btn">Transportation Reimbursement Form <i class="fas fa-download"></i></a>
+                <a href="{{ asset('storage/' . $transpo->pathname) }}" class="download-btn" download>Transportation
+                    Reimbursement
+                    Form <i class="fas fa-download"></i></a>
             </div>
 
             <div class="sub-form text-center">
-                <a href="{{ route('transpoform') }}" class="form-btn">Go to submission form</a>
+                <a href="{{ route('showrequestform', 'TRF') }}" class="form-btn">Go to submission form</a>
             </div>
         </div>
     </div>
     <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
+
 </html>

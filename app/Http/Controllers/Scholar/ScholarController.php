@@ -15,8 +15,16 @@ use App\Models\penalty;
 use App\Models\grades;
 use App\Models\hcattendance;
 use App\Models\humanitiesclass;
-
 use App\Models\lte;
+use App\Models\specialallowanceforms;
+use App\Models\allowancebook;
+use App\Models\allowanceevent;
+use App\Models\allowancegraduation;
+use App\Models\allowanceproject;
+use App\Models\allowancethesis;
+use App\Models\allowancetranspo;
+use App\Models\allowanceuniform;
+use Illuminate\Validation\ValidationException;
 
 class ScholarController extends Controller
 {
@@ -309,5 +317,586 @@ class ScholarController extends Controller
         // elseif ($letter->eventtype == 'Community Service') {
         //     $violation = csattendance::where('csaid', $letter->conditionid);
         // }
+    }
+
+    public function showspecialallowance()
+    {
+        $scholar = User::where('id', Auth::id())
+            ->first();
+
+        $reqbook = allowancebook::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+        $reqevent = allowanceevent::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+        $reqthesis = allowancethesis::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+        $reqproj = allowanceproject::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+        $reqtranspo = allowancetranspo::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+        $requnif = allowanceuniform::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+        $reqgrad = allowancegraduation::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+
+        // Merge all collections into one
+        $mergedrequests = $reqbook
+            ->concat($reqevent)
+            ->concat($reqthesis)
+            ->concat($reqproj)
+            ->concat($reqtranspo)
+            ->concat($requnif)
+            ->concat($reqgrad);
+
+        // Sort the merged collection by created_at
+        $requests = $mergedrequests->sortBy('created_at')->values();
+
+        return view('scholar.allowancerequest.scspecial', compact('requests'));
+    }
+
+    public function showrequestinstruction($requesttype)
+    {
+        $transpo = specialallowanceforms::where('filetype', 'TRF')->first();
+        $cert = specialallowanceforms::where('filetype', 'PBCF')->first();
+        $acknowledgement = specialallowanceforms::where('filetype', 'AR')->first();
+        $liquidation = specialallowanceforms::where('filetype', 'LF')->first();
+        if ($requesttype == 'TRF') {
+            return view('scholar.allowancerequest.transporeq', compact('transpo'));
+        } elseif ($requesttype == 'BAR') {
+            return view('scholar.allowancerequest.bookreq', compact('cert', 'acknowledgement', 'liquidation'));
+        } elseif ($requesttype == 'TAR') {
+            return view('scholar.allowancerequest.thesisreq', compact('acknowledgement', 'liquidation'));
+        } elseif ($requesttype == 'PAR') {
+            return view('scholar.allowancerequest.projectreq', compact('cert', 'acknowledgement', 'liquidation'));
+        } elseif ($requesttype == 'UAR') {
+            return view('scholar.allowancerequest.uniformreq', compact('acknowledgement', 'liquidation'));
+        } elseif ($requesttype == 'GAR') {
+            return view('scholar.allowancerequest.gradreq', compact('acknowledgement', 'liquidation'));
+        } elseif ($requesttype == 'FTTSAR') {
+            return view('scholar.allowancerequest.fieldtripreq', compact('acknowledgement', 'liquidation'));
+        }
+    }
+
+    public function showrequestform($formtype)
+    {
+        $scholar = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->find(Auth::id());
+        if ($formtype == 'TRF') {
+            return view('scholar.allowancerequest.transpoform', compact('scholar'));
+        } elseif ($formtype == 'BAR') {
+            return view('scholar.allowancerequest.bookform', compact('scholar'));
+        } elseif ($formtype == 'TAR') {
+            return view('scholar.allowancerequest.thesisform', compact('scholar'));
+        } elseif ($formtype == 'PAR') {
+            return view('scholar.allowancerequest.projectform', compact('scholar'));
+        } elseif ($formtype == 'UAR') {
+            return view('scholar.allowancerequest.uniformform', compact('scholar'));
+        } elseif ($formtype == 'GAR') {
+            return view('scholar.allowancerequest.gradform', compact('scholar'));
+        } elseif ($formtype == 'FTTSAR') {
+            return view('scholar.allowancerequest.fieldtripform', compact('scholar'));
+        }
+    }
+
+    public function reqallowancebook($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'booktitle' => 'string|max:255',
+                    'author' => 'string|max:255',
+                    'price' => 'numeric|min:1',
+                    'certification' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'acknowledgement' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'purchaseproof' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'liquidation' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                ],
+                [
+                    'booktitle.string' => 'The book title must be a valid string.',
+                    'booktitle.max' => 'The book title must not be greater than 255 characters.',
+                    'author.string' => 'The author name must be a valid string.',
+                    'author.max' => 'The author name must not be greater than 255 characters.',
+                    'price.numeric' => 'The price must be a valid number.',
+                    'price.min' => 'The price must be at least 1.',
+                    'certification.mimes' => 'The certification must be a file of type: pdf, jpg, jpeg, png.',
+                    'certification.max' => 'The certification file must not exceed 2 MB.',
+                    'acknowledgement.mimes' => 'The acknowledgement must be a file of type: pdf, jpg, jpeg, png.',
+                    'acknowledgement.max' => 'The acknowledgement file must not exceed 2 MB.',
+                    'purchaseproof.mimes' => 'The purchase proof must be a file of type: pdf, jpg, jpeg, png.',
+                    'purchaseproof.max' => 'The purchase proof file must not exceed 2 MB.',
+                    'liquidation.mimes' => 'The liquidation must be a file of type: pdf, jpg, jpeg, png.',
+                    'liquidation.max' => 'The liquidation file must not exceed 2 MB.',
+                ]
+            );
+
+            $certification = $request->file('certification');
+            $acknowledgement = $request->file('acknowledgement');
+            $purchaseproof = $request->file('purchaseproof');
+            $liquidation = $request->file('liquidation');
+
+            $datetime = now()->format('Ymd_His');
+
+            $filename_certification = $datetime . '_' . $caseCode . '_Book_Certification.' . $certification->getClientOriginalExtension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
+            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->getClientOriginalExtension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+
+            $path_certification = $certification->storeAs('uploads/allowance_requests/special/book_requests', $filename_certification, 'public');
+            $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/book_requests', $filename_acknowledgement, 'public');
+            $path_purchaseproof = $purchaseproof->storeAs('uploads/allowance_requests/special/book_requests', $filename_purchaseproof, 'public');
+            $path_liquidation = $liquidation->storeAs('uploads/allowance_requests/special/book_requests', $filename_liquidation, 'public');
+
+            allowancebook::create([
+                'caseCode' => $caseCode,
+                'booktitle' => $request->booktitle,
+                'author' => $request->author,
+                'price' => $request->price,
+                'certification' => $path_certification,
+                'acknowledgement' => $path_acknowledgement,
+                'purchaseproof' => $path_purchaseproof,
+                'liquidation' => $path_liquidation
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Your book allowance request has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+        };
+    }
+
+    public function reqallowanceevent($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'eventtype' => 'string|max:50',
+                    'eventloc' => 'string|max:255',
+                    'totalprice' => 'numeric|min:1',
+                    'memo' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'waiver' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'acknowledgement' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'liquidation' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                ],
+                [
+                    'eventtype.string' => 'The event type must be a valid string.',
+                    'eventtype.max' => 'The event type must not be greater than 50 characters.',
+                    'eventloc.string' => 'The author name must be a valid string.',
+                    'eventloc.max' => 'The author name must not be greater than 255 characters.',
+                    'totalprice.numeric' => 'The price must be a valid number.',
+                    'totalprice.min' => 'The price must be at least 1.',
+                    'memo.mimes' => 'The memo must be a file of type: pdf, jpg, jpeg, png.',
+                    'memo.max' => 'The memo file must not exceed 2 MB.',
+                    'waiver.mimes' => 'The waiver must be a file of type: pdf, jpg, jpeg, png.',
+                    'waiver.max' => 'The waiver file must not exceed 2 MB.',
+                    'acknowledgement.mimes' => 'The acknowledgement must be a file of type: pdf, jpg, jpeg, png.',
+                    'acknowledgement.max' => 'The acknowledgement file must not exceed 2 MB.',
+                    'liquidation.mimes' => 'The liquidation must be a file of type: pdf, jpg, jpeg, png.',
+                    'liquidation.max' => 'The liquidation file must not exceed 2 MB.',
+                ]
+            );
+
+            $memo = $request->file('memo');
+            $waiver = $request->file('waiver');
+            $acknowledgement = $request->file('acknowledgement');
+            $liquidation = $request->file('liquidation');
+
+            $datetime = now()->format('Ymd_His');
+
+            $filename_memo = $datetime . '_' . $caseCode . '_Memo.' . $memo->getClientOriginalExtension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
+            $filename_waiver = $datetime . '_' . $caseCode . '_Waiver.' . $waiver->getClientOriginalExtension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+
+            $path_memo = $memo->storeAs('uploads/allowance_requests/special/event_requests', $filename_memo, 'public');
+            $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/event_requests', $filename_acknowledgement, 'public');
+            $path_waiver = $waiver->storeAs('uploads/allowance_requests/special/event_requests', $filename_waiver, 'public');
+            $path_liquidation = $liquidation->storeAs('uploads/allowance_requests/special/event_requests', $filename_liquidation, 'public');
+
+            allowanceevent::create([
+                'caseCode' => $caseCode,
+                'eventtype' => $request->eventtype,
+                'eventloc' => $request->eventloc,
+                'totalprice' => $request->totalprice,
+                'memo' => $path_memo,
+                'waiver' => $path_waiver,
+                'acknowledgement' => $path_acknowledgement,
+                'liquidation' => $path_liquidation
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Your event allowance request has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+        };
+    }
+
+    public function reqallowancegraduation($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'totalprice' => 'numeric|min:1',
+                    'gradlist' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'acknowledgement' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'liquidation' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                ],
+                [
+                    'totalprice.numeric' => 'The price must be a valid number.',
+                    'totalprice.min' => 'The price must be at least 1.',
+                    'gradlist.mimes' => 'The official list of graduates must be a file of type: pdf, jpg, jpeg, png.',
+                    'gradlist.max' => 'The official list of graduates file must not exceed 2 MB.',
+                    'acknowledgement.mimes' => 'The acknowledgement must be a file of type: pdf, jpg, jpeg, png.',
+                    'acknowledgement.max' => 'The acknowledgement file must not exceed 2 MB.',
+                    'liquidation.mimes' => 'The liquidation must be a file of type: pdf, jpg, jpeg, png.',
+                    'liquidation.max' => 'The liquidation file must not exceed 2 MB.',
+                ]
+            );
+
+            $gradlist = $request->file('gradlist');
+            $acknowledgement = $request->file('acknowledgement');
+            $liquidation = $request->file('liquidation');
+
+            $datetime = now()->format('Ymd_His');
+
+            $filename_gradlist = $datetime . '_' . $caseCode . '_List_of_Graduates.' . $gradlist->getClientOriginalExtension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+
+            $path_gradlist = $gradlist->storeAs('uploads/allowance_requests/special/graduation_requests', $filename_gradlist, 'public');
+            $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/graduation_requests', $filename_acknowledgement, 'public');
+            $path_liquidation = $liquidation->storeAs('uploads/allowance_requests/special/graduation_requests', $filename_liquidation, 'public');
+
+            allowancegraduation::create([
+                'caseCode' => $caseCode,
+                'totalprice' => $request->totalprice,
+                'listofgraduates' => $path_gradlist,
+                'acknowledgement' => $path_acknowledgement,
+                'liquidation' => $path_liquidation
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Your graduation allowance request has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+        };
+    }
+
+    public function reqallowanceproject($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'subject' => 'string|max:255',
+                    'totalprice' => 'numeric|min:1',
+                    'certification' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'acknowledgement' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'purchaseproof' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'liquidation' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                ],
+                [
+                    'subject.string' => 'The subject must be a valid string.',
+                    'subject.max' => 'The subject must not be greater than 255 characters.',
+                    'totalprice.numeric' => 'The price must be a valid number.',
+                    'totalprice.min' => 'The price must be at least 1.',
+                    'certification.mimes' => 'The certification must be a file of type: pdf, jpg, jpeg, png.',
+                    'certification.max' => 'The certification file must not exceed 2 MB.',
+                    'acknowledgement.mimes' => 'The acknowledgement must be a file of type: pdf, jpg, jpeg, png.',
+                    'acknowledgement.max' => 'The acknowledgement file must not exceed 2 MB.',
+                    'purchaseproof.mimes' => 'The purchase proof must be a file of type: pdf, jpg, jpeg, png.',
+                    'purchaseproof.max' => 'The purchase proof file must not exceed 2 MB.',
+                    'liquidation.mimes' => 'The liquidation must be a file of type: pdf, jpg, jpeg, png.',
+                    'liquidation.max' => 'The liquidation file must not exceed 2 MB.',
+                ]
+            );
+
+            $certification = $request->file('certification');
+            $acknowledgement = $request->file('acknowledgement');
+            $purchaseproof = $request->file('purchaseproof');
+            $liquidation = $request->file('liquidation');
+
+            $datetime = now()->format('Ymd_His');
+
+            $filename_certification = $datetime . '_' . $caseCode . '_Project_Certification.' . $certification->getClientOriginalExtension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
+            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->getClientOriginalExtension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+
+            $path_certification = $certification->storeAs('uploads/allowance_requests/special/project_requests', $filename_certification, 'public');
+            $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/project_requests', $filename_acknowledgement, 'public');
+            $path_purchaseproof = $purchaseproof->storeAs('uploads/allowance_requests/special/project_requests', $filename_purchaseproof, 'public');
+            $path_liquidation = $liquidation->storeAs('uploads/allowance_requests/special/project_requests', $filename_liquidation, 'public');
+
+            allowanceproject::create([
+                'caseCode' => $caseCode,
+                'subject' => $request->subject,
+                'totalprice' => $request->totalprice,
+                'certification' => $path_certification,
+                'acknowledgement' => $path_acknowledgement,
+                'purchaseproof' => $path_purchaseproof,
+                'liquidation' => $path_liquidation
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Your project allowance request has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+        };
+    }
+
+    public function reqallowancethesis($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'thesistitle' => 'string|max:255',
+                    'totalprice' => 'numeric|min:1',
+                    'titlepage' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'acknowledgement' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'purchaseproof' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'liquidation' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                ],
+                [
+                    'thesistitle.string' => 'The thesis title must be a valid string.',
+                    'thesistitle.max' => 'The thesis title must not be greater than 255 characters.',
+                    'totalprice.numeric' => 'The price must be a valid number.',
+                    'totalprice.min' => 'The price must be at least 1.',
+                    'titlepage.mimes' => 'The title page must be a file of type: pdf, jpg, jpeg, png.',
+                    'titlepage.max' => 'The title page file must not exceed 2 MB.',
+                    'acknowledgement.mimes' => 'The acknowledgement must be a file of type: pdf, jpg, jpeg, png.',
+                    'acknowledgement.max' => 'The acknowledgement file must not exceed 2 MB.',
+                    'purchaseproof.mimes' => 'The purchase proof must be a file of type: pdf, jpg, jpeg, png.',
+                    'purchaseproof.max' => 'The purchase proof file must not exceed 2 MB.',
+                    'liquidation.mimes' => 'The liquidation must be a file of type: pdf, jpg, jpeg, png.',
+                    'liquidation.max' => 'The liquidation file must not exceed 2 MB.',
+                ]
+            );
+
+            $titlepage = $request->file('titlepage');
+            $acknowledgement = $request->file('acknowledgement');
+            $purchaseproof = $request->file('purchaseproof');
+            $liquidation = $request->file('liquidation');
+
+            $datetime = now()->format('Ymd_His');
+
+            $filename_titlepage = $datetime . '_' . $caseCode . '_Title_Page.' . $titlepage->getClientOriginalExtension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
+            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->getClientOriginalExtension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+
+            $path_titlepage = $titlepage->storeAs('uploads/allowance_requests/special/thesis_requests', $filename_titlepage, 'public');
+            $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/thesis_requests', $filename_acknowledgement, 'public');
+            $path_purchaseproof = $purchaseproof->storeAs('uploads/allowance_requests/special/thesis_requests', $filename_purchaseproof, 'public');
+            $path_liquidation = $liquidation->storeAs('uploads/allowance_requests/special/thesis_requests', $filename_liquidation, 'public');
+
+            allowancethesis::create([
+                'caseCode' => $caseCode,
+                'thesistitle' => $request->thesistitle,
+                'totalprice' => $request->totalprice,
+                'titlepage' => $path_titlepage,
+                'acknowledgement' => $path_acknowledgement,
+                'purchaseproof' => $path_purchaseproof,
+                'liquidation' => $path_liquidation
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Your thesis allowance request has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+        };
+    }
+
+    public function reqallowancetranspo($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'totalprice' => 'numeric|min:1',
+                    'purpose' => 'string|max:255',
+                    'staffname' => 'string|max:255',
+                    'transpoform' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                ],
+                [
+                    'totalprice.numeric' => 'The price must be a valid number.',
+                    'totalprice.min' => 'The price must be at least 1.',
+                    'purpose.string' => 'The purpose/activity must be a valid string.',
+                    'purpose.max' => 'The purpose/activity must not be greater than 255 characters.',
+                    'staffname.string' => 'The name of staff/volunteer must be a valid string.',
+                    'staffname.max' => 'The name of staff/volunteer must not be greater than 255 characters.',
+                    'transpoform.mimes' => 'The transportation reimbursement form must be a file of type: pdf, jpg, jpeg, png.',
+                    'transpoform.max' => 'The transportation reimbursement form must not exceed 2 MB.',
+                ]
+            );
+
+            $transpoform = $request->file('transpoform');
+
+            $datetime = now()->format('Ymd_His');
+
+            $filename_transpoform = $datetime . '_' . $caseCode . '_Transportation_Reimbursement_Form.' . $transpoform->getClientOriginalExtension();
+
+            $path_transpoform = $transpoform->storeAs('uploads/allowance_requests/special/transportation_reimbursements', $filename_transpoform, 'public');
+
+            allowancetranspo::create([
+                'caseCode' => $caseCode,
+                'totalprice' => $request->totalprice,
+                'purpose' => $request->purpose,
+                'staffname' => $request->staffname,
+                'transpoform' => $path_transpoform,
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Your transportation reimbursements request has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+        };
+    }
+
+    public function reqallowanceuniform($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'totalprice' => 'numeric|min:1',
+                    'certificate' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'acknowledgement' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'uniformpic' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                    'liquidation' => ['mimes:pdf,jpg,jpeg,png', 'max:2048'],
+                ],
+                [
+                    'totalprice.numeric' => 'The price must be a valid number.',
+                    'totalprice.min' => 'The price must be at least 1.',
+                    'certificate.mimes' => 'The Enrollment/OJT certificate must be a file of type: pdf, jpg, jpeg, png.',
+                    'certificate.max' => 'The Enrollment/OJT certificate file must not exceed 2 MB.',
+                    'acknowledgement.mimes' => 'The acknowledgement must be a file of type: pdf, jpg, jpeg, png.',
+                    'acknowledgement.max' => 'The acknowledgement file must not exceed 2 MB.',
+                    'uniformpic.mimes' => 'The picture of uniform must be a file of type: pdf, jpg, jpeg, png.',
+                    'uniformpic.max' => 'The picture of uniform must not exceed 2 MB.',
+                    'liquidation.mimes' => 'The liquidation must be a file of type: pdf, jpg, jpeg, png.',
+                    'liquidation.max' => 'The liquidation file must not exceed 2 MB.',
+                ]
+            );
+
+            $certificate = $request->file('certificate');
+            $acknowledgement = $request->file('acknowledgement');
+            $uniformpic = $request->file('uniformpic');
+            $liquidation = $request->file('liquidation');
+
+            $datetime = now()->format('Ymd_His');
+
+            $filename_certificate = $datetime . '_' . $caseCode . '_Title_Page.' . $certificate->getClientOriginalExtension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
+            $filename_uniformpic = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $uniformpic->getClientOriginalExtension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+
+            $path_certificate = $certificate->storeAs('uploads/allowance_requests/special/uniform_requests', $filename_certificate, 'public');
+            $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/uniform_requests', $filename_acknowledgement, 'public');
+            $path_uniformpic = $uniformpic->storeAs('uploads/allowance_requests/special/uniform_requests', $filename_uniformpic, 'public');
+            $path_liquidation = $liquidation->storeAs('uploads/allowance_requests/special/uniform_requests', $filename_liquidation, 'public');
+
+            allowanceuniform::create([
+                'caseCode' => $caseCode,
+                'uniformtype' => $request->uniformtype,
+                'totalprice' => $request->totalprice,
+                'certificate' => $path_certificate,
+                'acknowledgement' => $path_acknowledgement,
+                'uniformpic' => $path_uniformpic,
+                'liquidation' => $path_liquidation
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Your uniform allowance request has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+        };
     }
 }

@@ -186,18 +186,39 @@ class ApplicationController extends Controller
                 'talent.max' => 'The talent details may not be greater than 255 characters.',
                 'expectation.string' => 'The expectations must be a valid string.',
                 'expectation.max' => 'The expectations may not be greater than 255 characters.',
-                // Custom error messages for documents
-                'idpic.required' => 'The ID picture must be a valid image file (jpeg, jpg, png).',
-                'reportcard.required' => 'The report card must be a valid file (jpeg, jpg, png, pdf).',
-                'regiform.required' => 'The registration form must be a valid file (jpeg, jpg, png, pdf).',
-                'autobiography.required' => 'The autobiography must be a PDF file.',
-                'familypic.required' => 'A family picture must be a valid image file (jpeg, jpg, png).',
-                'insidehouse.required' => 'An image of the inside of the house must be a valid image file (jpeg, jpg, png).',
-                'outsidehouse.required' => 'An image of the outside of the house must be a valid image file (jpeg, jpg, png).',
-                'utility.required' => 'A utility bill must be a valid file (jpeg, jpg, png, pdf).',
-                'sketchmap.required' => 'A sketch map must be a valid file (jpeg, jpg, png, pdf).',
-                'payslip.required' => 'A payslip must be a valid file (jpeg, jpg, png, pdf).',
-                'indigencycert.required' => 'An indigency certificate and must be a valid file (jpeg, jpg, png, pdf).',
+                // Custom error messages for documents with file size limits
+                'idpic.mimes' => 'The ID picture must be a valid image file (jpeg, jpg, png).',
+                'idpic.max' => 'The ID picture must not exceed 2 MB.',
+
+                'reportcard.mimes' => 'The report card must be a valid file (jpeg, jpg, png, or pdf).',
+                'reportcard.max' => 'The report card must not exceed 2 MB.',
+
+                'regiform.mimes' => 'The registration form must be a valid file (jpeg, jpg, png, or pdf).',
+                'regiform.max' => 'The registration form must not exceed 2 MB.',
+
+                'autobiography.mimes' => 'The autobiography must be a PDF file.',
+                'autobiography.max' => 'The autobiography must not exceed 2 MB.',
+
+                'familypic.mimes' => 'The family picture must be a valid image file (jpeg, jpg, or png).',
+                'familypic.max' => 'The family picture must not exceed 2 MB.',
+
+                'insidehouse.mimes' => 'The image of the inside of the house must be a valid image file (jpeg, jpg, or png).',
+                'insidehouse.max' => 'The image of the inside of the house must not exceed 2 MB.',
+
+                'outsidehouse.mimes' => 'The image of the outside of the house must be a valid image file (jpeg, jpg, or png).',
+                'outsidehouse.max' => 'The image of the outside of the house must not exceed 2 MB.',
+
+                'utility.mimes' => 'The utility bill must be a valid file (jpeg, jpg, png, or pdf).',
+                'utility.max' => 'The utility bill must not exceed 2 MB.',
+
+                'sketchmap.mimes' => 'The sketch map must be a valid file (jpeg, jpg, png, or pdf).',
+                'sketchmap.max' => 'The sketch map must not exceed 2 MB.',
+
+                'payslip.mimes' => 'The payslip must be a valid file (jpeg, jpg, png, or pdf).',
+                'payslip.max' => 'The payslip must not exceed 2 MB.',
+
+                'indigencycert.mimes' => 'The indigency certificate must be a valid file (jpeg, jpg, png, or pdf).',
+                'indigencycert.max' => 'The indigency certificate must not exceed 2 MB.',
             ]);
 
             $casecode = $this->generatecasecode($request->incomingyear);
@@ -362,7 +383,7 @@ class ApplicationController extends Controller
             return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ');
         }
     }
 

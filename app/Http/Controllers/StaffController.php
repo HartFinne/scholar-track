@@ -22,6 +22,7 @@ use App\Models\applicants;
 use App\Models\apceducation;
 use App\Models\apeheducation;
 use App\Models\apfamilyinfo;
+use App\Models\specialallowanceforms;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -373,6 +374,219 @@ class StaffController extends Controller
     public function showAllowanceSpecial()
     {
         return view('staff.specialallowance');
+    }
+
+    public function updatetransporeimbursenment(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'transporeimbursement' => ['mimes:doc,docx,pdf', 'max:2048'],
+                ],
+                [
+                    'transporeimbursement.mimes' => 'The transportation reimbursement form must be a valid file (doc, docx, or pdf).',
+                    'transporeimbursement.max' => 'The transportation reimbursement form must not exceed 2 MB.',
+                ]
+            );
+
+            $uploadedfile = $request->file('transporeimbursement');
+
+            $filename = 'Transportation Reimbursement Form.' . $uploadedfile->getClientOriginalExtension();
+
+            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
+
+            $filetype = 'TRF';
+
+            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
+
+            if ($fileexists) {
+                $fileexists->pathname = $path;
+                $fileexists->save();
+            } else {
+                specialallowanceforms::create([
+                    'filetype' => $filetype,
+                    'pathname' => $path,
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'File has been successfully uploaded.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
+        };
+    }
+
+    public function updateacknowledgementreceipt(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'acknowledgementreceipt' => ['mimes:doc,docx,pdf', 'max:2048'],
+                ],
+                [
+                    'acknowledgementreceipt.mimes' => 'The acknowledgement receipt must be a valid file (doc, docx, or pdf).',
+                    'acknowledgementreceipt.max' => 'The acknowledgement receipt must not exceed 2 MB.',
+                ]
+            );
+
+            $uploadedfile = $request->file('acknowledgementreceipt');
+
+            $filename = 'Acknowledgement Receipt.' . $uploadedfile->getClientOriginalExtension();
+
+            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
+
+            $filetype = 'AR';
+
+            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
+
+            if ($fileexists) {
+                $fileexists->pathname = $path;
+                $fileexists->save();
+            } else {
+                specialallowanceforms::create([
+                    'filetype' => $filetype,
+                    'pathname' => $path,
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'File has been successfully uploaded.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
+        };
+    }
+
+    public function updateliquidationform(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'liquidationform' => ['mimes:doc,docx,pdf', 'max:2048'],
+                    'certificationform' => ['mimes:doc,docx,pdf', 'max:2048'],
+                ],
+                [
+                    'liquidationform.mimes' => 'The liquidation form must be a valid file (doc, docx, or pdf).',
+                    'liquidationform.max' => 'The liquidation form must not exceed 2 MB.',
+                ]
+            );
+
+            $uploadedfile = $request->file('liquidationform');
+
+            $filename = 'Liquidation Form.' . $uploadedfile->getClientOriginalExtension();
+
+            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
+
+            $filetype = 'LF';
+
+            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
+
+            if ($fileexists) {
+                $fileexists->pathname = $path;
+                $fileexists->save();
+            } else {
+                specialallowanceforms::create([
+                    'filetype' => $filetype,
+                    'pathname' => $path,
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'File has been successfully uploaded.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
+        };
+    }
+
+    public function updatecertificationform(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate(
+                [
+                    'certificationform' => ['mimes:doc,docx,pdf', 'max:2048'],
+                ],
+                [
+                    'certificationform.mimes' => 'The certification form must be a valid file (doc, docx, or pdf).',
+                    'certificationform.max' => 'The certification form must not exceed 2 MB.',
+                ]
+            );
+
+            $uploadedfile = $request->file('certificationform');
+
+            $filename = 'Project and Book Certification Form.' . $uploadedfile->getClientOriginalExtension();
+
+            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
+
+            $filetype = 'PBCF';
+
+            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
+
+            if ($fileexists) {
+                $fileexists->pathname = $path;
+                $fileexists->save();
+            } else {
+                specialallowanceforms::create([
+                    'filetype' => $filetype,
+                    'pathname' => $path,
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'File has been successfully uploaded.');
+        } catch (ValidationException $e) {
+            DB::rollBack();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
+        };
     }
 
     public function showScholarsoverview()

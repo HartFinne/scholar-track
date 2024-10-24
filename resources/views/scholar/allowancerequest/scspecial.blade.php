@@ -29,13 +29,14 @@
 
         <!-- ALLOWANCE BUTTONS -->
         <div class="sallowance">
-            <a href="{{ route('transpo') }}" class="btn-request">Transportation Reimbursement Request</a>
-            <a href="{{ route('book') }}" class="btn-request">Book Allowance Request</a>
-            <a href="{{ route('thesis') }}" class="btn-request">Thesis Allowance Request</a>
-            <a href="{{ route('project') }}" class="btn-request">Project Allowance Request</a>
-            <a href="{{ route('uniform') }}" class="btn-request">Uniform Allowance Request</a>
-            <a href="{{ route('grad') }}" class="btn-request">Graduation Allowance Request</a>
-            <a href="{{ route('fieldtrip') }}" class="btn-request">Field Trip, Training, Seminar Allowance Request</a>
+            <a href="{{ route('specialreqs', 'TRF') }}" class="btn-request">Transportation Reimbursement Request</a>
+            <a href="{{ route('specialreqs', 'BAR') }}" class="btn-request">Book Allowance Request</a>
+            <a href="{{ route('specialreqs', 'TAR') }}" class="btn-request">Thesis Allowance Request</a>
+            <a href="{{ route('specialreqs', 'PAR') }}" class="btn-request">Project Allowance Request</a>
+            <a href="{{ route('specialreqs', 'UAR') }}" class="btn-request">Uniform Allowance Request</a>
+            <a href="{{ route('specialreqs', 'GAR') }}" class="btn-request">Graduation Allowance Request</a>
+            <a href="{{ route('specialreqs', 'FTTSAR') }}" class="btn-request">Field Trip, Training, Seminar Allowance
+                Request</a>
         </div>
         <!-- REQUESTS -->
         <div class="status">
@@ -52,7 +53,7 @@
             <table class="table table-bordered">
                 <thead class="table-success">
                     <tr>
-                        <th class="text-center align-middle">ID</th>
+                        <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Type of Request</th>
                         <th class="text-center align-middle">Date of Request</th>
                         <th class="text-center align-middle">Status</th>
@@ -61,18 +62,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Transportation Reimbursement Request</td>
-                        <td>02/04/2024</td>
-                        <td>Completed</td>
-                        <td>-</td>
-                        <td><a href="{{ route('transpoinfo') }}" class="btn-view">View</td>
-                    </tr>
+                <tbody>
+                    @foreach ($requests as $index => $request)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>
+                                @if ($request instanceof App\Models\allowancebook)
+                                    Book Allowance Request
+                                @elseif ($request instanceof App\Models\allowanceevent)
+                                    Event Allowance Request
+                                @elseif ($request instanceof App\Models\allowancegraduation)
+                                    Graduation Allowance Request
+                                @elseif ($request instanceof App\Models\allowanceproject)
+                                    Project Allowance Request
+                                @elseif ($request instanceof App\Models\allowancethesis)
+                                    Thesis Allowance Request
+                                @elseif ($request instanceof App\Models\allowancetranspo)
+                                    Transportation Reimbursement Request
+                                @elseif ($request instanceof App\Models\allowanceuniform)
+                                    Uniform Allowance Request
+                                @endif
+                            </td>
+                            <td>{{ $request->created_at->format('F d, Y') }}</td>
+                            <td>{{ $request->status }}</td>
+                            <td>{{ $request->releasedate ? $request->releasedate->format('F d, Y') : '--' }}</td>
+                            <td><a href="#" class="btn btn-success">View</a></td>
+                        </tr>
+                    @endforeach
+                </tbody>
                 </tbody>
             </table>
         </div>
     </main>
     <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
+
 </html>

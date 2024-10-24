@@ -30,14 +30,11 @@ Route::prefix('applicant')->group(function () {
 
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
-
     Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
     Route::view('/schome', 'scholar.schome')->name('schome');
-
-
     // Appointment system
     Route::view('/appointmentsystem', 'scholar.appointmentsystem')->name('appointment');
     Route::view('/appointmentinfo', 'scholar.appointmentinfo')->name('appointmentinfo');
@@ -53,7 +50,6 @@ Route::prefix('scholar/communityservice')->middleware('scholar')->group(function
     Route::post('/csdetails/{csid}', [CommunityController::class, 'storeCSRegistration'])->name('csdetails.post');
     Route::get('/csdashboard', [CommunityController::class, 'showCSDashboard'])->name('csdashboard');
     Route::post('/csdashboard/{csid}/cancel', [CommunityController::class, 'cancelRegistration'])->name('csdashboard.cancel');
-
     Route::get('/csattendance', [CommunityController::class, 'showCSAttendance'])->name('csattendance');
     Route::get('/csform', [CommunityController::class, 'showCSForm'])->name('csform');
     Route::post('/csform', [CommunityController::class, 'storeCSForm'])->name('csform.post');
@@ -61,69 +57,53 @@ Route::prefix('scholar/communityservice')->middleware('scholar')->group(function
 
 // scholarship folder
 Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
-    // fixed about 70%
     Route::get('/overview', [ScholarController::class, 'showScholarshipOverview'])->name('overview');
-
-    // -------------------------------------------------------------------------------------------------------------------
     Route::get('/gradesub', [ScholarController::class, 'showGradeSubmission'])->name('gradesub');
     Route::post('/gradesub', [ScholarController::class, 'storeGradeSubmission'])->name('gradesub.post');
     Route::get('/gradesinfo/{id}', [ScholarController::class, 'showGradeInfo'])->name('gradesinfo');
-    // fixed na gradesubmission sa page ----------------------------------------------------------------------------------
-    // pero dagdagan ng restriction pag nakapaginput na ng 1st sem 2nd sem sa isang academic year
-
-
     // LTE
     Route::get('/sclte', [ScholarController::class, 'showLTE'])->name('sclte');
     Route::get('/lteinfo/{lid}', [ScholarController::class, 'showLTEinfo'])->name('lteinfo');
-    // Route::get('/lteinfo-absent/{lid}', [ScholarController::class, 'showLTEinfoabsent'])->name('lteinfo-absent');
-    // Route::get('/lteinfo-late/{lid}', [ScholarController::class, 'showLTEinfolate'])->name('lteinfo-late');
-    // Route::get('/lteinfo-leftearly/{lid}', [ScholarController::class, 'showLTEinfoleftearly'])->name('lteinfo-leftearly');
-
-    // fixed
+    Route::get('/lteinfo-absent/{lid}', [ScholarController::class, 'showLTEinfoabsent'])->name('lteinfo-absent');
+    Route::get('/lteinfo-late/{lid}', [ScholarController::class, 'showLTEinfolate'])->name('lteinfo-late');
+    Route::get('/lteinfo-leftearly/{lid}', [ScholarController::class, 'showLTEinfoleftearly'])->name('lteinfo-leftearly');
+    // user profile
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
     Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
-
-    // sa sms or email ba
+    // sms | email notif preference
     Route::post('/update-notification-preference', [ScholarController::class, 'updateNotificationPreference'])->name('update.notification.preference');
 });
 
 Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function () {
-    // Allowance Requests
     Route::view('/scregular', 'scholar.allowancerequest.scregular')->name('scregular');
-    Route::view('/regularform', 'scholar.allowancerequest.regularform')->name('regularform');
     Route::view('/regularforminfo', 'scholar.allowancerequest.regularforminfo')->name('regularforminfo');
-
-    Route::view('/scspecial', 'scholar.allowancerequest.scspecial')->name('scspecial');
-    Route::view('/transporeq', 'scholar.allowancerequest.transporeq')->name('transpo');
-    Route::view('/transpoform', 'scholar.allowancerequest.transpoform')->name('transpoform');
     Route::view('/transpoinfo', 'scholar.allowancerequest.transpoinfo')->name('transpoinfo');
-    Route::view('/bookreq', 'scholar.allowancerequest.bookreq')->name('book');
-    Route::view('/bookform', 'scholar.allowancerequest.bookform')->name('bookform');
     Route::view('/bookinfo', 'scholar.allowancerequest.bookinfo')->name('bookinfo');
-    Route::view('/thesisreq', 'scholar.allowancerequest.thesisreq')->name('thesis');
-    Route::view('/thesisform', 'scholar.allowancerequest.thesisform')->name('thesisform');
     Route::view('/thesisinfo', 'scholar.allowancerequest.thesisinfo')->name('thesisinfo');
-    Route::view('/projectreq', 'scholar.allowancerequest.projectreq')->name('project');
-    Route::view('/projectform', 'scholar.allowancerequest.projectform')->name('projectform');
     Route::view('/projectinfo', 'scholar.allowancerequest.projectinfo')->name('projectinfo');
-    Route::view('/uniformreq', 'scholar.allowancerequest.uniformreq')->name('uniform');
-    Route::view('/uniformform', 'scholar.allowancerequest.uniformform')->name('uniformform');
     Route::view('/uniforminfo', 'scholar.allowancerequest.uniforminfo')->name('uniforminfo');
-    Route::view('/gradreq', 'scholar.allowancerequest.gradreq')->name('grad');
-    Route::view('/gradform', 'scholar.allowancerequest.gradform')->name('gradform');
     Route::view('/gradinfo', 'scholar.allowancerequest.gradinfo')->name('gradinfo');
-    Route::view('/fieldtripreq', 'scholar.allowancerequest.fieldtripreq')->name('fieldtrip');
-    Route::view('/fieldtripform', 'scholar.allowancerequest.fieldtripform')->name('fieldtripform');
     Route::view('/fieldtripinfo', 'scholar.allowancerequest.fieldtripinfo')->name('fieldtripinfo');
+    // Allowance Requests : Special
+    Route::get('/scspecial', [ScholarController::class, 'showspecialallowance'])->name('scspecial');
+    Route::get('/special/instruction/{requesttype}', [ScholarController::class, 'showrequestinstruction'])->name('specialreqs');
+    Route::get('/special/form/{formtype}', [ScholarController::class, 'showrequestform'])->name('showrequestform');
+    Route::post('/book/{casecode}', [ScholarController::class, 'reqallowancebook'])->name('reqallowancebook');
+    Route::post('/event/{casecode}', [ScholarController::class, 'reqallowanceevent'])->name('reqallowanceevent');
+    Route::post('/graduation/{casecode}', [ScholarController::class, 'reqallowancegraduation'])->name('reqallowancegraduation');
+    Route::post('/project/{casecode}', [ScholarController::class, 'reqallowanceproject'])->name('reqallowanceproject');
+    Route::post('/thesis/{casecode}', [ScholarController::class, 'reqallowancethesis'])->name('reqallowancethesis');
+    Route::post('/transportation_reimbursement/{casecode}', [ScholarController::class, 'reqallowancetranspo'])->name('reqallowancetranspo');
+    Route::post('/uniform/{casecode}', [ScholarController::class, 'reqallowanceuniform'])->name('reqallowanceuniform');
 });
-
 
 Route::view('chartjs', 'chartjs');
 
 // route to registration for existing scholars
 Route::view('/registration', 'registration')->name('registration');
 Route::post('/registerScholar', [HomeController::class, 'registerScholar'])->name('registerScholar');
+
 // Login-Logout | Scholar
 Route::prefix('scholar')->controller(LoginController::class)->group(function () {
     Route::get('/scholar-login', 'viewLogin')->name('scholar-login');
@@ -163,7 +143,11 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/letter-of-explanation', [StaffController::class, 'showLTE'])->name('lte');
     // ALLOWANCE REQUESTS
     Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');
-    Route::get('/allowance-requests-', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
+    Route::get('/allowance-requests-special', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
+    Route::post('/upload-transpo', [StaffController::class, 'updatetransporeimbursenment'])->name('transporeimbursement');
+    Route::post('/upload-acknowledgement', [StaffController::class, 'updateacknowledgementreceipt'])->name('acknowledgement');
+    Route::post('/upload-liquidation', [StaffController::class, 'updateliquidationform'])->name('liquidation');
+    Route::post('/upload-certification', [StaffController::class, 'updatecertificationform'])->name('certform');
     // APPLICATION CRITERIA
     Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
     Route::get('/application-qualification', [StaffController::class, 'showQualification'])->name('qualification');
@@ -202,6 +186,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/applicant/deactivate/{apid}', [StaffController::class, 'deactivateapplicant'])->name('applicant.deactivate');
 });
 
+// staff login, logout, account creation
 Route::prefix('staff')->controller(StaffAuthController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('login-sw');
     Route::post('/login', 'login')->name('log-worker');
@@ -209,6 +194,7 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
     Route::post('/create-staff', 'createAccount')->name('staccount.create');
 });
 
+// report generation
 Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
 });

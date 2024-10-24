@@ -12,6 +12,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -48,17 +49,81 @@
                 Manage Special Allowance Forms
                 <i class="fas fa-caret-right"></i>
             </button>
-            <div class="groupB1" id="ctnmanageform" style="display: none;">
-                <div class="ctntable table-responsive" id="ctntable">
-                    <table class="table table-bordered" id="tblmanageform">
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle">Special Allowance Form</th>
-                                <th class="text-center align-middle">Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+            <div class="groupB1 my-3" id="ctnmanageform" style="display: flex;">
+                <div class="row" id="confirmmsg">
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                            {!! session('error') !!}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                aria-label="Close"></button>
+                        </div>
+                    @endif
                 </div>
+                <p class="text-muted">Note: Uploading a new file will replace the existing file with the updated
+                    version. This action cannot be undone.</p>
+                <form method="POST" action="{{ route('transporeimbursement') }}" enctype="multipart/form-data"
+                    class="row g-3 align-items-center mb-3 justify-content-center">
+                    @csrf
+                    <div class="col-md-3">
+                        <label for="transpoReimbursement"><strong>Transportation Reimbursement Form</strong></label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" name="transporeimbursement" class="form-control" id="transpoReimbursement"
+                            required>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-success w-100">Update File</button>
+                    </div>
+                </form>
+                <form method="POST" action="{{ route('acknowledgement') }}" enctype="multipart/form-data"
+                    class="row g-3 align-items-center mb-3 justify-content-center">
+                    @csrf
+                    <div class="col-md-3">
+                        <label for="acknowledgementReceipt"><strong>Acknowledgement Receipt</strong></label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" name="acknowledgementreceipt" class="form-control"
+                            id="acknowledgementReceipt" required>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-success w-100">Update File</button>
+                    </div>
+                </form>
+                <form method="POST" action="{{ route('liquidation') }}" enctype="multipart/form-data"
+                    class="row g-3 align-items-center mb-3 justify-content-center">
+                    @csrf
+                    <div class="col-md-3">
+                        <label for="liquidationForm"><strong>Liquidation Form</strong></label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="file" name="liquidationform" class="form-control" id="liquidationForm"
+                            required>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-success w-100">Update File</button>
+                    </div>
+                </form>
+                <form method="POST" action="{{ route('certform') }}" enctype="multipart/form-data"
+                    class="row g-3 align-items-center justify-content-center">
+                    @csrf
+                    <div class="col-md-3">
+                        <label for="certificationForm"><strong>Project/Book Certification Form</strong></label>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="file" name="certificationform" class="form-control" id="certificationForm"
+                            required>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="submit" class="btn btn-success w-100">Update File</button>
+                    </div>
+                </form>
             </div>
             <button class="togglebuttons" id="btnshowlist" onclick="togglerequestlist()">
                 List of Requests
