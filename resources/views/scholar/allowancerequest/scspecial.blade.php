@@ -24,7 +24,6 @@
     @include('partials._navbar')
 
     <main class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
         <h1 class="title">Special Allowances:</h1>
 
         <!-- ALLOWANCE BUTTONS -->
@@ -48,6 +47,20 @@
                 <button class="filter-btn">Completed</button>
                 <button class="filter-btn">Rejected</button>
             </div>
+        </div>
+        <div class="row">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                    {!! session('error') !!}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
         </div>
         <div class="ctn-table table-responsive">
             <table class="table table-bordered">
@@ -86,7 +99,30 @@
                             <td>{{ $request->created_at->format('F d, Y') }}</td>
                             <td>{{ $request->status }}</td>
                             <td>{{ $request->releasedate ? $request->releasedate->format('F d, Y') : '--' }}</td>
-                            <td><a href="#" class="btn btn-success">View</a></td>
+                            <td>
+                                @if ($request instanceof App\Models\allowancebook)
+                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'BAR', 'id' => $request->id]) }}"
+                                        class="btn btn-success">View</a>
+                                @elseif ($request instanceof App\Models\allowanceevent)
+                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'FTTSAR', 'id' => $request->id]) }}"
+                                        class="btn btn-success">View</a>
+                                @elseif ($request instanceof App\Models\allowancegraduation)
+                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'GAR', 'id' => $request->id]) }}"
+                                        class="btn btn-success">View</a>
+                                @elseif ($request instanceof App\Models\allowanceproject)
+                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'PAR', 'id' => $request->id]) }}"
+                                        class="btn btn-success">View</a>
+                                @elseif ($request instanceof App\Models\allowancethesis)
+                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'TAR', 'id' => $request->id]) }}"
+                                        class="btn btn-success">View</a>
+                                @elseif ($request instanceof App\Models\allowancetranspo)
+                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'TRF', 'id' => $request->id]) }}"
+                                        class="btn btn-success">View</a>
+                                @elseif ($request instanceof App\Models\allowanceuniform)
+                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'UAR', 'id' => $request->id]) }}"
+                                        class="btn btn-success">View</a>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>

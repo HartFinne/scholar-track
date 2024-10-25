@@ -899,4 +899,35 @@ class ScholarController extends Controller
             return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
+
+    public function showrequestinfo($requesttype, $id)
+    {
+        $scholar = User::with(['basicInfo', 'education'])
+            ->where('id', Auth::id())
+            ->first();
+        if ($requesttype == 'TRF') {
+            $request = allowancetranspo::where('id', $id)->first();
+            return view('scholar.allowancerequest.transpoinfo', compact('request', 'scholar'));
+        } elseif ($requesttype == 'BAR') {
+            $request = allowancebook::where('id', $id)->first();
+            return view('scholar.allowancerequest.bookinfo', compact('request', 'scholar'));
+        } elseif ($requesttype == 'TAR') {
+            $request = allowancethesis::where('id', $id)->first();
+            return view('scholar.allowancerequest.thesisinfo', compact('request', 'scholar'));
+        } elseif ($requesttype == 'PAR') {
+            $request = allowanceproject::where('id', $id)->first();
+            return view('scholar.allowancerequest.projectinfo', compact('request', 'scholar'));
+        } elseif ($requesttype == 'UAR') {
+            $request = allowanceuniform::where('id', $id)->first();
+            return view('scholar.allowancerequest.uniforminfo', compact('request', 'scholar'));
+        } elseif ($requesttype == 'GAR') {
+            $request = allowancegraduation::where('id', $id)->first();
+            return view('scholar.allowancerequest.gradinfo', compact('request', 'scholar'));
+        } elseif ($requesttype == 'FTTSAR') {
+            $request = allowanceevent::where('id', $id)->first();
+            return view('scholar.allowancerequest.fieldtripinfo', compact('request', 'scholar'));
+        } else {
+            return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
+        }
+    }
 }

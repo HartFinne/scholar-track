@@ -78,15 +78,8 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
 Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function () {
     Route::view('/scregular', 'scholar.allowancerequest.scregular')->name('scregular');
     Route::view('/regularforminfo', 'scholar.allowancerequest.regularforminfo')->name('regularforminfo');
-    Route::view('/transpoinfo', 'scholar.allowancerequest.transpoinfo')->name('transpoinfo');
-    Route::view('/bookinfo', 'scholar.allowancerequest.bookinfo')->name('bookinfo');
-    Route::view('/thesisinfo', 'scholar.allowancerequest.thesisinfo')->name('thesisinfo');
-    Route::view('/projectinfo', 'scholar.allowancerequest.projectinfo')->name('projectinfo');
-    Route::view('/uniforminfo', 'scholar.allowancerequest.uniforminfo')->name('uniforminfo');
-    Route::view('/gradinfo', 'scholar.allowancerequest.gradinfo')->name('gradinfo');
-    Route::view('/fieldtripinfo', 'scholar.allowancerequest.fieldtripinfo')->name('fieldtripinfo');
     // Allowance Requests : Special
-    Route::get('/scspecial', [ScholarController::class, 'showspecialallowance'])->name('scspecial');
+    Route::get('/special', [ScholarController::class, 'showspecialallowance'])->name('scspecial');
     Route::get('/special/instruction/{requesttype}', [ScholarController::class, 'showrequestinstruction'])->name('specialreqs');
     Route::get('/special/form/{formtype}', [ScholarController::class, 'showrequestform'])->name('showrequestform');
     Route::post('/book/{casecode}', [ScholarController::class, 'reqallowancebook'])->name('reqallowancebook');
@@ -96,6 +89,7 @@ Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function
     Route::post('/thesis/{casecode}', [ScholarController::class, 'reqallowancethesis'])->name('reqallowancethesis');
     Route::post('/transportation_reimbursement/{casecode}', [ScholarController::class, 'reqallowancetranspo'])->name('reqallowancetranspo');
     Route::post('/uniform/{casecode}', [ScholarController::class, 'reqallowanceuniform'])->name('reqallowanceuniform');
+    Route::get('/special/{requesttype}-details/{id}', [ScholarController::class, 'showrequestinfo'])->name('showrequestinfo');
 });
 
 Route::view('chartjs', 'chartjs');

@@ -12,8 +12,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ asset('css/regular.css') }}">
-        <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/regular.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
 </head>
 
 <body>
@@ -23,37 +23,37 @@
     <!-- Include Navbar -->
     @include('partials._navbar')
 
-        <div class="ctn-main">
-            <a href="" class="goback">&lt Go back</a>
-            <h1 class="title">Regular Allowance</h1>
+    <div class="ctn-main">
+        <h1 class="title">Regular Allowance</h1>
 
-            <a href="{{ route ('regularform') }}" class="btn-request fw-bold">Request Regular Allowance</a>
-            
-            <p class="table-title"> My Requests </p>
-            <div class="ctn-table table-responsive">
-                <table class="table table-bordered">
-                    <thead class="table-success">
-                        <tr>
-                            <th class="text-center align-middle">ID</th>
-                            <th class="text-center align-middle">Semester</th>
-                            <th class="text-center align-middle">Date of Request</th>
-                            <th class="text-center align-middle">Date of Release</th>
-                            <th class="text-center align-middle">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>1st Semester</td>
-                            <td>01/03/2024</td>
-                            <td>01/05/2024</td>
-                            <td><a href="{{ route ('regularforminfo') }}" class="btn-view">View</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <a href="{{ route('regularform') }}" class="btn-request fw-bold">Request Regular Allowance</a>
+
+        <p class="table-title">My Requests</p>
+        <div class="ctn-table table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th class="text-center align-middle">ID</th>
+                        <th class="text-center align-middle">Semester</th>
+                        <th class="text-center align-middle">Date of Request</th>
+                        <th class="text-center align-middle">Date of Release</th>
+                        <th class="text-center align-middle">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>1st Semester</td>
+                        <td>01/03/2024</td>
+                        <td>01/05/2024</td>
+                        <td><a href="{{ route('regularforminfo') }}" class="btn-view">View</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <script src="{{ asset('js/scholar.js') }}"></script>
+    <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
+
 </html>
