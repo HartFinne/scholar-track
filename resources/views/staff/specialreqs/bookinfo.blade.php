@@ -79,7 +79,8 @@
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Date of Request</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">: {{ $request->created_at->format('F d, Y') }}</p>
+                            <p class="form-control-plaintext">:
+                                {{ \Carbon\Carbon::parse($request->created_at)->format('F d, Y') }}</p>
                         </div>
                     </div>
                     {{-- SCHOLAR INFO --}}

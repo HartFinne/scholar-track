@@ -75,7 +75,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                <tbody>
                     @foreach ($requests as $index => $request)
                         <tr>
                             <td>{{ $index + 1 }}</td>
@@ -125,7 +124,6 @@
                             </td>
                         </tr>
                     @endforeach
-                </tbody>
                 </tbody>
             </table>
         </div>

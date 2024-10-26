@@ -143,6 +143,8 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/upload-acknowledgement', [StaffController::class, 'updateacknowledgementreceipt'])->name('acknowledgement');
     Route::post('/upload-liquidation', [StaffController::class, 'updateliquidationform'])->name('liquidation');
     Route::post('/upload-certification', [StaffController::class, 'updatecertificationform'])->name('certform');
+    Route::get('/allowance-requests-special/{requesttype}/{id}', [StaffController::class, 'showspecrecinfo'])->name('showspecrecinfo');
+    Route::post('/updatespecreq/{requesttype}/{id}', [StaffController::class, 'updatespecreq'])->name('updatespecreq');
     // APPLICATION CRITERIA
     Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
     Route::get('/application-qualification', [StaffController::class, 'showQualification'])->name('qualification');

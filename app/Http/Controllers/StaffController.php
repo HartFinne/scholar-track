@@ -23,6 +23,13 @@ use App\Models\apceducation;
 use App\Models\apeheducation;
 use App\Models\apfamilyinfo;
 use App\Models\specialallowanceforms;
+use App\Models\allowancebook;
+use App\Models\allowanceevent;
+use App\Models\allowancegraduation;
+use App\Models\allowanceproject;
+use App\Models\allowancethesis;
+use App\Models\allowancetranspo;
+use App\Models\allowanceuniform;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -375,7 +382,142 @@ class StaffController extends Controller
 
     public function showAllowanceSpecial()
     {
-        return view('staff.specialallowance');
+        // Define an array of the models to simplify access
+        $allowanceModels = [
+            allowancebook::class,
+            allowanceevent::class,
+            allowancethesis::class,
+            allowanceproject::class,
+            allowancetranspo::class,
+            allowanceuniform::class,
+            allowancegraduation::class
+        ];
+
+        $statuses = ['pending', 'accepted', 'completed', 'rejected'];
+        $data = [];
+
+        foreach ($statuses as $status) {
+            $count = 0;
+            foreach ($allowanceModels as $model) {
+                // Directly count only records with the specific status using where condition
+                $count += $model::where('status', $status)->count();
+            }
+            $data[$status] = $count;
+        }
+
+        // Calculate the total count of all statuses
+        $data['total'] = array_sum($data);
+
+        // Define an array of model classes
+        $allowanceModels = [
+            allowancebook::class,
+            allowanceevent::class,
+            allowancethesis::class,
+            allowanceproject::class,
+            allowancetranspo::class,
+            allowanceuniform::class,
+            allowancegraduation::class
+        ];
+
+        // Initialize an empty collection to store all results
+        $mergedRequests = collect();
+
+        // Loop through each model class, retrieve and merge the results
+        foreach ($allowanceModels as $model) {
+            // Retrieve records already ordered by created_at and add to the merged collection
+            $records = $model::orderBy('created_at', 'asc')->get();
+            $mergedRequests = $mergedRequests->concat($records);
+        }
+
+        // Define a custom order for statuses
+        $statusOrder = ['Pending', 'Accepted', 'Completed', 'Rejected'];
+
+        // Sort the merged collection by status first, then by created_at
+        $requests = $mergedRequests->sort(function ($a, $b) use ($statusOrder) {
+            // Compare status by predefined priority
+            $statusComparison = array_search($a->status, $statusOrder) <=> array_search($b->status, $statusOrder);
+            if ($statusComparison == 0) { // if statuses are the same, sort by created_at
+                return $a->created_at <=> $b->created_at;
+            }
+            return $statusComparison;
+        })->values();
+
+        // Ensure keys are reset
+        $requests = $requests->values();
+
+        return view('staff.specialallowance', compact('data', 'requests'));
+    }
+
+    public function showspecrecinfo($requesttype, $id)
+    {
+        if ($requesttype == 'TRF') {
+            $request = allowancetranspo::where('id', $id)->first();
+            $reqtype = 'transpoinfo';
+        } elseif ($requesttype == 'BAR') {
+            $request = allowancebook::where('id', $id)->first();
+            $reqtype = 'bookinfo';
+        } elseif ($requesttype == 'TAR') {
+            $request = allowancethesis::where('id', $id)->first();
+            $reqtype = 'thesisinfo';
+        } elseif ($requesttype == 'PAR') {
+            $request = allowanceproject::where('id', $id)->first();
+            $reqtype = 'projectinfo';
+        } elseif ($requesttype == 'UAR') {
+            $request = allowanceuniform::where('id', $id)->first();
+            $reqtype = 'uniforminfo';
+        } elseif ($requesttype == 'GAR') {
+            $request = allowancegraduation::where('id', $id)->first();
+            $reqtype = 'gradinfo';
+        } elseif ($requesttype == 'FTTSAR') {
+            $request = allowanceevent::where('id', $id)->first();
+            $reqtype = 'fieldtripinfo';
+        } else {
+            return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
+        }
+
+        $scholar = User::with(['basicInfo', 'education'])
+            ->where('caseCode', $request->caseCode)
+            ->first();
+
+        return view("staff.specialreqs.{$reqtype}", compact('request', 'scholar'));
+    }
+
+    public function updatespecreq($requesttype, $id, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            if ($requesttype == 'TRF') {
+                $req = allowancetranspo::where('id', $id)->first();
+            } elseif ($requesttype == 'BAR') {
+                $req = allowancebook::where('id', $id)->first();
+            } elseif ($requesttype == 'TAR') {
+                $req = allowancethesis::where('id', $id)->first();
+            } elseif ($requesttype == 'PAR') {
+                $req = allowanceproject::where('id', $id)->first();
+            } elseif ($requesttype == 'UAR') {
+                $req = allowanceuniform::where('id', $id)->first();
+            } elseif ($requesttype == 'GAR') {
+                $req = allowancegraduation::where('id', $id)->first();
+            } elseif ($requesttype == 'FTTSAR') {
+                $req = allowanceevent::where('id', $id)->first();
+            } else {
+                return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
+            }
+
+            if ($request->releasedate == NULL) {
+                $req->status = $request->status;
+            } else {
+                $req->status = $request->status;
+                $req->releasedate = $request->releasedate;
+            }
+
+            $req->save();
+            DB::commit();
+            return redirect()->back()->with('success', 'Allowance Request has been updated.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Unable to update request. ' . $e->getMessage());
+        };
     }
 
     public function updatetransporeimbursenment(Request $request)

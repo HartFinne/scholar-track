@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('staffname', 255);
             $table->string('transpoform', 255);
             $table->string('status', 20)->default('Pending');
-            $table->date('releasedate')->default(NULL);
+            $table->date('releasedate')->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->string('purchaseproof', 255);
             $table->string('liquidation', 255);
             $table->string('status', 20)->default('Pending');
-            $table->date('releasedate')->default(NULL);
+            $table->date('releasedate')->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -62,7 +62,7 @@ return new class extends Migration
             $table->string('purchaseproof', 255);
             $table->string('liquidation', 255);
             $table->string('status', 20)->default('Pending');
-            $table->date('releasedate')->default(NULL);
+            $table->date('releasedate')->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -83,7 +83,7 @@ return new class extends Migration
             $table->string('purchaseproof', 255);
             $table->string('liquidation', 255);
             $table->string('status', 20)->default('Pending');
-            $table->date('releasedate')->default(NULL);
+            $table->date('releasedate')->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -104,7 +104,7 @@ return new class extends Migration
             $table->string('uniformpic', 255);
             $table->string('liquidation', 255);
             $table->string('status', 20)->default('Pending');
-            $table->date('releasedate')->default(NULL);
+            $table->date('releasedate')->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -123,7 +123,7 @@ return new class extends Migration
             $table->string('acknowledgement', 255);
             $table->string('liquidation', 255);
             $table->string('status', 20)->default('Pending');
-            $table->date('releasedate')->default(NULL);
+            $table->date('releasedate')->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column
@@ -145,7 +145,7 @@ return new class extends Migration
             $table->string('acknowledgement', 255);
             $table->string('liquidation', 255);
             $table->string('status', 20)->default('Pending');
-            $table->date('releasedate')->default(NULL);
+            $table->date('releasedate')->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column

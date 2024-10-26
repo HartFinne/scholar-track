@@ -24,23 +24,23 @@
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total Requests</span>
-                <span class="data" id="totalrequests">0</span>
+                <span class="data" id="totalrequests">{{ $data['total'] }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Pending</span>
-                <span class="data" id="pending">0</span>
+                <span class="data" id="pending">{{ $data['pending'] }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Completed</span>
-                <span class="data" id="completed">0</span>
+                <span class="data" id="completed">{{ $data['completed'] }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Accepted</span>
-                <span class="data" id="completed">0</span>
+                <span class="data" id="completed">{{ $data['accepted'] }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Rejected</span>
-                <span class="data" id="rejected">0</span>
+                <span class="data" id="rejected">{{ $data['rejected'] }}</span>
             </div>
         </div>
         <div class="divider"></div>
@@ -49,7 +49,7 @@
                 Manage Special Allowance Forms
                 <i class="fas fa-caret-right"></i>
             </button>
-            <div class="groupB1 my-3" id="ctnmanageform" style="display: flex;">
+            <div class="groupB1 my-3" id="ctnmanageform" style="display: none;">
                 <div class="row" id="confirmmsg">
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
@@ -129,7 +129,7 @@
                 List of Requests
                 <i class="fas fa-caret-right"></i>
             </button>
-            <div class="groupB1" id="ctnfiltertable" style="display: none;">
+            <div class="groupB1" id="ctnfiltertable active" style="display: flex;">
                 <div class="ctnfilter" id="ctnfilter">
                     <form action="#" class="filterform">
                         <span class="filtertitle">Filter Result</span>
@@ -198,6 +198,61 @@
                                 <th class="text-center align-middle">Action</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach ($requests as $index => $request)
+                                <tr>
+                                    <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                    <td class="text-center align-middle">
+                                        @if ($request instanceof App\Models\allowancebook)
+                                            Book Allowance Request
+                                        @elseif ($request instanceof App\Models\allowanceevent)
+                                            Event Allowance Request
+                                        @elseif ($request instanceof App\Models\allowancegraduation)
+                                            Graduation Allowance Request
+                                        @elseif ($request instanceof App\Models\allowanceproject)
+                                            Project Allowance Request
+                                        @elseif ($request instanceof App\Models\allowancethesis)
+                                            Thesis Allowance Request
+                                        @elseif ($request instanceof App\Models\allowancetranspo)
+                                            Transportation Reimbursement Request
+                                        @elseif ($request instanceof App\Models\allowanceuniform)
+                                            Uniform Allowance Request
+                                        @endif
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        {{ $request->created_at ? \Carbon\Carbon::parse($request->created_at)->format('F d, Y') : '--' }}
+                                    </td>
+                                    <td class="text-center align-middle">{{ $request->status }}</td>
+                                    <td class="text-center align-middle">
+                                        {{ $request->releasedate ? \Carbon\Carbon::parse($request->releasedate)->format('F d, Y') : '--' }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        @if ($request instanceof App\Models\allowancebook)
+                                            <a href="{{ route('showspecrecinfo', ['requesttype' => 'BAR', 'id' => $request->id]) }}"
+                                                class="btn btn-success">View</a>
+                                        @elseif ($request instanceof App\Models\allowanceevent)
+                                            <a href="{{ route('showspecrecinfo', ['requesttype' => 'FTTSAR', 'id' => $request->id]) }}"
+                                                class="btn btn-success">View</a>
+                                        @elseif ($request instanceof App\Models\allowancegraduation)
+                                            <a href="{{ route('showspecrecinfo', ['requesttype' => 'GAR', 'id' => $request->id]) }}"
+                                                class="btn btn-success">View</a>
+                                        @elseif ($request instanceof App\Models\allowanceproject)
+                                            <a href="{{ route('showspecrecinfo', ['requesttype' => 'PAR', 'id' => $request->id]) }}"
+                                                class="btn btn-success">View</a>
+                                        @elseif ($request instanceof App\Models\allowancethesis)
+                                            <a href="{{ route('showspecrecinfo', ['requesttype' => 'TAR', 'id' => $request->id]) }}"
+                                                class="btn btn-success">View</a>
+                                        @elseif ($request instanceof App\Models\allowancetranspo)
+                                            <a href="{{ route('showspecrecinfo', ['requesttype' => 'TRF', 'id' => $request->id]) }}"
+                                                class="btn btn-success">View</a>
+                                        @elseif ($request instanceof App\Models\allowanceuniform)
+                                            <a href="{{ route('showspecrecinfo', ['requesttype' => 'UAR', 'id' => $request->id]) }}"
+                                                class="btn btn-success">View</a>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
                 </div>
             </div>

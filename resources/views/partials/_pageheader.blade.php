@@ -44,12 +44,12 @@
                 Service</button>
             <button id="btnhc" class="sbarmainopt"
                 onclick="window.location.href='{{ route('humanitiesclass') }}';">Humanities Class</button>
-            <button id="btncriteria" class="sbarmainopt" onclick="togglesubopt3()">Scholarship Application<i
+            <a href="{{ route('qualification') }}" class="sbarmainopt">Scholarship Criteria</a>
+            <button id="btncriteria" class="sbarmainopt" onclick="togglesubopt3()">Application<i
                     class="fas fa-caret-right"></i></button>
             <div class="ctnsuboptions" id="subopt3" style="display: none;">
                 <a href="{{ route('applicants') }}" class="sbarsubopt">Applicants</a>
                 <a href="{{ route('applicationforms') }}" class="sbarsubopt">Application Forms</a>
-                <a href="{{ route('qualification') }}" class="sbarsubopt">Application Qualification</a>
             </div>
             <a id="btnhc" class="sbarmainopt" href='{{ route('generatescholarshipreport') }}'
                 target="_blank">Generate Report</a>
