@@ -97,6 +97,7 @@ Route::view('chartjs', 'chartjs');
 // route to registration for existing scholars
 Route::view('/registration', 'registration')->name('registration');
 Route::post('/registerScholar', [HomeController::class, 'registerScholar'])->name('registerScholar');
+Route::get('/registration-success', [HomeController::class, 'showregiconfirmation'])->name('showregiconfirmation');
 
 // Login-Logout | Scholar
 Route::prefix('scholar')->controller(LoginController::class)->group(function () {
@@ -152,6 +153,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/addcourse/{level}', [StaffController::class, 'addcourse'])->name('addcourse');
     Route::post('/updatecourse/{coid}', [StaffController::class, 'updatecourse'])->name('updatecourse');
     Route::post('/deletecourse/{coid}', [StaffController::class, 'deletecourse'])->name('deletecourse');
+    Route::post('/import-emails', [StaffController::class, 'importemails'])->name('importemails');
     // RENEWAL
     Route::get('/renewal', [StaffController::class, 'showRenewal'])->name('scholarshiprenewal');
     Route::get('/renewal-college', [StaffController::class, 'showRenewalCollege'])->name('renewal-college');

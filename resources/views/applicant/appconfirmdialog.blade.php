@@ -26,9 +26,8 @@
         <p>You have successfully submitted your scholarship application.</p>
         <p>To monitor the status of your application, login to your account using the credentials below:</p>
         <ul>
-            <li>Applicant ID: <strong>{{ $casecode }}</strong></li>
-            <li>Applicant ID: <strong>{{ $password }}</strong></li>
-            {{-- <li>Password: <strong>Lastname.tzuchi (ex: Cruz.tzuchi)</strong></li> --}}
+            <li>Case Code: <strong>{{ $casecode }}</strong></li>
+            <li>Password: <strong>{{ $password }}</strong></li>
         </ul>
         <p>For your security, please change your password immediately after logging into your account. We recommend
             keeping your password confidential to prevent unauthorized access.</p>

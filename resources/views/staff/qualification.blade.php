@@ -35,6 +35,39 @@
     <div class="ctnmain">
         <!-- COLLEGE-->
         <h2 class="mb-4">Scholarship Criteria</h2>
+        <div class="row">
+            @if (session('importsuccess'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('importsuccess') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if (session('importerror'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('importerror') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
+        <fieldset class="row">
+            <legend><strong>Import Scholar Emails</strong></legend>
+            <span class="col-12 mb-2">
+                Please upload the Excel file containing scholar emails for registration verification.
+                Ensure the file contains only email addresses, and they must be placed in the first column of the sheet.
+            </span>
+            <form action="{{ route('importemails') }}" method="POST" enctype="multipart/form-data" class="col-12">
+                @csrf <!-- Ensure CSRF protection for Laravel applications -->
+                <div class="input-group">
+                    <input type="file" class="form-control" id="file" name="file" required
+                        aria-describedby="fileHelp">
+                    <button class="btn btn-success" type="submit">Upload</button>
+                </div>
+                <small id="fileHelp" class="form-text text-muted">
+                    File must be in .xlsx or .xls format.
+                </small>
+            </form>
+        </fieldset>
         <div class="row" id="confirmmsg1">
             @if (session('critsuccess'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">

@@ -29,6 +29,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\UsesTrait;
+use App\Imports\EmailsImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StaffController extends Controller
 {
@@ -1092,6 +1094,24 @@ class StaffController extends Controller
             DB::rollBack();
 
             return $this->viewattendeeslist($attendee->hcid)->with('error', 'Checkout was successful.');
+        }
+    }
+
+    public function importemails(Request $request)
+    {
+        try {
+            $request->validate([
+                'file' => ['mimes:xls,xlsx', 'max:25600'], // 25MB limit in kilobytes
+            ], [
+                'file.mimes' => 'The uploaded file must be an Excel file (.xls, .xlsx).',
+                'file.max' => 'The uploaded file may not be larger than 25MB.',
+            ]);
+
+            Excel::import(new EmailsImport, $request->file('file'));
+
+            return redirect()->back()->with('importsuccess', 'File imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('importerror', 'Import was unsuccessful. Error: ' . $e->getMessage());
         }
     }
 }

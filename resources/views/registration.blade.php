@@ -50,17 +50,17 @@
                 <fieldset class="custom-fieldset">
                     <legend>SCHOLARSHIP INFORMATION</legend>
                     <div class="row">
-                        <label for="caseCode">Case Code</label>
-                        <input type="text" class="reg-input" placeholder="ex: 2020-00001-MD" id="caseCode"
-                            name="caseCode" required>
-                    </div>
-                    <div class="row">
                         <label for="area">Assigned Area</label>
                         <select class="" aria-label="area" name="assignedArea" required>
                             <option value="" hidden disbaled selected>Select area</option>
                             <option value="Mindong">Mindong</option>
                             <option value="Minxi">Minxi</option>
                             <option value="Minzhong">Minzhong</option>
+                            <option value="Bicol">Bicol</option>
+                            <option value="Davao">Davao</option>
+                            <option value="Iloilo">Iloilo</option>
+                            <option value="Palo">Palo</option>
+                            <option value="Zamboanga">Zamboanga</option>
                         </select>
                     </div>
                     <div class="row">
@@ -102,8 +102,7 @@
                     </div>
                     <div class="row">
                         <label for="date">Date of Birth</label>
-                        <input type="date" id="date" class="reg-input" placeholder="" name="birthdate"
-                            required>
+                        <input type="date" id="date" class="reg-input" placeholder="" name="birthdate" required>
                     </div>
                     <div class="row">
                         <label for="sex">Sex</label>
