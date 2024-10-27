@@ -109,12 +109,7 @@
 }
 
 .home-main{
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    gap: 50px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
+    margin-bottom: 50px;
 }
 
 .card-notif{
@@ -133,6 +128,7 @@
     padding: 10px;
     position: relative;
     width: 100%;
+    margin-bottom: 20px;
 }
 
 .card-header {

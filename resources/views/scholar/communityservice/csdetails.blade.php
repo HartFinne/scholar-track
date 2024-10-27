@@ -60,15 +60,6 @@
             </div>
         </div>
 
-        <div class="activity-desc">
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsam distinctio ex rem incidunt
-                numquam nesciunt vero asperiores est mollitia dicta, exercitationem blanditiis in, odio eum
-                voluptates velit eligendi molestiae nam.</p>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ipsam distinctio ex rem incidunt
-                numquam nesciunt vero asperiores est mollitia dicta, exercitationem blanditiis in, odio eum
-                voluptates velit eligendi molestiae nam.</p>
-        </div>
-
         <!-- Register Dialog with remaining hours -->
         <div id="confirmDialog" class="register dialog hidden">
             <div class="dialog-content">

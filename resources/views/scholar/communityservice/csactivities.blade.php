@@ -47,7 +47,7 @@
                         @if ($registrations[$activity->csid]['registatus'] === 'Cancelled')
                             {{-- If the registration is cancelled, show a message and make it non-clickable --}}
                             <div>
-                                <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
+                                <!-- <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt=""> -->
                                 <div class="card-content">
                                     <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
                                     <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>

@@ -77,6 +77,7 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
 
 Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function () {
     Route::view('/scregular', 'scholar.allowancerequest.scregular')->name('scregular');
+    Route::view('/regularform', 'scholar.allowancerequest.regularform')->name('regularform');
     Route::view('/regularforminfo', 'scholar.allowancerequest.regularforminfo')->name('regularforminfo');
     // Allowance Requests : Special
     Route::get('/special', [ScholarController::class, 'showspecialallowance'])->name('scspecial');
