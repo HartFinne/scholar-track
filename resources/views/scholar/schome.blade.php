@@ -58,24 +58,28 @@
 
         </div>
         <div class="home-main">
-            <div class="announcement">
-                <div class="card-announcement">
-                    <div class="card-header">
-                        <img src="{{ asset('images/account.png') }}" alt="Profile Image" class="profile-img">
-                        <div>
-                            <h6 class="fw-bold mb-0">Name</h6>
-                            <small class="text-muted">Date/Time</small>
+            @foreach ($announcements as $announcement)
+                <div class="announcement">
+                    <div class="card-announcement">
+                        <div class="card-header">
+                            <img src="{{ asset('images/account.png') }}" alt="Profile Image" class="profile-img">
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ $announcement->author }}</h6>
+                                <small
+                                    class="text-muted">{{ \Carbon\Carbon::parse($announcement->created_at)->format('F d, Y h:i a') }}</small>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Lorem ipsum...</p>
-                        <img src="{{ asset('images/home-bg.png') }}" class="card-img-top" alt="Activity Image">
-                    </div>
-                    <div>
-                        <i class="heart-icon fas fa-heart"></i>
+                        <div class="card-body">
+                            <p class="card-text fw-bold">{{ $announcement->title }}</p>
+                            <p class="card-text">{{ $announcement->description }}</p>
+                            {{-- <img src="{{ asset('images/home-bg.png') }}" class="card-img-top" alt="Activity Image"> --}}
+                        </div>
+                        {{-- <div>
+                            <i class="heart-icon fas fa-heart"></i>
+                        </div> --}}
                     </div>
                 </div>
-            </div>
+            @endforeach
 
             <!-- <div class="card-notif">
                     <h5 id="notif-title" class="fw-bold">NOTIFICATIONS</h5>

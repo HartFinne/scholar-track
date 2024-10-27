@@ -33,9 +33,9 @@ class hcattendance extends Model
         return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
     }
 
-    public function humanitiesClass()
+    public function humanitiesclass()
     {
-        return $this->belongsTo(HumanitiesClass::class, 'hcid', 'hcid');
+        return $this->belongsTo(humanitiesclass::class, 'hcid', 'hcid');
     }
 
     public function lte()

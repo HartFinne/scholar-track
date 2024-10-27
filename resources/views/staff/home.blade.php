@@ -35,13 +35,16 @@
         </div>
 
         <!-- ANNOUNCEMENTS CONTAINER -->
-        <div class="group3">
-            @foreach ($announcements as $announcement)
-                <h1>{{ $announcement->title }}</h1>
-                <h2>{{ $announcement->description }}</h2>
-            @endforeach
-
-        </div>
+        @foreach ($announcements as $announcement)
+            <div class="card col-md-6 mx-auto mt-2 mb-2 border border-success rounded">
+                <div class="card-header bg-success">
+                    <span class="fw-bold" style="font-size: 18px; color: #fff">{{ $announcement->title }}</span>
+                </div>
+                <div class="card-body">
+                    <p>{{ $announcement->description }}</p>
+                </div>
+            </div>
+        @endforeach
     </div>
 
     <!-- ANNOUNCEMENT FORM CONTAINER -->
@@ -57,18 +60,24 @@
 
             <div class="groupB">
                 <!-- Multiple selection of recipients with Select2 -->
-                <div class="form-group">
-                    <label class="lbloption" for="recipients">Select Recipients:</label>
-                    <select class="form-control" name="recipients[]" id="recipients" multiple="multiple">
-                        <option value="all">All Users</option>
-                        @foreach ($users as $user)
-                            <option value="{{ $user->id }}">{{ $user->caseCode }}</option>
-                        @endforeach
-                    </select>
+                <div class="row mb-2 align-items-center">
+                    <label class="fw-bold col-md-3" for="recipients">Select Recipients:</label>
+                    <div class="col-md-9">
+                        <select class="form-control" name="recipients[]" id="recipients" multiple="multiple"
+                            style="width: 100%">
+                            <option value="all">All Users</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->caseCode }}">{{ $user->caseCode }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-                <div class="groupB2">
-                    <label class="lbloption">Subject</label>
-                    <input type="text" name="title" id="insubject" placeholder="enter subject" required>
+                <div class="row mb-2 align-items-center">
+                    <label class="fw-bold col-md-3" for="title">Subject</label>
+                    <div class="col-md-9">
+                        <input type="text" name="title" id="title" class="form-control" style="width: 100%"
+                            placeholder="Enter subject" required>
+                    </div>
                 </div>
                 <div class="groupB3">
                     <label class="lbloption">Message</label>
@@ -82,15 +91,13 @@
     </div>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/toggleannouncementform.js') }}"></script>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
         // Initialize Select2 on the recipients dropdown
         $(document).ready(function() {
-            $('.form-control').select2();
+            $('#recipients').select2();
         });
     </script>
 </body>

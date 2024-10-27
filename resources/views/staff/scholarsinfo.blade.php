@@ -5,8 +5,8 @@
     <title>Profile</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ asset('css/scholar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/table.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -21,162 +21,217 @@
     <!-- MAIN CONTENT -->
     <div class="ctnmain">
         <div class="text-center profile">
-            <h1 class="title">Scholar's Profile</h1>
-            <a href="{{ route('scholars-college') }}" class="btngoback">&lt Go back</a>
+            <h1 class="title"><strong>Scholar's Information</strong></h1>
+            <a href="{{ route('scholars-college') }}" class="btn btn-success">&lt Go back</a>
         </div>
-        <div class="profile-view">
-            <div class="profile-info">
-                <h4>SCHOLARSHIP INFORMATION</h4>
-                <div class="info">
-                    <div class="label">Case Code</div>
-                    <div class="value">: <span>{{ $data->caseCode }}</span></div>
-
-                    <div class="label">Assigned Area</div>
-                    <div class="value">: <span>{{ $data->scholarshipinfo->area }}</span></div>
-
-                    <div class="label">Scholar Type</div>
-                    <div class="value">: <span>{{ $data->scholarshipinfo->scholartype }}</span></div>
-
-                    <div class="label">Start of Scholarship</div>
-                    <div class="value">:
-                        <span>{{ \Carbon\Carbon::parse($data->scholarshipinfo->startdate)->format('m - d - Y') }}</span>
-                    </div>
-
-                    <div class="label">End of Scholarship</div>
-                    <div class="value">:
-                        <span>{{ \Carbon\Carbon::parse($data->scholarshipinfo->enddate)->format('m - d - Y') }}</span>
-                    </div>
-
-                    <div class="label">Scholarship Status</div>
-                    <div class="value">: <span>{{ $data->scholarshipinfo->scholarshipstatus }}</span></div>
+        <div class="container mt-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <span style="font-size: 18px; font-weight: bold"><strong>Personal Information</strong></span>
                 </div>
-            </div>
-            <div class="profile-info">
-                <h4>BASIC INFORMATION</h4>
-                <div class="info">
-                    <div class="label">Name</div>
-                    <div class="value">: <span>{{ $data->basicInfo->scLastname }},
-                            {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</span></div>
-
-                    <div class="label">Date of Birth</div>
-                    <div class="value">:
-                        <span>{{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m - d - Y') }}</span>
+                <div class="card-body">
+                    <!-- Scholarship Information Section -->
+                    <div class="mb-3">
+                        <h5 class="text-success">SCHOLARSHIP INFORMATION</h5>
+                        <div class="row">
+                            <div class="col-md-6"><strong>Case Code:</strong> {{ $data->caseCode }}</div>
+                            <div class="col-md-6"><strong>Assigned Area:</strong> {{ $data->scholarshipinfo->area }}
+                            </div>
+                            <div class="col-md-6"><strong>Scholar Type:</strong>
+                                {{ $data->scholarshipinfo->scholartype }}</div>
+                            <div class="col-md-6"><strong>Start of Scholarship:</strong>
+                                {{ \Carbon\Carbon::parse($data->scholarshipinfo->startdate)->format('m - d - Y') }}
+                            </div>
+                            <div class="col-md-6"><strong>End of Scholarship:</strong>
+                                {{ \Carbon\Carbon::parse($data->scholarshipinfo->enddate)->format('m - d - Y') }}</div>
+                            <div class="col-md-6"><strong>Scholarship Status:</strong>
+                                {{ $data->scholarshipinfo->scholarshipstatus }}</div>
+                        </div>
                     </div>
 
-                    <div class="label">Sex</div>
-                    <div class="value">: <span>{{ $data->basicInfo->scSex }}</span></div>
-
-                    <div class="label">T-Shirt Size</div>
-                    <div class="value">: <span>{{ $data->clothingSize->scTShirtSize }}</span></div>
-
-                    <div class="label">Shoe Size</div>
-                    <div class="value">: <span>{{ $data->clothingSize->scShoesSize }}</span></div>
-
-                    <div class="label">Slippers Size</div>
-                    <div class="value">: <span>{{ $data->clothingSize->scSlipperSize }}</span></div>
-
-                    <div class="label">Pants Size</div>
-                    <div class="value">: <span>{{ $data->clothingSize->scPantsSize }}</span></div>
-
-                    <div class="label">Jogging Pants Size</div>
-                    <div class="value">: <span>{{ $data->clothingSize->scJoggingPantSize }}</span></div>
-
-                    <div class="label">Is Indigenous?</div>
-                    <div class="value">: <span>{{ $data->basicInfo->scIsIndigenous }}</span></div>
-
-                    <div class="label">Indigenous Group</div>
-                    <div class="value">: <span>{{ $data->basicInfo->scIndigenousgroup }}</span></div>
-
-                    {{-- Email Address --}}
-                    <div class="label">Email Address</div>
-                    <div class="value">: <span>{{ old('scEmail', $data->scEmail) }}</span></div>
-
-                    {{-- Contact Number --}}
-                    <div class="label">Contact Number</div>
-                    <div class="value">: <span>{{ old('scPhoneNum', $data->scPhoneNum) }}</span></div>
-                </div>
-            </div>
-            {{-- <div class="profile-info">
-                <h4>ACCOUNT INFORMATION</h4>
-                <div class="info">
-                    <div class="label">Account Number</div>
-                    <div class="value">: <span>wala eto sa database na ginawa ko pasensya na</span></div>
-
-                    <div class="label">Card Number</div>
-                    <div class="value">: <span>wala eto sa database na ginawa ko pasensya na</span></div>
-                </div>
-            </div> --}}
-            <div class="profile-info">
-                <h4>ADDRESS INFORMATION</h4>
-                <div class="info">
-                    {{-- Home Address --}}
-                    <div class="label">Home Address</div>
-                    <div class="value">: <span>{{ old('scResidential', $data->addressinfo->scResidential) }}</span>
+                    <!-- Basic Information Section -->
+                    <div class="mb-3">
+                        <h5 class="text-success">BASIC INFORMATION</h5>
+                        <div class="row">
+                            <div class="col-md-6"><strong>Name:</strong> {{ $data->basicInfo->scLastname }},
+                                {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</div>
+                            <div class="col-md-6"><strong>Date of Birth:</strong>
+                                {{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m - d - Y') }}</div>
+                            <div class="col-md-6"><strong>Sex:</strong> {{ $data->basicInfo->scSex }}</div>
+                            <div class="col-md-6"><strong>T-Shirt Size:</strong>
+                                {{ $data->clothingSize->scTShirtSize }}</div>
+                        </div>
                     </div>
 
-                    {{-- Barangay --}}
-                    <div class="label">Barangay</div>
-                    <div class="value">: <span>{{ $data->addressinfo->scBarangay }}</span></div>
+                    <!-- Address Information Section -->
+                    <div class="mb-3">
+                        <h5 class="text-success">ADDRESS INFORMATION</h5>
+                        <div class="row">
+                            <div class="col-md-6"><strong>Home Address:</strong>
+                                {{ old('scResidential', $data->addressinfo->scResidential) }}</div>
+                            <div class="col-md-6"><strong>Barangay:</strong> {{ $data->addressinfo->scBarangay }}</div>
+                            <div class="col-md-6"><strong>City/Municipality:</strong> {{ $data->addressinfo->scCity }}
+                            </div>
+                            <div class="col-md-6"><strong>Permanent Address:</strong>
+                                {{ old('scResidential', $data->addressinfo->scResidential) }}</div>
+                        </div>
+                    </div>
 
-                    {{-- City/Municipality --}}
-                    <div class="label">City/Municipality</div>
-                    <div class="value">: <span>{{ $data->addressinfo->scCity }}</span></div>
+                    <!-- Emergency Contact Section -->
+                    <div class="mb-3">
+                        <h5 class="text-success">EMERGENCY CONTACT</h5>
+                        <div class="row">
+                            <div class="col-md-6"><strong>Name:</strong>
+                                {{ old('scGuardianName', $data->basicInfo->scGuardianName) }}</div>
+                            <div class="col-md-6"><strong>Relation:</strong>
+                                {{ old('scRelationToGuardian', $data->basicInfo->scRelationToGuardian) }}</div>
+                            <div class="col-md-6"><strong>Email Address:</strong>
+                                {{ old('scGuardianEmailAddress', $data->basicInfo->scGuardianEmailAddress) }}</div>
+                            <div class="col-md-6"><strong>Contact Number:</strong>
+                                {{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}</div>
+                        </div>
+                    </div>
 
-                    {{-- Permanent Address --}}
-                    <div class="label">Permanent Address</div>
-                    <div class="value">: <span>{{ old('scResidential', $data->addressinfo->scResidential) }}</span>
+                    <!-- Educational Background Section -->
+                    <div>
+                        <h5 class="text-success">EDUCATIONAL BACKGROUND</h5>
+                        <div class="row">
+                            <div class="col-md-6"><strong>School Level:</strong> {{ $data->education->scSchoolLevel }}
+                            </div>
+                            <div class="col-md-6"><strong>School Name:</strong> {{ $data->education->scSchoolName }}
+                            </div>
+                            <div class="col-md-6"><strong>Grade/Year Level:</strong>
+                                {{ $data->education->scYearGrade }}</div>
+                            <div class="col-md-6"><strong>Course/Strand:</strong>
+                                {{ $data->education->scCourseStrandSec }}</div>
+                            <div class="col-md-6"><strong>Academic Year:</strong>
+                                {{ $data->education->scAcademicYear }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="profile-info">
-                <h4>EMERGENCY CONTACT</h4>
-                <div class="info">
-                    {{-- Name --}}
-                    <div class="label">Name</div>
-                    <div class="value">: <span>{{ old('scGuardianName', $data->basicInfo->scGuardianName) }}</span>
-                    </div>
-
-                    {{-- Relation --}}
-                    <div class="label">Relation</div>
-                    <div class="value">:
-                        <span>{{ old('scRelationToGuardian', $data->basicInfo->scRelationToGuardian) }}</span>
-                    </div>
-
-                    {{-- Email Address --}}
-                    <div class="label">Email Address</div>
-                    <div class="value">:
-                        <span>{{ old('scGuardianEmailAddress', $data->basicInfo->scGuardianEmailAddress) }}</span>
-                    </div>
-
-                    {{-- Contact Number --}}
-                    <div class="label">Contact Number</div>
-                    <div class="value">:
-                        <span>{{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}</span>
-                    </div>
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <span style="font-size: 18px; font-weight: bold"><strong>Grades Report</strong></span>
+                </div>
+                <div class="ctntable card-body table-responsive">
+                    <table class=" table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center align-center">#</th>
+                                <th class="text-center align-center">School Year</th>
+                                <th class="text-center align-center">
+                                    {{ $data->education->scSchoolLevel == 'College' ? 'Semester' : 'Quarter' }}
+                                </th>
+                                <th class="text-center align-center">GWA</th>
+                                <th class="text-center align-center">Status</th>
+                                <th class="text-center align-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($grades == null || $grades->isEmpty())
+                                <tr>
+                                    <td class="text-center align-center" colspan="6">No data available</td>
+                                </tr>
+                            @else
+                                @foreach ($grades as $index => $grade)
+                                    <tr>
+                                        <td class="text-center align-center">{{ $index + 1 }}</td>
+                                        <td class="text-center align-center">School Year</td>
+                                        <td class="text-center align-center">{{ $grade->SemesterQuarter }}</td>
+                                        <td class="text-center align-center">{{ $grade->GWA }}</td>
+                                        <td class="text-center align-center">{{ $grade->GradeStatus }}</td>
+                                        <td class="text-center align-center">
+                                            <a href="" class="btn btn-success">View</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="profile-info">
-                <h4>EDUCATIONAL BACKGROUND</h4>
-                <div class="info">
-                    <div class="label">School Level</div>
-                    <div class="value">: <span>{{ $data->education->scSchoolLevel }}</span></div>
-
-                    <div class="label">School Name</div>
-                    <div class="value">: <span>{{ $data->education->scSchoolName }}</span></div>
-
-                    <div class="label">Grade/Year Level</div>
-                    <div class="value">: <span>{{ $data->education->scYearGrade }}</span></div>
-
-                    <div class="label">Course/Strand</div>
-                    <div class="value">: <span>{{ $data->education->scCourseStrandSec }}</span></div>
-
-                    <div class="label">Academic Year</div>
-                    <div class="value">: <span>{{ $data->education->scAcademicYear }}</span></div>
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <span style="font-size: 18px; font-weight: bold"><strong>Community Service Attendance
+                            Report</strong></span>
+                </div>
+                <div class="ctntable card-body table-responsive">
+                    <table class=" table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center align-center">#</th>
+                                <th class="text-center align-center">Date of Event</th>
+                                <th class="text-center align-center">Time In</th>
+                                <th class="text-center align-center">Time Out</th>
+                                <th class="text-center align-center">Facilitator Name</th>
+                                <th class="text-center align-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($csattendances == null || $csattendances->isEmpty())
+                                <tr>
+                                    <td class="text-center align-center" colspan="6">No data available</td>
+                                </tr>
+                            @else
+                                @foreach ($csattendances as $index => $attendance)
+                                    <tr>
+                                        <td class="text-center align-center">{{ $index + 1 }}</td>
+                                        <td class="text-center align-center">
+                                            {{ \Carbon\Carbon::parse($attendance->communityservice->eventdate)->format('F d, Y') }}
+                                        </td>
+                                        <td class="text-center align-center">{{ $attendance->timein }}</td>
+                                        <td class="text-center align-center">{{ $attendance->timeout }}</td>
+                                        <td class="text-center align-center">{{ $attendance->facilitator }}</td>
+                                        <td class="text-center align-center">{{ $attendance->status }}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <script src="{{ asset('js/headercontrol.js') }}"></script>
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <span style="font-size: 18px; font-weight: bold"><strong>Humanities Class Attendance
+                            Report</strong></span>
+                </div>
+                <div class="ctntable card-body table-responsive">
+                    <table class=" table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center align-center">#</th>
+                                <th class="text-center align-center">Date of Event</th>
+                                <th class="text-center align-center">Time In</th>
+                                <th class="text-center align-center">Time Out</th>
+                                <th class="text-center align-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if ($hcattendances == null || $hcattendances->isEmpty())
+                                <tr>
+                                    <td class="text-center align-center" colspan="6">No data available</td>
+                                </tr>
+                            @else
+                                @foreach ($hcattendances as $index => $attendance)
+                                    <tr>
+                                        <td class="text-center align-center">{{ $index + 1 }}</td>
+                                        <td class="text-center align-center">
+                                            {{ \Carbon\Carbon::parse($attendance->humanitiesclass->hcdate)->format('F d, Y') }}
+                                        </td>
+                                        <td class="text-center align-center">{{ $attendance->timein }}</td>
+                                        <td class="text-center align-center">{{ $attendance->timeout }}</td>
+                                        <td class="text-center align-center">{{ $attendance->status }}</td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+    <script src="{{ asset('js/headercontrol.js') }}"></script>
 </body>
 
 </html>

@@ -34,7 +34,7 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
-    Route::view('/schome', 'scholar.schome')->name('schome');
+    Route::get('/schome', [ScholarController::class, 'showHome'])->name('schome');
     // Appointment system
     Route::view('/appointmentsystem', 'scholar.appointmentsystem')->name('appointment');
     Route::view('/appointmentinfo', 'scholar.appointmentinfo')->name('appointmentinfo');

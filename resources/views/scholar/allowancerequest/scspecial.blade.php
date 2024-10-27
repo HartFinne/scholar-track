@@ -97,7 +97,8 @@
                             </td>
                             <td>{{ $request->created_at->format('F d, Y') }}</td>
                             <td>{{ $request->status }}</td>
-                            <td>{{ $request->releasedate ? $request->releasedate->format('F d, Y') : '--' }}</td>
+                            <td>{{ $request->releasedate ? \Carbon\Carbon::parse($request->releasedate)->format('F d, Y') : '--' }}
+                            </td>
                             <td>
                                 @if ($request instanceof App\Models\allowancebook)
                                     <a href="{{ route('showrequestinfo', ['requesttype' => 'BAR', 'id' => $request->id]) }}"

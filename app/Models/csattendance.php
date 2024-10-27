@@ -34,4 +34,9 @@ class csattendance extends Model
     {
         return $this->hasOne(lte::class, 'conditionid', 'csaid');
     }
+
+    public function communityservice()
+    {
+        return $this->belongsTo(communityservice::class, 'csid', 'csid');
+    }
 }

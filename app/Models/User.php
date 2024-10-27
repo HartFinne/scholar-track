@@ -71,7 +71,7 @@ class User extends Authenticatable
 
     public function grades()
     {
-        return $this->hasOne(grades::class, 'caseCode', 'caseCode');
+        return $this->hasMany(grades::class, 'caseCode', 'caseCode');
     }
 
     public function addressinfo()
@@ -86,27 +86,27 @@ class User extends Authenticatable
 
     public function csattendance()
     {
-        return $this->hasOne(csattendance::class, 'caseCode', 'caseCode');
+        return $this->hasMany(csattendance::class, 'caseCode', 'caseCode');
     }
 
     public function csregistration()
     {
-        return $this->hasOne(csregistration::class, 'caseCode', 'caseCode');
+        return $this->hasMany(csregistration::class, 'caseCode', 'caseCode');
     }
 
     public function hcattendance()
     {
-        return $this->hasOne(hcattendance::class, 'caseCode', 'caseCode');
+        return $this->hasMany(hcattendance::class, 'caseCode', 'caseCode');
     }
 
     public function lte()
     {
-        return $this->hasOne(lte::class, 'caseCode', 'caseCode');
+        return $this->hasMany(lte::class, 'caseCode', 'caseCode');
     }
 
     public function penalty()
     {
-        return $this->hasOne(penalty::class, 'caseCode', 'caseCode');
+        return $this->hasMany(penalty::class, 'caseCode', 'caseCode');
     }
 
     public function renewal()

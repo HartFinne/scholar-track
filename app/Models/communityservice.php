@@ -25,4 +25,9 @@ class communityservice extends Model
         'volunteersnum',
         'eventstatus'
     ];
+
+    public function csattendance()
+    {
+        return $this->hasMany(csattendance::class, 'csid', 'csid');
+    }
 }

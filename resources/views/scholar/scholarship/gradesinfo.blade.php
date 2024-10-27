@@ -40,7 +40,7 @@
                     <div class="value">: <span>{{ $grade->GWA }}</span></div>
 
                     <div class="label">School Year</div>
-                    <div class="value">: <span>S.Y. {{ $academicYear->scAcademicYear }}</span></div>
+                    <div class="value">: <span>S.Y. {{ $grade->schoolyear }}</span></div>
 
                     <div class="label">Semester</div>
                     <div class="value">: <span>{{ $grade->SemesterQuarter }}</span></div>

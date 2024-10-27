@@ -60,7 +60,7 @@
             </div>
         </div>
         @foreach ($classes as $class)
-            @foreach ($class->attendances as $attendance)
+            @foreach ($class->hcattendance as $attendance)
                 <div class="attendance-card">
                     <div class="attendance-details">
                         <div class="topic">

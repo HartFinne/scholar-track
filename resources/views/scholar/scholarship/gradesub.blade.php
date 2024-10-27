@@ -24,7 +24,6 @@
     <x-alert />
     <!-- MAIN -->
     <div class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
         <div class="text-center">
             <h1 class="sub-title">Grades Submission</h1>
             <p class="desc">Submit your GWA and the scanned copy of pdf file of your grades.</p>
@@ -89,7 +88,7 @@
                 <tbody>
                     @foreach ($grades as $grade)
                         <tr>
-                            <td>S.Y. {{ $academicYear }}</td>
+                            <td>S.Y. {{ $grade->schoolyear }}</td>
                             <td>{{ $grade->SemesterQuarter }}</td>
                             <td>{{ $grade->GWA }}</td>
                             <td>{{ $grade->GradeStatus }}</td>

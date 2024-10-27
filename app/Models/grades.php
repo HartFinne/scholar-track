@@ -14,10 +14,16 @@ class grades extends Model
     protected $primaryKey = 'gid';
 
     protected $fillable = [
-        'eid',
+        'caseCode',
+        'schoolyear',
         'SemesterQuarter',
         'GWA',
         'ReportCard',
         'GradeStatus',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
 }

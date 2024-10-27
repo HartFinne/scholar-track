@@ -29,6 +29,8 @@ class AnnouncementController extends Controller
     // storeannouncement
     public function storeAnnouncement(Request $request)
     {
+        $worker = Auth::guard('staff')->user();
+
         $request->validate([
             'title' => ['required', 'string'],
             'description' => ['required', 'string']
@@ -38,6 +40,8 @@ class AnnouncementController extends Controller
         $announcement = Announcement::create([
             'title' => $request->title,
             'description' => $request->description,
+            'author' => $worker->name,
+            'recipients' => json_encode($request->recipients),
         ]);
 
         // Prepare the API key and secret from the .env file

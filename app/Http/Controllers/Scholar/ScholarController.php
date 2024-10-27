@@ -24,10 +24,20 @@ use App\Models\allowanceproject;
 use App\Models\allowancethesis;
 use App\Models\allowancetranspo;
 use App\Models\allowanceuniform;
+use App\Models\Announcement;
 use Illuminate\Validation\ValidationException;
 
 class ScholarController extends Controller
 {
+
+    public function showHome()
+    {
+        $user = Auth::user();
+        $announcements = Announcement::whereJsonContains('recipients', 'all')
+            ->orWhereJsonContains('recipients', $user->caseCode)
+            ->get();
+        return view('scholar.schome', compact('announcements'));
+    }
 
     //for sms or email
     public function updateNotificationPreference(Request $request)
@@ -127,10 +137,9 @@ class ScholarController extends Controller
 
         // Fetch grades associated with the user's education
         // Fetch academic performance data using a join
-        $academicData = ScEducation::join('grades', 'sc_education.eid', '=', 'grades.eid')
-            ->selectRaw("CONCAT(sc_education.scAcademicYear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
-            ->where('sc_education.caseCode', $user->caseCode) // Filter by user's caseCode
-            ->orderBy('sc_education.scAcademicYear', 'asc')
+        $academicData = grades::selectRaw("CONCAT(grades.schoolyear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
+            ->where('grades.caseCode', $user->caseCode) // Filter by user's caseCode
+            ->orderBy('grades.schoolyear', 'asc')
             ->orderBy('grades.SemesterQuarter', 'asc')
             ->get();
 
@@ -169,17 +178,11 @@ class ScholarController extends Controller
         $user = Auth::user(); // Get the authenticated user
         $caseCode = $user->caseCode; // Access the caseCode property
 
-        // Find the corresponding sc_education entry based on caseCode
-        $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
-
         // Fetch grades associated with the education entry
-        $grades = grades::where('eid', $scEducation->eid)->get();
-
-        // Retrieve the academic year from the scEducation record
-        $academicYear = $scEducation->scAcademicYear;
+        $grades = grades::where('caseCode', $caseCode)->get();
 
         // Pass the grades and academic year to the view
-        return view('scholar/scholarship.gradesub', compact('grades', 'academicYear'));
+        return view('scholar/scholarship.gradesub', compact('grades'));
     }
 
     public function storeGradeSubmission(Request $request)
@@ -200,22 +203,18 @@ class ScholarController extends Controller
         try {
             // Retrieve the currently authenticated user's caseCode
             $user = Auth::user(); // Get the authenticated user
-            $caseCode = $user->caseCode; // Access the caseCode property
-
-            // Find the corresponding sc_education entry based on caseCode
-            $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
-            $academicYear = $scEducation->scAcademicYear; // Retrieve the academic year from sc_education
-            Log::info('scEducation ID: ' . $scEducation->eid);
-            Log::info('scEducation ID: ' .  $academicYear);
+            $educ = ScEducation::where('caseCode', $user->caseCode)->first();
+            $grade = grades::where('caseCode', $user->caseCode)->where('schoolyear', $request->schoolyear)->first();
 
             // Check if an entry for the same academic year and semester already exists
-            $existingGrade = grades::where('eid', $scEducation->eid)
+            $existingGrade = grades::where('caseCode', $user->caseCode)
                 ->where('SemesterQuarter', $request->semester)
+                ->where('schoolyear', $request->schoolyear)
                 ->first();
 
 
             if ($existingGrade) {
-                return redirect()->back()->withErrors(['error' => 'A grade for this semester in the academic year ' . $academicYear . ' has already been submitted.'])->withInput();
+                return redirect()->back()->withErrors(['error' => 'A grade for this semester in the academic year ' . $grade->schoolyear . ' has already been submitted.'])->withInput();
             }
 
             // Handle file upload
@@ -233,7 +232,8 @@ class ScholarController extends Controller
 
             // Save the grade entry and link it to the educationID
             grades::create([
-                'eid' => $scEducation->eid, // Link the grade to the education entry
+                'caseCode' => $user->caseCode, // Link the grade to the scholar
+                'schoolyear' => $educ->scAcademicYear,
                 'SemesterQuarter' => $request->semester,
                 'GWA' => $request->gwa,
                 'ReportCard' => $filePath, // Store the file path
@@ -255,11 +255,9 @@ class ScholarController extends Controller
     {
         // Find the grade using the correct primary key
         $grade = grades::findOrFail($id);
-        // Fetch the associated education entry to get the academic year
-        $academicYear = ScEducation::findOrFail($grade->eid); // Assuming educationID is stored in ScGrade
 
         // Pass the grade data and academic year to the view
-        return view('scholar.scholarship.gradesinfo', compact('grade', 'academicYear'));
+        return view('scholar.scholarship.gradesinfo', compact('grade'));
     }
 
     // HUMANITIES CLASS
@@ -275,7 +273,7 @@ class ScholarController extends Controller
             ->where('hcastatus', 'Absent')
             ->count();
 
-        $classes = HumanitiesClass::with(['attendances' => function ($query) use ($scholar) {
+        $classes = humanitiesclass::with(['hcattendance' => function ($query) use ($scholar) {
             $query->where('caseCode', $scholar->caseCode);
         }])->get();
 

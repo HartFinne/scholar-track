@@ -8,6 +8,7 @@ use App\Models\staccount;
 use App\Models\User;
 use App\Models\communityservice;
 use App\Models\csregistration;
+use App\Models\csattendance;
 use App\Models\humanitiesclass;
 use App\Models\hcattendance;
 use App\Models\lte;
@@ -15,6 +16,7 @@ use App\Models\penalty;
 use App\Models\renewal;
 use App\Models\ScEducation;
 use App\Models\scholarshipinfo;
+use App\Models\grades;
 use App\Models\criteria;
 use App\Models\institutions;
 use App\Models\courses;
@@ -80,6 +82,7 @@ class StaffController extends Controller
         $siblings = apfamilyinfo::where('casecode', $casecode)
             ->where('relationship', 'Sibling')->get();
         $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
+
         return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege'));
     }
 
@@ -90,8 +93,7 @@ class StaffController extends Controller
 
     public function showScholarsCollege()
     {
-        $scholar = User::with(['basicInfo', 'education', 'addressInfo'])->get();
-
+        $scholar = User::with(['basicInfo', 'education', 'addressInfo', 'grades', 'hcattendance', 'csattendance', 'penalty'])->get();
         return view('staff.listcollege', compact('scholar'));
     }
 
@@ -107,9 +109,21 @@ class StaffController extends Controller
 
     public function showScholarProfile($id)
     {
+        // personal info
         $data = User::with(['basicInfo', 'education', 'addressInfo'])->findOrFail($id);
 
-        return view('staff.scholarsinfo', compact('data'));
+        // grades info
+        $grades = grades::where('eid', $data->education->eid)->get();
+
+        // cs info
+        $csattendances = csattendance::with('communityservice')
+            ->where('caseCode', $data->caseCode)->get();
+
+        // hc info
+        $hcattendances = hcattendance::with('humanitiesclass')
+            ->where('caseCode', $data->caseCode)->get();
+
+        return view('staff.scholarsinfo', compact('data', 'grades', 'csattendances', 'hcattendances'));
     }
 
     public function showLTE()

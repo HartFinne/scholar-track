@@ -35,11 +35,13 @@
                 <h5>PROJECT ALLOWANCE REQUEST</h5>
                 <div class="info">
                     <div class="label">Date of Request:</div>
-                    <div class="value"><span>{{ $request->created_at->format('F d, Y') }}</span></div>
+                    <div class="value">
+                        <span>{{ $request->releasedate ? \Carbon\Carbon::parse($request->created_at)->format('F d, Y') : '--' }}</span>
+                    </div>
 
                     <div class="label">Date of Release:</div>
                     <div class="value">
-                        <span>{{ $request->releasedate ? $request->releasedate->format('F d, Y') : '--' }}</span>
+                        <span>{{ $request->releasedate ? \Carbon\Carbon::parse($request->releasedate)->format('F d, Y') : '--' }}</span>
                     </div>
 
                     <div class="label">Area:</div>

@@ -21,7 +21,8 @@ class humanitiesclass extends Model
         'hcendtime',
         'totalattendees'
     ];
-    public function attendances()
+
+    public function hcattendance()
     {
         return $this->hasMany(hcattendance::class, 'hcid', 'hcid');
     }
