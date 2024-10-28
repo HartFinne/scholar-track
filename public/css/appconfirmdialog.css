@@ -11,6 +11,7 @@
 body{
     background: rgb(255,255,255);
     background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(192,251,191,1) 35%);
+    background-repeat: no-repeat;
     height: auto;
 }
 
@@ -40,7 +41,7 @@ body{
 .dialog{
     width: 50%;
     background-color: #fff;
-    margin: auto;
+    margin: 0 auto 50px;
     border: 1px solid #bfbfbf;
     border-radius: 10px;
     text-align: center;

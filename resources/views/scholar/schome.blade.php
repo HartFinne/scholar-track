@@ -80,10 +80,6 @@
                     </div>
                 </div>
             @endforeach
-
-            <!-- <div class="card-notif">
-                    <h5 id="notif-title" class="fw-bold">NOTIFICATIONS</h5>
-                </div> -->
         </div>
     </div>
 
