@@ -46,9 +46,17 @@
 
             <!-- Semester Selection -->
             <select class="sem" aria-label="qtrsem" name="semester" required>
-                <option value="" disabled selected hidden>Semester</option>
-                <option value="1st Semester">1ST SEMESTER</option>
-                <option value="2nd Semester">2ND SEMESTER</option>
+                @if ($educ->scSchoolLevel == 'College' || $educ->scSchoolLevel == 'Senior High')
+                    <option value="" disabled selected hidden>Semester</option>
+                    <option value="1st Semester">1ST SEMESTER</option>
+                    <option value="2nd Semester">2ND SEMESTER</option>
+                @else
+                    <option value="" disabled selected hidden>Quarter</option>
+                    <option value="1st Semester">1ST QUARTER</option>
+                    <option value="2nd Semester">2ND QUARTER</option>
+                    <option value="2nd Semester">3RD QUARTER</option>
+                    <option value="2nd Semester">4TH QUARTER</option>
+                @endif
             </select>
 
             <!-- GWA Input -->

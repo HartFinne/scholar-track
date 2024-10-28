@@ -28,10 +28,12 @@
 
         <!-- ALLOWANCE BUTTONS -->
         <div class="sallowance">
-            <a href="{{ route('specialreqs', 'TRF') }}" class="btn-request">Transportation Reimbursement Request</a>
-            <a href="{{ route('specialreqs', 'BAR') }}" class="btn-request">Book Allowance Request</a>
-            <a href="{{ route('specialreqs', 'TAR') }}" class="btn-request">Thesis Allowance Request</a>
-            <a href="{{ route('specialreqs', 'PAR') }}" class="btn-request">Project Allowance Request</a>
+            @if ($scholar->education->scSchoolLevel == 'College')
+                <a href="{{ route('specialreqs', 'TRF') }}" class="btn-request">Transportation Reimbursement Request</a>
+                <a href="{{ route('specialreqs', 'BAR') }}" class="btn-request">Book Allowance Request</a>
+                <a href="{{ route('specialreqs', 'TAR') }}" class="btn-request">Thesis Allowance Request</a>
+                <a href="{{ route('specialreqs', 'PAR') }}" class="btn-request">Project Allowance Request</a>
+            @endif
             <a href="{{ route('specialreqs', 'UAR') }}" class="btn-request">Uniform Allowance Request</a>
             <a href="{{ route('specialreqs', 'GAR') }}" class="btn-request">Graduation Allowance Request</a>
             <a href="{{ route('specialreqs', 'FTTSAR') }}" class="btn-request">Field Trip, Training, Seminar Allowance

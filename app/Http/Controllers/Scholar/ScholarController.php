@@ -176,13 +176,13 @@ class ScholarController extends Controller
     {
         // Retrieve the currently authenticated user's caseCode
         $user = Auth::user(); // Get the authenticated user
-        $caseCode = $user->caseCode; // Access the caseCode property
+        $educ = ScEducation::where('caseCode', $user->caseCode)->first(); // Access the caseCode property
 
         // Fetch grades associated with the education entry
-        $grades = grades::where('caseCode', $caseCode)->get();
+        $grades = grades::where('caseCode', $user->caseCode)->get();
 
         // Pass the grades and academic year to the view
-        return view('scholar/scholarship.gradesub', compact('grades'));
+        return view('scholar/scholarship.gradesub', compact('grades', 'educ'));
     }
 
     public function storeGradeSubmission(Request $request)
@@ -319,7 +319,8 @@ class ScholarController extends Controller
 
     public function showspecialallowance()
     {
-        $scholar = User::where('id', Auth::id())
+        $scholar = User::with('education')
+            ->where('id', Auth::id())
             ->first();
 
         $reqbook = allowancebook::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
@@ -342,7 +343,7 @@ class ScholarController extends Controller
         // Sort the merged collection by created_at
         $requests = $mergedrequests->sortBy('created_at')->values();
 
-        return view('scholar.allowancerequest.scspecial', compact('requests'));
+        return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar'));
     }
 
     public function showrequestinstruction($requesttype)

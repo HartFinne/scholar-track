@@ -113,4 +113,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(renewal::class, 'caseCode', 'caseCode');
     }
+
+    public function datasets()
+    {
+        return $this->hasMany(renewal::class, 'caseCode', 'caseCode');
+    }
 }

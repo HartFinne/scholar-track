@@ -20,11 +20,15 @@
 
     <!-- MAIN CONTENT -->
     <div class="ctnmain">
-        <div class="text-center profile">
-            <h1 class="title"><strong>Scholar's Information</strong></h1>
-            <a href="{{ route('scholars-college') }}" class="btn btn-success">&lt Go back</a>
+        <div class="container d-flex align-items-center">
+            <div class="col-md-11">
+                <h1 class="title"><strong>Scholar's Information</strong></h1>
+            </div>
+            <div class="col-md-1">
+                <a href="{{ route('scholars-college') }}" class="btn btn-success">&lt Go back</a>
+            </div>
         </div>
-        <div class="container mt-4">
+        <div class="container">
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
                     <span style="font-size: 18px; font-weight: bold"><strong>Personal Information</strong></span>
@@ -118,31 +122,32 @@
                     <table class=" table table-bordered">
                         <thead>
                             <tr>
-                                <th class="text-center align-center">#</th>
-                                <th class="text-center align-center">School Year</th>
-                                <th class="text-center align-center">
+                                <th class="text-center align-middle">#</th>
+                                <th class="text-center align-middle">School Year</th>
+                                <th class="text-center align-middle">
                                     {{ $data->education->scSchoolLevel == 'College' ? 'Semester' : 'Quarter' }}
                                 </th>
-                                <th class="text-center align-center">GWA</th>
-                                <th class="text-center align-center">Status</th>
-                                <th class="text-center align-center">Action</th>
+                                <th class="text-center align-middle">GWA</th>
+                                <th class="text-center align-middle">Status</th>
+                                <th class="text-center align-middle">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if ($grades == null || $grades->isEmpty())
                                 <tr>
-                                    <td class="text-center align-center" colspan="6">No data available</td>
+                                    <td class="text-center align-middle" colspan="6">No data available</td>
                                 </tr>
                             @else
                                 @foreach ($grades as $index => $grade)
                                     <tr>
-                                        <td class="text-center align-center">{{ $index + 1 }}</td>
-                                        <td class="text-center align-center">School Year</td>
-                                        <td class="text-center align-center">{{ $grade->SemesterQuarter }}</td>
-                                        <td class="text-center align-center">{{ $grade->GWA }}</td>
-                                        <td class="text-center align-center">{{ $grade->GradeStatus }}</td>
-                                        <td class="text-center align-center">
-                                            <a href="" class="btn btn-success">View</a>
+                                        <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                        <td class="text-center align-middle">School Year</td>
+                                        <td class="text-center align-middle">{{ $grade->SemesterQuarter }}</td>
+                                        <td class="text-center align-middle">{{ $grade->GWA }}</td>
+                                        <td class="text-center align-middle">{{ $grade->GradeStatus }}</td>
+                                        <td class="text-center align-middle">
+                                            <a href="{{ route('scholar-gradesinfo', ['gid' => $grade->gid]) }}"
+                                                class="btn btn-success">View</a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -160,30 +165,30 @@
                     <table class=" table table-bordered">
                         <thead>
                             <tr>
-                                <th class="text-center align-center">#</th>
-                                <th class="text-center align-center">Date of Event</th>
-                                <th class="text-center align-center">Time In</th>
-                                <th class="text-center align-center">Time Out</th>
-                                <th class="text-center align-center">Facilitator Name</th>
-                                <th class="text-center align-center">Status</th>
+                                <th class="text-center align-middle">#</th>
+                                <th class="text-center align-middle">Date of Event</th>
+                                <th class="text-center align-middle">Time In</th>
+                                <th class="text-center align-middle">Time Out</th>
+                                <th class="text-center align-middle">Facilitator Name</th>
+                                <th class="text-center align-middle">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if ($csattendances == null || $csattendances->isEmpty())
                                 <tr>
-                                    <td class="text-center align-center" colspan="6">No data available</td>
+                                    <td class="text-center align-middle" colspan="6">No data available</td>
                                 </tr>
                             @else
                                 @foreach ($csattendances as $index => $attendance)
                                     <tr>
-                                        <td class="text-center align-center">{{ $index + 1 }}</td>
-                                        <td class="text-center align-center">
+                                        <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                        <td class="text-center align-middle">
                                             {{ \Carbon\Carbon::parse($attendance->communityservice->eventdate)->format('F d, Y') }}
                                         </td>
-                                        <td class="text-center align-center">{{ $attendance->timein }}</td>
-                                        <td class="text-center align-center">{{ $attendance->timeout }}</td>
-                                        <td class="text-center align-center">{{ $attendance->facilitator }}</td>
-                                        <td class="text-center align-center">{{ $attendance->status }}</td>
+                                        <td class="text-center align-middle">{{ $attendance->timein }}</td>
+                                        <td class="text-center align-middle">{{ $attendance->timeout }}</td>
+                                        <td class="text-center align-middle">{{ $attendance->facilitator }}</td>
+                                        <td class="text-center align-middle">{{ $attendance->status }}</td>
                                     </tr>
                                 @endforeach
                             @endif
@@ -200,28 +205,28 @@
                     <table class=" table table-bordered">
                         <thead>
                             <tr>
-                                <th class="text-center align-center">#</th>
-                                <th class="text-center align-center">Date of Event</th>
-                                <th class="text-center align-center">Time In</th>
-                                <th class="text-center align-center">Time Out</th>
-                                <th class="text-center align-center">Status</th>
+                                <th class="text-center align-middle">#</th>
+                                <th class="text-center align-middle">Date of Event</th>
+                                <th class="text-center align-middle">Time In</th>
+                                <th class="text-center align-middle">Time Out</th>
+                                <th class="text-center align-middle">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             @if ($hcattendances == null || $hcattendances->isEmpty())
                                 <tr>
-                                    <td class="text-center align-center" colspan="6">No data available</td>
+                                    <td class="text-center align-middle" colspan="6">No data available</td>
                                 </tr>
                             @else
                                 @foreach ($hcattendances as $index => $attendance)
                                     <tr>
-                                        <td class="text-center align-center">{{ $index + 1 }}</td>
-                                        <td class="text-center align-center">
+                                        <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                        <td class="text-center align-middle">
                                             {{ \Carbon\Carbon::parse($attendance->humanitiesclass->hcdate)->format('F d, Y') }}
                                         </td>
-                                        <td class="text-center align-center">{{ $attendance->timein }}</td>
-                                        <td class="text-center align-center">{{ $attendance->timeout }}</td>
-                                        <td class="text-center align-center">{{ $attendance->status }}</td>
+                                        <td class="text-center align-middle">{{ $attendance->timein }}</td>
+                                        <td class="text-center align-middle">{{ $attendance->timeout }}</td>
+                                        <td class="text-center align-middle">{{ $attendance->status }}</td>
                                     </tr>
                                 @endforeach
                             @endif

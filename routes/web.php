@@ -117,6 +117,8 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/scholars-elementary', [StaffController::class, 'showScholarsElem'])->name('scholars-elementary');
     Route::get('/scholars-highschool', [StaffController::class, 'showScholarsHS'])->name('scholars-highschool');
     Route::get('/scholar/{id}', [StaffController::class, 'showScholarProfile'])->name('scholar-viewinfo');
+    Route::get('/grade-details/{gid}', [StaffController::class, 'showgradesinfo'])->name('scholar-gradesinfo');
+    Route::post('/update-grade-status/{gid}', [StaffController::class, 'updategradestatus'])->name('updategradestatus');
     // COMMUNITY SERVICE
     Route::get('/community-service-overview', [StaffController::class, 'showCommunityService'])->name('communityservice');
     Route::get('/community-service-open', [StaffController::class, 'showCSOpenEvents'])->name('communityservice-open');
@@ -196,4 +198,5 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
 // report generation
 Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
+    Route::get('/scholars-evaluation', 'evaluatescholars')->name('evaluatescholars');
 });

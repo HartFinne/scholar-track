@@ -113,7 +113,7 @@ class StaffController extends Controller
         $data = User::with(['basicInfo', 'education', 'addressInfo'])->findOrFail($id);
 
         // grades info
-        $grades = grades::where('eid', $data->education->eid)->get();
+        $grades = grades::where('caseCode', $data->caseCode)->get();
 
         // cs info
         $csattendances = csattendance::with('communityservice')
@@ -124,6 +124,53 @@ class StaffController extends Controller
             ->where('caseCode', $data->caseCode)->get();
 
         return view('staff.scholarsinfo', compact('data', 'grades', 'csattendances', 'hcattendances'));
+    }
+
+    public function showgradesinfo($gid)
+    {
+        $grade = grades::where('gid', $gid)->first();
+        $scholar = user::with('basicInfo')->where('caseCode', $grade->caseCode)->first();
+
+        return view('staff.gradesinfo', compact('grade', 'scholar'));
+    }
+
+    public function updategradestatus($gid, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $worker = Auth::guard('staff')->user();
+            $grade = Grades::where('gid', $gid)->first();
+
+            // Update the grade status
+            $grade->GradeStatus = $request->gradestatus;
+            $grade->save();
+
+            // Check if the grade status is neither "Passed" nor "Pending"
+            if ($request->gradestatus != 'Passed' && $request->gradestatus != 'Pending') {
+                lte::create([
+                    'caseCode' => $grade->caseCode,
+                    'violation' => $request->gradestatus,
+                    'conditionid' => null,
+                    'eventtype' => null,
+                    'dateissued' => now(),
+                    'deadline' => Carbon::now()->addDays(3),
+                    'datesubmitted' => null,
+                    'reason' => null,
+                    'explanation' => null,
+                    'proof' => null,
+                    'ltestatus' => 'No Response',
+                    'workername' => strtoupper($worker->name) . ', RSW',
+                ]);
+            }
+
+            // Commit the transaction
+            DB::commit();
+            return redirect()->back()->with('success', 'Successfully updated grade status.');
+        } catch (\Exception $e) {
+            // Roll back the transaction in case of error
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to update grade status: ' . $e->getMessage());
+        }
     }
 
     public function showLTE()
@@ -1113,6 +1160,7 @@ class StaffController extends Controller
 
                     lte::create([
                         'caseCode' => $attendee->caseCode,
+                        'violation' => NULL,
                         'conditionid' => $attendee->hcaid,
                         'eventtype' => "Humanities Class",
                         'dateissued' => $event->hcdate,
@@ -1229,6 +1277,7 @@ class StaffController extends Controller
                 if ($attendee->hcastatus != 'Late') {
                     lte::create([
                         'caseCode' => $attendee->caseCode,
+                        'violation' => NULL,
                         'conditionid' => $attendee->hcaid,
                         'eventtype' => "Humanities Class",
                         'dateissued' => $event->hcdate,

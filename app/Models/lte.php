@@ -15,6 +15,7 @@ class lte extends Model
 
     protected $fillable = [
         'caseCode',
+        'violation',
         'conditionid',
         'eventtype',
         'dateissued',

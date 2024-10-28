@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('lte', function (Blueprint $table) {
             $table->increments('lid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
-            $table->unsignedInteger('conditionid');
-            $table->string('eventtype', 50);
+            $table->string('violation', 50)->nullable();
+            $table->unsignedInteger('conditionid')->nullable();
+            $table->string('eventtype', 50)->nullable();
             $table->date('dateissued');
             $table->date('deadline');
             $table->date('datesubmitted')->nullable();

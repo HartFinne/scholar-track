@@ -220,7 +220,7 @@
                 @forelse ($renewals as $renewal)
                     <tr>
                         <td>{{ $renewal->status }}</td>
-                        <td>{{ $renewal->cnt }}</td>
+                        <td>{{ $renewal->sccount }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -242,7 +242,7 @@
                 @forelse ($ltes as $lte)
                     <tr>
                         <td>{{ $lte->ltestatus }}</td>
-                        <td>{{ $lte->cnt }}</td>
+                        <td>{{ $lte->sccount }}</td>
                     </tr>
                 @empty
                     <tr>
@@ -264,7 +264,7 @@
                 @forelse ($penalties as $penalty)
                     <tr>
                         <td>{{ $penalty->remark }}</td>
-                        <td>{{ $penalty->cnt }}</td>
+                        <td>{{ $penalty->sccount }}</td>
                     </tr>
                 @empty
                     <tr>

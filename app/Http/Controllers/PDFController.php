@@ -11,7 +11,12 @@ use App\Models\csattendance;
 use App\Models\renewal;
 use App\Models\lte;
 use App\Models\penalty;
+use App\Models\grades;
+use App\Models\datasets;
+use App\Models\evalresults;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class PDFController extends Controller
 {
@@ -62,5 +67,76 @@ class PDFController extends Controller
 
         $pdf = Pdf::loadView('staff.scholarship-report', $data);
         return $pdf->stream("scholarship-report-{$date}.pdf");
+    }
+
+    public function evaluatescholars()
+    {
+        try {
+            // // always empty the datasets
+            // DB::table('datasets')->truncate();
+            // // populate datasets
+            // $users = User::with(['scholarshipinfo', 'education'])
+            //     ->whereHas('scholarshipinfo', function ($query) {
+            //         $query->where('scholarshipstatus', 'Continuing');
+            //     })
+            //     ->whereHas('education', function ($query) {
+            //         $query->where('scSchoolLevel', 'College');
+            //     })
+            //     ->get();
+
+            // foreach ($users as $user) {
+            //     $startdate = Carbon::parse($user->startdate);
+            //     $schoolYear = $startdate->format('Y') . '-' . $startdate->copy()->addYear()->format('Y');
+
+            //     datasets::create([
+            //         'caseCode'      => $user->caseCode,
+            //         'startcontract' => $startdate,
+            //         'endcontract'   => $startdate->copy()->addYear(),
+            //         'gwasem1'       => grades::where('caseCode', $user->caseCode)
+            //             ->where('schoolyear', $schoolYear)
+            //             ->where('SemesterQuarter', '1ST SEMESTER')
+            //             ->first()?->grade,
+            //         'gwasem2'       => grades::where('caseCode', $user->caseCode)
+            //             ->where('schoolyear', $schoolYear)
+            //             ->where('SemesterQuarter', '2ND SEMESTER')
+            //             ->first()?->grade,
+            //         'cshours'       => csattendance::where('caseCode', $user->caseCode)
+            //             ->whereBetween('eventdate', [$startdate, $startdate->copy()->addYear()])
+            //             ->sum('hoursspent'),
+            //         'ltecount'      => lte::where('caseCode', $user->caseCode)
+            //             ->where('ltestatus', 'Unexcused')
+            //             ->count(),
+            //         'penaltycount'  => penalty::where('caseCode', $user->caseCode)
+            //             ->distinct('condition')
+            //             ->count('condition'),
+            //     ]);
+            // }
+
+            DB::table('evalresults')->truncate();
+
+            $command = 'python ' . base_path('storage/app/python/evaluate_scholars.py');
+
+            // Execute the command, capturing any output and error status
+            exec($command . ' 2>&1', $output, $return_var);
+
+            // Check if the script executed successfully
+            if ($return_var !== 0) {
+                // If an error occurred, handle it (e.g., log it or return an error response)
+                $errorMessage = "Failed to execute Python script. Error: " . implode("\n", $output);
+
+                // Optionally, return an error response or redirect with an error message
+                return redirect()->back()->with('error', 'Evaluation script failed to execute.');
+            }
+
+            // Fetch the results and order by 'acadyear' in ascending order
+            $results = evalresults::orderBy('acadyear', 'ASC')->get();
+
+            $acadyears = evalresults::selectRaw('acadyear')->distinct()->get();
+
+            // Pass the results to the view
+            return view('staff.scholarsevaluation', compact('results', 'acadyears'));
+        } catch (\Exception $e) {
+            return view('staff.scholarsevaluation')->with('error', 'An error has occurred. ' . $e->getMessage());
+        }
     }
 }

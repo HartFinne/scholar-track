@@ -44,6 +44,10 @@
                             <td>{{ $letter->dateissued }}</td>
                             @if ($letter->eventtype == 'Humanities Class')
                                 <td>{{ $letter->hcattendance->hcastatus }} in {{ $letter->eventtype }}</td>
+                            @elseif ($letter->eventtype == 'Community Service')
+                                <td>{{ $letter->csattendanc->status }} in {{ $letter->eventtype }}</td>
+                            @elseif ($letter->eventtype == null)
+                                <td>{{ $letter->violation }}</td>
                             @endif
                             <td>{{ $letter->deadline }}</td>
                             <td>

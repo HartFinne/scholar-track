@@ -102,9 +102,15 @@
                                 @endif
                             @endforeach
                             <td class="text-center align-middle">{{ $letter->dateissued }}</td>
-                            <td class="text-center align-middle">{{ $letter->hcattendance->hcastatus }} in
-                                {{ $letter->eventtype }}
-                            </td>
+                            @if ($letter->eventtype == 'Humanities Class')
+                                <td class="text-center align-middle">{{ $letter->hcattendance->hcastatus }} in
+                                    {{ $letter->eventtype }}</td>
+                            @elseif ($letter->eventtype == 'Community Service')
+                                <td class="text-center align-middle">{{ $letter->csattendanc->status }} in
+                                    {{ $letter->eventtype }}</td>
+                            @elseif ($letter->eventtype == null)
+                                <td class="text-center align-middle">{{ $letter->violation }}</td>
+                            @endif
                             <td class="text-center align-middle">{{ $letter->reason ?? '--' }}</td>
                             <td class="text-center align-middle">{{ $letter->ltestatus }}</td>
                             <td class="text-center align-middle">
