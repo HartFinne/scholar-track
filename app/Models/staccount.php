@@ -8,11 +8,20 @@ use Illuminate\Notifications\Notifiable;
 
 class staccount extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasFactory;
 
-    // Your table and other configurations
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'staccounts';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'email',
@@ -20,12 +29,15 @@ class staccount extends Authenticatable
         'area',
         'role',
         'status',
-        'password'
-    ];
-
-    protected $hidden = [
         'password',
     ];
 
-    use HasFactory;
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+    ];
 }
