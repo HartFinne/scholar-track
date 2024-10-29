@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AllowanceUniform extends Model
+class allowanceuniform extends Model
 {
     use HasFactory;
 

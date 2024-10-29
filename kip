@@ -1,0 +1,579 @@
+[33mcommit 77dc1e4bdfd006df7b1e96b3e7f26770c820a602[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Tue Oct 29 15:35:36 2024 +0800
+
+    edited  models name
+
+[33mcommit e12785fd6fa102363401b8e6b4989f0ee98361bf[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Tue Oct 29 14:52:59 2024 +0800
+
+    nilagyan ko lang insert ng admin account
+
+[33mcommit 8ad2bc1ea6c34d2c64543b1aeee93b730098c8ae[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 28 20:26:16 2024 +0800
+
+    logistic regression done
+
+[33mcommit a87748134d1e62bf4bc7c39b69c7b58d2123efcb[m
+Merge: 15241ad d8d6311
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 28 20:12:39 2024 +0800
+
+    Merge remote-tracking branch 'origin/master'
+
+[33mcommit 15241adcf753553f05818525a1ccfac916a07fdb[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 28 20:12:07 2024 +0800
+
+    logistic regression done
+
+[33mcommit d8d63114e8a9476db56c882b50e160b16dea26e5[m
+Author: atsirhc <algarnechrista@gmail.com>
+Date:   Sun Oct 27 15:40:12 2024 +0800
+
+    may inayos lang sa ui
+
+[33mcommit 1a1ee4438d54beecb496fe94c8b6c0e1dfc79aa8[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sun Oct 27 10:05:09 2024 +0800
+
+    updated announcement/gradesub
+
+[33mcommit de277307f58d48b8e62c781d5a690eb4c16bf139[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sat Oct 26 16:47:13 2024 +0800
+
+    fixed spec req
+
+[33mcommit 6e5ae305e58b55a58a07fee8d705fcc18fe2d319[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sat Oct 26 12:11:14 2024 +0800
+
+    fixed registration with verification
+
+[33mcommit cf95e6f0f76ec4119a206f0e4f4a5f400b27eb49[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sat Oct 26 12:08:53 2024 +0800
+
+    fixed registration with verification
+
+[33mcommit e7128613e7334524ff4b76d6c04f896ff37d113d[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sat Oct 26 00:57:48 2024 +0800
+
+    updating specreq status working but not yet complete
+
+[33mcommit 05242403972733d29d08f03c64666cc7fafda028[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Fri Oct 25 13:10:35 2024 +0800
+
+    done special allowance - scholar only
+
+[33mcommit b45a149dda259cc0078efaaf3219eaeace8d6c21[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 24 22:00:25 2024 +0800
+
+    working special allowance - scholar
+
+[33mcommit 0417d44cfb2ea7d8d276e79bb34f5df08854566b[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Wed Oct 23 21:22:44 2024 +0800
+
+    working report generation but not yet complete
+
+[33mcommit c699628434fdfc605b856d00bae9015111490b37[m
+Author: atsirhc <algarnechrista@gmail.com>
+Date:   Wed Oct 23 18:20:20 2024 +0800
+
+    added regular allowance form
+
+[33mcommit b6e3cde6d5bf01cd09e8e673ec1c240f82c5f9f6[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Wed Oct 23 16:01:04 2024 +0800
+
+    fix overview
+
+[33mcommit fa2693e66abbf2d59cfb4b5c105be9c82bcbd518[m
+Merge: 17debc4 eeab899
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Tue Oct 22 12:07:44 2024 +0800
+
+    minerge ko na
+
+[33mcommit eeab899b3ec3b64da66da6a19f560fc5301f854b[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Tue Oct 22 12:03:54 2024 +0800
+
+    done working na grades
+
+[33mcommit 17debc41a57fda4e52edfdfe6e95c73e72dcc22b[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Tue Oct 22 11:15:09 2024 +0800
+
+    working na application
+
+[33mcommit 7fb3aac5a10d77024a97cfb40fe55fd381d312e3[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 21 18:02:02 2024 +0800
+
+    working na application
+
+[33mcommit d4b21233b27f99646661a55c5fb27963d484ecba[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 21 13:19:57 2024 +0800
+
+    working na application
+
+[33mcommit 829b1a492874e5d79755ba88992871caa69340ce[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sun Oct 20 12:52:16 2024 +0800
+
+    application update
+
+[33mcommit a34ca6a3740059632a27d8fc98f9fb06cbd6b004[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Sun Oct 20 02:32:03 2024 +0800
+
+    nilagay ko lang yung mga files ng scholar sa another folder para di makalat tignan
+
+[33mcommit c4148763aab644c56520c384fb23e1cb8df7cc97[m
+Merge: 4c1c9f9 a2ad7f5
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Sun Oct 20 02:00:42 2024 +0800
+
+    Merge branch 'scholartrackv5' merging
+
+[33mcommit a2ad7f5c763af4ac36bee8e395af6fa0583f1395[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Sun Oct 20 01:59:23 2024 +0800
+
+    kulang sa cs is pag kincancel mabibigyan ng lte and dun sa staff lagyan ng power na status like accepted or pending
+
+[33mcommit 4c1c9f9fb75746a06ebc19d546c07748dae1a967[m
+Merge: d687fa5 13975d6
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sat Oct 19 22:23:46 2024 +0800
+
+    updated backend ng criteria
+
+[33mcommit d687fa5dcb3e924d3e432350dc5fe9ca9d21ec31[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sat Oct 19 22:17:39 2024 +0800
+
+    backend ng criteria patapos na
+
+[33mcommit 13975d696dccb612f63ca3a6452e5a405e89719f[m
+Author: atsirhc <algarnechrista@gmail.com>
+Date:   Sat Oct 19 19:04:43 2024 +0800
+
+    added allowance requests and appointment system ui
+
+[33mcommit 7b010dabf0fb446ee40bb68100accf34d900def3[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Fri Oct 18 19:16:01 2024 +0800
+
+    updated scholars overview
+
+[33mcommit 8dbe992827e3791da1b4e941653f64ad494778cd[m
+Merge: 6768867 72a76a4
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Fri Oct 18 16:40:42 2024 +0800
+
+    Merge branch 'master' of https://github.com/HartFinne/ScholarTrack
+
+[33mcommit 6768867d259de19dde3ceb46c70548362eaae990[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Fri Oct 18 16:39:16 2024 +0800
+
+    lte update
+
+[33mcommit 72a76a4302966e31deea3f97af5a4bf61f386bdf[m
+Merge: 194a1b4 e013ded
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Fri Oct 18 00:36:47 2024 +0800
+
+    Merge branch 'scholartrackv4'
+
+[33mcommit e013ded033e566c01acbaee5842774894c582063[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Fri Oct 18 00:32:32 2024 +0800
+
+    done working announcement nagsesend na sa mailtrap test then sa sms goods na din pero kunting ayos pa
+
+[33mcommit cf35e42904baefe4dcbbb8d77c55a0ce59f9b0b4[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Thu Oct 17 20:13:02 2024 +0800
+
+    meron na email notification pa lang
+
+[33mcommit 71c7fa849b14a6d06b14413a6a6bbe1a02c24ccf[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Thu Oct 17 15:29:14 2024 +0800
+
+    working in announcement, cs
+
+[33mcommit 194a1b49abd4ab756e8dad33c0e7350e6f1ed54a[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 17 09:21:44 2024 +0800
+
+    done hc staff side
+
+[33mcommit 762dd66c65ad113a2e5c4f7139eae76302747623[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 17 06:28:53 2024 +0800
+
+    updated hc
+
+[33mcommit eaf3cfb172d29d73d620476ee3a31d115adb463f[m
+Merge: 570264c 0eb4fd2
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Wed Oct 16 06:56:19 2024 +0800
+
+    lapit na matapos hc ahshahsa
+
+[33mcommit 570264c5bd792832609f026d9bf56db629c23a91[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Wed Oct 16 06:54:00 2024 +0800
+
+    lapit na matapos hc ahshahsa
+
+[33mcommit 0eb4fd2a235194851d11ef4e06bdc3cfc6b88854[m
+Merge: 97047a0 0ccb184
+Author: atsirhc <algarnechrista@gmail.com>
+Date:   Tue Oct 15 22:06:00 2024 +0800
+
+    updated scholar css
+
+[33mcommit 97047a0641abb4ba3f5adeec9d196da3b5f7c176[m
+Author: atsirhc <algarnechrista@gmail.com>
+Date:   Tue Oct 15 21:49:03 2024 +0800
+
+    updated scholar css
+
+[33mcommit 0ccb184382aea4c5b7acfbf14c92f849216116ea[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Tue Oct 15 08:49:38 2024 +0800
+
+    working cs creation and attendance system but may kulang pa
+
+[33mcommit f9a7fd33bf303a610530cc24bcb0142423ab2f0a[m
+Merge: db86276 516b4af
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Tue Oct 15 03:28:30 2024 +0800
+
+    update staff cs
+
+[33mcommit db862760ac5c7f20363cb582a9a9fdaf259f2919[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Tue Oct 15 03:27:46 2024 +0800
+
+    update staff cs
+
+[33mcommit 516b4afae5b40b798d92be7c49ce0390949ac1de[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Mon Oct 14 02:25:57 2024 -0700
+
+    Add files via upload
+
+[33mcommit 9010fa0394f41da1c0a5af4b09f7fca28ed42b2b[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 14:14:17 2024 -0700
+
+    add other files needed
+
+[33mcommit 0edd0087cfa9dc74e3f58b80e71dcc491fd509a0[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 14:09:34 2024 -0700
+
+    add new file (Regular Allowance.html)
+    
+    hindi ko po nagawang blade.php  HAHAAHA medyo nalilito pa ako kaya naka html ko muna huhuhu
+
+[33mcommit a765cddd892626443fefbe5a886041a68a81c5a1[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:33:37 2024 -0700
+
+    Delete view.html
+
+[33mcommit d2a57d1ae45358b4f2caca2de015c865bcef4a16[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:33:25 2024 -0700
+
+    Delete thesis.html
+
+[33mcommit b3615df7fc73d23f35b73e24c2a9356f6ee8553a[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:33:09 2024 -0700
+
+    Delete transpo.html
+
+[33mcommit 1dc1669fc06fe603b256ba02ab9c88a4df68b445[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:33:00 2024 -0700
+
+    Delete uniform.html
+
+[33mcommit 03a4c6cade5c379c16e7c3f8398dc3f6d179ce72[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:32:52 2024 -0700
+
+    Delete project.html
+
+[33mcommit 51f720544a9c1807e65cfe27c59abfb3138841a5[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:32:40 2024 -0700
+
+    Delete book.html
+
+[33mcommit 540ac6bb7ddf5650734a31f37cb871271d765922[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:32:31 2024 -0700
+
+    Delete UNAR.html
+
+[33mcommit 1445b36fa9319602ae9550d932ade37e6c582e33[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:32:22 2024 -0700
+
+    Delete TRR.html
+
+[33mcommit 267cb57c14a2b8baf8f8cfa55c55ac170eef585c[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:32:12 2024 -0700
+
+    Delete PAR.html
+
+[33mcommit 7ef0f30fb42d40acdd6bd635a67dd3ff7915fa87[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:32:01 2024 -0700
+
+    Delete TAR.html
+
+[33mcommit bb3af905eda077dc67f67a5c72944e91735b6150[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:31:50 2024 -0700
+
+    Delete Special Allowance.html
+
+[33mcommit f5ed786a714837538bcef275a433789d90910620[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:31:42 2024 -0700
+
+    Delete Regularform.html
+
+[33mcommit 272c2a7fa62418150c20e9aefe7f892a67972585[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:31:32 2024 -0700
+
+    Delete Regular Allowance.html
+
+[33mcommit bd0eeb37f1ca9c7817b4a15d291e084dc2b38520[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:31:23 2024 -0700
+
+    Delete GAR.html
+
+[33mcommit e89781d3b26f6795e8d0dcc02cf383fbd52f46c6[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:30:58 2024 -0700
+
+    Delete FTTSA.html
+
+[33mcommit ef3d2a2a40239f815bd13f2870d945c2cc19506e[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:30:46 2024 -0700
+
+    Delete FTTSA(2).html
+
+[33mcommit 690ed74366d7b0245846fc942d1fb03ced95683f[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 13:30:34 2024 -0700
+
+    Delete BAR.html
+
+[33mcommit 55ed1aa91737ebebf1d7a229af21e44589e416bd[m
+Merge: 403232f 27c6c30
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 14 03:00:39 2024 +0800
+
+    updated db
+
+[33mcommit 403232f68a6f7a88be3c15b086ee74b02542ff26[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 14 02:52:41 2024 +0800
+
+    updated database
+
+[33mcommit 27c6c3052ff6ac47958a41bce2acee720a685e4d[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 08:47:39 2024 -0700
+
+    add the css of the regular and special allowance
+
+[33mcommit 5b263f100f1a6af9497999ecb40e07137b2962cd[m
+Merge: 3623791 7b82d18
+Author: atsirhc <algarnechrista@gmail.com>
+Date:   Sun Oct 13 18:29:25 2024 +0800
+
+    Merge branch 'master' of https://github.com/HartFinne/ScholarTrack
+
+[33mcommit 36237918445b18600b202f055549d31593437dbc[m
+Author: atsirhc <algarnechrista@gmail.com>
+Date:   Sun Oct 13 18:29:09 2024 +0800
+
+    added applicant ui and updated mainhome css
+
+[33mcommit 7b82d18e940d32bfe0d82f778d0e58ccb8d20b01[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 03:03:51 2024 -0700
+
+    add regular and special allowance via upload
+
+[33mcommit a78daccd7a5d266c37506213803810600f323dd7[m
+Author: itsmeJayz <150787602+itsmeJayz@users.noreply.github.com>
+Date:   Sun Oct 13 02:51:56 2024 -0700
+
+    add regular allowance html
+
+[33mcommit 382330a9996890d40e384fcc7c5c1674178cbef9[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Sat Oct 12 11:26:05 2024 +0800
+
+    merge complete no errors i think hahaha
+
+[33mcommit 6024f5b4bf7b7b8d623bb1f1bc1d320c5bd4c274[m
+Merge: b7bfec0 a2e6305
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Sat Oct 12 11:17:27 2024 +0800
+
+    Merge branch 'master' of https://github.com/HartFinne/ScholarTrack
+
+[33mcommit b7bfec0631c206044b00365c3d7a1dfd04b7f247[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Sat Oct 12 11:01:42 2024 +0800
+
+    tapos na gradesub
+
+[33mcommit a2e63054902526745f307aaa52e03f8bf1f13158[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sat Oct 12 05:28:22 2024 +0800
+
+    staff update
+
+[33mcommit 5f96a2e14a077815e1bec7db63777672b3f3a790[m
+Merge: ad71776 68daa65
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Fri Oct 11 21:25:40 2024 +0800
+
+    merge complete
+
+[33mcommit 68daa65ce6e647dc46f985aeb9267a214ff711b7[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Fri Oct 11 21:11:00 2024 +0800
+
+    scholartrackv2
+
+[33mcommit ad71776bfb923b3e2741ac0caef1792f970fb29d[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 10 23:35:37 2024 +0800
+
+    compiled updates
+
+[33mcommit cd684734a3ecf9bc5924a2c2ea70fafcb669f7e8[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 10 07:56:12 2024 +0800
+
+    update staff session
+
+[33mcommit 910fcc99a77373b07e423621375650488c05d585[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 10 07:29:35 2024 +0800
+
+    update staff session
+
+[33mcommit 1bfacf000bfb467df4005a8215c6eb744844ce87[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 10 05:49:43 2024 +0800
+
+    ok na staff session (not sure ahshasha)
+
+[33mcommit 8ea77a0dca6d54c8f791c359a128e507271b950c[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 10 05:13:59 2024 +0800
+
+    update staff login
+
+[33mcommit 9b385ac17f072e7ef3d60eeb28bdd9b8a208f70c[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Thu Oct 10 04:54:20 2024 +0800
+
+    updated staff login
+
+[33mcommit f2f3ee29de3c01dc8747f16462e61983881d4af4[m
+Merge: da7f981 124e8d1
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Wed Oct 9 17:54:27 2024 +0800
+
+    merge
+
+[33mcommit da7f981000c28677f032d5c0e90fb64f6fd668c8[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Wed Oct 9 16:37:31 2024 +0800
+
+    login and register tapos na
+
+[33mcommit 124e8d19c343fd330a60d6bdafb009edd00d0182[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Wed Oct 9 03:44:15 2024 +0800
+
+    updated login and register - staff
+
+[33mcommit 34112a5f551957b26c0b8000327f02deccd26298[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Wed Oct 9 02:40:06 2024 +0800
+
+    done staff account creation sa system admin
+
+[33mcommit 7f0f5900679abfbe55f6a8b4a1dafa80d66710d2[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 7 22:14:59 2024 +0800
+
+    added system admin UI
+
+[33mcommit 0b31fd89138dc9bba897009d45395aa1b940851c[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Mon Oct 7 03:22:26 2024 +0800
+
+    fixed routing in staff UI
+
+[33mcommit e94b8265ba54993a921d6db962aad7447452c5e6[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Sun Oct 6 21:55:38 2024 +0800
+
+    homeController inaayos pa
+
+[33mcommit ed0c1957735a1f74b7590378f24b9ac2ed710aaa[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sun Oct 6 20:16:00 2024 +0800
+
+    added staff ui
+
+[33mcommit 3405e390cca9ffd21756914892cf5ad30ba75f59[m
+Author: eyyiii <jeyempleo@gmail.com>
+Date:   Sun Oct 6 20:07:32 2024 +0800
+
+    added staff ui
+
+[33mcommit 40891d5ae77f6e80b58607b201e1f13c819adeea[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Thu Oct 3 01:46:34 2024 +0800
+
+    updated na yung mga links
+
+[33mcommit 25eafc0c9cec6d599b75484e96215d5da6e51cf2[m
+Author: HartFinne <167497706+HartFinne@users.noreply.github.com>
+Date:   Thu Sep 5 10:51:25 2024 +0800
+
+    first commit

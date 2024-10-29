@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Scholar;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\CommunityService;
-use App\Models\CsAttendance;
-use App\Models\CsRegistration;
+use App\Models\communityservice;
+use App\Models\csattendance;
+use App\Models\csregistration;
 use App\Models\User;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Support\Carbon;
