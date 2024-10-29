@@ -119,6 +119,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/scholar/{id}', [StaffController::class, 'showScholarProfile'])->name('scholar-viewinfo');
     Route::get('/grade-details/{gid}', [StaffController::class, 'showgradesinfo'])->name('scholar-gradesinfo');
     Route::post('/update-grade-status/{gid}', [StaffController::class, 'updategradestatus'])->name('updategradestatus');
+    Route::post('/update-scholarship-status/{caseCode}', [StaffController::class, 'updatescholarshipstatus'])->name('updatescholarshipstatus');
     // COMMUNITY SERVICE
     Route::get('/community-service-overview', [StaffController::class, 'showCommunityService'])->name('communityservice');
     Route::get('/community-service-open', [StaffController::class, 'showCSOpenEvents'])->name('communityservice-open');

@@ -22,8 +22,10 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <a href="{{ route('allowancerequests-special') }}" class="link-success">&lt Go back</a>
         <div class="container mt-5">
+            <div class="col-md-1 mb-2" style="margin-left: auto;">
+                <a href="{{ route('allowancerequests-special') }}" class="btn btn-success w-100">Go back</a>
+            </div>
             <div class="row" id="confirmmsg">
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
@@ -66,7 +68,7 @@
                             <div class="col-sm-8">
                                 <input type="date" name="releasedate" class="form-control"
                                     value="{{ $request->releasedate ? $request->releasedate : '' }}"
-                                    min="{{ date('Y-m-d') }}">
+                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}">
                             </div>
                         </div>
                         <div class="mb-3 row">

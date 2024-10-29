@@ -14,6 +14,7 @@ class criteria extends Model
     protected $primaryKey = 'crid';
 
     protected $fillable = [
+        'cshours',
         'cgwa',
         'shsgwa',
         'jhsgwa',

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('criteria', function (Blueprint $table) {
             $table->increments('crid');
+            $table->unsignedInteger('cshours');
             $table->float('cgwa');
             $table->float('shsgwa');
             $table->float('jhsgwa');

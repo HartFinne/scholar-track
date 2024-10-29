@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -29,6 +30,20 @@
             </div>
         </div>
         <div class="container">
+            <div class="row">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                        {!! session('error') !!}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+            </div>
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
                     <span style="font-size: 18px; font-weight: bold"><strong>Personal Information</strong></span>
@@ -37,33 +52,92 @@
                     <!-- Scholarship Information Section -->
                     <div class="mb-3">
                         <h5 class="text-success">SCHOLARSHIP INFORMATION</h5>
-                        <div class="row">
-                            <div class="col-md-6"><strong>Case Code:</strong> {{ $data->caseCode }}</div>
-                            <div class="col-md-6"><strong>Assigned Area:</strong> {{ $data->scholarshipinfo->area }}
+                        <form class="row" action="{{ route('updatescholarshipstatus', $data->caseCode) }}"
+                            method="POST">
+                            @csrf
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Case Code</div>
+                                <div class="col-md-8">: {{ $data->caseCode }}</div>
                             </div>
-                            <div class="col-md-6"><strong>Scholar Type:</strong>
-                                {{ $data->scholarshipinfo->scholartype }}</div>
-                            <div class="col-md-6"><strong>Start of Scholarship:</strong>
-                                {{ \Carbon\Carbon::parse($data->scholarshipinfo->startdate)->format('m - d - Y') }}
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Assigned Area</div>
+                                <div class="col-md-8">: {{ $data->scholarshipinfo->area }}</div>
                             </div>
-                            <div class="col-md-6"><strong>End of Scholarship:</strong>
-                                {{ \Carbon\Carbon::parse($data->scholarshipinfo->enddate)->format('m - d - Y') }}</div>
-                            <div class="col-md-6"><strong>Scholarship Status:</strong>
-                                {{ $data->scholarshipinfo->scholarshipstatus }}</div>
-                        </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Scholar Type</div>
+                                <div class="col-md-8">: {{ $data->scholarshipinfo->scholartype }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Start of Scholarship</div>
+                                <div class="col-md-8">:
+                                    {{ \Carbon\Carbon::parse($data->scholarshipinfo->startdate)->format('m - d - Y') }}
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">End of Scholarship</div>
+                                <div class="col-md-8">:
+                                    {{ \Carbon\Carbon::parse($data->scholarshipinfo->enddate)->format('m - d - Y') }}
+                                </div>
+                            </div>
+                            <div class="row col-md-6 d-flex align-items-center">
+                                <div class="col-md-4 fw-bold">Scholarship Status</div>
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <span>:&nbsp;</span>
+                                    @php
+                                        if ($data->scholarshipinfo->scholarshipstatus == 'Continuing') {
+                                            $style = 'border-success text-success';
+                                        } elseif ($data->scholarshipinfo->scholarshipstatus == 'On-Hold') {
+                                            $style = 'border-warning text-warning';
+                                        } else {
+                                            $style = 'border-danger text-danger';
+                                        }
+                                    @endphp
+                                    <select name="scholarshipstatus"
+                                        class="form-select border {{ $style }} fw-bold">
+                                        <option value="Continuing"
+                                            {{ $data->scholarshipinfo->scholarshipstatus == 'Continuing' ? 'selected' : '' }}>
+                                            Continuing
+                                        </option>
+                                        <option value="On-Hold"
+                                            {{ $data->scholarshipinfo->scholarshipstatus == 'On-Hold' ? 'selected' : '' }}>
+                                            On-Hold
+                                        </option>
+                                        <option value="Terminated"
+                                            {{ $data->scholarshipinfo->scholarshipstatus == 'Terminated' ? 'selected' : '' }}>
+                                            Terminated
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-success">Update</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
 
                     <!-- Basic Information Section -->
                     <div class="mb-3">
                         <h5 class="text-success">BASIC INFORMATION</h5>
                         <div class="row">
-                            <div class="col-md-6"><strong>Name:</strong> {{ $data->basicInfo->scLastname }},
-                                {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</div>
-                            <div class="col-md-6"><strong>Date of Birth:</strong>
-                                {{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m - d - Y') }}</div>
-                            <div class="col-md-6"><strong>Sex:</strong> {{ $data->basicInfo->scSex }}</div>
-                            <div class="col-md-6"><strong>T-Shirt Size:</strong>
-                                {{ $data->clothingSize->scTShirtSize }}</div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Name</div>
+                                <div class="col-md-8">: {{ $data->basicInfo->scLastname }},
+                                    {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Date of Birth</div>
+                                <div class="col-md-8">:
+                                    {{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('m - d - Y') }}
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Sex</div>
+                                <div class="col-md-8">: {{ $data->basicInfo->scSex }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">T-Shirt Size</div>
+                                <div class="col-md-8">: {{ $data->clothingSize->scTShirtSize }}</div>
+                            </div>
                         </div>
                     </div>
 
@@ -71,13 +145,24 @@
                     <div class="mb-3">
                         <h5 class="text-success">ADDRESS INFORMATION</h5>
                         <div class="row">
-                            <div class="col-md-6"><strong>Home Address:</strong>
-                                {{ old('scResidential', $data->addressinfo->scResidential) }}</div>
-                            <div class="col-md-6"><strong>Barangay:</strong> {{ $data->addressinfo->scBarangay }}</div>
-                            <div class="col-md-6"><strong>City/Municipality:</strong> {{ $data->addressinfo->scCity }}
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Home Address</div>
+                                <div class="col-md-8">: {{ old('scResidential', $data->addressinfo->scResidential) }}
+                                </div>
                             </div>
-                            <div class="col-md-6"><strong>Permanent Address:</strong>
-                                {{ old('scResidential', $data->addressinfo->scResidential) }}</div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Barangay</div>
+                                <div class="col-md-8">: {{ $data->addressinfo->scBarangay }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">City/Municipality</div>
+                                <div class="col-md-8">: {{ $data->addressinfo->scCity }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Permanent Address</div>
+                                <div class="col-md-8">: {{ old('scResidential', $data->addressinfo->scResidential) }}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -85,14 +170,26 @@
                     <div class="mb-3">
                         <h5 class="text-success">EMERGENCY CONTACT</h5>
                         <div class="row">
-                            <div class="col-md-6"><strong>Name:</strong>
-                                {{ old('scGuardianName', $data->basicInfo->scGuardianName) }}</div>
-                            <div class="col-md-6"><strong>Relation:</strong>
-                                {{ old('scRelationToGuardian', $data->basicInfo->scRelationToGuardian) }}</div>
-                            <div class="col-md-6"><strong>Email Address:</strong>
-                                {{ old('scGuardianEmailAddress', $data->basicInfo->scGuardianEmailAddress) }}</div>
-                            <div class="col-md-6"><strong>Contact Number:</strong>
-                                {{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}</div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Name</div>
+                                <div class="col-md-8">: {{ old('scGuardianName', $data->basicInfo->scGuardianName) }}
+                                </div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Relation</div>
+                                <div class="col-md-8">:
+                                    {{ old('scRelationToGuardian', $data->basicInfo->scRelationToGuardian) }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Email Address</div>
+                                <div class="col-md-8">:
+                                    {{ old('scGuardianEmailAddress', $data->basicInfo->scGuardianEmailAddress) }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Contact Number</div>
+                                <div class="col-md-8">:
+                                    {{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}</div>
+                            </div>
                         </div>
                     </div>
 
@@ -100,16 +197,26 @@
                     <div>
                         <h5 class="text-success">EDUCATIONAL BACKGROUND</h5>
                         <div class="row">
-                            <div class="col-md-6"><strong>School Level:</strong> {{ $data->education->scSchoolLevel }}
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">School Level</div>
+                                <div class="col-md-8">: {{ $data->education->scSchoolLevel }}</div>
                             </div>
-                            <div class="col-md-6"><strong>School Name:</strong> {{ $data->education->scSchoolName }}
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">School Name</div>
+                                <div class="col-md-8">: {{ $data->education->scSchoolName }}</div>
                             </div>
-                            <div class="col-md-6"><strong>Grade/Year Level:</strong>
-                                {{ $data->education->scYearGrade }}</div>
-                            <div class="col-md-6"><strong>Course/Strand:</strong>
-                                {{ $data->education->scCourseStrandSec }}</div>
-                            <div class="col-md-6"><strong>Academic Year:</strong>
-                                {{ $data->education->scAcademicYear }}</div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Grade/Year Level</div>
+                                <div class="col-md-8">: {{ $data->education->scYearGrade }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Course/Strand</div>
+                                <div class="col-md-8">: {{ $data->education->scCourseStrandSec }}</div>
+                            </div>
+                            <div class="row col-md-6">
+                                <div class="col-md-4 fw-bold">Academic Year</div>
+                                <div class="col-md-8">: {{ $data->education->scAcademicYear }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>

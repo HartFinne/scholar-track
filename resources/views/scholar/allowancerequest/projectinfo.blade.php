@@ -28,7 +28,18 @@
 
         <div class="request-view">
             <div class="request-status">
-                <h6 class="request-stat">{{ $request->status }}</h6>
+                @php
+                    $statusClasses = [
+                        'Pending' => 'bg-warning',
+                        'Accepted' => 'bg-success',
+                        'Completed' => 'bg-success',
+                        'Rejected' => 'bg-danger',
+                    ];
+
+                    $statusClass = $statusClasses[$request->status] ?? 'bg-secondary text-white';
+                @endphp
+
+                <h6 class="request-stat {{ $statusClass }} text-white">{{ $request->status }}</h6>
             </div>
 
             <div class="request-info">
@@ -36,7 +47,7 @@
                 <div class="info">
                     <div class="label">Date of Request:</div>
                     <div class="value">
-                        <span>{{ $request->releasedate ? \Carbon\Carbon::parse($request->created_at)->format('F d, Y') : '--' }}</span>
+                        <span>{{ \Carbon\Carbon::parse($request->created_at)->format('F d, Y') }}</span>
                     </div>
 
                     <div class="label">Date of Release:</div>
@@ -49,7 +60,8 @@
 
                     <div class="label">Name:</div>
                     <div class="value"><span>{{ $scholar->basicInfo->scLastname }},
-                            {{ $scholar->basicInfo->scFirstname }}, {{ $scholar->basicInfo->scMiddlename }}</span></div>
+                            {{ $scholar->basicInfo->scFirstname }}, {{ $scholar->basicInfo->scMiddlename }}</span>
+                    </div>
 
                     <div class="label">School:</div>
                     <div class="value"><span>{{ $scholar->education->scSchoolName }}</span></div>

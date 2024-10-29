@@ -23,6 +23,11 @@
         <div class="row">
             <span class="pagetitle">Scholars Performance Evaluation (College Only)</span>
         </div>
+        @if ($acadyears->isEmpty())
+            <div class="row">
+                <span class="fw-bold text-center">No Available Data.</span>
+            </div>
+        @endif
         @foreach ($acadyears as $acadyear)
             <div class="row">
                 <span class="fw-bold">Academic Year: <strong>{{ $acadyear->acadyear }}</strong></span>

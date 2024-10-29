@@ -45,27 +45,20 @@
         </div>
         <div class="divider"></div>
         <div class="groupB">
-            <button class="togglebuttons" id="btnmanageform" onclick="toggleforms()">
-                Manage Special Allowance Forms
-                <i class="fas fa-caret-right"></i>
-            </button>
-            <div class="groupB1 my-3" id="ctnmanageform" style="display: none;">
-                <div class="row" id="confirmmsg">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                            {!! session('error') !!}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
-                    @endif
-                </div>
+            <span class="pagetitle">Manage Special Allowance Forms</span>
+            <div class="groupB1 my-3" id="ctnmanageform" style="display: flex;">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                        {!! session('error') !!}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
                 <p class="text-muted">Note: Uploading a new file will replace the existing file with the updated
                     version. This action cannot be undone.</p>
                 <form method="POST" action="{{ route('transporeimbursement') }}" enctype="multipart/form-data"
@@ -103,8 +96,7 @@
                         <label for="liquidationForm"><strong>Liquidation Form</strong></label>
                     </div>
                     <div class="col-md-8">
-                        <input type="file" name="liquidationform" class="form-control" id="liquidationForm"
-                            required>
+                        <input type="file" name="liquidationform" class="form-control" id="liquidationForm" required>
                     </div>
                     <div class="col-md-1">
                         <button type="submit" class="btn btn-success w-100">Update File</button>
@@ -125,10 +117,8 @@
                     </div>
                 </form>
             </div>
-            <button class="togglebuttons" id="btnshowlist" onclick="togglerequestlist()">
-                List of Requests
-                <i class="fas fa-caret-right"></i>
-            </button>
+            <div class="divider"></div>
+            <span class="pagetitle">List of Requests</span>
             <div class="groupB1" id="ctnfiltertable active" style="display: flex;">
                 <div class="ctnfilter" id="ctnfilter">
                     <form action="#" class="filterform">

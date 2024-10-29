@@ -25,7 +25,20 @@
 
     <main class="ctn-main">
         <h1 class="title">Special Allowances:</h1>
-
+        <div class="row">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                    {!! session('error') !!}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
         <!-- ALLOWANCE BUTTONS -->
         <div class="sallowance">
             @if ($scholar->education->scSchoolLevel == 'College')
@@ -49,20 +62,6 @@
                 <button class="filter-btn">Completed</button>
                 <button class="filter-btn">Rejected</button>
             </div>
-        </div>
-        <div class="row">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                    {!! session('error') !!}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
         </div>
         <div class="ctn-table table-responsive">
             <table class="table table-bordered">

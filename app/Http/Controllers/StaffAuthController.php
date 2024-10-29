@@ -54,7 +54,7 @@ class StaffAuthController extends Controller
             $status = "Active";
 
             $nameParts = explode(' ', strtolower($request->name));
-            $password = end($nameParts) . '.scholartrack';
+            $password = end($nameParts) . '.st'; // password: surname.st
 
             Staccount::create([
                 'name' => $request->name,

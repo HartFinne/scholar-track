@@ -331,7 +331,6 @@ class ScholarController extends Controller
         $requnif = allowanceuniform::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
         $reqgrad = allowancegraduation::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
 
-        // Merge all collections into one
         $mergedrequests = $reqbook
             ->concat($reqevent)
             ->concat($reqthesis)
@@ -340,7 +339,6 @@ class ScholarController extends Controller
             ->concat($requnif)
             ->concat($reqgrad);
 
-        // Sort the merged collection by created_at
         $requests = $mergedrequests->sortBy('created_at')->values();
 
         return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar'));
@@ -352,19 +350,41 @@ class ScholarController extends Controller
         $cert = specialallowanceforms::where('filetype', 'PBCF')->first();
         $acknowledgement = specialallowanceforms::where('filetype', 'AR')->first();
         $liquidation = specialallowanceforms::where('filetype', 'LF')->first();
+
         if ($requesttype == 'TRF') {
+            if ($transpo == NULL) {
+                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+            }
             return view('scholar.allowancerequest.transporeq', compact('transpo'));
         } elseif ($requesttype == 'BAR') {
+            if ($cert == NULL || $acknowledgement == NULL || $liquidation == NULL) {
+                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+            }
             return view('scholar.allowancerequest.bookreq', compact('cert', 'acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'TAR') {
+            if ($acknowledgement == NULL || $liquidation == NULL) {
+                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+            }
             return view('scholar.allowancerequest.thesisreq', compact('acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'PAR') {
+            if ($cert == NULL || $acknowledgement == NULL || $liquidation == NULL) {
+                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+            }
             return view('scholar.allowancerequest.projectreq', compact('cert', 'acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'UAR') {
+            if ($acknowledgement == NULL || $liquidation == NULL) {
+                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+            }
             return view('scholar.allowancerequest.uniformreq', compact('acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'GAR') {
+            if ($acknowledgement == NULL || $liquidation == NULL) {
+                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+            }
             return view('scholar.allowancerequest.gradreq', compact('acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'FTTSAR') {
+            if ($acknowledgement == NULL || $liquidation == NULL) {
+                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+            }
             return view('scholar.allowancerequest.fieldtripreq', compact('acknowledgement', 'liquidation'));
         }
     }

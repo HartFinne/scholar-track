@@ -99,46 +99,51 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label for="cshours" class="form-label">Required CS Hours</label>
+                                <input type="text" class="form-control" id="cshours" name="cshours"
+                                    value="{{ $criteria->elemgwa ?? '' }}" placeholder="Not Set" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="cgwa" class="form-label">College GWA</label>
                                 <input type="text" class="form-control" id="cgwa" name="cgwa"
-                                    value="{{ $criteria->cgwa ?? '--' }}" required>
+                                    value="{{ $criteria->cgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
                                 <label for="shsgwa" class="form-label">Senior High GWA</label>
                                 <input type="text" class="form-control" id="shsgwa" name="shsgwa"
-                                    value="{{ $criteria->shsgwa ?? '--' }}" required>
+                                    value="{{ $criteria->shsgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
                                 <label for="jhsgwa" class="form-label">Junior High GWA</label>
                                 <input type="text" class="form-control" id="jhsgwa" name="jhsgwa"
-                                    value="{{ $criteria->jhsgwa ?? '--' }}" required>
+                                    value="{{ $criteria->jhsgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
                                 <label for="elemgwa" class="form-label">Elementary GWA</label>
                                 <input type="text" class="form-control" id="elemgwa" name="elemgwa"
-                                    value="{{ $criteria->elemgwa ?? '--' }}" required>
+                                    value="{{ $criteria->elemgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="fincome" class="form-label">Father's Income</label>
                                 <input type="text" class="form-control" id="fincome" name="fincome"
-                                    value="{{ $criteria->fincome ?? '--' }}" required>
+                                    value="{{ $criteria->fincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
                                 <label for="mincome" class="form-label">Mother's Income</label>
                                 <input type="text" class="form-control" id="mincome" name="mincome"
-                                    value="{{ $criteria->mincome ?? '--' }}" required>
+                                    value="{{ $criteria->mincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
                                 <label for="sincome" class="form-label">Siblings' Income</label>
                                 <input type="text" class="form-control" id="sincome" name="sincome"
-                                    value="{{ $criteria->sincome ?? '--' }}" required>
+                                    value="{{ $criteria->sincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
                                 <label for="aincome" class="form-label">Applicant's Income</label>
                                 <input type="text" class="form-control" id="aincome" name="aincome"
-                                    value="{{ $criteria->aincome ?? '--' }}" required>
+                                    value="{{ $criteria->aincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                         </div>
                     </div>

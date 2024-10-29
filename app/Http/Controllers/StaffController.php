@@ -32,6 +32,7 @@ use App\Models\allowanceproject;
 use App\Models\allowancethesis;
 use App\Models\allowancetranspo;
 use App\Models\allowanceuniform;
+use App\Models\Email;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -93,8 +94,41 @@ class StaffController extends Controller
 
     public function showScholarsCollege()
     {
-        $scholar = User::with(['basicInfo', 'education', 'addressInfo', 'grades', 'hcattendance', 'csattendance', 'penalty'])->get();
-        return view('staff.listcollege', compact('scholar'));
+        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])->get();
+
+        // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
+        foreach ($scholars as $scholar) {
+            $acadyearend = $scholar->scholarshipinfo->enddate;  // Ensure `enddate` is retrieved correctly
+            $acadyearstart = date('Y-m-d', strtotime('-1 year', strtotime($acadyearend)));  // Subtract one year from end date
+
+            // Latest GWA based on `caseCode`
+            $scholar->latestgwa = DB::table('grades')
+                ->where('caseCode', $scholar->caseCode)
+                ->orderBy('schoolyear', 'desc')
+                ->value('gwa');
+
+            // Total Community Service Hours within academic year
+            $scholar->totalcshours = csattendance::where('caseCode', $scholar->caseCode)
+                ->whereHas('communityservice', function ($query) use ($acadyearstart, $acadyearend) {
+                    $query->whereBetween('eventdate', [$acadyearstart, $acadyearend]);
+                })
+                ->sum('hoursspent');
+
+            // Total Humanities Class Attendance within academic year
+            $scholar->totalhcattendance = hcattendance::where('caseCode', $scholar->caseCode)
+                ->whereHas('humanitiesclass', function ($query) use ($acadyearstart, $acadyearend) {
+                    $query->whereBetween('hcdate', [$acadyearstart, $acadyearend]);
+                })
+                ->count();
+
+            // Total Penalties
+            $scholar->penaltycount = penalty::where('caseCode', $scholar->caseCode)->count();
+        }
+
+        // Count humanities events within the academic year range
+        $hcevents = humanitiesclass::whereBetween('hcdate', [$acadyearstart, $acadyearend])->count();
+
+        return view('staff.listcollege', compact('scholars', 'hcevents'));
     }
 
     public function showScholarsElem()
@@ -124,6 +158,21 @@ class StaffController extends Controller
             ->where('caseCode', $data->caseCode)->get();
 
         return view('staff.scholarsinfo', compact('data', 'grades', 'csattendances', 'hcattendances'));
+    }
+
+    public function  updatescholarshipstatus($caseCode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $scholar = scholarshipinfo::where('caseCode', $caseCode)->first();
+            $scholar->scholarshipstatus = $request->scholarshipstatus;
+            $scholar->save();
+            DB::commit();
+            return redirect()->back()->with('success', 'Successfully updated scholarship status.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to update scholarship status. ' . $e->getMessage());
+        }
     }
 
     public function showgradesinfo($gid)
@@ -202,6 +251,7 @@ class StaffController extends Controller
         DB::beginTransaction();
         try {
             $request->validate([
+                'cshours' => 'required|numeric|min:1',
                 'cgwa' => 'required|numeric|min:1|max:5',
                 'shsgwa' => 'required|numeric|min:1|max:100',
                 'jhsgwa' => 'required|numeric|min:1|max:100',
@@ -216,6 +266,7 @@ class StaffController extends Controller
 
             if (is_null($criteria)) {
                 criteria::create([
+                    'cshours' => $request->cshours,
                     'cgwa' => $request->cgwa,
                     'shsgwa' => $request->shsgwa,
                     'jhsgwa' => $request->jhsgwa,
@@ -227,6 +278,7 @@ class StaffController extends Controller
                 ]);
             } else {
                 $criteria->update([
+                    'cshours' => $request->cshours,
                     'cgwa' => $request->cgwa,
                     'shsgwa' => $request->shsgwa,
                     'jhsgwa' => $request->jhsgwa,
@@ -252,13 +304,14 @@ class StaffController extends Controller
     public function addinstitution(Request $request)
     {
         DB::beginTransaction();
+
         try {
             $request->validate([
                 'institute' => 'required|string|max:255',
             ]);
 
             institutions::create([
-                'schoolname' => $request->institute
+                'schoolname' => $request->institute,
             ]);
 
             DB::commit();
@@ -269,6 +322,10 @@ class StaffController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollback();
+
+            if (institutions::where('schoolname', $request->institute)->exists()) {
+                return redirect()->back()->with('error', 'Error: Duplicate institution.')->withFragment('confirmmsg2');
+            }
 
             return redirect()->back()->with('error', 'Failed to add institution.')->withFragment('confirmmsg2');
         }
@@ -295,6 +352,11 @@ class StaffController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollback();
+
+            if (institutions::where('schoolname', $request->institute)->exists()) {
+                return redirect()->back()->with('error', 'Error: Duplicate institution.')->withFragment('confirmmsg2');
+            }
+
             return redirect()->back()->with('error', 'Failed to update institution name.')->withFragment('confirmmsg2');
         }
     }
@@ -338,6 +400,10 @@ class StaffController extends Controller
             } catch (\Exception $e) {
                 DB::rollback();
 
+                if (courses::where('coursename', $request->course)->exists()) {
+                    return redirect()->back()->with('error', 'Error: Duplicate course.')->withFragment('confirmmsg2');
+                }
+
                 return redirect()->back()->with('error', 'Failed to add course.')->withFragment('confirmmsg2');
             }
         } elseif ($level == 'Senior High') {
@@ -360,6 +426,10 @@ class StaffController extends Controller
             } catch (\Exception $e) {
                 DB::rollback();
 
+                if (courses::where('coursename', $request->strand)->exists()) {
+                    return redirect()->back()->with('error', 'Error: Duplicate strand.')->withFragment('confirmmsg2');
+                }
+
                 return redirect()->back()->with('error', 'Failed to add strand.')->withFragment('confirmmsg2');
             }
         }
@@ -375,18 +445,31 @@ class StaffController extends Controller
         try {
             $course = courses::findOrFail($coid);
 
+            $type = '';
+
+            if ($course->level == 'College') {
+                $type = 'course';
+            } else {
+                $type = 'strand';
+            }
+
             $course->update([
                 'coursename' => $request->newcoursename
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Successfully updated the course name.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('success', "Successfully updated {$type}.")->withFragment('confirmmsg2');
         } catch (ValidationException $e) {
             DB::rollback();
             return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Failed to update institution name.')->withFragment('confirmmsg2');
+
+            if (courses::where('coursename', $request->newcoursename)->exists()) {
+                return redirect()->back()->with('error', "Error: Duplicate {$type}.")->withFragment('confirmmsg2');
+            }
+
+            return redirect()->back()->with('error', "Failed to update {$type}.")->withFragment('confirmmsg2');
         }
     }
 
@@ -396,13 +479,21 @@ class StaffController extends Controller
         try {
             $course = courses::findOrFail($coid);
 
+            $type = '';
+
+            if ($course->level == 'College') {
+                $type = 'course';
+            } else {
+                $type = 'strand';
+            }
+
             $course->delete();
 
             DB::commit();
-            return redirect()->back()->with('success', 'Successfully deleted the institution.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('success', "Successfully deleted {$type}.")->withFragment('confirmmsg2');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Failed to delete institution.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('error', "Failed to delete {$type}.")->withFragment('confirmmsg2');
         }
     }
 
@@ -1305,16 +1396,25 @@ class StaffController extends Controller
     public function importemails(Request $request)
     {
         try {
+            // Validate the file upload
             $request->validate([
-                'file' => ['mimes:xls,xlsx', 'max:25600'], // 25MB limit in kilobytes
+                'file' => ['required', 'mimes:xls,xlsx', 'max:25600'], // Ensure file is required and within limits
             ], [
                 'file.mimes' => 'The uploaded file must be an Excel file (.xls, .xlsx).',
                 'file.max' => 'The uploaded file may not be larger than 25MB.',
             ]);
 
+            // Check if the Email table is empty
+            if (Email::exists()) { // Returns true if there are records
+                Email::truncate();
+            }
+
+            // Import the file using Maatwebsite Excel
             Excel::import(new EmailsImport, $request->file('file'));
 
             return redirect()->back()->with('importsuccess', 'File imported successfully.');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            return redirect()->back()->with('importerror', 'Import failed due to file validation error: ' . $e->getMessage());
         } catch (\Exception $e) {
             return redirect()->back()->with('importerror', 'Import was unsuccessful. Error: ' . $e->getMessage());
         }
