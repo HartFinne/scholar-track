@@ -44,6 +44,7 @@ class AnnouncementController extends Controller
             'recipients' => json_encode($request->recipients),
         ]);
 
+
         // Prepare the API key and secret from the .env file
         $api_key = env('MOVIDER_API_KEY');
         $api_secret = env('MOVIDER_API_SECRET');
@@ -52,6 +53,7 @@ class AnnouncementController extends Controller
         $users = [];
         if (in_array('all', $request->recipients)) {
             $users = User::all(); // Select all users
+
         } else {
             $users = User::whereIn('id', $request->recipients)->get(); // Select only the chosen users
         }
@@ -96,9 +98,11 @@ class AnnouncementController extends Controller
                 // Send an email notification
                 try {
                     $user->notify(new AnnouncementCreated($announcement));
+                    dd($user);
                 } catch (\Exception $e) {
                     // If email notification failed, add to failed list
                     $failedEmail[] = $user->email;
+                    dd($failedEmail[]);
                 }
             }
         }

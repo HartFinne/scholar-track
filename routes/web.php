@@ -11,6 +11,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\Scholar\RegularAllowanceForm;
 
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
@@ -76,9 +77,10 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
 });
 
 Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function () {
-    Route::view('/scregular', 'scholar.allowancerequest.scregular')->name('scregular');
-    Route::view('/regularform', 'scholar.allowancerequest.regularform')->name('regularform');
-    Route::view('/regularforminfo', 'scholar.allowancerequest.regularforminfo')->name('regularforminfo');
+    Route::get('/scregular', [RegularAllowanceForm::class, 'showSCRegular'])->name('scregular');
+    Route::get('/regularform', [RegularAllowanceForm::class, 'showRegularForm'])->name('regularform');
+    Route::post('/regularform', [RegularAllowanceForm::class, 'storeRegularForm'])->name('regularform.post');
+    Route::get('/regularforminfo/{id}', [RegularAllowanceForm::class, 'showRegularFormInfo'])->name('regularforminfo');
     // Allowance Requests : Special
     Route::get('/special', [ScholarController::class, 'showspecialallowance'])->name('scspecial');
     Route::get('/special/instruction/{requesttype}', [ScholarController::class, 'showrequestinstruction'])->name('specialreqs');

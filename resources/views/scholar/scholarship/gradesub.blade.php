@@ -24,6 +24,7 @@
     <x-alert />
     <!-- MAIN -->
     <div class="ctn-main">
+        <a href="" class="goback">&lt Go back</a>
         <div class="text-center">
             <h1 class="sub-title">Grades Submission</h1>
             <p class="desc">Submit your GWA and the scanned copy of pdf file of your grades.</p>
@@ -46,17 +47,9 @@
 
             <!-- Semester Selection -->
             <select class="sem" aria-label="qtrsem" name="semester" required>
-                @if ($educ->scSchoolLevel == 'College' || $educ->scSchoolLevel == 'Senior High')
-                    <option value="" disabled selected hidden>Semester</option>
-                    <option value="1st Semester">1ST SEMESTER</option>
-                    <option value="2nd Semester">2ND SEMESTER</option>
-                @else
-                    <option value="" disabled selected hidden>Quarter</option>
-                    <option value="1st Semester">1ST QUARTER</option>
-                    <option value="2nd Semester">2ND QUARTER</option>
-                    <option value="2nd Semester">3RD QUARTER</option>
-                    <option value="2nd Semester">4TH QUARTER</option>
-                @endif
+                <option value="" disabled selected hidden>Semester</option>
+                <option value="1st Semester">1ST SEMESTER</option>
+                <option value="2nd Semester">2ND SEMESTER</option>
             </select>
 
             <!-- GWA Input -->
@@ -96,7 +89,7 @@
                 <tbody>
                     @foreach ($grades as $grade)
                         <tr>
-                            <td>S.Y. {{ $grade->schoolyear }}</td>
+                            <td>S.Y. {{ $academicYear }}</td>
                             <td>{{ $grade->SemesterQuarter }}</td>
                             <td>{{ $grade->GWA }}</td>
                             <td>{{ $grade->GradeStatus }}</td>

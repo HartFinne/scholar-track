@@ -49,8 +49,38 @@
                     <div class="value">: </div>
                 </div>
                 <div class="grades-img text-center">
-                    <img src="{{ asset('storage/' . $grade->ReportCard) }}" alt="Report Card"
-                        style="max-width: 100%; height: auto;">
+
+                    @php
+                        // Get the file extension
+                        $fileExtension = pathinfo($grade->ReportCard, PATHINFO_EXTENSION);
+
+                        // dd($fileExtension);
+
+                    @endphp
+                    @if (in_array($fileExtension, ['jpeg', 'jpg', 'png', 'gif']))
+                        <!-- Display image files -->
+                        <img src="{{ asset('storage/' . $grade->ReportCard) }}" alt="Report Card"
+                            style="max-width: 100%; height: auto;">
+                    @elseif($fileExtension === 'pdf')
+                        <!-- Display PDF files -->
+                        <iframe src="{{ asset('storage/' . $grade->ReportCard) }}" width="100%" height="600px">
+                            Your browser does not support iframes. Please download the PDF file
+                            <a href="{{ asset('storage/' . $grade->ReportCard) }}">here</a>.
+                        </iframe>
+                    @elseif(in_array($fileExtension, ['doc', 'docx']))
+                        <!-- Display link for DOC and DOCX files (since browsers can't display these directly) -->
+                        <p>Your browser cannot display this document. Please download it below:</p>
+                        <a href="{{ asset('storage/' . $grade->ReportCard) }}" target="_blank" class="btn btn-primary">
+                            Download Document
+                        </a>
+                    @else
+                        <!-- Fallback message for unsupported file types -->
+                        <p>File type not supported for preview. Please download the file below:</p>
+                        <a href="{{ asset('storage/' . $grade->ReportCard) }}" target="_blank" class="btn btn-primary">
+                            Download File
+                        </a>
+                    @endif
+
                 </div>
             </div>
         </div>

@@ -137,9 +137,10 @@ class ScholarController extends Controller
 
         // Fetch grades associated with the user's education
         // Fetch academic performance data using a join
-        $academicData = grades::selectRaw("CONCAT(grades.schoolyear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
-            ->where('grades.caseCode', $user->caseCode) // Filter by user's caseCode
-            ->orderBy('grades.schoolyear', 'asc')
+        $academicData = ScEducation::join('grades', 'sc_education.eid', '=', 'grades.eid')
+            ->selectRaw("CONCAT(sc_education.scAcademicYear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
+            ->where('sc_education.caseCode', $user->caseCode) // Filter by user's caseCode
+            ->orderBy('sc_education.scAcademicYear', 'asc')
             ->orderBy('grades.SemesterQuarter', 'asc')
             ->get();
 
@@ -176,13 +177,19 @@ class ScholarController extends Controller
     {
         // Retrieve the currently authenticated user's caseCode
         $user = Auth::user(); // Get the authenticated user
-        $educ = ScEducation::where('caseCode', $user->caseCode)->first(); // Access the caseCode property
+        $caseCode = $user->caseCode; // Access the caseCode property
+
+        // Find the corresponding sc_education entry based on caseCode
+        $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
 
         // Fetch grades associated with the education entry
-        $grades = grades::where('caseCode', $user->caseCode)->get();
+        $grades = grades::where('eid', $scEducation->eid)->get();
+
+        // Retrieve the academic year from the scEducation record
+        $academicYear = $scEducation->scAcademicYear;
 
         // Pass the grades and academic year to the view
-        return view('scholar/scholarship.gradesub', compact('grades', 'educ'));
+        return view('scholar/scholarship.gradesub', compact('grades', 'academicYear'));
     }
 
     public function storeGradeSubmission(Request $request)
@@ -203,18 +210,20 @@ class ScholarController extends Controller
         try {
             // Retrieve the currently authenticated user's caseCode
             $user = Auth::user(); // Get the authenticated user
-            $educ = ScEducation::where('caseCode', $user->caseCode)->first();
-            $grade = grades::where('caseCode', $user->caseCode)->where('schoolyear', $request->schoolyear)->first();
+            $caseCode = $user->caseCode; // Access the caseCode property
+
+            // Find the corresponding sc_education entry based on caseCode
+            $scEducation = ScEducation::where('caseCode', $caseCode)->firstOrFail();
+            $academicYear = $scEducation->scAcademicYear; // Retrieve the academic year from sc_education
 
             // Check if an entry for the same academic year and semester already exists
-            $existingGrade = grades::where('caseCode', $user->caseCode)
+            $existingGrade = grades::where('eid', $scEducation->eid)
                 ->where('SemesterQuarter', $request->semester)
-                ->where('schoolyear', $request->schoolyear)
                 ->first();
 
 
             if ($existingGrade) {
-                return redirect()->back()->withErrors(['error' => 'A grade for this semester in the academic year ' . $grade->schoolyear . ' has already been submitted.'])->withInput();
+                return redirect()->back()->withErrors(['error' => 'A grade for this semester in the academic year ' . $academicYear . ' has already been submitted.'])->withInput();
             }
 
             // Handle file upload
@@ -230,14 +239,16 @@ class ScholarController extends Controller
                 return redirect()->back()->withErrors(['gradeImage' => 'File upload failed. Please try again.'])->withInput();
             }
 
+            // Determine the grade status based on the GWA value
+            $gradeStatus = ($request->gwa >= 3 && $request->gwa <= 5) ? 'Failed' : 'Pending';
+
             // Save the grade entry and link it to the educationID
             grades::create([
-                'caseCode' => $user->caseCode, // Link the grade to the scholar
-                'schoolyear' => $educ->scAcademicYear,
+                'eid' => $scEducation->eid, // Link the grade to the education entry
                 'SemesterQuarter' => $request->semester,
                 'GWA' => $request->gwa,
-                'ReportCard' => $filePath, // Store the file path
-                'GradeStatus' => 'Pending' // Default status or modify based on your logic
+                'ReportCard' => $filePath, // Store the path relative to 'storage/app/public'
+                'GradeStatus' => $gradeStatus // Set the status based on the GWA value
             ]);
 
             // Redirect on success and pass the grades data
