@@ -25,6 +25,9 @@ use App\Models\allowancethesis;
 use App\Models\allowancetranspo;
 use App\Models\allowanceuniform;
 use App\Models\Announcement;
+use App\Models\communityservice;
+use App\Models\csregistration;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class ScholarController extends Controller
@@ -322,11 +325,136 @@ class ScholarController extends Controller
             } elseif ($violation->hcastatus == "Left Early") {
                 return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
             }
+        } elseif ($letter->eventtype == 'Community Service') {
+            $csviolation = csregistration::where('csrid', $letter->conditionid)->first();
+
+            $eventinfo = communityservice::where('csid', $csviolation->csid)->first();
+
+
+            if ($csviolation->registatus == "Cancelled") {
+                return view('scholar.scholarship.lteinfo-cancelled', compact('letter', 'scholar', 'eventinfo', 'csviolation'));
+            } elseif ($csviolation->registatus == "ABSENT") {
+                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar',  'eventinfo', 'csviolation'));
+            } elseif ($csviolation->hcastatus == "Left Early") {
+                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+            }
         }
-        // elseif ($letter->eventtype == 'Community Service') {
-        //     $violation = csattendance::where('csaid', $letter->conditionid);
-        // }
     }
+
+    public function showLTEForm($lid)
+    {
+        return view('scholar.scholarship.lteform', compact(var_name: 'lid'));
+    }
+
+    public function storeLTEForm(Request $request, $lid)
+    {
+        // get the data in lte
+        $letter = lte::where('lid', $lid)->first();
+
+        // Validate the incoming request
+        $request->validate([
+            'explanation' => 'required|file|mimes:pdf,doc,docx|max:2048',
+            'reason' => 'required|string',
+            'medical-file' => 'nullable|file|mimes:jpeg,png,pdf|max:2048',
+            'academic-file' => 'nullable|file|mimes:jpeg,png,pdf|max:2048',
+            'death-file' => 'nullable|file|mimes:jpeg,png,pdf|max:2048',
+            'disaster-file' => 'nullable|file|mimes:jpeg,png,pdf|max:2048',
+        ]);
+
+        // Retrieve the currently authenticated user's details
+        $user = Auth::user();
+
+        // Construct the directory path based on the user's full name and case code
+        $directoryPath = 'scholars/'
+            . $user->basicInfo->scLastname . ', '
+            . $user->basicInfo->scFirstname . ' '
+            . $user->basicInfo->scMiddlename . '_'
+            . $user->caseCode . '/lte_submitted/' . $letter->eventtype . '/' .  $letter->conditionid;
+
+        // Ensure the directory exists
+        if (!Storage::exists('public/' . $directoryPath)) {
+            Storage::makeDirectory('public/' . $directoryPath);
+        }
+
+        // Store the explanation file in the specified directory
+        $explanationPath = $request->file('explanation')->storeAs(
+            'public/' . $directoryPath,
+            'explanation_' . time() . '.' . $request->file('explanation')->getClientOriginalExtension()
+        );
+
+        // Initialize the reason file path variable
+        $reasonFilePath = null;
+
+        // Depending on the selected reason, store the related file in the specified directory
+        switch ($request->input('reason')) {
+            case 'Medical':
+                if ($request->hasFile('medical-file')) {
+                    $reasonFilePath = $request->file('medical-file')->storeAs(
+                        'public/' . $directoryPath,
+                        'medical_' . time() . '.' . $request->file('medical-file')->getClientOriginalExtension()
+                    );
+                }
+                break;
+            case 'Academic Activity':
+                if ($request->hasFile('academic-file')) {
+                    $reasonFilePath = $request->file('academic-file')->storeAs(
+                        'public/' . $directoryPath,
+                        'academic_' . time() . '.' . $request->file('academic-file')->getClientOriginalExtension()
+                    );
+                }
+                break;
+            case 'Death of an Immediate Family Member':
+                if ($request->hasFile('death-file')) {
+                    $reasonFilePath = $request->file('death-file')->storeAs(
+                        'public/' . $directoryPath,
+                        'death_' . time() . '.' . $request->file('death-file')->getClientOriginalExtension()
+                    );
+                }
+                break;
+            case 'Natural and Human induced disasters':
+                if ($request->hasFile('disaster-file')) {
+                    $reasonFilePath = $request->file('disaster-file')->storeAs(
+                        'public/' . $directoryPath,
+                        'disaster_' . time() . '.' . $request->file('disaster-file')->getClientOriginalExtension()
+                    );
+                }
+                break;
+        }
+
+        // Convert paths to remove the 'public/' prefix so they can be accessed correctly via the browser
+        $explanationPathForDB = str_replace('public/', '', $explanationPath);
+        $reasonFilePathForDB = $reasonFilePath ? str_replace('public/', '', $reasonFilePath) : null;
+
+        // Retrieve the LTE record by its ID
+        $lte = LTE::findOrFail($lid);
+
+        // Update the record with new data
+        $lte->update([
+            'datesubmitted' => now(), // Update the date submitted to the current time
+            'explanation' => $explanationPathForDB,
+            'reason' => $request->reason,
+            'proof' => $reasonFilePathForDB,
+            'ltestatus' => 'To Review'
+            // other fields as needed...
+        ]);
+
+        return redirect()->route('sclte')->with('success', 'LTE submission successful.');
+    }
+
+    public function showSubLTEInfo($lid)
+    {
+
+        $letter = lte::where('lid', $lid)->first();
+
+        $concerncsregistration = csregistration::where('csrid', $letter->conditionid)->first();
+        $concernhcattendance = hcattendance::where('hcaid', $letter->conditionid)->first();
+        // for the if statement pdf, image
+        $fileExtensionExplanation = pathinfo($letter->explanation, PATHINFO_EXTENSION);
+        $fileExtensionProof = pathinfo($letter->proof, PATHINFO_EXTENSION);
+
+        return view('scholar.scholarship.sublteinfo', compact('letter', 'fileExtensionExplanation', 'fileExtensionProof', 'concerncsregistration', 'concernhcattendance'));
+    }
+
 
     public function showspecialallowance()
     {

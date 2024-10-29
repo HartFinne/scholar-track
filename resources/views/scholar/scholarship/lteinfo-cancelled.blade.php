@@ -54,7 +54,8 @@
                     {{ $eventinfo->hclocation }}.
                     Upon checking the
                     attendance,
-                    we noticed that you left the event early, despite the Foundation's prior communication and efforts
+                    we noticed that you {{ $csviolation->registatus }} the event, despite the Foundation's prior
+                    communication and efforts
                     to ensure your full participation.
                 </p>
                 <p>

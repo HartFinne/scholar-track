@@ -31,7 +31,6 @@ Route::prefix('applicant')->group(function () {
 
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
-    Route::view('/lteform', 'scholar.lteform')->name('lteform');
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
@@ -65,9 +64,12 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
     // LTE
     Route::get('/sclte', [ScholarController::class, 'showLTE'])->name('sclte');
     Route::get('/lteinfo/{lid}', [ScholarController::class, 'showLTEinfo'])->name('lteinfo');
+    Route::get('/lteform/{lid}', [ScholarController::class, 'showLTEForm'])->name('lteform');
+    Route::post('/lteform/{lid}', [ScholarController::class, 'storeLTEForm'])->name('lteform.post');
     Route::get('/lteinfo-absent/{lid}', [ScholarController::class, 'showLTEinfoabsent'])->name('lteinfo-absent');
     Route::get('/lteinfo-late/{lid}', [ScholarController::class, 'showLTEinfolate'])->name('lteinfo-late');
     Route::get('/lteinfo-leftearly/{lid}', [ScholarController::class, 'showLTEinfoleftearly'])->name('lteinfo-leftearly');
+    Route::get('/sublteinfo/{lid}', [ScholarController::class, 'showSubLTEInfo'])->name('subtleinfo');
     // user profile
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');

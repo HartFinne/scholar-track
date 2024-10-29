@@ -39,19 +39,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($noresponseletters as $letter)
+                    @foreach ($noresponseletters as $nonletter)
                         <tr>
-                            <td>{{ $letter->dateissued }}</td>
-                            @if ($letter->eventtype == 'Humanities Class')
-                                <td>{{ $letter->hcattendance->hcastatus }} in {{ $letter->eventtype }}</td>
-                            @elseif ($letter->eventtype == 'Community Service')
-                                <td>{{ $letter->csattendanc->status }} in {{ $letter->eventtype }}</td>
-                            @elseif ($letter->eventtype == null)
-                                <td>{{ $letter->violation }}</td>
+                            <td>{{ $nonletter->dateissued }}</td>
+                            @if ($nonletter->eventtype == 'Humanities Class')
+                                <td>{{ $nonletter->hcattendance ? $nonletter->hcattendance->hcstatus : 'N/A' }} in
+                                    {{ $nonletter->eventtype }}</td>
+                            @elseif ($nonletter->eventtype == 'Community Service')
+                                <td>
+                                    {{ $nonletter->csregistration ? $nonletter->csregistration->registatus : 'N/A' }}
+                                    in {{ $nonletter->eventtype }}
+                                </td>
                             @endif
-                            <td>{{ $letter->deadline }}</td>
+                            <td>{{ $nonletter->deadline }}</td>
                             <td>
-                                <a href="{{ route('lteinfo', $letter->lid) }}" id="view">View</a>
+                                <a href="{{ route('lteinfo', $nonletter->lid) }}" id="view">View</a>
                             </td>
                         </tr>
                     @endforeach
@@ -85,7 +87,8 @@
                             <td>{{ $letter->datesubmitted }}</td>
                             <td>{{ $letter->reason }}</td>
                             <td>{{ $letter->ltestatus }}</td>
-                            <td><a href="{{ route('subtleinfo') }}" id="view">View</a></td>
+                            <td><a href="{{ route('subtleinfo', $letter->lid) }}" id="view">View</a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
