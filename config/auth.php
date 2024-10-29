@@ -74,7 +74,7 @@ return [
         ],
         'staff' => [
             'driver' => 'eloquent',
-            'model' => App\Models\StAccount::class, // Point to staccounts model
+            'model' => App\Models\staccount::class, // Point to staccounts model
         ],
         'applicant' => [
             'driver' => 'eloquent',
