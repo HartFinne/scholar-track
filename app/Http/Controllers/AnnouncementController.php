@@ -36,6 +36,7 @@ class AnnouncementController extends Controller
             'description' => ['required', 'string']
         ]);
 
+
         // Create the announcement in the database
         $announcement = Announcement::create([
             'title' => $request->title,
@@ -49,14 +50,14 @@ class AnnouncementController extends Controller
         $api_key = env('MOVIDER_API_KEY');
         $api_secret = env('MOVIDER_API_SECRET');
 
-        // Get the list of recipients (all users or selected users)
         $users = [];
         if (in_array('all', $request->recipients)) {
             $users = User::all(); // Select all users
-
         } else {
-            $users = User::whereIn('id', $request->recipients)->get(); // Select only the chosen users
+            $users = User::whereIn('caseCode', $request->recipients)->get(); // Select only the chosen users
         }
+
+        // dd($request->recipients);
 
         // Initialize the Guzzle client
         $client = new \GuzzleHttp\Client();
@@ -78,6 +79,8 @@ class AnnouncementController extends Controller
                             'text' => $message,
                         ],
                     ]);
+
+                    dd($response);
 
                     // Get the full response body
                     $responseBody = $response->getBody()->getContents();
