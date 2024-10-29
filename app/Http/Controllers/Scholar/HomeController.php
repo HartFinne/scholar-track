@@ -189,14 +189,14 @@ class HomeController extends Controller
         }
 
         $latestCase = DB::table('users')
-            ->where('casecode', 'like', "{$startyear}{$nextyear}-%")
-            ->orderBy('casecode', 'desc')
+            ->where('caseCode', 'like', "{$startyear}{$nextyear}-%")
+            ->orderBy('caseCode', 'desc')
             ->first();
 
         $sequenceNumber = 1;
 
         if ($latestCase) {
-            $latestSequence = intval(explode('-', $latestCase->casecode)[1]);
+            $latestSequence = intval(explode('-', $latestCase->caseCode)[1]);
             $sequenceNumber = $latestSequence + 1;
         }
 
