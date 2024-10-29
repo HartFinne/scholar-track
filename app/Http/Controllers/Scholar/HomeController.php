@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Scholar;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Db;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\ScAddressInfo;
 use App\Models\ScBasicInfo;
