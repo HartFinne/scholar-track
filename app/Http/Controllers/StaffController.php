@@ -250,17 +250,30 @@ class StaffController extends Controller
     {
         DB::beginTransaction();
         try {
-            $request->validate([
-                'cshours' => 'required|numeric|min:1',
-                'cgwa' => 'required|numeric|min:1|max:5',
-                'shsgwa' => 'required|numeric|min:1|max:100',
-                'jhsgwa' => 'required|numeric|min:1|max:100',
-                'elemgwa' => 'required|numeric|min:1|max:100',
-                'fincome' => 'required|numeric|min:0',
-                'mincome' => 'required|numeric|min:0',
-                'sincome' => 'required|numeric|min:0',
-                'aincome' => 'required|numeric|min:0',
-            ]);
+            $request->validate(
+                [
+                    'cshours' => 'required|numeric|min:1',
+                    'cgwa' => 'required|numeric|min:1|max:5',
+                    'shsgwa' => 'required|numeric|min:1|max:100',
+                    'jhsgwa' => 'required|numeric|min:1|max:100',
+                    'elemgwa' => 'required|numeric|min:1|max:100',
+                    'fincome' => 'required|numeric|min:0',
+                    'mincome' => 'required|numeric|min:0',
+                    'sincome' => 'required|numeric|min:0',
+                    'aincome' => 'required|numeric|min:0',
+                ],
+                [
+                    'cshours.min' => 'The required community service hours must not be less than 1.',
+                    'cgwa.min' => 'Please input a valid GWA in college.',
+                    'cgwa.max' => 'Please input a valid GWA in college.',
+                    'shsgwa.min' => 'Please input a valid General Average in Senior High.',
+                    'shsgwa.max' => 'Please input a valid General Average in Senior High.',
+                    'jhsgwa.min' => 'Please input a valid General Average in Junior High.',
+                    'jhsgwa.max' => 'Please input a valid General Average in Junior High.',
+                    'elemgwa.min' => 'Please input a valid General Average in Elementary.',
+                    'elemgwa.max' => 'Please input a valid General Average in Elementary.',
+                ]
+            );
 
             $criteria = criteria::first();
 
@@ -324,7 +337,7 @@ class StaffController extends Controller
             DB::rollback();
 
             if (institutions::where('schoolname', $request->institute)->exists()) {
-                return redirect()->back()->with('error', 'Error: Duplicate institution.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', 'Failed to add institution. Duplicate institution.')->withFragment('confirmmsg2');
             }
 
             return redirect()->back()->with('error', 'Failed to add institution.')->withFragment('confirmmsg2');
@@ -354,7 +367,7 @@ class StaffController extends Controller
             DB::rollback();
 
             if (institutions::where('schoolname', $request->institute)->exists()) {
-                return redirect()->back()->with('error', 'Error: Duplicate institution.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', 'Failed to update institution name. Duplicate institution.')->withFragment('confirmmsg2');
             }
 
             return redirect()->back()->with('error', 'Failed to update institution name.')->withFragment('confirmmsg2');
@@ -401,7 +414,7 @@ class StaffController extends Controller
                 DB::rollback();
 
                 if (courses::where('coursename', $request->course)->exists()) {
-                    return redirect()->back()->with('error', 'Error: Duplicate course.')->withFragment('confirmmsg2');
+                    return redirect()->back()->with('error', 'Failed to add course. Duplicate course.')->withFragment('confirmmsg2');
                 }
 
                 return redirect()->back()->with('error', 'Failed to add course.')->withFragment('confirmmsg2');
@@ -427,7 +440,7 @@ class StaffController extends Controller
                 DB::rollback();
 
                 if (courses::where('coursename', $request->strand)->exists()) {
-                    return redirect()->back()->with('error', 'Error: Duplicate strand.')->withFragment('confirmmsg2');
+                    return redirect()->back()->with('error', 'Failed to add strand. Duplicate strand.')->withFragment('confirmmsg2');
                 }
 
                 return redirect()->back()->with('error', 'Failed to add strand.')->withFragment('confirmmsg2');
@@ -466,7 +479,7 @@ class StaffController extends Controller
             DB::rollback();
 
             if (courses::where('coursename', $request->newcoursename)->exists()) {
-                return redirect()->back()->with('error', "Error: Duplicate {$type}.")->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', "Failed to update {$type}. Duplicate {$type}.")->withFragment('confirmmsg2');
             }
 
             return redirect()->back()->with('error', "Failed to update {$type}.")->withFragment('confirmmsg2');
@@ -1389,7 +1402,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return $this->viewattendeeslist($attendee->hcid)->with('error', 'Checkout was successful.');
+            return $this->viewattendeeslist($attendee->hcid)->with('error', 'Checkout was unsuccessful.');
         }
     }
 
@@ -1414,9 +1427,9 @@ class StaffController extends Controller
 
             return redirect()->back()->with('importsuccess', 'File imported successfully.');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            return redirect()->back()->with('importerror', 'Import failed due to file validation error: ' . $e->getMessage());
+            return redirect()->back()->with('importerror', 'Import was unsuccessful. ' . $e->getMessage());
         } catch (\Exception $e) {
-            return redirect()->back()->with('importerror', 'Import was unsuccessful. Error: ' . $e->getMessage());
+            return redirect()->back()->with('importerror', 'Import was unsuccessful. ' . $e->getMessage());
         }
     }
 }

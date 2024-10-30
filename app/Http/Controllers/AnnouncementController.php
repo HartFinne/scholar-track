@@ -53,7 +53,7 @@ class AnnouncementController extends Controller
         if (in_array('all', $request->recipients)) {
             $users = User::all(); // Select all users
         } else {
-            $users = User::whereIn('id', $request->recipients)->get(); // Select only the chosen users
+            $users = User::whereIn('caseCode', $request->recipients)->get(); // Select only the chosen users
         }
 
         // Initialize the Guzzle client

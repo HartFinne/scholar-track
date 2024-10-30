@@ -15,7 +15,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('scEmail', 255)->unique();
-            $table->string('scPhoneNum', 11)->unique();
+            $table->string('scPhoneNum', 12)->unique();
             $table->string('password', 255);
             $table->string('scStatus', 15);
             $table->string('notification_preference')->default('sms');

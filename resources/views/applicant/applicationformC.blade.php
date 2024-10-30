@@ -158,11 +158,13 @@
                             <p>Are you a member of any indigenous group?</p>
                             <div class="row-radio">
                                 <input type="radio" id="indigenousCheck" name="isIndigenous" value="Yes"
-                                    onclick="toggleInput()" {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }}>
-                                <label for="indigenousCheck">Yes</label>
+                                    onclick="toggleInput()" {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }}
+                                    style="cursor: pointer">
+                                <label for="indigenousCheck" style="cursor: pointer">Yes</label>
                                 <input type="radio" id="noCheck" name="isIndigenous" value="No"
-                                    onclick="disableInput()" {{ old('isIndigenous') == 'No' ? 'checked' : '' }}>
-                                <label for="noCheck">No</label>
+                                    onclick="disableInput()" {{ old('isIndigenous') == 'No' ? 'checked' : '' }}
+                                    style="cursor: pointer">
+                                <label for="noCheck" style="cursor: pointer">No</label>
                             </div>
                             <input type="text" name="indigenousgroup" id="indigenousInput"
                                 placeholder="Please specify the group you belong to" disabled
@@ -381,9 +383,9 @@
                                         required>
                                 </div>
                                 <div class="column">
-                                    <label for="srelationship[]">Relationship</label>
-                                    <input type="text" id="srelationship[]" value="Sibling"
-                                        name="srelationship[]" readonly>
+                                    <label for="srelationship">Relationship</label>
+                                    <input type="text" id="srelationship" value="Sibling" name="srelationship"
+                                        readonly>
                                 </div>
                                 <div class="column">
                                     <label for="sreligion[]">Religion</label>

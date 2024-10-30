@@ -66,6 +66,15 @@ class HomeController extends Controller
                 ]
             );
 
+            $phoneNumber = $request->input('phoneNumber');
+            $guardianPhoneNumber = $request->input('guardianPhoneNumber');
+            if (str_starts_with($phoneNumber, '0')) {
+                $phoneNumber = '63' . substr($phoneNumber, 1);
+            }
+            if (str_starts_with($guardianPhoneNumber, '0')) {
+                $guardianPhoneNumber = '63' . substr($guardianPhoneNumber, 1);
+            }
+
             $casecode = $this->generatecasecode($request->startdate, $request->assignedArea);
 
             // Start a database transaction
@@ -77,7 +86,7 @@ class HomeController extends Controller
                     'caseCode' => $casecode,
                     'scEmail' => $request->emailAddress,
                     'password' => Hash::make($request->password),
-                    'scPhoneNum' => $request->phoneNumber,
+                    'scPhoneNum' => $phoneNumber,
                     'scStatus' => $scStatus,
                 ]);
 
@@ -103,7 +112,7 @@ class HomeController extends Controller
                     'scGuardianName' => $request->guardianName,
                     'scRelationToGuardian' => $request->relationToGuardian,
                     'scGuardianEmailAddress' => $request->guardianEmailAddress,
-                    'scGuardianPhoneNumber' => $request->guardianPhoneNumber,
+                    'scGuardianPhoneNumber' => $guardianPhoneNumber,
                     'scIsIndigenous' => $request->isIndigenous == 'Yes' ? $request->indigenousGroup : 'No',
                     'scIndigenousgroup' => $request->indigenousGroup,
                 ]);

@@ -61,6 +61,7 @@ document.getElementById('addSibling').addEventListener('click', function (event)
    var originalDiv = document.querySelector('.siblingsinfo');
    var clone = originalDiv.cloneNode(true);
    clone.querySelectorAll('input, select').forEach(input => input.value = '');
+   clone.querySelector('[name="srelationship"]').value = 'Sibling';
    var removeButton = document.createElement('button');
    removeButton.textContent = 'Remove';
    removeButton.type = 'button';

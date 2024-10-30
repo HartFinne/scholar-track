@@ -101,7 +101,7 @@
                             <div class="mb-3">
                                 <label for="cshours" class="form-label">Required CS Hours</label>
                                 <input type="text" class="form-control" id="cshours" name="cshours"
-                                    value="{{ $criteria->elemgwa ?? '' }}" placeholder="Not Set" required>
+                                    value="{{ $criteria->cshours ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
                                 <label for="cgwa" class="form-label">College GWA</label>
