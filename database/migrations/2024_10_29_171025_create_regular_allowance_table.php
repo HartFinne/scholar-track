@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('status', 20);
             $table->timestamps();
 
-            $table->foreign('gid')->references('gid')->on('grades')->onDelete('cascade');
+            $table->foreign('gid')->references('gid')->on('grades')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
