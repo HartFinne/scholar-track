@@ -143,6 +143,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/exitattendancesystem/{hcid}', [StaffController::class, 'exitattendancesystem'])->name('exitattendancesystem');
     // PENALTY | LTE
     Route::get('/penalty', [StaffController::class, 'showPenalty'])->name('penalty');
+    Route::post('/penalty', [StaffController::class, 'storePenalty'])->name('penalty.post');
     Route::get('/letter-of-explanation', [StaffController::class, 'showLTE'])->name('lte');
     // ALLOWANCE REQUESTS
     Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');

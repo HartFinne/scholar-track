@@ -41,6 +41,7 @@ use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\UsesTrait;
 use App\Imports\EmailsImport;
 use App\Notifications\LteAnnouncementCreated;
+use App\Notifications\PenaltyNotification;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -233,10 +234,120 @@ class StaffController extends Controller
 
     public function showPenalty()
     {
-        $penalties = penalty::all();
+        $penalty = penalty::all();
         $scholars = User::with(['basicInfo'])->get();
-        return view('staff.penalty', compact('penalties', 'scholars'));
+
+        $penalties = [];
+        foreach ($scholars as $scholar) {
+            $latestPenalty = penalty::where('caseCode', $scholar->caseCode)
+                ->latest('dateofpenalty')
+                ->first();
+            $penalties[$scholar->caseCode] = $latestPenalty;
+        }
+        return view('staff.penalty', compact('penalties', 'scholars', 'penalty'));
     }
+
+    public function storePenalty(Request $request)
+    {
+        $validatedData = $request->validate([
+            'scholar_id' => 'required|string|exists:users,caseCode', // Ensures the scholar ID exists in the users table
+            'condition' => 'required|string|in:Lost Cash Card,Dress Code Violation', // Restrict to specific values
+            'remark' => 'required|string|in:1st Offense,2nd Offense,3rd Offense,4th Offense', // Restrict to specific values
+            'date' => 'required|date', // Ensure the date is a valid date format
+        ]);
+
+        // Check if a penalty already exists for the given scholar ID and condition
+        $penalty = penalty::where('caseCode', $validatedData['scholar_id'])
+            ->first();
+
+        if ($penalty) {
+            // Map the offense levels for comparison
+            $offenseLevels = [
+                '1st Offense' => 1,
+                '2nd Offense' => 2,
+                '3rd Offense' => 3,
+                '4th Offense' => 4,
+            ];
+
+            // Check if the new remark is greater than the current remark
+            if ($offenseLevels[$validatedData['remark']] <= $offenseLevels[$penalty->remark]) {
+                return redirect()->route('penalty')->with('failure', 'The remark must be greater than the current remark level.');
+            }
+
+            // Update the existing penalty record
+            $penalty->update([
+                'condition' => $validatedData['condition'],
+                'remark' => $validatedData['remark'],
+                'dateofpenalty' => $validatedData['date'],
+            ]);
+        } else {
+            // If no penalty exists, create a new record
+            $penalty = penalty::create([
+                'caseCode' => $validatedData['scholar_id'],
+                'condition' => $validatedData['condition'],
+                'remark' => $validatedData['remark'],
+                'dateofpenalty' => $validatedData['date'],
+            ]);
+        }
+
+        // Prepare notification settings
+        $api_key = config('services.movider.api_key');
+        $api_secret = config('services.movider.api_secret');
+        Log::info('Movider API Key', ['api_key' => $api_key, 'api_secret' => $api_secret]);
+
+        $user = User::where('caseCode', $validatedData['scholar_id'])->first();
+
+        $client = new \GuzzleHttp\Client();
+        $failedSMS = [];
+        $failedEmail = [];
+        $message = "Your penalty has been updated: " . $validatedData['condition'] . " (" . $validatedData['remark'] . ")";
+
+        // Send notification based on user preference
+        if ($user->notification_preference === 'sms') {
+            try {
+                $response = $client->post('https://api.movider.co/v1/sms', [
+                    'form_params' => [
+                        'api_key' => $api_key,
+                        'api_secret' => $api_secret,
+                        'to' => $user->scPhoneNum,
+                        'text' => $message,
+                    ],
+                ]);
+
+                $decodedResponse = json_decode($response->getBody()->getContents(), true);
+                Log::info('Movider SMS Response', ['response_body' => $decodedResponse]);
+
+                if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                    $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                }
+            } catch (\Exception $e) {
+                $failedSMS[] = $user->scPhoneNum;
+                Log::error('Movider SMS Exception', ['error' => $e->getMessage()]);
+            }
+        } else {
+            try {
+                $user->notify(new PenaltyNotification($penalty));
+            } catch (\Exception $e) {
+                $failedEmail[] = $user->email;
+                Log::error('Email Notification Error', ['error' => $e->getMessage()]);
+            }
+        }
+
+        // Determine the message based on failed notifications
+        if (empty($failedSMS) && empty($failedEmail)) {
+            return redirect()->route('penalty')->with('success', 'Penalty recorded and notification sent successfully.');
+        } else {
+            $failureDetails = "";
+            if (!empty($failedSMS)) {
+                $failureDetails .= " SMS failed for: " . implode(", ", $failedSMS) . ".";
+            }
+            if (!empty($failedEmail)) {
+                $failureDetails .= " Email failed for: " . implode(", ", $failedEmail) . ".";
+            }
+            return redirect()->route('penalty')->with('failure', 'Penalty recorded, but some notifications failed.' . $failureDetails);
+        }
+    }
+
 
     // SCHOLARSHIP CRITERIA
     public function showQualification()
