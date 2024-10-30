@@ -40,7 +40,7 @@ class LteAnnouncementCreated extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Warning: ' . $this->lte->caseCode)
-            ->line('You are late')
+            ->line('You are ' . $this->lte->violation)
             ->line('Event: ' . $this->lte->eventtype)
             ->line(line: 'Submit an LTE to resolve this')
             ->line('Date Issued: ' . $this->lte->dateissued)
@@ -58,6 +58,7 @@ class LteAnnouncementCreated extends Notification implements ShouldQueue
     {
         return [
             'caseCode' => $this->lte->caseCode,
+            'violation' => $this->lte->violation,
             'eventtype' => $this->lte->eventtype,
             'dateissued' => $this->lte->dateissued,
             'deadline' => $this->lte->deadline,
