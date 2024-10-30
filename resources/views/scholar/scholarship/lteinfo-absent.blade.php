@@ -50,7 +50,8 @@
             </div>
             <div class="lte-body">
                 <p>
-                    Last {{ $letter->dateissued }}, was the [EVENT] that took place in the [LOCATION]. Upon checking the
+                    Last {{ $letter->dateissued }}, was the {{ $eventinfo->topic }} that took place in the
+                    {{ $eventinfo->hclocation }}. Upon checking the
                     attendance,
                     we noticed that you did not participate despite the Foundation's effort to inform you beforehand.
                 </p>
@@ -80,7 +81,8 @@
         </div>
 
         <div class="submit-lte text-center">
-            <button type="button" class="btn-submit" onclick="window.location.href='{{ route('lteform') }}';">Submit
+            <button type="button" class="btn-submit"
+                onclick="window.location.href='{{ route('lteform', $letter->lid) }}';">Submit
                 your
                 response here</button>
         </div>

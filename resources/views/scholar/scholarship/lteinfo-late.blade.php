@@ -82,7 +82,8 @@
         </div>
 
         <div class="submit-lte text-center">
-            <button type="button" class="btn-submit" onclick="window.location.href='{{ route('lteform') }}';">Submit
+            <button type="button" class="btn-submit"
+                onclick="window.location.href='{{ route('lteform', ['lid' => $letter->lid]) }}';">Submit
                 your
                 response here</button>
         </div>

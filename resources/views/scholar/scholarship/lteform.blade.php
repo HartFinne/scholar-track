@@ -26,80 +26,134 @@
     <div class="ctn-main">
         <a href="" class="goback">&lt Go back</a>
 
-        <div class="lte-form">
-            <div class="lteform-title text-center">
-                <h3 class="form-heading fw-bold">LTE Submission</h3>
-                <p class="form-desc"><i>You must submit within 3 days after the receipt of the letter</i></p>
-            </div>
-            <div class="form-body">
-                <div class="explanation">
-                    <label for="explanation"><b>Explanation Letter</b></label>
-                    <input type="file" id="explanation" name="explanation">
+
+        <form action="{{ route('lteform.post', ['lid' => $lid]) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="lte-form">
+                <div class="lteform-title text-center">
+                    <h3 class="form-heading fw-bold">LTE Submission</h3>
+                    <p class="form-desc"><i>You must submit within 3 days after the receipt of the letter</i></p>
                 </div>
-                <p><b>Select your reason:</b></p>
-                <div class="lte-reason">
-                    <div class="reason1">
-                        <div class="rad">
-                            <input type="radio" id="medical" name="reason" value="Medical"
-                                onclick="toggleFileInputs('medical')">
-                            <label for="medical">Medical</label>
+                <div class="form-body">
+                    <div class="explanation mb-3">
+                        <label for="explanation"><b>Explanation Letter</b></label>
+                        <input type="file" id="explanation" name="explanation"
+                            class="form-control {{ $errors->has('explanation') ? 'is-invalid' : '' }}">
+                        @if ($errors->has('explanation'))
+                            <div class="invalid-feedback">
+                                {{ $errors->first('explanation') }}
+                            </div>
+                        @endif
+                    </div>
+                    <p><b>Select your reason:</b></p>
+                    <div class="lte-reason mb-3">
+                        <div class="reason1">
+                            <div class="rad">
+                                <input type="radio" id="medical" name="reason" value="Medical"
+                                    onclick="toggleFileInputs('medical')"
+                                    {{ old('reason') == 'Medical' ? 'checked' : '' }}>
+                                <label for="medical">Medical</label>
+                            </div>
+                            <div class="rad">
+                                <input type="radio" id="academic" name="reason" value="Academic Activity"
+                                    onclick="toggleFileInputs('academic')"
+                                    {{ old('reason') == 'Academic Activity' ? 'checked' : '' }}>
+                                <label for="academic">Academic Activity</label>
+                            </div>
                         </div>
-                        <div class="rad">
-                            <input type="radio" id="academic" name="reason" value="Academic Activity"
-                                onclick="toggleFileInputs('academic')">
-                            <label for="academic">Academic Activity</label>
+                        <div class="reason2">
+                            <div class="rad">
+                                <input type="radio" id="death" name="reason"
+                                    value="Death of an Immediate Family Member" onclick="toggleFileInputs('death')"
+                                    {{ old('reason') == 'Death of an Immediate Family Member' ? 'checked' : '' }}>
+                                <label for="death">Death of an Immediate Family Member</label>
+                            </div>
+                            <div class="rad">
+                                <input type="radio" id="disaster" name="reason"
+                                    value="Natural and Human induced disasters" onclick="toggleFileInputs('disaster')"
+                                    {{ old('reason') == 'Natural and Human induced disasters' ? 'checked' : '' }}>
+                                <label for="disaster">Natural and Human induced disasters</label>
+                            </div>
+                        </div>
+                        @if ($errors->has('reason'))
+                            <div class="text-danger">
+                                {{ $errors->first('reason') }}
+                            </div>
+                        @endif
+                    </div>
+
+                    <p><b>Please upload here the necessary document:</b></p>
+                    <div class="file-upload mb-3">
+                        <div class="file1">
+                            <div class="medfile">
+                                <label for="medical-file">Photocopy of Medical or Doctor's Certificate</label><br>
+                                <input type="file" id="medical-file" name="medical-file"
+                                    class="form-control {{ $errors->has('medical-file') ? 'is-invalid' : '' }}"
+                                    disabled>
+                                @if ($errors->has('medical-file'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('medical-file') }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="acadfile">
+                                <label for="academic-file">Duly Signed Letter<br>(School
+                                    Official/Chairperson/Professor)</label><br>
+                                <input type="file" id="academic-file" name="academic-file"
+                                    class="form-control {{ $errors->has('academic-file') ? 'is-invalid' : '' }}"
+                                    disabled>
+                                @if ($errors->has('academic-file'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('academic-file') }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="file2">
+                            <div class="deathfile">
+                                <label for="death-file">Photocopy of Death Certificate</label><br>
+                                <input type="file" id="death-file" name="death-file"
+                                    class="form-control {{ $errors->has('death-file') ? 'is-invalid' : '' }}" disabled>
+                                @if ($errors->has('death-file'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('death-file') }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="disfile">
+                                <label for="disaster-file">Proof of Calamity<br>(Photo/News Clipping/LGU
+                                    Declaration)</label><br>
+                                <input type="file" id="disaster-file" name="disaster-file"
+                                    class="form-control {{ $errors->has('disaster-file') ? 'is-invalid' : '' }}"
+                                    disabled>
+                                @if ($errors->has('disaster-file'))
+                                    <div class="invalid-feedback">
+                                        {{ $errors->first('disaster-file') }}
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
-                    <div class="reason2">
-                        <div class="rad">
-                            <input type="radio" id="death" name="reason"
-                                value="Death of an Immediate Family Member" onclick="toggleFileInputs('death')">
-                            <label for="death">Death of an Immediate Family Member</label>
+                </div>
+                <div class="agreement mb-3">
+                    <input type="checkbox" id="agreement" name="agreement"
+                        class="{{ $errors->has('agreement') ? 'is-invalid' : '' }}">
+                    <label for="agreement"><i>I hereby attest that the information I have provided is true and correct.
+                            I also give my consent to Tzu Chi Foundation to obtain, retain and verify my
+                            letter.</i></label>
+                    @if ($errors->has('agreement'))
+                        <div class="text-danger">
+                            {{ $errors->first('agreement') }}
                         </div>
-                        <div class="rad">
-                            <input type="radio" id="disaster" name="reason"
-                                value="Natural and Human induced disasters" onclick="toggleFileInputs('disaster')">
-                            <label for="disaster">Natural and Human induced disasters</label>
-                        </div>
-                    </div>
+                    @endif
                 </div>
 
-                <p><b>Please upload here the necessary document:</b></p>
-                <div class="file-upload">
-                    <div class="file1">
-                        <div class="medfile">
-                            <label for="medical-file">Photocopy of Medical or Doctor's Certificate</label><br>
-                            <input type="file" id="medical-file" disabled>
-                        </div>
-                        <div class="acadfile">
-                            <label for="academic-file">Duly Signed Letter<br>(School
-                                Official/Chairperson/Professor)</label><br>
-                            <input type="file" id="academic-file" disabled>
-                        </div>
-                    </div>
-                    <div class="file2">
-                        <div class="deathfile">
-                            <label for="death-file">Photocopy of Death Certificate</label><br>
-                            <input type="file" id="death-file" disabled>
-                        </div>
-                        <div class="disfile">
-                            <label for="disaster-file">Proof of Calamity<br>(Photo/News Clipping/LGU
-                                Declaration)</label><br>
-                            <input type="file" id="disaster-file" disabled>
-                        </div>
-                    </div>
+                <div class="submit-lte text-center">
+                    <button type="submit" class="btn-submit fw-bold m-4">Submit</button>
                 </div>
             </div>
-            <div class="agreement">
-                <input type="checkbox" id="agreement">
-                <label for="agreement"><i>I hereby attest that the information I have provided is true and correct.
-                        I also give my consent to Tzu Chi Foundation to obtain, retain and verify my letter.</i></label>
-            </div>
+        </form>
 
-            <div class="submit-lte text-center">
-                <button type="submit" class="btn-submit fw-bold m-4">Submit</button>
-            </div>
-        </div>
 
 
     </div>

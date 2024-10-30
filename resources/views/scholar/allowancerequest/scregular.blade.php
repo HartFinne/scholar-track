@@ -28,7 +28,7 @@
 
         <a href="{{ route('regularform') }}" class="btn-request fw-bold">Request Regular Allowance</a>
 
-        <p class="table-title">My Requests</p>
+        <p class="table-title"> My Requests </p>
         <div class="ctn-table table-responsive">
             <table class="table table-bordered">
                 <thead class="table-success">
@@ -36,18 +36,23 @@
                         <th class="text-center align-middle">ID</th>
                         <th class="text-center align-middle">Semester</th>
                         <th class="text-center align-middle">Date of Request</th>
+                        <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Date of Release</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>1st Semester</td>
-                        <td>01/03/2024</td>
-                        <td>01/05/2024</td>
-                        <td><a href="{{ route('regularforminfo') }}" class="btn-view">View</td>
-                    </tr>
+                    @foreach ($allowanceRequests as $request)
+                        <tr>
+                            <td>{{ $request->regularID }}</td>
+                            <td>{{ $request->grades ? $request->grades->SemesterQuarter : 'N/A' }}</td>
+                            <td>{{ $request->created_at->format('m/d/Y') }}</td>
+                            <td>{{ $request->status }}</td>
+                            <td>{{ $request->release_date ? $request->release_date->format('m/d/Y') : 'N/A' }}</td>
+                            <td><a href="{{ route('regularforminfo', ['id' => $request->regularID]) }}"
+                                    class="btn-view">View</a></td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

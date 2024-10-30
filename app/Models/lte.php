@@ -11,7 +11,7 @@ class lte extends Model
 
     protected $table = 'lte';
 
-    protected $primaryKey = 'lit';
+    protected $primaryKey = 'lid';
 
     protected $fillable = [
         'caseCode',
@@ -37,6 +37,11 @@ class lte extends Model
     public function csattendance()
     {
         return $this->belongsTo(csattendance::class, 'conditionid', 'csaid');
+    }
+
+    public function csregistration()
+    {
+        return $this->belongsTo(csregistration::class, 'conditionid', 'csrid');
     }
 
     public function hcattendance()

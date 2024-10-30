@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('scGuardianName', 50);
             $table->string('scRelationToGuardian', 50);
             $table->string('scGuardianEmailAddress', 255);
-            $table->string('scGuardianPhoneNumber', 11);
+            $table->string('scGuardianPhoneNumber', 12);
             $table->string('scIsIndigenous', 3);
             $table->string('scIndigenousgroup', 100)->nullable();
             $table->timestamps();

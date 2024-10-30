@@ -31,26 +31,57 @@
 
         <div class="lte-view">
             <div class="lte-status">
-                <h6 class="lte-stat">PENDING</h6>
+                <h6 class="lte-stat">{{ $letter->ltestatus }}</h6>
             </div>
 
             <div class="lte-info">
                 <h5>LTE SUBMITTED</h5>
                 <div class="info">
                     <div class="label">Date Submitted</div>
-                    <div class="value">: <span>MM/DD/YYYY</span></div>
+                    <div class="value">:
+                        <span>{{ \Carbon\Carbon::parse($letter->datesubmitted)->format('m/d/Y') }}</span>
+                    </div>
+
+
 
                     <div class="label">Concern</div>
-                    <div class="value">: <span>Absent in Humanities Class</span></div>
+
+                    @if ($concerncsregistration && $concerncsregistration->csrid === $letter->conditionid)
+                        <div class="value">: <span>{{ $concerncsregistration->registatus }} in
+                                {{ $letter->eventtype }}</span>
+                        </div>
+                    @elseif ($concernhcattendance && $concernhcattendance->hcaid === $letter->conditionid)
+                        <div class="value">: <span>{{ $concernhcattendance->hcastatus }} in
+                                {{ $letter->eventtype }}</span>
+                        </div>
+                    @endif
 
                     <div class="label">Explanation Letter</div>
-                    <div class="value">: <span>file.pdf</span></div>
+                    @if (in_array($fileExtensionExplanation, ['jpeg', 'jpg', 'png']))
+                        <img src="{{ url('storage/' . $letter->explanation) }}" alt="Report Card"
+                            style="max-width: 100%; height: auto;">
+                    @elseif($fileExtensionExplanation === 'pdf')
+                        <!-- Display PDF files -->
+                        <iframe src="{{ url('storage/' . $letter->explanation) }}" width="100%" height="600px">
+                            Your browser does not support iframes. Please download the PDF file
+                            <a href="{{ url('storage/' . $letter->explanation) }}">here</a>.
+                        </iframe>
+                    @endif
 
                     <div class="label">Reason</div>
-                    <div class="value">: <span>Medical</span></div>
+                    <div class="value">: <span>{{ $letter->reason }}</span></div>
 
                     <div class="label">Proof</div>
-                    <div class="value">: <span>file.pdf</span></div>
+                    @if (in_array($fileExtensionProof, ['jpeg', 'jpg', 'png']))
+                        <img src="{{ url('storage/' . $letter->proof) }}" alt="Report Card"
+                            style="max-width: 100%; height: auto;">
+                    @elseif($fileExtensionProof === 'pdf')
+                        <!-- Display PDF files -->
+                        <iframe src="{{ url('storage/' . $letter->proof) }}" width="100%" height="600px">
+                            Your browser does not support iframes. Please download the PDF file
+                            <a href="{{ url('storage/' . $letter->proof) }}">here</a>.
+                        </iframe>
+                    @endif
                 </div>
             </div>
         </div>

@@ -7,12 +7,16 @@ use Illuminate\Http\Request;
 use App\Models\communityservice;
 use App\Models\csattendance;
 use App\Models\csregistration;
+use App\Models\lte;
+use App\Models\staccount;
 use App\Models\User;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 
 class CommunityController extends Controller
 {
@@ -119,22 +123,22 @@ class CommunityController extends Controller
             ->get();
 
         // Loop through the registrations to check if any "GOING" status needs to be updated
-        foreach ($registrations as $registration) {
-            // Check if the event date is in the past and the status is "GOING"
-            if ($registration->registatus === 'GOING' && Carbon::parse($registration->eventdate)->toDateString() < $today) {
-                // Check if there is no attendance record for this activity
-                $attendanceExists = csattendance::where('caseCode', $caseCode)
-                    ->where('csid', $registration->csid)
-                    ->exists();
+        // foreach ($registrations as $registration) {
+        //     // Check if the event date is in the past and the status is "GOING"
+        //     if ($registration->registatus === 'GOING' && Carbon::parse($registration->eventdate)->toDateString() < $today) {
+        //         // Check if there is no attendance record for this activity
+        //         $attendanceExists = csattendance::where('caseCode', $caseCode)
+        //             ->where('csid', $registration->csid)
+        //             ->exists();
 
-                if (!$attendanceExists) {
-                    // Update the status to "ABSENT"
-                    csregistration::where('caseCode', $caseCode)
-                        ->where('csid', $registration->csid)
-                        ->update(['registatus' => 'ABSENT']);
-                }
-            }
-        }
+        //         if (!$attendanceExists) {
+        //             // Update the status to "ABSENT"
+        //             csregistration::where('caseCode', $caseCode)
+        //                 ->where('csid', $registration->csid)
+        //                 ->update(['registatus' => 'ABSENT']);
+        //         }
+        //     }
+        // }
 
         // Refresh the registrations after updating statuses
         $registrations = csregistration::where('caseCode', $caseCode)
@@ -204,14 +208,34 @@ class CommunityController extends Controller
                 $activity->save();
             }
 
-            // Update the registration status to 'Cancelled' instead of deleting
-            $registration->registatus = 'Cancelled';
-            $registration->save(); // Save the updated registration
+            // Retrieve the staff member using the staffID from the community service event
+            $staff = staccount::find($activity->staffID);
 
-            return redirect()->route('csdashboard')->with('success', 'Your registration has been cancelled. Thank you.');
+            if ($staff) {
+                // Create an LTE record using the staff's details
+                lte::create([
+                    'caseCode' => $caseCode,
+                    'conditionid' => $csid, // Use the CS activity ID as the conditionid
+                    'eventtype' => 'Community Service Cancellation', // Specify the event type
+                    'dateissued' => now(),
+                    'deadline' => now()->addDays(3), // Set a deadline for response (3 days in this example)
+                    'datesubmitted' => null,
+                    'reason' => null,
+                    'explanation' => null,
+                    'proof' => null,
+                    'ltestatus' => 'No Response', // Default status
+                    'workername' => strtoupper($staff->name) . ", RSW", // Using the staff's name
+                ]);
+
+                // Update the registration status to 'Cancelled' instead of deleting
+                $registration->registatus = 'Cancelled';
+                $registration->save(); // Save the updated registration
+
+                return redirect()->route('csdashboard')->with('success', 'Your registration has been cancelled. Thank you.');
+            }
+
+            return redirect()->route('csdashboard')->with('error', 'Unable to cancel registration.');
         }
-
-        return redirect()->route('csdashboard')->with('error', 'Unable to cancel registration.');
     }
 
 
@@ -232,7 +256,6 @@ class CommunityController extends Controller
         // Fetch the total absences (assuming absence means no attendance record for an event the user was registered for)
         $totalAbsences = csregistration::where('caseCode', $caseCode)
             ->where('registatus', 'ABSENT')
-            ->whereNotIn('csid', csattendance::where('caseCode', $caseCode)->pluck('csid'))
             ->count();
 
         // Fetch the attendance details joined with the community service information
@@ -325,13 +348,28 @@ class CommunityController extends Controller
             $attendance->hoursspent = $validatedData['hrSpent'];
             $attendance->tardinessduration = $tardinessDuration; // Store tardiness duration in minutes
 
-            // Handle the file upload
-            if ($request->hasFile('proofImg')) {
-                $file = $request->file('proofImg');
-                $filename = time() . '_' . $file->getClientOriginalName();
-                $path = $file->storeAs('attendance_proof', $filename, 'public');
-                $attendance->attendanceproof = $path;
+            // Retrieve the currently authenticated user's details
+            $user = Auth::user();
+
+            // Construct the directory path based on the user's full name and case code
+            $directoryPath = 'scholars/'
+                . $user->basicInfo->scLastname . ', '
+                . $user->basicInfo->scFirstname . ' '
+                . $user->basicInfo->scMiddlename . '_'
+                . $user->caseCode . '/cs_attendance/' . $communityService->title;
+
+            // Ensure the directory exists
+            if (!Storage::exists('public/' . $directoryPath)) {
+                Storage::makeDirectory('public/' . $directoryPath);
             }
+
+            // Store the explanation file in the specified directory
+            $attendancePath = $request->file('proofImg')->storeAs(
+                'public/' . $directoryPath,
+                'proof_image' . $request->file('proofImg')->getClientOriginalExtension()
+            );
+
+            $attendance->attendanceproof = $attendancePath;
 
             $attendance->save();
 
@@ -344,6 +382,7 @@ class CommunityController extends Controller
                 $csRegistration->registatus = 'COMPLETED';
                 $csRegistration->save();
             }
+
 
             // Return success response
             return back()->with('success', 'Attendance recorded successfully.');

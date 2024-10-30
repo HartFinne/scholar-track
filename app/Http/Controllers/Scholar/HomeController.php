@@ -66,11 +66,14 @@ class HomeController extends Controller
                 ]
             );
 
+            // Adjust phone numbers
             $phoneNumber = $request->input('phoneNumber');
             $guardianPhoneNumber = $request->input('guardianPhoneNumber');
+
             if (str_starts_with($phoneNumber, '0')) {
                 $phoneNumber = '63' . substr($phoneNumber, 1);
             }
+
             if (str_starts_with($guardianPhoneNumber, '0')) {
                 $guardianPhoneNumber = '63' . substr($guardianPhoneNumber, 1);
             }
@@ -155,7 +158,7 @@ class HomeController extends Controller
                 DB::rollBack();
 
                 // Dump the error message directly to the screen for debugging
-                dd($e->getMessage());
+                // dd($e->getMessage());
 
                 return redirect()->route('registration')->with('failure', 'Registration failed. Please try again.');
             }
