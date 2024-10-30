@@ -17,6 +17,7 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
+    <x-alert />
 
     <div class="ctnmain">
         <!-- USER NAME CONTAINER -->

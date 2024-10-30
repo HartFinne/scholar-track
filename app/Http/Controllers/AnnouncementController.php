@@ -36,7 +36,6 @@ class AnnouncementController extends Controller
             'description' => ['required', 'string']
         ]);
 
-
         // Create the announcement in the database
         $announcement = Announcement::create([
             'title' => $request->title,
@@ -44,7 +43,6 @@ class AnnouncementController extends Controller
             'author' => $worker->name,
             'recipients' => json_encode($request->recipients),
         ]);
-
 
         // Prepare the API key and secret from the .env file
         $api_key = env('MOVIDER_API_KEY');
@@ -57,14 +55,14 @@ class AnnouncementController extends Controller
             $users = User::whereIn('caseCode', $request->recipients)->get(); // Select only the chosen users
         }
 
-        // dd($request->recipients);
-
         // Initialize the Guzzle client
         $client = new \GuzzleHttp\Client();
 
-        // Track failed SMS and failed email notifications
+        // Track failed and successful notifications
         $failedSMS = [];
         $failedEmail = [];
+        $successfulSMS = 0;
+        $successfulEmail = 0;
         $message = $request->description;
 
         foreach ($users as $user) {
@@ -80,48 +78,47 @@ class AnnouncementController extends Controller
                         ],
                     ]);
 
-                    // dd($response);
-
-                    // Get the full response body
                     $responseBody = $response->getBody()->getContents();
                     $decodedResponse = json_decode($responseBody, true);
 
-
                     Log::info('Movider SMS Response', ['response' => $decodedResponse]);
-                    // If SMS sending failed, add it to the failed list
-                    if (!isset($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                    // If SMS sending was successful, increment success counter
+                    if (isset($decodedResponse['phone_number_list']) && is_array($decodedResponse['phone_number_list']) && count($decodedResponse['phone_number_list']) > 0) {
+                        $successfulSMS++;
+                    } else {
                         $failedSMS[] = $user->scPhoneNum; // Track failed SMS
                     }
                 } catch (\Exception $e) {
                     // Catch and handle any exception
                     $failedSMS[] = $user->scPhoneNum;
-                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                    Log::info('Movider SMS Error', ['error' => $e->getMessage()]);
                 }
             } else {
                 // Send an email notification
                 try {
                     $user->notify(new AnnouncementCreated($announcement));
-                    // dd($user);
+                    $successfulEmail++;
                 } catch (\Exception $e) {
                     // If email notification failed, add to failed list
                     $failedEmail[] = $user->email;
-                    // dd($failedEmail[]);
+                    Log::info('Email Notification Error', ['error' => $e->getMessage()]);
                 }
             }
         }
 
-        // Prepare messages based on failed notifications
-        $smsErrorMessage = count($failedSMS) > 0 ? 'Some SMS failed to send to: ' . implode(', ', $failedSMS) : '';
-        $emailErrorMessage = count($failedEmail) > 0 ? 'Some emails failed to send to: ' . implode(', ', $failedEmail) : '';
+        // Prepare messages based on failed and successful notifications
+        $smsErrorMessage = count($failedSMS) > 0 ? 'Failed to send SMS to: ' . implode(', ', $failedSMS) : '';
+        $emailErrorMessage = count($failedEmail) > 0 ? 'Failed to send email to: ' . implode(', ', $failedEmail) : '';
+        $successMessage = "Announcement created. Successfully sent $successfulSMS SMS and $successfulEmail email notifications.";
 
-        // Combine error messages
+        // Combine error messages if both SMS and email errors occurred
         $errorMessage = trim($smsErrorMessage . ' ' . $emailErrorMessage);
 
         // Redirect back to the view with a success or failure message
         if ($errorMessage) {
-            return redirect('staff/home')->with('error', $errorMessage);
+            return redirect('staff/home')->with('failure', $errorMessage)->with('success', $successMessage);
         } else {
-            return redirect('staff/home')->with('success', 'Announcement created and notifications sent successfully!');
+            return redirect('staff/home')->with('success', $successMessage);
         }
     }
 }

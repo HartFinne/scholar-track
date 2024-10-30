@@ -1215,8 +1215,6 @@ class StaffController extends Controller
 
     public function saveattendance($hcid, Request $request)
     {
-
-
         $request->validate([
             'scholar' => 'required',
         ]);
