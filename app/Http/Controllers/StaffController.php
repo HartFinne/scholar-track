@@ -1099,11 +1099,15 @@ class StaffController extends Controller
                 'facilitator' => 'required|string|max:255',
                 'slotnum' => 'required|integer|min:1',
             ]);
+            $worker = Auth::guard('staff')->user();
 
             $volunteersnum = 0;
             $eventstatus = 'Open';
 
+
+
             $event = communityservice::create([
+                'staffID' => $worker->id,
                 'title' => $request->title,
                 'eventloc' => $request->eventloc,
                 'eventdate' => $request->eventdate,

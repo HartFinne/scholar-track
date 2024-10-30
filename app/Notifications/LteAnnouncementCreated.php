@@ -40,9 +40,9 @@ class LteAnnouncementCreated extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Warning: ' . $this->lte->caseCode)
-            ->line('You are ' . $this->lte->violation)
+            ->line('You ' . $this->lte->violation . ' in ' . $this->lte->eventtype)
             ->line('Event: ' . $this->lte->eventtype)
-            ->line(line: 'Submit an LTE to resolve this')
+            ->line('Submit an LTE to resolve this')
             ->line('Date Issued: ' . $this->lte->dateissued)
             ->line('Date need to be submitted: ' . $this->lte->deadline)
             ->action('View LTE', url('/login'))

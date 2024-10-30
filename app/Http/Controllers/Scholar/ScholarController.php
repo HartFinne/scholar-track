@@ -288,8 +288,9 @@ class ScholarController extends Controller
     public function showLTE()
     {
         $scholar = Auth::user();
-        $noresponseletters = lte::with(['hcattendance', 'csattendance'])
+        $noresponseletters = lte::with(['hcattendance', 'csattendance', 'csregistration'])
             ->where('caseCode', $scholar->caseCode)->where('ltestatus', "No Response")->get();
+
         $letters = lte::where('caseCode', $scholar->caseCode)
             ->whereIn('ltestatus', ['To Review', 'Excused', 'Unexcused'])
             ->get();

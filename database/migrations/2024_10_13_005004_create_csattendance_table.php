@@ -15,12 +15,12 @@ return new class extends Migration
             $table->increments('csaid');
             $table->unsignedInteger('csid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
-            $table->time('timein');
-            $table->time('timeout');
+            $table->time('timein')->nullable();
+            $table->time('timeout')->nullable();
             $table->tinyInteger('tardinessduration')->default(0);
             $table->tinyInteger('hoursspent');
             $table->string('csastatus');
-            $table->binary('attendanceproof');
+            $table->binary('attendanceproof')->nullable();
             $table->string('status')->default('PENDING'); // Set default value to 'pending'
             $table->timestamps();
 

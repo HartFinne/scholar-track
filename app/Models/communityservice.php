@@ -15,6 +15,7 @@ class communityservice extends Model
 
     protected $fillable = [
         'title',
+        'staffID',
         'eventloc',
         'eventdate',
         'meetingplace',

@@ -43,12 +43,13 @@
                         <tr>
                             <td>{{ $nonletter->dateissued }}</td>
                             @if ($nonletter->eventtype == 'Humanities Class')
-                                <td>{{ $nonletter->hcattendance ? $nonletter->violation : 'N/A' }} in
+                                <td>{{ $nonletter->violation }} in
                                     {{ $nonletter->eventtype }}</td>
                             @elseif ($nonletter->eventtype == 'Community Service')
                                 <td>
-                                    {{ $nonletter->csregistration ? $nonletter->csregistration->registatus : 'N/A' }}
+                                    {{ $nonletter->violation }}
                                     in {{ $nonletter->eventtype }}
+
                                 </td>
                             @endif
                             <td>{{ $nonletter->deadline }}</td>
