@@ -18,6 +18,7 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._adminpageheader')
+    <x-alert />
 
     <div class="ctnmain">
         <span class="pagetitle">Manage Staff Accounts</span>

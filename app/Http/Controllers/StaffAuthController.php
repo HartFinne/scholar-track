@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\staccount;
+use App\Notifications\AccountCreationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class StaffAuthController extends Controller
 {
@@ -37,7 +39,6 @@ class StaffAuthController extends Controller
             return redirect()->back()->with('error', 'Invalid email or password.');
         }
     }
-
     public function createAccount(Request $request)
     {
         try {
@@ -50,13 +51,14 @@ class StaffAuthController extends Controller
             ]);
 
             $mobileno = null;
-
             $status = "Active";
 
+            // Generate password using the last part of the name
             $nameParts = explode(' ', strtolower($request->name));
             $password = end($nameParts) . '.st'; // password: surname.st
 
-            Staccount::create([
+            // Create the account in the database
+            $staccount = staccount::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'mobileno' => $mobileno,
@@ -66,11 +68,22 @@ class StaffAuthController extends Controller
                 'password' => Hash::make($password),
             ]);
 
-            return redirect()->route('users-staff')->with('success', 'Account created successfully.');
+            // Fetch the created account
+            $staff = Staccount::where('email', $request->email)->first();
+
+            // Send notification to email only
+            try {
+                $staff->notify(new AccountCreationNotification($staccount, $password));
+                return redirect()->route('users-staff')->with('success', 'Account created successfully and email sent.');
+            } catch (\Exception $e) {
+                Log::error('Email Notification Error', ['error' => $e->getMessage()]);
+                return redirect()->route('users-staff')->with('failure', 'Account created, but email notification failed.');
+            }
         } catch (\Exception $e) {
             return redirect()->route('users-staff')->with('error', 'Account creation was unsuccessful. ' . $e->getMessage());
         }
     }
+
 
     public function logout(Request $request)
     {
