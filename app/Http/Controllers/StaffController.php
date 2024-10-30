@@ -42,6 +42,7 @@ use PHPUnit\Framework\Attributes\UsesTrait;
 use App\Imports\EmailsImport;
 use App\Notifications\LteAnnouncementCreated;
 use App\Notifications\PenaltyNotification;
+use App\Notifications\SpecialAllowancesNotification;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -765,18 +766,25 @@ class StaffController extends Controller
         DB::beginTransaction();
         try {
             if ($requesttype == 'TRF') {
+                $requestname = 'Transportation Reimbursement Request';
                 $req = allowancetranspo::where('id', $id)->first();
             } elseif ($requesttype == 'BAR') {
+                $requestname = 'Book Allowance Request';
                 $req = allowancebook::where('id', $id)->first();
             } elseif ($requesttype == 'TAR') {
+                $requestname = 'Thesis Allowance Request';
                 $req = allowancethesis::where('id', $id)->first();
             } elseif ($requesttype == 'PAR') {
+                $requestname = 'Project Allowance Request';
                 $req = allowanceproject::where('id', $id)->first();
             } elseif ($requesttype == 'UAR') {
+                $requestname = 'Uniform Allowance Request';
                 $req = allowanceuniform::where('id', $id)->first();
             } elseif ($requesttype == 'GAR') {
+                $requestname = 'Graduation Allowance Request';
                 $req = allowancegraduation::where('id', $id)->first();
             } elseif ($requesttype == 'FTTSAR') {
+                $requestname = 'Field Trip, Training, Seminar Allowance Request';
                 $req = allowanceevent::where('id', $id)->first();
             } else {
                 return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
@@ -791,11 +799,66 @@ class StaffController extends Controller
 
             $req->save();
             DB::commit();
-            return redirect()->back()->with('success', 'Allowance Request has been updated.');
+
+            // Prepare notification settings
+            $api_key = config('services.movider.api_key');
+            $api_secret = config('services.movider.api_secret');
+            Log::info('Movider API Key', ['api_key' => $api_key, 'api_secret' => $api_secret]);
+
+            $user = User::where('caseCode', $req->caseCode)->first();
+
+            $client = new \GuzzleHttp\Client();
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = "Your request has been updated: " . $req->status;
+
+            // Send notification based on user preference
+            if ($user->notification_preference === 'sms') {
+                // Send SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->scPhoneNum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $decodedResponse = json_decode($response->getBody()->getContents(), true);
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum;
+                    }
+                } catch (\Exception $e) {
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::error('Movider SMS Exception', ['error' => $e->getMessage()]);
+                }
+            } else {
+                // Send email notification
+                try {
+                    $user->notify(new SpecialAllowancesNotification($req, $requestname));
+                } catch (\Exception $e) {
+                    $failedEmail[] = $user->email;
+                    Log::error('Email Notification Error', ['error' => $e->getMessage()]);
+                }
+            }
+
+            if (empty($failedSMS) && empty($failedEmail)) {
+                return redirect()->back()->with('success', 'Allowance Request has been updated.');
+            } else {
+                $failureDetails = "";
+                if (!empty($failedSMS)) {
+                    $failureDetails .= " SMS failed for: " . implode(", ", $failedSMS) . ".";
+                }
+                if (!empty($failedEmail)) {
+                    $failureDetails .= " Email failed for: " . implode(", ", $failedEmail) . ".";
+                }
+                return redirect()->back()->with('failure', 'Special Allowances recorded, but some notifications failed.' . $failureDetails);
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Unable to update request. ' . $e->getMessage());
-        };
+        }
     }
 
     public function updatetransporeimbursenment(Request $request)
