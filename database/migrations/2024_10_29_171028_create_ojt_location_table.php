@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ojt_travel_itinerary', function (Blueprint $table) {
+        Schema::create('ojt_location', function (Blueprint $table) {
             $table->increments('ojtID');
             $table->unsignedInteger('regularID');
             $table->date('start_of_ojt');

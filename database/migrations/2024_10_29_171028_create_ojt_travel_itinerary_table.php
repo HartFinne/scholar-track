@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ojt_location', function (Blueprint $table) {
+        Schema::create('ojt_travel_itinerary', function (Blueprint $table) {
             $table->increments('ojtLocationID');
             $table->unsignedInteger('ojtID');
             $table->string('ojt_from', 100);
