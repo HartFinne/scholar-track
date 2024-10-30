@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('communityservice', function (Blueprint $table) {
             $table->increments('csid');
-            $table->unsignedInteger('staffID');
+            $table->unsignedBigInteger('staffID');
             $table->string('title');
             $table->string('eventloc');
             $table->date('eventdate');
