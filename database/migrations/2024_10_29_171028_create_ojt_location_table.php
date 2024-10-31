@@ -12,15 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ojt_location', function (Blueprint $table) {
-            $table->increments('ojtID');
-            $table->unsignedInteger('regularID');
-            $table->date('start_of_ojt');
-            $table->date('end_of_ojt');
-            $table->string('endorsement', 255);
-            $table->string('acceptance', 255);
+            $table->increments('ojtLocationID');
+            $table->unsignedInteger('ojtID');
+            $table->string('ojt_from', 100);
+            $table->string('ojt_to', 100);
+            $table->string('ojt_estimated_time', 100);
+            $table->string('ojt_vehicle_type', 100);
+            $table->integer('ojt_fare_rate');
             $table->timestamps();
 
-            $table->foreign('regularID')->references('regularID')->on('regular_allowance')->onDelete('cascade');
+            $table->foreign('ojtID')->references('ojtID')->on('ojt_location')->onDelete('cascade');
         });
     }
 

@@ -42,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- @foreach ($requests as $request)
+                    @foreach ($requests as $request)
                         <tr>
                             <td>{{ $request->regularID }}</td>
                             <td>{{ $request->grades ? $request->grades->SemesterQuarter : 'N/A' }}</td>
@@ -52,7 +52,7 @@
                             <td><a href="{{ route('regularforminfo', ['id' => $request->regularID]) }}"
                                     class="btn-view">View</a></td>
                         </tr>
-                    @endforeach --}}
+                    @endforeach
                 </tbody>
             </table>
         </div>
