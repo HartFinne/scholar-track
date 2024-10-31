@@ -725,8 +725,9 @@ class StaffController extends Controller
     {
         $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
             ->join('users', 'users.caseCode', '=', 'grades.caseCode')
-            ->join('sc_basicInfo', 'sc_basicInfo.caseCode', '=', 'users.caseCode') // Joining with sc_basicInfo using user_id
+            ->join('sc_basicinfo', 'sc_basicinfo.caseCode', '=', 'users.caseCode') // Joining with sc_basicInfo using user_id
             ->get();
+
         return view('staff.regularallowance', compact('requests'));
     }
 
@@ -735,7 +736,7 @@ class StaffController extends Controller
 
         $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
             ->join('users', 'users.caseCode', '=', 'grades.caseCode')
-            ->join('sc_basicInfo', 'sc_basicInfo.caseCode', '=', 'users.caseCode') // Join basic info
+            ->join('sc_basicinfo', 'sc_basicinfo.caseCode', '=', 'users.caseCode') // Join basic info
             ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'users.caseCode') // Join scholarship info
             ->join('sc_education', 'sc_education.caseCode', '=', 'users.caseCode') // Join education info
             ->where('regular_allowance.regularID', $id) // Filter by specific RegularAllowance ID
@@ -834,8 +835,6 @@ class StaffController extends Controller
             return redirect()->back()->with('error', 'Unable to update request. ' . $e->getMessage());
         }
     }
-
-
 
     public function showAllowanceSpecial()
     {
