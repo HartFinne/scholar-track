@@ -18,3 +18,8 @@ Schedule::command('automate:attendance-lte')
 Schedule::command('app:automate-commnunity-service-status')
     ->dailyAt('00:00')
     ->timezone('Asia/Manila');
+
+
+Schedule::command('app:automate-humanities-class-absent-attendance')
+    ->dailyAt('00:00')
+    ->timezone('Asia/Manila');

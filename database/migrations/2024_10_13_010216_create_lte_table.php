@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('explanation')->nullable();
             $table->binary('proof')->nullable();
             $table->string('ltestatus', 25)->default('Pending');
-            $table->string('workername', 255);
+            $table->string('workername', 255)->nullable();
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column

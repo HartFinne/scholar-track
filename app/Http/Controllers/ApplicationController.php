@@ -15,6 +15,7 @@ use App\Models\aprequirements;
 use App\Models\criteria;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ApplicationController extends Controller
@@ -383,6 +384,7 @@ class ApplicationController extends Controller
             return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollback();
+            Log::error("Application submission error: " . $e->getMessage());
             return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ');
         }
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->increments('hcaid');
             $table->unsignedInteger('hcid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
-            $table->time('timein');
+            $table->time('timein')->nullable();
             $table->time('timeout')->nullable();
             $table->tinyInteger('tardinessduration')->default(0);
             $table->string('hcastatus')->default('Present');
