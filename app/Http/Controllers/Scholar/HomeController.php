@@ -48,7 +48,7 @@ class HomeController extends Controller
                     'city' => 'required|string|max:50',
                     'permanentAddress' => 'required|string|max:255',
                     'nameOfSchool' => 'required|string|max:255',
-                    'courseSection' => 'required|string|max:50',
+                    'courseSection' => 'required|string|max:255',
                     'acadyear' => 'required|string|max:9',
                     'guardianName' => 'required|string|max:50',
                     'relationToGuardian' => 'required|string|max:50',

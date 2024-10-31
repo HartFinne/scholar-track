@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('scSchoolLevel', 20);
             $table->string('scSchoolName', 255);
             $table->string('scYearGrade', 25);
-            $table->string('scCourseStrandSec', 100);
+            $table->string('scCourseStrandSec', 255);
             $table->string('scAcademicYear', 9);
             $table->timestamps();
 
