@@ -112,15 +112,7 @@
                 <tbody>
                     @foreach ($penalty as $penalty)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($penalty->dateOfPenalty)->format('m/d/Y') }}</td>
-                            <!-- Formatting the date -->
-                            <td>{{ $penalty->pendCondition }}</td>
-                            <td>{{ $penalty->penalty }}</td>
-                        </tr>
-                    @endforeach
-                    @foreach ($penalty as $penalty)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($penalty->dateOfPenalty)->format('m/d/Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($penalty->dateofpenalty)->format('m/d/Y') }}</td>
                             <!-- Formatting the date -->
                             <td>{{ $penalty->pendCondition }}</td>
                             <td>{{ $penalty->penalty }}</td>
