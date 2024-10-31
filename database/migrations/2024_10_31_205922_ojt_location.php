@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('ojt_fare_rate');
             $table->timestamps();
 
-            $table->foreign('ojtID')->references('ojtID')->on('ojt_location')->onDelete('cascade');
+            $table->foreign('ojtID')->references('ojtID')->on('ojt_travel_itinerary')->onDelete('cascade');
         });
     }
 
