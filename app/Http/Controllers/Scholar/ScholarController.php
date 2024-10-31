@@ -26,6 +26,7 @@ use App\Models\allowancetranspo;
 use App\Models\allowanceuniform;
 use App\Models\Announcement;
 use App\Models\communityservice;
+use App\Models\criteria;
 use App\Models\csregistration;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -140,10 +141,9 @@ class ScholarController extends Controller
 
         // Fetch grades associated with the user's education
         // Fetch academic performance data using a join
-        $academicData = ScEducation::join('grades', 'sc_education.eid', '=', 'grades.eid')
-            ->selectRaw("CONCAT(sc_education.scAcademicYear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
-            ->where('sc_education.caseCode', $user->caseCode) // Filter by user's caseCode
-            ->orderBy('sc_education.scAcademicYear', 'asc')
+        $academicData = grades::selectRaw("CONCAT(grades.schoolyear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
+            ->where('grades.caseCode', $user->caseCode) // Filter by user's caseCode
+            ->orderBy('grades.schoolyear', 'asc')
             ->orderBy('grades.SemesterQuarter', 'asc')
             ->get();
 
@@ -161,7 +161,7 @@ class ScholarController extends Controller
             ->first();
 
         // Set the total required hours (example value)
-        $totalRequiredHours = 8;
+        $totalRequiredHours = criteria::selectRAW('criteria.cshours');
         $completedHours = $communityServiceData->total_hours ?? 0;
         $remainingHours = max($totalRequiredHours - $completedHours, 0);
 

@@ -27,14 +27,10 @@ class RegularAllowanceForm extends Controller
     public function showSCRegular()
     {
         $user = Auth::user();
-        // Fetch Regular Allowances for the authenticated user by joining through grades and education
-        $allowanceRequests = RegularAllowance::select('regular_allowance.*')
-            ->join('grades', 'grades.gid', '=', 'regular_allowance.gid')
-            ->join('sc_education', 'sc_education.eid', '=', 'grades.eid')
-            ->where('sc_education.caseCode', $user->caseCode) // Filter by authenticated user ID
+        $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
+            ->where('grades.caseCode', $user->caseCode) // Filter by authenticated user ID
             ->get();
-
-        return view('scholar.allowancerequest.scregular', compact('allowanceRequests'));
+        return view('scholar.allowancerequest.scregular', compact('requests'));
     }
 
 
@@ -78,8 +74,7 @@ class RegularAllowanceForm extends Controller
 
         if ($currentEducation) {
             // Fetch the latest semester (most recent based on `created_at`) for this academic year
-            $latestSemester = grades::where('eid', $currentEducation->eid)
-                ->select('SemesterQuarter', 'gid')
+            $latestSemester = grades::select('SemesterQuarter', 'gid')
                 ->orderBy('created_at', 'desc')
                 ->first();
 

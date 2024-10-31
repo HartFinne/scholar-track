@@ -166,11 +166,13 @@
                     <p>Are you a member of any indigenous group?</p>
                     <div class="row-checkbox">
                         <input type="checkbox" name="isIndigenous" id="indigenousCheck" value="Yes"
-                            onclick="toggleInput()"> Yes
+                            onclick="toggleInput()" style="cursor: pointer">
+                        <label for="indigenousCheck" style="cursor: pointer"> Yes</label>
                         <input type="text" name="indigenousGroup" id="indigenousInput"
                             placeholder="If Yes, please specify" disabled>
                         <input type="checkbox" name="isIndigenous" id="noCheck" value="No"
-                            onclick="disableInput()"> No
+                            onclick="disableInput()" style="cursor: pointer">
+                        <label for="noCheck" style="cursor: pointer"> No</label>
                     </div>
                     <p class="description"><i>If the scholar does not have any personal email or phone number, please
                             provide the contact information of the parent or guardian.</i>

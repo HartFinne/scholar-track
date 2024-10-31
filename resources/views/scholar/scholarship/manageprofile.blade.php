@@ -121,7 +121,7 @@
                                 value="{{ old('scPhoneNum', $data->scPhoneNum) }}"></div>
                     </div>
                 </div>
-                <div class="profile-info">
+                {{-- <div class="profile-info">
                     <h5>ACCOUNT INFORMATION</h5>
                     <div class="info">
                         <div class="label">Account Number</div>
@@ -130,7 +130,7 @@
                         <div class="label">Card Number</div>
                         <div class="value">: <span>wala eto sa database na ginawa ko pasensya na</span></div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="profile-info">
                     <h5>ADDRESS INFORMATION</h5>
                     <div class="info">

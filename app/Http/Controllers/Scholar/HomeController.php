@@ -116,8 +116,8 @@ class HomeController extends Controller
                     'scRelationToGuardian' => $request->relationToGuardian,
                     'scGuardianEmailAddress' => $request->guardianEmailAddress,
                     'scGuardianPhoneNumber' => $guardianPhoneNumber,
-                    'scIsIndigenous' => $request->isIndigenous == 'Yes' ? $request->indigenousGroup : 'No',
-                    'scIndigenousgroup' => $request->indigenousGroup,
+                    'scIsIndigenous' => $request->isIndigenous,
+                    'scIndigenousgroup' => $request->isIndigenous == 'Yes' ? $request->indigenousGroup : 'Not Applicable',
                 ]);
 
                 // Insert data into sc_addressinfo
@@ -158,7 +158,7 @@ class HomeController extends Controller
                 DB::rollBack();
 
                 // Dump the error message directly to the screen for debugging
-                // dd($e->getMessage());
+                dd($e->getMessage());
 
                 return redirect()->route('registration')->with('failure', 'Registration failed. Please try again.');
             }

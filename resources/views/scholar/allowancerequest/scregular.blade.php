@@ -33,7 +33,7 @@
             <table class="table table-bordered">
                 <thead class="table-success">
                     <tr>
-                        <th class="text-center align-middle">ID</th>
+                        <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Semester</th>
                         <th class="text-center align-middle">Date of Request</th>
                         <th class="text-center align-middle">Status</th>
@@ -42,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($allowanceRequests as $request)
+                    {{-- @foreach ($requests as $request)
                         <tr>
                             <td>{{ $request->regularID }}</td>
                             <td>{{ $request->grades ? $request->grades->SemesterQuarter : 'N/A' }}</td>
@@ -52,7 +52,7 @@
                             <td><a href="{{ route('regularforminfo', ['id' => $request->regularID]) }}"
                                     class="btn-view">View</a></td>
                         </tr>
-                    @endforeach
+                    @endforeach --}}
                 </tbody>
             </table>
         </div>

@@ -79,7 +79,7 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
 });
 
 Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function () {
-    Route::get('/scregular', [RegularAllowanceForm::class, 'showSCRegular'])->name('scregular');
+    Route::get('/regular', [RegularAllowanceForm::class, 'showSCRegular'])->name('scregular');
     Route::get('/regularform', [RegularAllowanceForm::class, 'showRegularForm'])->name('regularform');
     Route::post('/regularform', [RegularAllowanceForm::class, 'storeRegularForm'])->name('regularform.post');
     Route::get('/regularforminfo/{id}', [RegularAllowanceForm::class, 'showRegularFormInfo'])->name('regularforminfo');
