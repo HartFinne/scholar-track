@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\UsesTrait;
 use App\Imports\EmailsImport;
+use App\Models\applicationforms;
 use App\Models\RegularAllowance;
 use App\Notifications\LteAnnouncementCreated;
 use App\Notifications\PenaltyNotification;
@@ -93,9 +94,48 @@ class StaffController extends Controller
         return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege'));
     }
 
+    public function updateapplicantstatus($casecode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $applicant = applicants::where('casecode', $casecode)->first();
+            $applicant->applicationstatus = $request->applicationstatus;
+            $applicant->save();
+            DB::commit();
+
+            return redirect()->back()->with('success', "Successfully updated application status.");
+        } catch (\Exception $e) {
+            // Roll back the transaction in case of error
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to update application status. ' . $e->getMessage());
+        }
+    }
+
     public function showApplicationForms()
     {
-        return view('staff.applicationforms');
+        $forms = applicationforms::all();
+        return view('staff.applicationforms', compact('forms'));
+    }
+
+    public function  updateappformstatus($formname, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $form = applicationforms::where('formname', $formname)->first();
+            $form->status = $request->status;
+            $form->save();
+
+            DB::commit();
+            if ($request->status == 'Open') {
+                return redirect()->back()->with('success', "{$formname} application is now open.");
+            } else {
+                return redirect()->back()->with('success', "{$formname} application is now closed.");
+            }
+        } catch (\Exception $e) {
+            // Roll back the transaction in case of error
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to update form status. ');
+        }
     }
 
     public function showScholarsCollege()

@@ -11,6 +11,7 @@ use App\Models\apeheducation;
 use App\Models\apotherinfo;
 use App\Models\apfamilyinfo;
 use App\Models\apcasedetails;
+use App\Models\applicationforms;
 use App\Models\aprequirements;
 use App\Models\criteria;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +25,21 @@ class ApplicationController extends Controller
     {
         $courses = courses::where('level', 'College')->get();
         $institutions = institutions::get();
+        $form = applicationforms::where('formname', 'College')->first();
 
-        return view('applicant.applicationformC', compact('courses', 'institutions'));
+        return view('applicant.applicationformC', compact('courses', 'institutions', 'form'));
+    }
+    public function showelemhsapplication($level)
+    {
+        $courses = courses::where('level', 'College')->get();
+        $institutions = institutions::get();
+        if ($level == 'elementary') {
+            $form = applicationforms::where('formname', 'Elementary')->first();
+        } else {
+            $form = applicationforms::where('formname', 'High School')->first();
+        }
+
+        return view('applicant.applicationformC', compact('courses', 'institutions', 'form'));
     }
 
     public function saveapplicant(Request $request)
@@ -43,7 +57,7 @@ class ApplicationController extends Controller
                 'barangay' => 'string|max:50',
                 'city' => 'string|max:50',
                 'email' => 'email|max:255',
-                'phonenum' => 'string|max:11',
+                'phonenum' => 'digits_between:11,12',
                 'occupation' => 'string|max:100',
                 'income' => 'numeric|min:0',
                 'fblink' => 'url',
@@ -230,6 +244,12 @@ class ApplicationController extends Controller
             $parts = explode(' ', strtolower($request->scholarname));
             $password = end($parts) . '.tzuchi';
 
+            $phoneNumber = $request->input('phonenum');
+
+            if (str_starts_with($phoneNumber, '0')) {
+                $phoneNumber = '63' . substr($phoneNumber, 1);
+            }
+
             applicants::create([
                 'casecode' => $casecode,
                 'password' => Hash::make($password),
@@ -242,7 +262,7 @@ class ApplicationController extends Controller
                 'barangay' => $request->barangay,
                 'city' => $request->city,
                 'email' => $request->email,
-                'phonenum' => $request->phonenum,
+                'phonenum' => $phoneNumber,
                 'occupation' => $request->occupation,
                 'income' => $request->income,
                 'fblink' => $request->fblink,
@@ -384,8 +404,8 @@ class ApplicationController extends Controller
             return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollback();
-            Log::error("Application submission error: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ');
+            // Log::error("Application submission error: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage());
         }
     }
 
@@ -503,5 +523,21 @@ class ApplicationController extends Controller
             $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $elemgwalvl;
         }
         return $prioritylevel;
+    }
+
+    public function cancelapplication($casecode)
+    {
+        DB::beginTransaction();
+        try {
+            $applicant = applicants::where('casecode', $casecode)->first();
+            $applicant->applicationstatus = 'WITHDRAWN';
+            $applicant->save();
+            DB::commit();
+
+            return redirect()->back()->with('success', "You have successfully withdrawn your application.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to cancel application. If the issue persists, please contact one of our social worker for assistance. ');
+        }
     }
 }

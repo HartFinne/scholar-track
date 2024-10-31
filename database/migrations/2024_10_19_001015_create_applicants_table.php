@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('barangay', 50);
             $table->string('city', 50);
             $table->string('email', 255);
-            $table->string('phonenum', 11);
+            $table->string('phonenum', 12);
             $table->string('occupation', 100);
             $table->integer('income');
             $table->text('fblink');

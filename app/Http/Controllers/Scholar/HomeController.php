@@ -42,7 +42,7 @@ class HomeController extends Controller
                     'isIndigenous' => 'required|in:Yes,No',
                     'indigenousGroup' => 'required_if:isIndigenous,yes|string|max:100',
                     'emailAddress' => 'required|email|max:255',
-                    'phoneNumber' => 'required|regex:/^[0-9]{11}$/',
+                    'phoneNumber' => 'digits_between:11,12',
                     'homeAddress' => 'required|string|max:255',
                     'barangay' => 'required|string|max:50',
                     'city' => 'required|string|max:50',

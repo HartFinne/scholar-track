@@ -68,7 +68,9 @@
                             style="width: 100%">
                             <option value="all">All Users</option>
                             @foreach ($users as $user)
-                                <option value="{{ $user->caseCode }}">{{ $user->caseCode }}</option>
+                                <option value="{{ $user->caseCode }}">{{ $user->caseCode }} |
+                                    {{ $user->education->scLastname }}, {{ $user->education->scFirstname }}
+                                    {{ $user->education->scMiddlename }}</option>
                             @endforeach
                         </select>
                     </div>

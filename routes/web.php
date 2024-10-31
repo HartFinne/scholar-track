@@ -19,14 +19,15 @@ Route::view('roleselection', 'roleselection')->name('roleselection');
 //routing for applicant page
 Route::prefix('applicant')->group(function () {
     Route::view('/appinstructions', 'applicant.appinstructions')->name('appinstructions');
-    Route::get('/applicationformC', [ApplicationController::class, 'showcollegeapplication'])->name('form-college');
+    Route::get('/application-form/college', [ApplicationController::class, 'showcollegeapplication'])->name('form-college');
     Route::post('/saveapplicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
-    Route::view('/applicationformHE', 'applicant.applicationformHE')->name('form-hselem');
+    Route::get('/application-form/{level}', [ApplicationController::class, 'showelemhsapplication'])->name('form-hselem');
     Route::get('/application-success/{casecode}/{password}', [ApplicationController::class, 'showconfirmation'])->name('showconfirmation');
     Route::get('/login', [ApplicantAuthController::class, 'showlogin'])->name('login-applicant');
     Route::post('/login', [ApplicantAuthController::class, 'login'])->name('log-applicant');
     Route::get('/logout', [ApplicantAuthController::class, 'logout'])->name('logout-applicant');
     Route::get('/applicant-portal/{casecode}', [ApplicantAuthController::class, 'showportal'])->middleware('applicant')->name('applicantportal');
+    Route::get('/cancel-application/{casecode}', [ApplicationController::class, 'cancelapplication'])->name('cancelapplication');
 });
 
 // routing for scholars page just for viewing the page no logic used here
@@ -159,6 +160,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/updatespecreq/{requesttype}/{id}', [StaffController::class, 'updatespecreq'])->name('updatespecreq');
     // APPLICATION CRITERIA
     Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
+    Route::post('/update-application-forms/{formname}', [StaffController::class, 'updateappformstatus'])->name('updateappformstatus');
     Route::get('/application-qualification', [StaffController::class, 'showQualification'])->name('qualification');
     Route::post('/updatecriteria', [StaffController::class, 'updatecriteria'])->name('updatecriteria');
     Route::post('/addinstitution', [StaffController::class, 'addinstitution'])->name('addinstitution');
@@ -191,6 +193,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // USER: APPLICANTS
     Route::get('/applicants', [StaffController::class, 'showApplicants'])->name('applicants');
     Route::get('/applicant-info/{casecode}', [StaffController::class, 'showapplicantinfo'])->name('applicantinfo');
+    Route::post('/applicant-info/{casecode}/update-status', [StaffController::class, 'updateapplicantstatus'])->name('updateapplicantstatus');
     Route::get('/applicant-account-info/{apid}', [StaffController::class, 'showapplicantaccount'])->name('applicant.view');
     Route::post('/applicant/activate/{apid}', [StaffController::class, 'activateapplicant'])->name('applicant.activate');
     Route::post('/applicant/deactivate/{apid}', [StaffController::class, 'deactivateapplicant'])->name('applicant.deactivate');

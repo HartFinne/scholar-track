@@ -194,7 +194,8 @@
 
                 <h5>Application Process:</h5>
                 <ul class="app-process">
-                    <li><strong>STEP 01:</strong> Fill out the <a href="{{ route('form-hselem') }}">Application
+                    <li><strong>STEP 01:</strong> Fill out the <a
+                            href="{{ route('form-hselem', 'highschool') }}">Application
                             Form.</a></li>
                     <li><strong>STEP 02:</strong> Submit the complete required documents.</li>
                     <li><strong>STEP 03:</strong> Initial Interview</li>
@@ -250,7 +251,8 @@
 
                 <h5>Application Process:</h5>
                 <ul class="app-process">
-                    <li><strong>STEP 01:</strong> Fill out the <a href="{{ route('form-hselem') }}">Application
+                    <li><strong>STEP 01:</strong> Fill out the <a
+                            href="{{ route('form-hselem', 'elementary') }}">Application
                             Form.</a></li>
                     <li><strong>STEP 02:</strong> Submit the complete required documents.</li>
                     <li><strong>STEP 03:</strong> Initial Interview</li>
@@ -263,7 +265,8 @@
         </div>
     </div>
 
-    <p class="applicant-login">Already an Applicant? Click <a href="">here</a> to login to your account.</p>
+    <p class="applicant-login">Already an Applicant? Click <a href="{{ route('login-applicant') }}">here</a> to login
+        to your account.</p>
 
     <footer>
         <p>For further inquiries, please call: <strong>8761-6427</strong> or <strong>0908-764-4245</strong>.</p>

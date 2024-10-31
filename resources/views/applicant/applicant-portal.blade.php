@@ -7,6 +7,7 @@
     <title>Applicant Portal</title>
     <link rel="stylesheet" href="{{ asset('css/appformview.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 </head>
 
@@ -37,24 +38,69 @@
     <!-- MAIN -->
     <div class="ctnmain">
         <div class="appform-view">
-            <div class="appinfo">
-                <div class="row my-2">
-                    <span class="col-md-3 label">Applicant Name</span>
-                    <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $applicant->name }}"
-                        readonly>
+            <div class="appinfo row mx-auto">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                <div class="col-md-9">
+                    <div class="row my-1">
+                        <span class="col-md-4 label">Applicant Name</span>
+                        <span class="col-md-1 label">: </span>
+                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $applicant->name }}"
+                            readonly>
+                    </div>
+                    <div class="row my-1">
+                        <span class="col-md-4 label">Applicant Case Code</span>
+                        <span class="col-md-1 label">: </span>
+                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;"
+                            value="{{ $applicant->casecode }}" readonly>
+                    </div>
+                    <div class="row my-1">
+                        <span class="col-md-4 label">Application Status</span>
+                        <span class="col-md-1 label">: </span>
+                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;"
+                            value="{{ $applicant->applicationstatus }}" readonly>
+                    </div>
                 </div>
-                <div class="row my-2">
-                    <span class="col-md-3 label">Applicant Case Code</span>
-                    <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $applicant->casecode }}"
-                        readonly>
+                <div class="col-md-3">
+                    <div class="row my-1 mx-1">
+                        <a href="" class="btn btn-outline-success text-success bg-light">Download Form</a>
+                    </div>
+                    <div class="row mx-1">
+                        <button class="btn btn-danger" id="btnwithdraw" data-bs-toggle="modal"
+                            data-bs-target="#withdrawModal">
+                            Withdraw
+                        </button>
+                    </div>
                 </div>
-                <div class="row my-2">
-                    <span class="col-md-3 label">Application Status</span>
-                    <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;"
-                        value="{{ $applicant->applicationstatus }}" readonly>
+            </div>
+            <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="withdrawModalLabel">Confirm Withdrawal</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure you want to withdraw your application?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" id="confirmWithdraw">Confirm</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="page1">
@@ -524,6 +570,11 @@
     </div>
 
     <script src="{{ asset('js/applicant.js') }}"></script>
+    <script>
+        document.getElementById('confirmWithdraw').addEventListener('click', function() {
+            window.location.href = "{{ route('cancelapplication', $applicant->casecode) }}";
+        });
+    </script>
 </body>
 
 </html>

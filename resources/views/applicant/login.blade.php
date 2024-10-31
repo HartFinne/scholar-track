@@ -49,6 +49,9 @@
             <a href="forgotpass.html" id="btnforgotpass">Forgot password?</a>
 
             <button type="submit" id="btnlogin">Sign In</button>
+            <a href="{{ route('appinstructions') }}" id="btnregister">Don't have an
+                account? Apply
+                here.</a>
         </form>
     </div>
 

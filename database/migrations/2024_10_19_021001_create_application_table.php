@@ -27,20 +27,14 @@ return new class extends Migration
                 'updated_at' => now(),
             ],
             [
-                'formname' => 'Senior High',
-                'status' => 'Open',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'formname' => 'Junior High',
-                'status' => 'Open',
+                'formname' => 'High School',
+                'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'formname' => 'Elementary',
-                'status' => 'Open',
+                'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

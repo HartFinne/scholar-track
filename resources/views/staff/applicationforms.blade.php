@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -20,6 +19,18 @@
 
     <div class="ctnmain">
         <span class="pagetitle">Manage Application Forms</span>
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert" id="success-alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show text-center" role="alert" id="error-alert">
+                {!! session('error') !!}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
         <div class="ctntable table-responsive">
             <table class="table table-bordered" id="tblapplicationforms">
                 <thead>
@@ -30,38 +41,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="text-center align-middle">College</td>
-                        <td class="text-center align-middle">Closed</td>
-                        <td class="text-center align-middle">
-                            <button id="btnoncollege" class="button">Open</button>
-                            <button id="btnoffcollege" class="button" disabled>Close</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center align-middle">Senior High School</td>
-                        <td class="text-center align-middle">Closed</td>
-                        <td class="text-center align-middle">
-                            <button id="btnoncollege" class="button">Open</button>
-                            <button id="btnoffcollege" class="button" disabled>Close</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center align-middle">Junior High School</td>
-                        <td class="text-center align-middle">Closed</td>
-                        <td class="text-center align-middle">
-                            <button id="btnoncollege" class="button">Open</button>
-                            <button id="btnoffcollege" class="button" disabled>Close</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center align-middle">Elementary</td>
-                        <td class="text-center align-middle">Closed</td>
-                        <td class="text-center align-middle">
-                            <button id="btnoncollege" class="button">Open</button>
-                            <button id="btnoffcollege" class="button" disabled>Close</button>
-                        </td>
-                    </tr>
+                    @foreach ($forms as $form)
+                        <tr>
+                            <td class="text-center align-middle">{{ $form->formname }}</td>
+                            <td class="text-center align-middle">{{ $form->status }}</td>
+                            <td class="text-center align-middle">
+                                <form action="{{ route('updateappformstatus', $form->formname) }}" method="POST">
+                                    @csrf <!-- Ensure CSRF protection is enabled for the form -->
+                                    @if ($form->status == 'Closed')
+                                        <input type="hidden" name="status" value="Open">
+                                        <button type="submit" class="btn btn-success">Open</button>
+                                    @else
+                                        <input type="hidden" name="status" value="Closed">
+                                        <button type="submit" class="btn btn-danger">Close</button>
+                                    @endif
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

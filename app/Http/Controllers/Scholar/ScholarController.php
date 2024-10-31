@@ -192,23 +192,27 @@ class ScholarController extends Controller
 
     public function storeGradeSubmission(Request $request)
     {
+        $user = Auth::user();
+        $educ = ScEducation::where('caseCode', $user->caseCode)->first();
         // Validate the form data
+        $gwaRules = ['required', 'numeric'];
+
+        if ($educ->scSchoolLevel == 'College') {
+            $gwaRules[] = 'min:1';
+            $gwaRules[] = 'max:5';
+        } else {
+            $gwaRules[] = 'min:1';
+            $gwaRules[] = 'max:100';
+        }
+
         $request->validate([
             'semester' => ['required'],
-            'gwa' => [
-                'required',
-                'numeric', // Ensures it is a number (int or float)
-                'regex:/^(0|[1-4](\.\d{1,2})?|5(\.0{1,2})?)$/', // Accepts 0, 1, 2, 3, 4, 5 or 1.00, 2.50, etc.
-                'min:1',  // Minimum value of 1
-                'max:5'   // Maximum value of 5
-            ],
+            'gwa' => $gwaRules,
             'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:2048'] // Validate file: jpeg/png/jpg/pdf and max size of 2MB
         ]);
 
         try {
-            // Retrieve the currently authenticated user's caseCode
-            $user = Auth::user(); // Get the authenticated user
-            $educ = ScEducation::where('caseCode', $user->caseCode)->first();
+            // Retrieve the currently authenticated user's caseCode // Get the authenticated user
 
             // Check if an entry for the same academic year and semester already exists
             $existingGrade = grades::where('caseCode', $user->caseCode)

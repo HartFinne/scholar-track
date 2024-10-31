@@ -7,15 +7,36 @@
     <title>Application Form</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/appformview.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
     <div class="ctnmain">
-        <div class="appform-view">
+        <div class="appformview">
+            <div class="mx-auto mb-2" style="width: 8.5in">
+                <div class="col-md-2">
+                    <a href="{{ route('applicants') }}" class="btn btn-success w-100">Go back</a>
+                </div>
+            </div>
             <div class="appinfo">
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
                 <div class="row my-2">
                     <span class="col-md-3 label">Applicant Name</span>
                     <span class="col-md-1 label">: </span>
@@ -28,17 +49,25 @@
                     <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $applicant->casecode }}"
                         readonly>
                 </div>
-                <form class="row my-2" method="POST" action="">
+                <form class="row my-2" method="POST"
+                    action="{{ route('updateapplicantstatus', $applicant->casecode) }}">
+                    @csrf
                     <span class="col-md-3 label">Application Status</span>
                     <span class="col-md-1 label">: </span>
-                    <select name="applicationstatus" class="col-md-8" style="max-width: 35%; padding: 2px 5px;">
-                        <option value="" selected hidden>{{ $applicant->applicationstatus }}</option>
-                        <option value="UNDER REVIEW">UNDER REVIEW</option>
-                        <option value="ACCEPTED">ACCEPTED</option>
-                        <option value="REJECTED">REJECTED</option>
-                        <option value="WITHDRAWN">WITHDRAWN</option>
+                    <select name="applicationstatus" class="col-md-8" style="max-width: 35%; padding: 2px 5px;"
+                        {{ $applicant->applicationstatus == 'WITHDRAWN' ? 'disabled' : '' }}>
+                        <option value="UNDER REVIEW"
+                            {{ $applicant->applicationstatus == 'UNDER REVIEW' ? 'selected' : '' }}>UNDER REVIEW
+                        </option>
+                        <option value="ACCEPTED" {{ $applicant->applicationstatus == 'ACCEPTED' ? 'selected' : '' }}>
+                            ACCEPTED</option>
+                        <option value="REJECTED" {{ $applicant->applicationstatus == 'REJECTED' ? 'selected' : '' }}>
+                            REJECTED</option>
+                        <option value="WITHDRAWN" {{ $applicant->applicationstatus == 'WITHDRAWN' ? 'selected' : '' }}>
+                            WITHDRAWN</option>
                     </select>
-                    <button class="btn mx-3" id="btnupdate">Save</button>
+                    <button class="rounded border border-success mx-3" id="btnupdate"
+                        {{ $applicant->applicationstatus == 'WITHDRAWN' ? 'disabled' : '' }}>Save</button>
                 </form>
             </div>
             <div class="page1">
@@ -352,154 +381,159 @@
                 </div>
             </div>
         </div>
-        <div class="page2">
-            <div class="header">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo">
-                <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
-                </p>
-            </div>
-            <h3 class="text-center my-3">Educational Assistance Application Form</h3>
-            <span class="row"><strong><u>Sketch of Home Address</u></strong></span>
-            <div class="sketchimg">
-                <img src="{{ asset('storage/' . $applicant->requirements->sketchmap) }}"
-                    alt="Sketch Map of Home Address" id="sketchmap">
-            </div>
-            <div class="instructions">
-                <ol>
-                    <li>
-                        The objective of Tzu Chi scholarship program is to provide financial assistance to deserving
-                        students through tuition fee support,
-                        monthly living allowance, as well as additional assistance for other school needs, should it
-                        be deemed necessary. College students
-                        are only authorized to enroll in partner schools and authorized courses.
-                    </li>
-                    <li>
-                        Students with a failing grade on any subject, with <strong>general weighted average 82% both
-                            English and Chinese</strong> or with a grade on
-                        <strong>Conduct below B</strong> or with scholarship grant from other foundations or
-                        organizations will not be accepted.
-                    </li>
-                    <li>Please fill up the Scholarship Application form completely and Draw Sketch of home address
-                        use the back page if necessary. Any
-                        misleading information may lead to disqualification.
-                    </li>
-                    <li>
-                        Submit the following: <span id="reqs">Photocopy of Report Card or copy of grade form
-                            last school year, Registration form, Accomplished Application
-                            Form, Two (2) 1x1 ID Pictures, Autobiography, Family Picture, Copies of Utility Bills,
-                            Detailed Sketch of Home Address, Certificate
-                            of indigence from the Barangay, Pictures of House (Inside and outside), Payslip or
-                            Income Tax Return of Both Parents (if working).</span>
-                        <strong>Deadline of Submission is on</strong> <span id="deadline">DEADLINE</span>.
-                    </li>
-                    <li>
-                        Late applicants will not be entertained.
-                    </li>
-                    <li>
-                        All applications are subject for home visit and approval.
-                    </li>
-                    <li>
-                        The applicants will be notified on the acceptance or rejection of the application.
-                    </li>
-                    <li>
-                        For inquiries, you may contact the Educational Assistance Program Staff with number
-                        09953066694.
-                    </li>
-                </ol>
-            </div>
-            <div class="fillstaff">
-                <div class="heading">
-                    <p>To be filled up by TZU CHI FOUNDATION</p>
-                    <p>Case Details</p>
+        <form action="" method="post">
+            <div class="page2">
+                <div class="header">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo">
+                    <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
+                    </p>
                 </div>
-            </div>
-            <div class="table3">
-                <table class="table" id="table">
-                    <tr>
-                        <td>
-                            <span class="slabel">Nature of Needs</span><br>
-                            <span class="svalue" id="natureOfneeds">
-                                <input type="radio" id="financial" name="needs" value="Financial">
-                                <label for="financial">Financial</label><br>
-                                <input type="radio" id="medical" name="needs" value="Medical">
-                                <label for="medical">Medical</label><br>
-                                <input type="radio" id="food" name="needs" value="Food">
-                                <label for="food">Food</label><br>
-                                <input type="radio" id="material" name="needs" value="Material">
-                                <label for="material">Material</label><br>
-                                <input type="radio" id="educ" name="needs" value="Education" checked>
-                                <label for="educ"> Education</label><br>
-                                <input type="radio" id="others" name="needs" value="Others">
-                                <label for="others"> Others</label><br>
+                <h3 class="text-center my-3">Educational Assistance Application Form</h3>
+                <span class="row"><strong><u>Sketch of Home Address</u></strong></span>
+                <div class="sketchimg">
+                    <img src="{{ asset('storage/' . $applicant->requirements->sketchmap) }}"
+                        alt="Sketch Map of Home Address" id="sketchmap">
+                </div>
+                <div class="instructions">
+                    <ol>
+                        <li>
+                            The objective of Tzu Chi scholarship program is to provide financial assistance to deserving
+                            students through tuition fee support,
+                            monthly living allowance, as well as additional assistance for other school needs, should it
+                            be deemed necessary. College students
+                            are only authorized to enroll in partner schools and authorized courses.
+                        </li>
+                        <li>
+                            Students with a failing grade on any subject, with <strong>general weighted average 82% both
+                                English and Chinese</strong> or with a grade on
+                            <strong>Conduct below B</strong> or with scholarship grant from other foundations or
+                            organizations will not be accepted.
+                        </li>
+                        <li>Please fill up the Scholarship Application form completely and Draw Sketch of home address
+                            use the back page if necessary. Any
+                            misleading information may lead to disqualification.
+                        </li>
+                        <li>
+                            Submit the following: <span id="reqs">Photocopy of Report Card or copy of grade form
+                                last school year, Registration form, Accomplished Application
+                                Form, Two (2) 1x1 ID Pictures, Autobiography, Family Picture, Copies of Utility Bills,
+                                Detailed Sketch of Home Address, Certificate
+                                of indigence from the Barangay, Pictures of House (Inside and outside), Payslip or
+                                Income Tax Return of Both Parents (if working).</span>
+                            <strong>Deadline of Submission is on</strong> <span id="deadline">DEADLINE</span>.
+                        </li>
+                        <li>
+                            Late applicants will not be entertained.
+                        </li>
+                        <li>
+                            All applications are subject for home visit and approval.
+                        </li>
+                        <li>
+                            The applicants will be notified on the acceptance or rejection of the application.
+                        </li>
+                        <li>
+                            For inquiries, you may contact the Educational Assistance Program Staff with number
+                            09953066694.
+                        </li>
+                    </ol>
+                </div>
+                <div class="fillstaff">
+                    <div class="heading">
+                        <p>To be filled up by TZU CHI FOUNDATION</p>
+                        <p>Case Details</p>
+                    </div>
+                </div>
+                <div class="table3">
+                    <table class="table" id="table">
+                        <tr>
+                            <td>
+                                <span class="slabel">Nature of Needs</span><br>
+                                <span class="svalue" id="natureOfneeds">
+                                    <input type="radio" id="financial" name="needs" value="Financial">
+                                    <label for="financial">Financial</label><br>
+                                    <input type="radio" id="medical" name="needs" value="Medical">
+                                    <label for="medical">Medical</label><br>
+                                    <input type="radio" id="food" name="needs" value="Food">
+                                    <label for="food">Food</label><br>
+                                    <input type="radio" id="material" name="needs" value="Material">
+                                    <label for="material">Material</label><br>
+                                    <input type="radio" id="educ" name="needs" value="Education" checked>
+                                    <label for="educ"> Education</label><br>
+                                    <input type="radio" id="others" name="needs" value="Others">
+                                    <label for="others"> Others</label><br>
+                                </span>
+                            </td>
+                            <td style="width: 600px;">
+                                <span class="slabel"><strong>Problem Statement</strong></span><br>
+                                <textarea name="problemstatement" id="" rows="5" cols="6" placeholder="Type here..." required></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="column col-md-5">
+                        <div class="row my-2 d-flex justify-content-between casedeets">
+                            Received By:
+                            <input class="casedeets-input text-center" style="width: 65% !important" type="text"
+                                name="receiveby" required>
+                        </div>
+                        <div class="row my-2 d-flex justify-content-between casedeets">
+                            Date Receive:
+                            <input class="casedeets-input text-center" style="width: 50% !important" type="text"
+                                name="datereceived" required placeholder="MM DD, YYYY">
+                        </div>
+                        <div class="row my-2 d-flex justify-content-between casedeets">
+                            Assigned District:
+                            <input class="casedeets-input text-center" style="width: 50% !important" type="text"
+                                name="district" required>
+                        </div>
+                        <div class="row my-2 d-flex justify-content-between casedeets">
+                            Assigned Volunteer:
+                            <input class="casedeets-input text-center" style="width: 50% !important" type="text"
+                                name="volunteer" required>
+                        </div>
+                    </div>
+                    <div class="column col-md-7">
+                        <div class="row">
+                            <span class="note">
+                                Note: Important information are essential to be able to assess and evaluate students'
+                                situation. Also please note significant details for home visitation purposes. You may
+                                use the back page if necessary.
                             </span>
-                        </td>
-                        <td style="width: 600px;">
-                            <span class="slabel"><strong>Problem Statement</strong></span><br>
-                            <textarea name="problemstatement" id="" rows="5" cols="6" placeholder="Type here..." required></textarea>
-                        </td>
-                    </tr>
-                </table>
+                        </div>
+                        <div class="column" style="padding: 0 10px">
+                            <div class="row my-2 d-flex justify-content-between casedeets">
+                                Case Referred By:
+                                <input class="casedeets-input text-center" style="width: 45% !important"
+                                    type="text" name="referredby" required>
+                            </div>
+                            <div class="row my-2 d-flex justify-content-between casedeets">
+                                Referral Contact no.:
+                                <input class="casedeets-input text-center" style="width: 45% !important"
+                                    type="tel" name="referphonenum" required>
+                            </div>
+                            <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
+                                Beneficiary:
+                                <input class="casedeets-input text-center" style="width: 45% !important"
+                                    type="text" name="relationship" required>
+                            </div>
+                            <div class="row my-2 d-flex justify-content-between casedeets">
+                                Applicant's Signature:
+                                <span class="casedeets-input text-center" style="width: 45% !important"></span>
+                            </div>
+                            <div class="row my-2 d-flex justify-content-between casedeets">
+                                Date Reported:
+                                <input class="casedeets-input text-center" style="width: 45% !important"
+                                    type="text" name="datereported" required placeholder="MM DD, YYYY">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="row">
-                <div class="column col-md-5">
-                    <div class="row my-2 d-flex justify-content-between casedeets">
-                        Received By:
-                        <input class="casedeets-input text-center" style="width: 65% !important" type="text"
-                            name="receiveby" required>
-                    </div>
-                    <div class="row my-2 d-flex justify-content-between casedeets">
-                        Date Receive:
-                        <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="datereceived" required placeholder="MM DD, YYYY">
-                    </div>
-                    <div class="row my-2 d-flex justify-content-between casedeets">
-                        Assigned District:
-                        <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="district" required>
-                    </div>
-                    <div class="row my-2 d-flex justify-content-between casedeets">
-                        Assigned Volunteer:
-                        <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="volunteer" required>
-                    </div>
-                </div>
-                <div class="column col-md-7">
-                    <div class="row">
-                        <span class="note">
-                            Note: Important information are essential to be able to assess and evaluate students'
-                            situation. Also please note significant details for home visitation purposes. You may
-                            use the back page if necessary.
-                        </span>
-                    </div>
-                    <div class="column" style="padding: 0 10px">
-                        <div class="row my-2 d-flex justify-content-between casedeets">
-                            Case Referred By:
-                            <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="referredby" required>
-                        </div>
-                        <div class="row my-2 d-flex justify-content-between casedeets">
-                            Referral Contact no.:
-                            <input class="casedeets-input text-center" style="width: 45% !important" type="tel"
-                                name="referphonenum" required>
-                        </div>
-                        <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
-                            Beneficiary:
-                            <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="relationship" required>
-                        </div>
-                        <div class="row my-2 d-flex justify-content-between casedeets">
-                            Applicant's Signature:
-                            <span class="casedeets-input text-center" style="width: 45% !important"></span>
-                        </div>
-                        <div class="row my-2 d-flex justify-content-between casedeets">
-                            Date Reported:
-                            <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="datereported" required placeholder="MM DD, YYYY">
-                        </div>
-                    </div>
-                </div>
+                <button type="submit" class="col-md-1 btn btn-success mx-auto">Save</button>
             </div>
-        </div>
+        </form>
     </div>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
 </body>

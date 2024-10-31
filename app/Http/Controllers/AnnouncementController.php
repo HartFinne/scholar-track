@@ -20,7 +20,7 @@ class AnnouncementController extends Controller
 
     public function showHome()
     {
-        $users = User::all();
+        $users = User::with('education')->get();
         $announcements = Announcement::all();
         $worker = Auth::guard('staff')->user();
 
