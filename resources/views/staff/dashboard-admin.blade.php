@@ -24,9 +24,9 @@
     <div class="ctnmain">
         <div class="groupA">
             <span class="welcome">Welcome,</span>
-            <span class="welcome" id="outname">Name</span>
-            <p>Success Message: {{ session('success') }}</p>
-            <p>Failure Message: {{ session('failure') }}</p>
+            <span class="welcome" id="outname">{{ $worker->name }}</span>
+            {{-- <p>Success Message: {{ session('success') }}</p>
+            <p>Failure Message: {{ session('failure') }}</p> --}}
         </div>
         <div class="groupB">
             <span class="groupB1">

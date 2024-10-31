@@ -263,46 +263,48 @@
                     </table>
                 </div>
             </div>
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
-                    <span style="font-size: 18px; font-weight: bold"><strong>Community Service Attendance
-                            Report</strong></span>
-                </div>
-                <div class="ctntable card-body table-responsive">
-                    <table class=" table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle">#</th>
-                                <th class="text-center align-middle">Date of Event</th>
-                                <th class="text-center align-middle">Time In</th>
-                                <th class="text-center align-middle">Time Out</th>
-                                <th class="text-center align-middle">Facilitator Name</th>
-                                <th class="text-center align-middle">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if ($csattendances == null || $csattendances->isEmpty())
+            @if ($data->education->scSchoolLevel == 'College')
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <span style="font-size: 18px; font-weight: bold"><strong>Community Service Attendance
+                                Report</strong></span>
+                    </div>
+                    <div class="ctntable card-body table-responsive">
+                        <table class=" table table-bordered">
+                            <thead>
                                 <tr>
-                                    <td class="text-center align-middle" colspan="6">No data available</td>
+                                    <th class="text-center align-middle">#</th>
+                                    <th class="text-center align-middle">Date of Event</th>
+                                    <th class="text-center align-middle">Time In</th>
+                                    <th class="text-center align-middle">Time Out</th>
+                                    <th class="text-center align-middle">Facilitator Name</th>
+                                    <th class="text-center align-middle">Status</th>
                                 </tr>
-                            @else
-                                @foreach ($csattendances as $index => $attendance)
+                            </thead>
+                            <tbody>
+                                @if ($csattendances == null || $csattendances->isEmpty())
                                     <tr>
-                                        <td class="text-center align-middle">{{ $index + 1 }}</td>
-                                        <td class="text-center align-middle">
-                                            {{ \Carbon\Carbon::parse($attendance->communityservice->eventdate)->format('F d, Y') }}
-                                        </td>
-                                        <td class="text-center align-middle">{{ $attendance->timein }}</td>
-                                        <td class="text-center align-middle">{{ $attendance->timeout }}</td>
-                                        <td class="text-center align-middle">{{ $attendance->facilitator }}</td>
-                                        <td class="text-center align-middle">{{ $attendance->status }}</td>
+                                        <td class="text-center align-middle" colspan="6">No data available</td>
                                     </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
+                                @else
+                                    @foreach ($csattendances as $index => $attendance)
+                                        <tr>
+                                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                            <td class="text-center align-middle">
+                                                {{ \Carbon\Carbon::parse($attendance->communityservice->eventdate)->format('F d, Y') }}
+                                            </td>
+                                            <td class="text-center align-middle">{{ $attendance->timein }}</td>
+                                            <td class="text-center align-middle">{{ $attendance->timeout }}</td>
+                                            <td class="text-center align-middle">{{ $attendance->facilitator }}</td>
+                                            <td class="text-center align-middle">{{ $attendance->status }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            @endif
             <div class="card mb-4">
                 <div class="card-header bg-success text-white">
                     <span style="font-size: 18px; font-weight: bold"><strong>Humanities Class Attendance

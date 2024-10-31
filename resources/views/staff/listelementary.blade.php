@@ -34,15 +34,31 @@
                 <thead>
                     <tr>
                         <th class="text-center align-middle">Scholar's Name</th>
-                        <th class="text-center align-middle">Year Level</th>
+                        <th class="text-center align-middle">Grade Level</th>
                         <th class="text-center align-middle">GWA</th>
-                        <th class="text-center align-middle">HC Attendance</th>
+                        <th class="text-center align-middle">HC Attendance Count</th>
                         <th class="text-center align-middle">Penalty Count</th>
-                        <th class="text-center align-middle">Status</th>
-                        <th class="text-center align-middle">Remark</th>
+                        <th class="text-center align-middle">Scholarship Status</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($scholars as $index => $data)
+                        <tr>
+                            <td class="text-center align-middle">{{ $data->basicInfo->scLastname }},
+                                {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
+                            <td class="text-center align-middle">{{ $data->education->scYearGrade }}</td>
+                            <td class="text-center align-middle">{{ $data->latestgwa ?? 'No Data Available' }}</td>
+                            <td class="text-center align-middle">{{ $data->totalhcattendance }}/{{ $hcevents }}
+                            </td>
+                            <td class="text-center align-middle">{{ $data->penaltycount }}</td>
+                            <td class="text-center align-middle">{{ $data->scholarshipinfo->scholarshipstatus }}</td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('scholar-viewinfo', $data->id) }}" class="btn btn-primary">View</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
     </div>

@@ -49,7 +49,7 @@
                             <td class="text-center align-middle">{{ $data->basicInfo->scLastname }},
                                 {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
                             <td class="text-center align-middle">{{ $data->education->scYearGrade }}</td>
-                            <td class="text-center align-middle">{{ $data->latestgwa }}</td>
+                            <td class="text-center align-middle">{{ $data->latestgwa ?? 'No Data Available' }}</td>
                             <td class="text-center align-middle">{{ $data->totalcshours }}/8</td>
                             <td class="text-center align-middle">{{ $data->totalhcattendance }}/{{ $hcevents }}
                             </td>

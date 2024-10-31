@@ -98,7 +98,11 @@ class StaffController extends Controller
 
     public function showScholarsCollege()
     {
-        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])->get();
+        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'College');
+            })
+            ->get();
 
         // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
         foreach ($scholars as $scholar) {
@@ -137,12 +141,73 @@ class StaffController extends Controller
 
     public function showScholarsElem()
     {
-        return view('staff.listelementary');
+        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'Elementary');
+            })
+            ->get();
+
+        // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
+        foreach ($scholars as $scholar) {
+            $acadyearend = $scholar->scholarshipinfo->enddate;  // Ensure `enddate` is retrieved correctly
+            $acadyearstart = date('Y-m-d', strtotime('-1 year', strtotime($acadyearend)));  // Subtract one year from end date
+
+            // Latest GWA based on `caseCode`
+            $scholar->latestgwa = DB::table('grades')
+                ->where('caseCode', $scholar->caseCode)
+                ->orderBy('schoolyear', 'desc')
+                ->value('gwa');
+
+            // Total Humanities Class Attendance within academic year
+            $scholar->totalhcattendance = hcattendance::where('caseCode', $scholar->caseCode)
+                ->whereHas('humanitiesclass', function ($query) use ($acadyearstart, $acadyearend) {
+                    $query->whereBetween('hcdate', [$acadyearstart, $acadyearend]);
+                })
+                ->count();
+
+            // Total Penalties
+            $scholar->penaltycount = penalty::where('caseCode', $scholar->caseCode)->count();
+        }
+
+        // Count humanities events within the academic year range
+        $hcevents = humanitiesclass::whereBetween('hcdate', [$acadyearstart, $acadyearend])->count();
+
+        return view('staff.listelementary', compact('scholars', 'hcevents'));
     }
 
     public function showScholarsHS()
     {
-        return view('staff.listhighschool');
+        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->whereHas('education', function ($query) {
+                $query->whereIn('scSchoolLevel', ['Junior High', 'Senior High']);
+            })
+            ->get();
+
+        // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
+        foreach ($scholars as $scholar) {
+            $acadyearend = $scholar->scholarshipinfo->enddate;  // Ensure `enddate` is retrieved correctly
+            $acadyearstart = date('Y-m-d', strtotime('-1 year', strtotime($acadyearend)));  // Subtract one year from end date
+
+            // Latest GWA based on `caseCode`
+            $scholar->latestgwa = DB::table('grades')
+                ->where('caseCode', $scholar->caseCode)
+                ->orderBy('schoolyear', 'desc')
+                ->value('gwa');
+
+            // Total Humanities Class Attendance within academic year
+            $scholar->totalhcattendance = hcattendance::where('caseCode', $scholar->caseCode)
+                ->whereHas('humanitiesclass', function ($query) use ($acadyearstart, $acadyearend) {
+                    $query->whereBetween('hcdate', [$acadyearstart, $acadyearend]);
+                })
+                ->count();
+
+            // Total Penalties
+            $scholar->penaltycount = penalty::where('caseCode', $scholar->caseCode)->count();
+        }
+
+        // Count humanities events within the academic year range
+        $hcevents = humanitiesclass::whereBetween('hcdate', [$acadyearstart, $acadyearend])->count();
+        return view('staff.listhighschool', compact('scholars', 'hcevents'));
     }
 
     public function showScholarProfile($id)
@@ -1076,16 +1141,29 @@ class StaffController extends Controller
 
     public function showScholarsoverview()
     {
-        $totalscholars = User::all()->count();
+        $totalscholars = User::count();
+
         $totalnewscholars = scholarshipinfo::where('scholartype', 'New Scholar')->count();
-        $scholarsmd = scholarshipinfo::where('area', 'Mindong')->count();
-        $scholarsmx = scholarshipinfo::where('area', 'Minxi')->count();
-        $scholarsmz = scholarshipinfo::where('area', 'Minzhong')->count();
-        $college = ScEducation::where('scSchoolLevel', 'College')->count();
-        $shs = ScEducation::where('scSchoolLevel', 'Senior High')->count();
-        $jhs = ScEducation::where('scSchoolLevel', 'Junior High')->count();
-        $elem = ScEducation::where('scSchoolLevel', 'Elementary')->count();
-        return view('staff.scholars', compact('totalscholars', 'totalnewscholars', 'scholarsmd', 'scholarsmx', 'scholarsmz', 'college', 'shs', 'jhs', 'elem'));
+
+        $areas = scholarshipinfo::selectRaw('area')->distinct()->pluck('area');
+        $scholarsperarea = [];
+        foreach ($areas as $area) {
+            $scholarsperarea[$area] = scholarshipinfo::where('area', $area)->count();
+        }
+
+        $levels = ScEducation::selectRaw('scSchoolLevel')->distinct()->pluck('scSchoolLevel');
+        $scholarsperlevel = [];
+        foreach ($levels as $level) {
+            $scholarsperlevel[$level] = ScEducation::where('scSchoolLevel', $level)->count();
+        }
+
+        return view('staff.scholars', compact(
+            'totalscholars',
+            'totalnewscholars',
+            'areas',
+            'scholarsperarea',
+            'scholarsperlevel'
+        ));
     }
 
     public function showUsersScholar()
@@ -1111,12 +1189,13 @@ class StaffController extends Controller
 
     public function showDashboard()
     {
+        $worker = Auth::guard('staff')->user();
         $totalscholar = user::all()->count();
         $totalstaff = staccount::all()->count();
         $totalapplicant = applicants::all()->count();
         $totalusers = $totalapplicant + $totalstaff + $totalscholar;
 
-        return view('staff.dashboard-admin', compact('totalscholar', 'totalstaff', 'totalapplicant', 'totalusers'));
+        return view('staff.dashboard-admin', compact('totalscholar', 'totalstaff', 'totalapplicant', 'totalusers', 'worker'));
     }
 
     public function activateStaff($id)

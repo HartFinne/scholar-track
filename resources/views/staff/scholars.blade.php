@@ -68,38 +68,66 @@
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Convert the PHP array to a JavaScript object for scholars per area
+            const scholarsperarea = @json($scholarsperarea);
+
+            // Prepare data for the chart
+            const areaLabels = Object.keys(scholarsperarea); // Areas
+            const areaData = Object.values(scholarsperarea); // Count per area
+
+            // Add 0 to the end of the data array
+            areaData.push(0);
+
             new Chart("scholarsperarea", {
                 type: "bar",
                 data: {
-                    labels: ["Mindong", "Minxi", "Minzhong"],
+                    labels: areaLabels,
                     datasets: [{
-                        backgroundColor: ['#1a5319', '#599f58', '#9de19c'],
-                        data: [{{ $scholarsmd }}, {{ $scholarsmx }}, {{ $scholarsmz }}, 0]
+                        backgroundColor: ['#1a5319', '#599f58', '#9de19c', '#a5d6a7', '#4caf50'],
+                        data: areaData
                     }]
                 },
                 options: {
                     legend: {
                         display: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true // Ensure the y-axis starts from 0
+                        }
                     }
                 }
             });
         });
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Convert the PHP array to a JavaScript object for levels
+            const scholarsperlevel = @json($scholarsperlevel);
+
+            // Prepare data for the chart
+            const levelLabels = Object.keys(scholarsperlevel); // Education levels
+            const levelData = Object.values(scholarsperlevel); // Count per level
+
+            // Add 0 to the end of the data array
+            levelData.push(0);
+
             new Chart("scholarsperschoolevel", {
                 type: "bar",
                 data: {
-                    labels: ["College", "Senior High", "Junior High", "Elementary"],
+                    labels: levelLabels,
                     datasets: [{
                         backgroundColor: "#1a5319",
-                        data: [{{ $college }}, {{ $shs }}, {{ $jhs }},
-                            {{ $elem }}, 0
-                        ]
+                        data: levelData
                     }]
                 },
                 options: {
                     legend: {
                         display: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true // Ensure the y-axis starts from 0
+                        }
                     }
                 }
             });

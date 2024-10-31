@@ -50,49 +50,50 @@
                             <label for="fullName">Name</label>
                             <input type="text" id="fullName" name="fullName"
                                 value="{{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }} {{ $data->basicInfo->scLastname }}"
-                                disabled>
+                                readonly>
                         </div>
                         <div class="column">
                             <label for="dateSubmitted">Date Submitted</label>
-                            <input type="date" id="dateSubmitted" name="dateSubmitted" required>
+                            <input type="date" id="dateSubmitted" name="dateSubmitted" readonly
+                                value="<?php echo date('Y-m-d'); ?>">
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="school">School</label>
                             <input type="text" id="school" name="school"
-                                value="{{ $data->education->scSchoolName }}" disabled>
+                                value="{{ $data->education->scSchoolName }}" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="category">School Category</label>
                             <input type="text" id="category" name="category"
-                                value="{{ $data->education->scSchoolLevel }}" required disabled>
+                                value="{{ $data->education->scSchoolLevel }}" required readonly>
                         </div>
                         <div class="column">
                             <label for="contactNo">Contact No.</label>
                             <input type="tel" id="contactNo" name="contactNo" value="{{ $data->scPhoneNum }}"
-                                disabled>
+                                readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="yrLevel">Year Level</label>
                             <input type="text" id="yrLevel" name="yrLevel"
-                                value="{{ $data->education->scYearGrade }}" disabled>
+                                value="{{ $data->education->scYearGrade }}" readonly>
                         </div>
                         <div class="column">
                             <label for="course">Course</label>
                             <input type="text" id="course" name="course"
-                                value="{{ $data->education->scCourseStrandSec }}" disabled>
+                                value="{{ $data->education->scCourseStrandSec }}" readonly>
                         </div>
                     </div>
                     <div class="row">
                         <div class="column">
                             <label for="homeAddress">Home Address</label>
                             <input type="text" id="homeAddress" name="homeAddress"
-                                value="{{ $data->addressinfo->scPermanent }}" disabled>
+                                value="{{ $data->addressinfo->scPermanent }}" readonly>
                         </div>
                     </div>
                     <div class="row">
@@ -105,7 +106,7 @@
                         <div class="column">
                             <label for="sem">Semester</label>
                             <select name="sem" id="sem" required>
-                                <option value="" selected disabled hidden>Select semester</option>
+                                <option value="" selected hidden>Select semester</option>
                                 @foreach ($availableSemesters as $semester)
                                     <option value="{{ $semester['gid'] }}">{{ $semester['SemesterQuarter'] }}</option>
                                 @endforeach
@@ -210,6 +211,7 @@
 
                 <fieldset class="custom-fieldset">
                     <legend>DAILY TRAVEL ITINERARY FORM</legend>
+                    <span>Fill out this section only if you commute from home to school.</span>
                     <div id="destination-container">
                         <div class="destination-info">
                             <p class="text-center fw-bold" style="text-decoration: underline;">Destination (Vice
@@ -284,6 +286,7 @@
 
                 <fieldset class="custom-fieldset">
                     <legend>LODGING INFORMATION</legend>
+                    <span>Fill out this section only if you are renting a place while studying.</span>
                     <div class="row">
                         <div class="column">
                             <label for="nameOwner">Name of owner/landlady/landlord</label>
@@ -327,6 +330,7 @@
 
                 <fieldset class="custom-fieldset">
                     <legend>OJT DAILY TRAVEL ITINERARY FORM</legend>
+                    <span>Fill out this section only if you are currently undergoing On-the-Job Training (OJT).</span>
                     <div class="row">
                         <div class="column">
                             <label for="endorsement">Photocopy of Endorsement</label>

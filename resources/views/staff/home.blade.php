@@ -23,7 +23,7 @@
         <!-- USER NAME CONTAINER -->
         <div class="group1">
             <h1>Welcome,</h1>
-            <h1>Name</h1>
+            <h1>{{ $worker->name }}</h1>
         </div>
 
         <!-- SEARCH BAR AND CREATE ANNOUNCEMENT BUTTON CONTAINER -->

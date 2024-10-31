@@ -100,15 +100,6 @@ class RegularAllowanceForm extends Controller
         // dd($request);
 
         $validatedData = $request->validate([
-            'dateSubmitted' => [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) {
-                    if ($value !== Carbon::today()->format('Y-m-d')) {
-                        $fail('The ' . $attribute . ' must be today\'s date.');
-                    }
-                },
-            ],
             'boardAddress' => 'nullable|string|max:255',
             'sem' => 'required|exists:grades,gid',
             'startSem' => 'required|date',

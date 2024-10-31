@@ -161,7 +161,7 @@ class ScholarController extends Controller
             ->first();
 
         // Set the total required hours (example value)
-        $totalRequiredHours = criteria::selectRAW('criteria.cshours');
+        $totalRequiredHours = criteria::selectRAW('criteria.cshours')->value('cshours');
         $completedHours = $communityServiceData->total_hours ?? 0;
         $remainingHours = max($totalRequiredHours - $completedHours, 0);
 

@@ -22,8 +22,9 @@ class AnnouncementController extends Controller
     {
         $users = User::all();
         $announcements = Announcement::all();
+        $worker = Auth::guard('staff')->user();
 
-        return view('staff.home', compact('users', 'announcements'));
+        return view('staff.home', compact('users', 'announcements', 'worker'));
     }
 
     // storeannouncement
