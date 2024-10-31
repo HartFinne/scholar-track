@@ -315,7 +315,7 @@ class RegularAllowanceForm extends Controller
 
             return redirect()->back()->with('success', 'Data successfully saved!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error saving data: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Error saving data: ' . $e->getMessage());
         }
     }
 }

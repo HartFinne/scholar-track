@@ -147,8 +147,11 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/letter-of-explanation', [StaffController::class, 'showLTE'])->name('lte');
     // ALLOWANCE REQUESTS
     Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');
-    Route::get('/allowance-requests-special', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
-    Route::post('/upload-transpo', [StaffController::class, 'updatetransporeimbursenment'])->name('transporeimbursement');
+    Route::get('/allowance-requests-regular/{id}', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
+    Route::post('/update-requests-regular/{id}', [StaffController::class, 'updateRegularAllowance'])->name('update-requests-regular.post');
+
+    Route::get('/allowance-requests-special', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-special');
+    Route::post('/upload-transpo', [StaffController::class, 'viewAllowanceRegularInfo'])->name('transporeimbursement');
     Route::post('/upload-acknowledgement', [StaffController::class, 'updateacknowledgementreceipt'])->name('acknowledgement');
     Route::post('/upload-liquidation', [StaffController::class, 'updateliquidationform'])->name('liquidation');
     Route::post('/upload-certification', [StaffController::class, 'updatecertificationform'])->name('certform');

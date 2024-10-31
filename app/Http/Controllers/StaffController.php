@@ -40,8 +40,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\UsesTrait;
 use App\Imports\EmailsImport;
+use App\Models\RegularAllowance;
 use App\Notifications\LteAnnouncementCreated;
 use App\Notifications\PenaltyNotification;
+use App\Notifications\RegularAllowanceNotification;
 use App\Notifications\SpecialAllowancesNotification;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -721,8 +723,119 @@ class StaffController extends Controller
 
     public function showAllowanceRegular()
     {
-        return view('staff.regularallowance');
+        $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
+            ->join('users', 'users.caseCode', '=', 'grades.caseCode')
+            ->join('sc_basicInfo', 'sc_basicInfo.caseCode', '=', 'users.caseCode') // Joining with sc_basicInfo using user_id
+            ->get();
+        return view('staff.regularallowance', compact('requests'));
     }
+
+    public function viewAllowanceRegularInfo($id)
+    {
+
+        $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
+            ->join('users', 'users.caseCode', '=', 'grades.caseCode')
+            ->join('sc_basicInfo', 'sc_basicInfo.caseCode', '=', 'users.caseCode') // Join basic info
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'users.caseCode') // Join scholarship info
+            ->join('sc_education', 'sc_education.caseCode', '=', 'users.caseCode') // Join education info
+            ->where('regular_allowance.regularID', $id) // Filter by specific RegularAllowance ID
+            ->firstOrFail(); // Retrieve single record or fail if not found
+
+
+        // Retrieve the regular allowance request by ID with related information
+        $regularAllowance = RegularAllowance::with([
+            'classReference.classSchedules',
+            'travelItinerary.travelLocations',
+            'lodgingInfo',
+            'ojtTravelItinerary.ojtLocations'
+        ])->findOrFail($id);
+
+        return view('staff.regularallowanceinfo', compact('id', 'requests', 'regularAllowance'));
+    }
+
+
+    public function updateRegularAllowance(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+
+            $req = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
+                ->join('users', 'users.caseCode', '=', 'grades.caseCode')
+                ->where('regular_allowance.regularID', $id)
+                ->firstOrFail();
+
+            if ($request->releasedate == NULL) {
+                $req->status = $request->status;
+            } else {
+                $req->status = $request->status;
+                $req->date_of_release = $request->releasedate;
+            }
+
+            $req->save();
+            DB::commit();
+
+            // Prepare notification settings
+            $api_key = config('services.movider.api_key');
+            $api_secret = config('services.movider.api_secret');
+            Log::info('Movider API Key', ['api_key' => $api_key, 'api_secret' => $api_secret]);
+
+            $user = User::where('caseCode', $req->caseCode)->first();
+
+            $client = new \GuzzleHttp\Client();
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = "Your request has been updated: " . $req->status;
+
+            // Send notification based on user preference
+            if ($user->notification_preference === 'sms') {
+                // Send SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->scPhoneNum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $decodedResponse = json_decode($response->getBody()->getContents(), true);
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum;
+                    }
+                } catch (\Exception $e) {
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::error('Movider SMS Exception', ['error' => $e->getMessage()]);
+                }
+            } else {
+                // Send email notification
+                try {
+                    $user->notify(new RegularAllowanceNotification($req));
+                } catch (\Exception $e) {
+                    $failedEmail[] = $user->email;
+                    Log::error('Email Notification Error', ['error' => $e->getMessage()]);
+                }
+            }
+
+            if (empty($failedSMS) && empty($failedEmail)) {
+                return redirect()->back()->with('success', 'Regular Allowance Request has been updated.');
+            } else {
+                $failureDetails = "";
+                if (!empty($failedSMS)) {
+                    $failureDetails .= " SMS failed for: " . implode(", ", $failedSMS) . ".";
+                }
+                if (!empty($failedEmail)) {
+                    $failureDetails .= " Email failed for: " . implode(", ", $failedEmail) . ".";
+                }
+                return redirect()->back()->with('failure', 'Regular Allowances recorded, but some notifications failed.' . $failureDetails);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Unable to update request. ' . $e->getMessage());
+        }
+    }
+
+
 
     public function showAllowanceSpecial()
     {
@@ -1594,7 +1707,6 @@ class StaffController extends Controller
                 DB::rollBack();
                 return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Failed to submit attendance.', $e->getMessage());
             }
-            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
         } catch (ValidationException $e) {
             DB::rollback();
             return redirect()->back()->with('error', $e->getMessage());

@@ -112,8 +112,30 @@
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    @foreach ($requests as $request)
+                        <tr>
+                            <td class="text-center align-middle">{{ $request->scLastname ?? 'N/A' }},
+                                {{ $request->scFirstname ?? 'N/A' }}</td>
+                            <td class="text-center align-middle">Regular</td>
+                            <td class="text-center align-middle">
+                                {{ $request->created_at ? \Carbon\Carbon::parse($request->created_at)->format('F j, Y') : 'N/A' }}
+                            </td>
+
+                            <td class="text-center align-middle">{{ $request->status ?? 'Pending' }}</td>
+                            <td class="text-center align-middle">
+                                {{ $request->date_of_release ?? 'N/A - Update to include release date' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('allowancerequests-regular-info', ['id' => $request->id]) }}"
+                                    class="btn btn-secondary btn-sm">Update</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
+
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
