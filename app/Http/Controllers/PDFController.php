@@ -139,7 +139,7 @@ class PDFController extends Controller
 
             return redirect()->route('showevalresults')->with('success', 'Evaluation completed successfully.');
         } catch (\Exception $e) {
-            return redirect()->route('showevalresults')->with('error', 'An error has occurred. ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error has occurred. ' . $e->getMessage());
         }
     }
 
