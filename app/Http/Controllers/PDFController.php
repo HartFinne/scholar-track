@@ -68,75 +68,86 @@ class PDFController extends Controller
         $pdf = Pdf::loadView('staff.scholarship-report', $data);
         return $pdf->stream("scholarship-report-{$date}.pdf");
     }
-
     public function evaluatescholars()
     {
         try {
-            // // always empty the datasets
-            // DB::table('datasets')->truncate();
-            // // populate datasets
-            // $users = User::with(['scholarshipinfo', 'education'])
-            //     ->whereHas('scholarshipinfo', function ($query) {
-            //         $query->where('scholarshipstatus', 'Continuing');
-            //     })
-            //     ->whereHas('education', function ($query) {
-            //         $query->where('scSchoolLevel', 'College');
-            //     })
-            //     ->get();
+            // Truncate datasets before processing
+            DB::table('datasets')->truncate();
 
-            // foreach ($users as $user) {
-            //     $startdate = Carbon::parse($user->startdate);
-            //     $schoolYear = $startdate->format('Y') . '-' . $startdate->copy()->addYear()->format('Y');
+            // Fetch users and loop through each to gather data
+            $users = User::with('scholarshipinfo', 'education', 'basicInfo')
+                ->whereHas('scholarshipinfo', fn($query) => $query->where('scholarshipstatus', 'Continuing'))
+                ->whereHas('education', fn($query) => $query->where('scSchoolLevel', 'College'))
+                ->get();
 
-            //     datasets::create([
-            //         'caseCode'      => $user->caseCode,
-            //         'startcontract' => $startdate,
-            //         'endcontract'   => $startdate->copy()->addYear(),
-            //         'gwasem1'       => grades::where('caseCode', $user->caseCode)
-            //             ->where('schoolyear', $schoolYear)
-            //             ->where('SemesterQuarter', '1ST SEMESTER')
-            //             ->first()?->grade,
-            //         'gwasem2'       => grades::where('caseCode', $user->caseCode)
-            //             ->where('schoolyear', $schoolYear)
-            //             ->where('SemesterQuarter', '2ND SEMESTER')
-            //             ->first()?->grade,
-            //         'cshours'       => csattendance::where('caseCode', $user->caseCode)
-            //             ->whereBetween('eventdate', [$startdate, $startdate->copy()->addYear()])
-            //             ->sum('hoursspent'),
-            //         'ltecount'      => lte::where('caseCode', $user->caseCode)
-            //             ->where('ltestatus', 'Unexcused')
-            //             ->count(),
-            //         'penaltycount'  => penalty::where('caseCode', $user->caseCode)
-            //             ->distinct('condition')
-            //             ->count('condition'),
-            //     ]);
-            // }
+            $currentYear = Carbon::now()->year;
+
+            foreach ($users as $user) {
+                $startYear = Carbon::parse($user->scholarshipinfo->startdate)->year;
+                for ($year = $startYear; $year <= $currentYear; $year++) {
+                    $startdate = Carbon::create($year, 1, 1);
+                    $enddate = $startdate->copy()->addYear();
+                    $schoolYear = $startdate->format('Y') . '-' . $enddate->format('Y');
+
+                    $gwasem1 = grades::where('caseCode', $user->caseCode)
+                        ->where('schoolyear', $schoolYear)
+                        ->where('SemesterQuarter', '1st Semester')
+                        ->select('GWA as grade')
+                        ->first()?->grade;
+
+                    $gwasem2 = grades::where('caseCode', $user->caseCode)
+                        ->where('schoolyear', $schoolYear)
+                        ->where('SemesterQuarter', '2nd Semester')
+                        ->select('GWA as grade')
+                        ->first()?->grade;
+
+                    if (is_null($gwasem1) && is_null($gwasem2)) continue;
+
+                    $cshours = csattendance::where('caseCode', $user->caseCode)
+                        ->whereHas('communityservice', fn($query) => $query->whereBetween('eventdate', [$startdate, $enddate]))
+                        ->sum('hoursspent');
+
+                    $ltecount = lte::where('caseCode', $user->caseCode)
+                        ->where('ltestatus', 'Unexcused')
+                        ->count();
+
+                    $penaltycount = penalty::where('caseCode', $user->caseCode)
+                        ->distinct('condition')
+                        ->count('condition');
+
+                    datasets::create([
+                        'caseCode' => $user->caseCode,
+                        'startcontract' => $startdate,
+                        'endcontract' => $enddate,
+                        'gwasem1' => $gwasem1,
+                        'gwasem2' => $gwasem2,
+                        'cshours' => $cshours,
+                        'ltecount' => $ltecount,
+                        'penaltycount' => $penaltycount,
+                    ]);
+                }
+            }
 
             DB::table('evalresults')->truncate();
 
             $command = 'python ' . base_path('storage/app/python/evaluate_scholars.py');
-
-            // Execute the command, capturing any output and error status
             exec($command . ' 2>&1', $output, $return_var);
 
-            // Check if the script executed successfully
             if ($return_var !== 0) {
-                // If an error occurred, handle it (e.g., log it or return an error response)
-                $errorMessage = "Failed to execute Python script. Error: " . implode("\n", $output);
-
-                // Optionally, return an error response or redirect with an error message
                 return redirect()->back()->with('error', 'Evaluation script failed to execute.');
             }
 
-            // Fetch the results and order by 'acadyear' in ascending order
-            $results = evalresults::orderBy('acadyear', 'ASC')->get();
-
-            $acadyears = evalresults::selectRaw('acadyear')->distinct()->get();
-
-            // Pass the results to the view
-            return view('staff.scholarsevaluation', compact('results', 'acadyears'));
+            return redirect()->route('showevalresults')->with('success', 'Evaluation completed successfully.');
         } catch (\Exception $e) {
-            return view('staff.scholarsevaluation')->with('error', 'An error has occurred. ' . $e->getMessage());
+            return redirect()->route('showevalresults')->with('error', 'An error has occurred. ' . $e->getMessage());
         }
+    }
+
+    public function showevalresults()
+    {
+        $results = evalresults::with('basicInfo')->orderBy('acadyear', 'ASC')->get();
+        $acadyears = evalresults::selectRaw('acadyear')->distinct()->get();
+
+        return view('staff.scholarsevaluation', compact('results', 'acadyears'));
     }
 }

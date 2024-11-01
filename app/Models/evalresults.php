@@ -25,4 +25,9 @@ class evalresults extends Model
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
+
+    public function basicInfo()
+    {
+        return $this->belongsTo(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
 }

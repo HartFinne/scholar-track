@@ -212,5 +212,6 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
 // report generation
 Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
-    Route::get('/scholars-evaluation', 'evaluatescholars')->name('evaluatescholars');
+    Route::get('/evaluate-scholars', 'evaluatescholars')->name('evaluatescholars');
+    Route::get('/scholars-evaluation', 'showevalresults')->name('showevalresults');
 });
