@@ -393,19 +393,12 @@ class ApplicationController extends Controller
             return redirect()->route('showconfirmation', ['casecode' => $casecode, 'password' => $password]);
         } catch (ValidationException $e) {
             DB::rollback();
-            $errors = $e->errors();
-            $errorMessages = '<ul>';
-            foreach ($errors as $fieldErrors) {
-                foreach ($fieldErrors as $errorMessage) {
-                    $errorMessages .= '<li>' . $errorMessage . '</li>';
-                }
-            }
-            $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages);
+            // Redirect back with validation errors and old input
+            return redirect()->back()->withInput()->withErrors($e->errors());
         } catch (\Exception $e) {
             DB::rollback();
-            // Log::error("Application submission error: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage());
+            // Handle general exception
+            return redirect()->back()->with('error', 'An error occurred. Please try again. ' . $e->getMessage());
         }
     }
 

@@ -55,21 +55,35 @@ function disableInput() {
 }
 
 
-// Fucntion to add and remove sibling
+// Function to add and remove sibling
 document.getElementById('addSibling').addEventListener('click', function (event) {
    event.preventDefault();
+
+   // Select the first sibling template
    var originalDiv = document.querySelector('.siblingsinfo');
    var clone = originalDiv.cloneNode(true);
-   clone.querySelectorAll('input, select').forEach(input => input.value = '');
-   clone.querySelector('[name="srelationship"]').value = 'Sibling';
+
+   // Clear values for each input in the cloned element
+   clone.querySelectorAll('input, select').forEach(input => {
+       if (input.type === 'text' || input.type === 'date') {
+           input.value = ''; // Clear text and date inputs
+       } else if (input.tagName.toLowerCase() === 'select') {
+           input.selectedIndex = 0; // Reset dropdown to first option
+       }
+   });
+
+   // Add a remove button for each cloned sibling entry
    var removeButton = document.createElement('button');
    removeButton.textContent = 'Remove';
    removeButton.type = 'button';
    removeButton.classList.add('removeSibling');
    removeButton.onclick = function () { clone.remove(); };
    clone.appendChild(removeButton);
+
+   // Append the cloned sibling entry to the siblings container
    document.getElementById('siblings-container').appendChild(clone);
 });
+
 
 // Function to toggle profile
 function showprofilemenu() {

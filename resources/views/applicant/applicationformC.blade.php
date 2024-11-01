@@ -24,20 +24,7 @@
             <div class="">
                 <h1 class="title text-center fw-bold app-open">TZU CHI PHILIPPINES<br>SCHOLARSHIP APPLICATION FORM</h1>
                 <div class="row mt-4">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                            {!! session('error') !!}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
-                    @endif
+
                 </div>
                 <p class="mt-2 mb-1">Welcome to Tzu Chi Scholarship Application Form <strong>(College)</strong>.
                     Before you proceed, kindly read and understand the following statements:
@@ -85,78 +72,124 @@
                     @csrf
                     <fieldset class="custom-fieldset">
                         <legend>Personal Information</legend>
+
                         <div class="row">
                             <div class="column">
                                 <label for="scholarname">Name</label>
                                 <input type="text" name="scholarname" value="{{ old('scholarname') }}"
                                     placeholder="(Last Name, First Name, Middle Name)" required>
+                                @error('scholarname')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="chinesename">Chinese Name</label>
                                 <input type="text" name="chinesename" value="{{ old('chinesename') }}" required>
+                                @error('chinesename')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="sex">Sex</label>
-                                <select name="sex" value="{{ old('sex') }}">
+                                <select name="sex" required>
                                     <option value="" disabled>Select gender</option>
                                     <option value="Male" {{ old('sex') == 'Male' ? 'selected' : '' }}>Male</option>
                                     <option value="Female" {{ old('sex') == 'Female' ? 'selected' : '' }}>Female
                                     </option>
                                 </select>
+                                @error('sex')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="age">Age</label>
                                 <input type="number" name="age" value="{{ old('age') }}" required>
+                                @error('age')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="birthdate">Birthdate</label>
                                 <input type="date" name="birthdate" value="{{ old('birthdate') }}" required>
+                                @error('birthdate')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="homeaddress">Home Address</label>
                                 <input type="text" name="homeaddress" value="{{ old('homeaddress') }}"
                                     placeholder="(House #/Unit #/Floor/Bldg. Name/Street Name)" required>
+                                @error('homeaddress')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="barangay">Barangay</label>
                                 <input type="text" name="barangay" value="{{ old('barangay') }}" required>
+                                @error('barangay')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="city">City</label>
                                 <input type="text" name="city" value="{{ old('city') }}" required>
+                                @error('city')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="email">Email Address</label>
                                 <input type="email" name="email" value="{{ old('email') }}" required>
+                                @error('email')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="phonenum">Cellphone No./Landline</label>
                                 <input type="tel" name="phonenum" value="{{ old('phonenum') }}" required>
+                                @error('phonenum')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="occupation">Occupation</label>
                                 <input type="text" name="occupation" value="{{ old('occupation') }}" required>
+                                @error('occupation')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="income">Income</label>
                                 <input type="number" name="income" value="{{ old('income') }}"
                                     placeholder="If none, input number zero" required>
+                                @error('income')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="fblink">Facebook Link</label>
                                 <input type="text" name="fblink" value="{{ old('fblink') }}" required>
+                                @error('fblink')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <p>Are you a member of any indigenous group?</p>
@@ -165,20 +198,28 @@
                                         onclick="toggleInput()" {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }}
                                         style="cursor: pointer">
                                     <label for="indigenousCheck" style="cursor: pointer">Yes</label>
+
                                     <input type="radio" id="noCheck" name="isIndigenous" value="No"
                                         onclick="disableInput()" {{ old('isIndigenous') == 'No' ? 'checked' : '' }}
                                         style="cursor: pointer">
                                     <label for="noCheck" style="cursor: pointer">No</label>
                                 </div>
+                                @error('isIndigenous')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                                 <input type="text" name="indigenousgroup" id="indigenousInput"
                                     placeholder="Please specify the group you belong to" disabled
                                     value="{{ old('indigenousgroup') }}">
+                                @error('indigenousgroup')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </fieldset>
 
                     <fieldset class="custom-fieldset">
                         <legend>Educational Background</legend>
+
                         <div class="row">
                             <div class="column">
                                 <label for="schoolname">Name of University</label>
@@ -191,12 +232,19 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('schoolname')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="collegedept">College Department</label>
                                 <input type="text" name="collegedept" value="{{ old('collegedept') }}" required>
+                                @error('collegedept')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="incomingyear">Incoming Year Level</label>
@@ -210,8 +258,12 @@
                                     <option value="Third Year"
                                         {{ old('incomingyear') == 'Third Year' ? 'selected' : '' }}>Third Year</option>
                                 </select>
+                                @error('incomingyear')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="course">Course</label>
@@ -224,16 +276,24 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('course')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="gwa">General Average Last Sem</label>
                                 <input type="text" name="gwa" value="{{ old('gwa') }}" required>
+                                @error('gwa')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </fieldset>
 
+
                     <fieldset class="custom-fieldset">
                         <legend>Family Information</legend>
+
                         <div class="fatherinfo">
                             <p class="family">FATHER INFORMATION</p>
                             <div class="row">
@@ -241,11 +301,17 @@
                                     <label for="fname">Name (Last Name, First Name)</label>
                                     <input type="text" id="fname" value="{{ old('fname') }}" name="fname"
                                         required>
+                                    @error('fname')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="fage">Age</label>
                                     <input type="text" id="fage" value="{{ old('fage') }}" name="fage"
                                         required>
+                                    @error('fage')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="fsex">Sex</label>
@@ -253,6 +319,9 @@
                                         <option value="F">F</option>
                                         <option value="M" selected>M</option>
                                     </select>
+                                    @error('fsex')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="row">
@@ -260,16 +329,25 @@
                                     <label for="fbirthdate">Birthdate</label>
                                     <input type="date" id="fbirthdate" value="{{ old('fbirthdate') }}"
                                         name="fbirthdate" required>
+                                    @error('fbirthdate')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="frelationship">Relationship</label>
                                     <input type="text" id="frelationship" value="Father" name="frelationship"
                                         readonly>
+                                    @error('frelationship')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="freligion">Religion</label>
                                     <input type="text" id="freligion" value="{{ old('freligion') }}"
                                         name="freligion" required>
+                                    @error('freligion')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="row">
@@ -277,11 +355,17 @@
                                     <label for="fattainment">Educational Attainment</label>
                                     <input type="text" id="fattainment" value="{{ old('fattainment') }}"
                                         name="fattainment" required>
+                                    @error('fattainment')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="foccupation">School/Occupation</label>
                                     <input type="text" id="foccupation" value="{{ old('foccupation') }}"
                                         name="foccupation" required>
+                                    @error('foccupation')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="row">
@@ -289,14 +373,21 @@
                                     <label for="fcompany">Company</label>
                                     <input type="text" id="fcompany" value="{{ old('fcompany') }}"
                                         name="fcompany" required>
+                                    @error('fcompany')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="fincome">Income</label>
                                     <input type="text" id="fincome" value="{{ old('fincome') }}"
                                         name="fincome" placeholder="If none, input number zero" required>
+                                    @error('fincome')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
+
                         <div class="motherinfo">
                             <p class="family">MOTHER INFORMATION</p>
                             <div class="row">
@@ -304,11 +395,17 @@
                                     <label for="mname">Name (Last Name, First Name)</label>
                                     <input type="text" id="mname" value="{{ old('mname') }}" name="mname"
                                         required>
+                                    @error('mname')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="mage">Age</label>
                                     <input type="text" id="mage" value="{{ old('mage') }}" name="mage"
                                         required>
+                                    @error('mage')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="msex">Sex</label>
@@ -316,6 +413,9 @@
                                         <option value="F" selected>F</option>
                                         <option value="M">M</option>
                                     </select>
+                                    @error('msex')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="row">
@@ -323,16 +423,25 @@
                                     <label for="mbirthdate">Birthdate</label>
                                     <input type="date" id="mbirthdate" value="{{ old('mbirthdate') }}"
                                         name="mbirthdate" required>
+                                    @error('mbirthdate')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="mrelationship">Relationship</label>
                                     <input type="text" id="mrelationship" value="Mother" name="mrelationship"
                                         readonly>
+                                    @error('mrelationship')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="mreligion">Religion</label>
                                     <input type="text" id="mreligion" value="{{ old('mreligion') }}"
                                         name="mreligion" required>
+                                    @error('mreligion')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="row">
@@ -340,11 +449,17 @@
                                     <label for="mattainment">Educational Attainment</label>
                                     <input type="text" id="mattainment" value="{{ old('mattainment') }}"
                                         name="mattainment" required>
+                                    @error('mattainment')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="column">
                                     <label for="moccupation">School/Occupation</label>
                                     <input type="text" id="moccupation" value="{{ old('moccupation') }}"
                                         name="moccupation" required>
+                                    @error('moccupation')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="row">
@@ -352,169 +467,271 @@
                                     <label for="mcompany">Company</label>
                                     <input type="text" id="mcompany" value="{{ old('mcompany') }}"
                                         name="mcompany" required>
+                                    @error('mcompany')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
-                                <div the="column">
+                                <div class="column">
                                     <label for="mincome">Income</label>
                                     <input type="text" id="mincome" value="{{ old('mincome') }}"
                                         name="mincome" placeholder="If none, input number zero" required>
+                                    @error('mincome')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
+
                         <div id="siblings-container">
-                            <div class="siblingsinfo">
-                                <p class="family">SIBLING INFORMATION</p>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="sname[]">Name (Last Name, First Name)</label>
-                                        <input type="text" id="sname[]" value="" name="sname[]" required>
+                            @if (old('sname'))
+                                @foreach (old('sname') as $index => $siblingName)
+                                    <div class="siblingsinfo">
+                                        <p class="family">SIBLING INFORMATION</p>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="sname[]">Name (Last Name, First Name)</label>
+                                                <input type="text" id="sname[]" name="sname[]"
+                                                    value="{{ old('sname')[$index] }}" required>
+                                                @error("sname.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="column">
+                                                <label for="sage[]">Age</label>
+                                                <input type="text" id="sage[]" name="sage[]"
+                                                    value="{{ old('sage')[$index] }}" required>
+                                                @error("sage.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="column">
+                                                <label for="ssex[]">Sex</label>
+                                                <select name="ssex[]" id="ssex[]" required>
+                                                    <option value="" disabled hidden></option>
+                                                    <option value="F"
+                                                        {{ old('ssex')[$index] == 'F' ? 'selected' : '' }}>F</option>
+                                                    <option value="M"
+                                                        {{ old('ssex')[$index] == 'M' ? 'selected' : '' }}>M</option>
+                                                </select>
+                                                @error("ssex.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="sbirthdate[]">Birthdate</label>
+                                                <input type="date" id="sbirthdate[]" name="sbirthdate[]"
+                                                    value="{{ old('sbirthdate')[$index] }}" required>
+                                                @error("sbirthdate.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="column">
+                                                <label for="srelationship">Relationship</label>
+                                                <input type="text" id="srelationship" value="Sibling"
+                                                    name="srelationship" readonly>
+                                            </div>
+                                            <div class="column">
+                                                <label for="sreligion[]">Religion</label>
+                                                <input type="text" id="sreligion[]" name="sreligion[]"
+                                                    value="{{ old('sreligion')[$index] }}" required>
+                                                @error("sreligion.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="sattainment[]">Educational Attainment</label>
+                                                <input type="text" id="sattainment[]" name="sattainment[]"
+                                                    value="{{ old('sattainment')[$index] }}" required>
+                                                @error("sattainment.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="column">
+                                                <label for="soccupation[]">School/Occupation</label>
+                                                <input type="text" id="soccupation[]" name="soccupation[]"
+                                                    value="{{ old('soccupation')[$index] }}" required>
+                                                @error("soccupation.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="scompany[]">Company</label>
+                                                <input type="text" id="scompany[]" name="scompany[]"
+                                                    value="{{ old('scompany')[$index] }}" required>
+                                                @error("scompany.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="column">
+                                                <label for="sincome[]">Income</label>
+                                                <input type="text" id="sincome[]" name="sincome[]"
+                                                    value="{{ old('sincome')[$index] }}"
+                                                    placeholder="If none, input number zero" required>
+                                                @error("sincome.{$index}")
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="column">
-                                        <label for="sage[]">Age</label>
-                                        <input type="text" id="sage[]" value="" name="sage[]" required>
-                                    </div>
-                                    <div class="column">
-                                        <label for="ssex[]">Sex</label>
-                                        <select name="ssex[]" id="ssex[]">
-                                            <option value="" disabled selected hidden></option>
-                                            <option value="F">F</option>
-                                            <option value="M">M</option>
-                                        </select>
-                                    </div>
+                                @endforeach
+                            @else
+                                <!-- Default single sibling form if there is no old input -->
+                                <div class="siblingsinfo">
+                                    <p class="family">SIBLING INFORMATION</p>
+                                    <!-- Same structure as above but without `old()` values -->
                                 </div>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="sbirthdate[]">Birthdate</label>
-                                        <input type="date" id="sbirthdate[]" value="" name="sbirthdate[]"
-                                            required>
-                                    </div>
-                                    <div class="column">
-                                        <label for="srelationship">Relationship</label>
-                                        <input type="text" id="srelationship" value="Sibling"
-                                            name="srelationship" readonly>
-                                    </div>
-                                    <div class="column">
-                                        <label for="sreligion[]">Religion</label>
-                                        <input type="text" id="sreligion[]" value="" name="sreligion[]"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="sattainment[]">Educational Attainment</label>
-                                        <input type="text" id="sattainment[]" value="" name="sattainment[]"
-                                            required>
-                                    </div>
-                                    <div class="column">
-                                        <label for="soccupation[]">School/Occupation</label>
-                                        <input type="text" id="soccupation[]" value="" name="soccupation[]"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="scompany[]">Company</label>
-                                        <input type="text" id="scompany[]" value="" name="scompany[]"
-                                            required>
-                                    </div>
-                                    <div class="column">
-                                        <label for="sincome[]">Income</label>
-                                        <input type="text" id="sincome[]" value="" name="sincome[]"
-                                            placeholder="If none, input number zero" required>
-                                    </div>
-                                </div>
-                            </div>
+                            @endif
                         </div>
+
                         <button id="addSibling">Add Sibling</button>
                     </fieldset>
 
                     <fieldset class="custom-fieldset">
                         <legend>Other Information</legend>
+
                         <div class="row">
                             <div class="column">
                                 <label for="grant">Grant/Assistance from other Government and Non-Government
                                     scholarships, School Discount (How much per sem?)</label>
                                 <textarea id="grant" name="grant" rows="2" cols="50" placeholder="Input your answer here..."
                                     required>{{ old('grant') }}</textarea>
+                                @error('grant')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="talent">Talents & Skills/ Honor and Recognition/
-                                    Extracurricular/Community
-                                    Involvement/Employment</label>
+                                    Extracurricular/Community Involvement/Employment</label>
                                 <textarea id="talent" name="talent" rows="2" cols="50" placeholder="Input your answer here..."
                                     required>{{ old('talent') }}</textarea>
+                                @error('talent')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="expectation">What are your expectations from Tzu Chi Foundation?</label>
                                 <textarea id="expectation" name="expectation" rows="2" cols="50" placeholder="Input your answer here..."
                                     required>{{ old('expectation') }}</textarea>
+                                @error('expectation')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </fieldset>
 
+
                     <fieldset class="custom-fieldset">
                         <legend>Requirements Submission</legend>
+
                         <div class="row">
                             <div class="column">
                                 <label for="idpic">1x1 ID Picture</label>
                                 <input type="file" name="idpic" required>
+                                @error('idpic')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="reportcard">Scanned copy of latest Report Card</label>
                                 <input type="file" name="reportcard" required>
+                                @error('reportcard')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="regiform">Scanned copy of latest Registration Form</label>
                                 <input type="file" name="regiform" required>
+                                @error('regiform')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="autobiography">Autobiography</label>
                                 <input type="file" name="autobiography" required>
+                                @error('autobiography')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="familypic">Family Picture</label>
                                 <input type="file" name="familypic" required>
+                                @error('familypic')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="insidehouse">Picture of the inside of the house</label>
                                 <input type="file" name="insidehouse" required>
+                                @error('insidehouse')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="outsidehouse">Picture of the outside of the house</label>
                                 <input type="file" name="outsidehouse" required>
+                                @error('outsidehouse')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="utility">Scanned copy of latest Utility Bills</label>
                                 <input type="file" name="utility" required>
+                                @error('utility')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="sketchmap">Detailed Sketch Map of Home Address</label>
                                 <input type="file" name="sketchmap" required>
+                                @error('sketchmap')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="column">
                                 <label for="payslip">Scanned copy latest ITR/ Official Pay Slip of parent/s (if
                                     applicable)</label>
                                 <input type="file" name="payslip">
+                                @error('payslip')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="indigencycert">Barangay Certificate of Indigency</label>
                                 <input type="file" name="indigencycert" required>
+                                @error('indigencycert')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                     </fieldset>
+
 
                     <div class="agreement">
                         <input type="checkbox" value="" name="agreement" id="agreement">

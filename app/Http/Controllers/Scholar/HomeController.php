@@ -13,11 +13,30 @@ use App\Models\scholarshipinfo;
 use App\Models\Email;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
-
-
+use Illuminate\Validation\Rules\Password;
 
 class HomeController extends Controller
 {
+    public function showRegistration()
+    {
+        // Retrieve grade/year levels and courses from the database
+        $yearLevels = [
+            'Elementary' => ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'],
+            'Junior High' => ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'],
+            'Senior High' => ['Grade 11', 'Grade 12'],
+            'College' => ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Fifth Year']
+        ];
+
+        // Retrieve courses based on school levels
+        $courses = [
+            'Senior High' => DB::table('courses')->where('level', 'Senior High')->get(),
+            'College' => DB::table('courses')->where('level', 'College')->get()
+        ];
+
+        return view('registration', compact('yearLevels', 'courses'));
+    }
+
+
     //
     function registerScholar(Request $request)
     {
@@ -54,7 +73,16 @@ class HomeController extends Controller
                     'relationToGuardian' => 'required|string|max:50',
                     'guardianEmailAddress' => 'required|email|max:100',
                     'guardianPhoneNumber' => 'required|regex:/^[0-9]{11}$/',
-                    'password' => 'required|string|min:8|confirmed',
+                    'password' => [
+                        'required',
+                        'string',
+                        'confirmed',
+                        Password::min(8)
+                            ->mixedCase()
+                            ->numbers()
+                            ->symbols()
+                            ->uncompromised(), // Ensures password is not a common one
+                    ],
                     'agreement' => 'accepted',
                 ],
                 [

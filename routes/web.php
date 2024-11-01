@@ -101,7 +101,7 @@ Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function
 Route::view('chartjs', 'chartjs');
 
 // route to registration for existing scholars
-Route::view('/registration', 'registration')->name('registration');
+Route::get('/registration', [HomeController::class, 'showRegistration'])->name('registration');
 Route::post('/registerScholar', [HomeController::class, 'registerScholar'])->name('registerScholar');
 Route::get('/registration-success', [HomeController::class, 'showregiconfirmation'])->name('showregiconfirmation');
 
