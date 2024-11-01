@@ -10,8 +10,8 @@ DB_CONNECTION = 'mysql'
 DB_HOST = '127.0.0.1'
 DB_PORT = '3306'
 DB_DATABASE = 'laravel'
-DB_USERNAME = 'root'
-DB_PASSWORD = ''
+DB_USERNAME = 'forge'
+DB_PASSWORD = 'Xf2DrGKSxX02BJ1S5yxI'
 
 # Create a connection string
 connection_string = f'{DB_CONNECTION}+pymysql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_DATABASE}'
