@@ -116,6 +116,8 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // ANNOUNCEMENTS
     Route::get('/home', [AnnouncementController::class, 'showHome'])->name('home-sw');
     Route::post('/home', [AnnouncementController::class, 'storeAnnouncement'])->name('home-sw.post');
+    Route::post('/updateannouncement/{id}', [AnnouncementController::class, 'updateannouncement'])->name('updateannouncement');
+    Route::get('/deleteannouncement/{id}', [AnnouncementController::class, 'deleteannouncement'])->name('deleteannouncement');
     // SCHOLAR OVERVIEW
     Route::get('/scholars', [StaffController::class, 'showScholarsoverview'])->name('scholars-overview');
     Route::get('/scholars-college', [StaffController::class, 'showScholarsCollege'])->name('scholars-college');

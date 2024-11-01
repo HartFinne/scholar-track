@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Announcement;
 use App\Notifications\AnnouncementCreated;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -21,8 +22,8 @@ class AnnouncementController extends Controller
     public function showHome()
     {
         $users = User::with('basicInfo')->get();
-        $announcements = Announcement::all();
         $worker = Auth::guard('staff')->user();
+        $announcements = Announcement::where('author', $worker->name)->get();
 
         return view('staff.home', compact('users', 'announcements', 'worker'));
     }
@@ -120,6 +121,46 @@ class AnnouncementController extends Controller
             return redirect('staff/home')->with('failure', $errorMessage)->with('success', $successMessage);
         } else {
             return redirect('staff/home')->with('success', $successMessage);
+        }
+    }
+
+    public function deleteannouncement($id)
+    {
+        DB::beginTransaction();
+        try {
+            $announcement = Announcement::find($id);
+            if ($announcement) {
+                $announcement->delete();
+                DB::commit();
+                return redirect('staff/home')->with('success', 'Successfully deleted the announcement.');
+            } else {
+                DB::rollBack();
+                return redirect('staff/home')->with('failure', 'Announcement not found.');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect('staff/home')->with('failure', 'Failed to delete the announcement.');
+        }
+    }
+
+    public function updateannouncement($id, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $announcement = Announcement::find($id);
+            if ($announcement) {
+                $announcement->title = $request->title;
+                $announcement->description = $request->description;
+                $announcement->save();
+                DB::commit();
+                return redirect('staff/home')->with('success', 'Successfully updated the announcement details.');
+            } else {
+                DB::rollBack();
+                return redirect('staff/home')->with('failure', 'Announcement not found.');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect('staff/home')->with('failure', 'Failed to update the announcement.');
         }
     }
 }

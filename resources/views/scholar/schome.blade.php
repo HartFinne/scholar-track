@@ -71,8 +71,7 @@
                         </div>
                         <div class="card-body">
                             <p class="card-text fw-bold">{{ $announcement->title }}</p>
-                            <p class="card-text">{{ $announcement->description }}</p>
-                            {{-- <img src="{{ asset('images/home-bg.png') }}" class="card-img-top" alt="Activity Image"> --}}
+                            <p class="card-text" style="white-space: pre-wrap;">{{ $announcement->description }}</p>
                         </div>
                         {{-- <div>
                             <i class="heart-icon fas fa-heart"></i>

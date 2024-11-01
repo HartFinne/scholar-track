@@ -10,7 +10,8 @@
     <link href="{{ asset('css/sthome.css') }}" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
@@ -37,12 +38,52 @@
 
         <!-- ANNOUNCEMENTS CONTAINER -->
         @foreach ($announcements as $announcement)
-            <div class="card col-md-6 mx-auto mt-2 mb-2 border border-success rounded">
-                <div class="card-header bg-success">
+            <div class="card col-md-6 mx-auto mt-4 mb-4 border border-success rounded">
+                <div class="card-header bg-success d-flex justify-content-between align-items-center">
                     <span class="fw-bold" style="font-size: 18px; color: #fff">{{ $announcement->title }}</span>
+                    <div class="d-flex">
+                        <button class="btn btn-light me-1" data-bs-toggle="modal" data-bs-target="#updateModal">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <a href="{{ route('deleteannouncement', $announcement->announcementID) }}"
+                            class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
-                    <p>{{ $announcement->description }}</p>
+                    <p style="white-space: pre-wrap;">{{ $announcement->description }}</p>
+                </div>
+            </div>
+
+            <!-- Update Modal -->
+            <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg"> <!-- Add modal-lg or modal-xl here -->
+                    <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title" id="updateModalLabel">Update Announcement</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ route('updateannouncement', $announcement->announcementID) }}"
+                                method="POST">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title"
+                                        value="{{ $announcement->title }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="10" required
+                                        style="resize: none; height: max-content;">{{ $announcement->description }}</textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endforeach
@@ -98,7 +139,6 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        // Initialize Select2 on the recipients dropdown
         $(document).ready(function() {
             $('#recipients').select2();
         });
