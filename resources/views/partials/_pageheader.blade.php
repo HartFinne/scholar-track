@@ -39,6 +39,7 @@
             Evaluation</a>
         <a id="btnhc" class="sbarmainopt" href='{{ route('generatescholarshipreport') }}' target="_blank">Generate
             Report</a>
+        <a id="btnhc" class="sbarmainopt" href='{{ route('appointments') }}'>Appointments</a>
     </div>
 </div>
 

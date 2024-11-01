@@ -41,6 +41,7 @@ use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\UsesTrait;
 use App\Imports\EmailsImport;
 use App\Models\applicationforms;
+use App\Models\Appointments;
 use App\Models\RegularAllowance;
 use App\Notifications\LteAnnouncementCreated;
 use App\Notifications\PenaltyNotification;
@@ -1938,6 +1939,50 @@ class StaffController extends Controller
             return redirect()->back()->with('importerror', 'Import was unsuccessful. ' . $e->getMessage());
         } catch (\Exception $e) {
             return redirect()->back()->with('importerror', 'Import was unsuccessful. ' . $e->getMessage());
+        }
+    }
+
+    public function showappointments()
+    {
+        $appointments = Appointments::with('basicInfo', 'education')->get();
+        return view('staff.appointments', compact('appointments'));
+    }
+
+    public function viewappointmentinfo($id)
+    {
+        $appointment = Appointments::with('basicInfo', 'education')->where('id', $id)->first();
+
+        return view('staff.appointmentinfo', compact('appointment'));
+    }
+
+    public function updateappointmentstatus($id, Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Fetch the appointment model from the database
+            $appointment = Appointments::where('id', $id)->first();
+
+            // Check if the appointment actually exists
+            if (!$appointment) {
+                throw new \Exception('Appointment not found.');
+            }
+
+            // Update the status of the appointment
+            $appointment->status = $request->status;
+            $appointment->save();
+
+            // Commit the transaction
+            DB::commit();
+
+            // Redirect with a success message
+            return redirect()->back()->with('success', 'Successfully updated appointment status.');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of error
+            DB::rollBack();
+
+            // Redirect with an error message
+            return redirect()->back()->with('error', 'Failed to update appointment status: ' . $e->getMessage());
         }
     }
 }

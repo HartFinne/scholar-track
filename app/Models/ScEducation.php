@@ -28,4 +28,9 @@ class ScEducation extends Model
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointments::class, 'caseCode', 'caseCode');
+    }
 }

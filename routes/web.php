@@ -37,8 +37,10 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
     Route::get('/schome', [ScholarController::class, 'showHome'])->name('schome');
     // Appointment system
-    Route::view('/appointmentsystem', 'scholar.appointmentsystem')->name('appointment');
-    Route::view('/appointmentinfo', 'scholar.appointmentinfo')->name('appointmentinfo');
+    Route::get('/appointment-system', [ScholarController::class, 'showappointmentsystem'])->name('appointment');
+    Route::post('/make-appointment/{caseCode}', [ScholarController::class, 'makeappointment'])->name('makeappointment');
+    Route::get('/cancel-appointment/{id}', [ScholarController::class, 'cancelappointment'])->name('cancelappointment');
+    Route::get('/appointment-info/{id}', [ScholarController::class, 'showappointmentinfo'])->name('appointmentinfo');
     // Humanities Class
     Route::get('/schumanities', [ScholarController::class, 'showHumanitiesClass'])->name('schumanities');
 });
@@ -119,6 +121,9 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/updateannouncement/{id}', [AnnouncementController::class, 'updateannouncement'])->name('updateannouncement');
     Route::get('/deleteannouncement/{id}', [AnnouncementController::class, 'deleteannouncement'])->name('deleteannouncement');
     // SCHOLAR OVERVIEW
+    Route::get('/appointments', [StaffController::class, 'showappointments'])->name('appointments');
+    Route::post('/updateappointmentstatus/{id}', [StaffController::class, 'updateappointmentstatus'])->name('updateappointmentstatus');
+    Route::get('/appointment-info/{id}', [StaffController::class, 'viewappointmentinfo'])->name('viewappointmentinfo');
     Route::get('/scholars', [StaffController::class, 'showScholarsoverview'])->name('scholars-overview');
     Route::get('/scholars-college', [StaffController::class, 'showScholarsCollege'])->name('scholars-college');
     Route::get('/scholars-elementary', [StaffController::class, 'showScholarsElem'])->name('scholars-elementary');

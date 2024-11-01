@@ -118,4 +118,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(renewal::class, 'caseCode', 'caseCode');
     }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointments::class, 'caseCode', 'caseCode');
+    }
 }

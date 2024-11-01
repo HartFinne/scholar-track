@@ -25,6 +25,7 @@ use App\Models\allowancethesis;
 use App\Models\allowancetranspo;
 use App\Models\allowanceuniform;
 use App\Models\Announcement;
+use App\Models\Appointments;
 use App\Models\communityservice;
 use App\Models\criteria;
 use App\Models\csregistration;
@@ -1084,5 +1085,86 @@ class ScholarController extends Controller
         } else {
             return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
         }
+    }
+
+    public function showappointmentsystem()
+    {
+        $user = Auth::user();
+
+        $userappointments = Appointments::where('caseCode', $user->caseCode)->get();
+
+        return view('scholar.appointmentsystem', compact('userappointments', 'user'));
+    }
+
+    public function makeappointment($caseCode, Request $request)
+    {
+        $recordexists = Appointments::where('caseCode', $caseCode)
+            ->where('reason', $request->reason)
+            ->where('date', $request->date)
+            ->exists();
+
+        if ($recordexists) {
+            $formattedDate = \Carbon\Carbon::parse($request->date)->format('F d, Y');
+            $error_message = "You have already made an appointment for " . strtolower($request->reason) . " on " . $formattedDate;
+            return redirect()->route('appointment')->with('error', $error_message);
+        }
+        try {
+            DB::beginTransaction();
+            // Create a new appointment record
+            Appointments::create([
+                'caseCode' => $caseCode,
+                'reason' => $request->reason,
+                'date' => $request->date,
+                'time' => $request->time,
+                'status' => 'Pending',
+                'updatedby' => null,  // Use null, not 'NULL'
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('appointment')->with('success', 'Successfully made an appointment. Please wait for approval.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('appointment')->with('error', 'Failed to make appointment: ' . $e->getMessage());
+        }
+    }
+
+    public function cancelappointment($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Fetch the appointment model from the database
+            $appointment = Appointments::where('id', $id)->first();
+
+            // Check if the appointment actually exists
+            if (!$appointment) {
+                throw new \Exception('Appointment not found.');
+            }
+
+            // Update the status of the appointment
+            $appointment->status = 'Cancelled';
+            $appointment->save();
+
+            // Commit the transaction
+            DB::commit();
+
+            // Redirect with a success message
+            return redirect()->route('appointment')->with('success', 'Successfully cancelled your appointment.');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of error
+            DB::rollBack();
+
+            // Redirect with an error message
+            return redirect()->route('appointment')->with('error', 'Failed to cancel appointment: ' . $e->getMessage());
+        }
+    }
+
+    public function showappointmentinfo($id)
+    {
+        $appointment = Appointments::find($id);
+        $user = user::with('basicInfo', 'education')->where('caseCode', $appointment->caseCode)->first();
+
+        return view('scholar.appointmentinfo', compact('appointment', 'user'));
     }
 }
