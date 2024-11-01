@@ -96,10 +96,26 @@
                     <div class="col-md-2">Proof of Grades</div>
                     <div class="col-md-10 fw-bold">: </div>
                 </div>
+
+                @php
+                    $filePath = Storage::url($grade->ReportCard);
+                    $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
+
+                @endphp
+
                 <div class="grades-img text-center row my-2">
-                    <img src="{{ asset('storage/' . $grade->ReportCard) }}" alt="Report Card"
-                        style="max-width: 100%; height: auto;">
+                    @if ($fileExtension === 'pdf')
+                        <!-- Display PDF using object tag -->
+                        <object data="{{ $filePath }}" type="application/pdf" width="100%" height="600px">
+                            <p>Your browser does not support PDFs. <a href="{{ $filePath }}">Download the PDF</a>.
+                            </p>
+                        </object>
+                    @else
+                        <!-- Display image -->
+                        <img src="{{ $filePath }}" alt="Report Card" style="max-width: 100%; height: auto;">
+                    @endif
                 </div>
+
             </div>
         </div>
     </div>

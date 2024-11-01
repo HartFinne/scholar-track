@@ -35,8 +35,10 @@ class ApplicationController extends Controller
         $institutions = institutions::get();
         if ($level == 'elementary') {
             $form = applicationforms::where('formname', 'Elementary')->first();
-        } else {
-            $form = applicationforms::where('formname', 'High School')->first();
+        } elseif ($level == 'highschool') {
+            $form = applicationforms::where('formname', 'Junior High')
+                ->orWhere('formname', 'Senior High')
+                ->first();
         }
 
         return view('applicant.applicationformC', compact('courses', 'institutions', 'form'));

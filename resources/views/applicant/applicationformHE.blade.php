@@ -19,8 +19,8 @@
     <div class="ctn-main">
         <a href="{{ route('appinstructions') }}" class="btn-back fw-bold" style="text-decoration: none">&lt Go
             back</a>
-        @if ($form->status == 'Closed' && ($form->formname == 'High School' || $form->formname == 'Elementary'))
-            <h1 class="title text-center fw-bold app-close">APPLICATION IS NOT YET OPEN.</h1>
+        @if ($form && $form->status == 'Closed')
+            <h1 class="title text-center fw-bold app-close">APPLICATION IS NOT YET OPEN</h1>
         @else
             <div class="hide">
                 <h1 class="title text-center fw-bold app-open">TZU CHI PHILIPPINES<br>SCHOLARSHIP APPLICATION FORM</h1>
