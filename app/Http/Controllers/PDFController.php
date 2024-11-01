@@ -134,7 +134,8 @@ class PDFController extends Controller
             exec($command . ' 2>&1', $output, $return_var);
 
             if ($return_var !== 0) {
-                return redirect()->back()->with('error', 'Evaluation script failed to execute.');
+            $errorMessage = implode("\n", $output); // Join the output array into a single string
+            return redirect()->back()->with('error', 'Evaluation script failed to execute. Error: ' . $errorMessage);
             }
 
             return redirect()->route('showevalresults')->with('success', 'Evaluation completed successfully.');
