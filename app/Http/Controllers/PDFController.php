@@ -130,12 +130,12 @@ class PDFController extends Controller
 
             DB::table('evalresults')->truncate();
 
-            $command = 'python3 ' . base_path('storage/app/python/evaluate_scholars.py');
+            $command = '/home/forge/my-python-envs/myenv/bin/python3 ' . base_path('storage/app/python/evaluate_scholars.py');
             exec($command . ' 2>&1', $output, $return_var);
 
             if ($return_var !== 0) {
-            $errorMessage = implode("\n", $output); // Join the output array into a single string
-            return redirect()->back()->with('error', 'Evaluation script failed to execute. Error: ' . $errorMessage);
+                $errorMessage = implode("\n", $output); // Join the output array into a single string
+                return redirect()->back()->with('error', 'Evaluation script failed to execute. Error: ' . $errorMessage);
             }
 
             return redirect()->route('showevalresults')->with('success', 'Evaluation completed successfully.');
