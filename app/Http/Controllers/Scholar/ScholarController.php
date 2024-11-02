@@ -1150,13 +1150,13 @@ class ScholarController extends Controller
             DB::commit();
 
             // Redirect with a success message
-            return redirect()->route('appointment')->with('success', 'Successfully cancelled your appointment.');
+            return redirect()->back()->with('success', 'Successfully cancelled your appointment.');
         } catch (\Exception $e) {
             // Rollback the transaction in case of error
             DB::rollBack();
 
             // Redirect with an error message
-            return redirect()->route('appointment')->with('error', 'Failed to cancel appointment: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to cancel appointment: ' . $e->getMessage());
         }
     }
 

@@ -160,7 +160,7 @@
                                 <a href="{{ route('appointmentinfo', $appointment->id) }}"
                                     class="btn-view">View</a><br>
                                 @if ($appointment->status != 'Cancelled')
-                                    <button class="btn-cancel"
+                                    <button class="btn-cancel" id="cancel"
                                         onclick="showDialog('confirmDialog', {{ $appointment->id }})">Cancel</button>
                                 @endif
                             </td>
@@ -183,7 +183,7 @@
                     <a class="btn btn-dark w-100" onclick="closeDialog('confirmDialog')">No</a>
                 </div>
                 <div class="col-md-4">
-                    <a class="btn btn-danger w-100">Yes</a>
+                    <a id="confirmYes" class="btn btn-danger w-100">Yes</a> <!-- Dynamic link set in JavaScript -->
                 </div>
             </div>
         </div>
@@ -192,12 +192,13 @@
     <script src="{{ asset('js/scholar.js') }}"></script>
     <script>
         // Function to show the dialog
-        function showDialog(dialogId, appointmentId) {
-            const dialog = document.getElementById(dialogId);
-            dialog.classList.remove('hidden');
-            // Update the 'Yes' button href attribute dynamically based on the passed appointmentId
-            const yesButton = dialog.querySelector('.btn-danger');
-            yesButton.href = `{{ url('cancelappointment') }}/${appointmentId}`;
+        function showDialog(dialogId, id) {
+            // Show the dialog
+            document.getElementById(dialogId).classList.remove('hidden');
+
+            // Set the "Yes" button's href to the route with the appointment ID
+            const yesButton = document.getElementById('confirmYes');
+            yesButton.href = `/scholar/cancel-appointment/${id}`; // Adjust this path as needed
         }
 
         // Function to close the dialog
