@@ -35,10 +35,8 @@ class ApplicationController extends Controller
         $institutions = institutions::get();
         if ($level == 'elementary') {
             $form = applicationforms::where('formname', 'Elementary')->first();
-        } elseif ($level == 'highschool') {
-            $form = applicationforms::where('formname', 'Junior High')
-                ->orWhere('formname', 'Senior High')
-                ->first();
+        } else {
+            $form = applicationforms::where('formname', 'High School')->first();
         }
 
         return view('applicant.applicationformC', compact('courses', 'institutions', 'form'));
@@ -395,12 +393,19 @@ class ApplicationController extends Controller
             return redirect()->route('showconfirmation', ['casecode' => $casecode, 'password' => $password]);
         } catch (ValidationException $e) {
             DB::rollback();
-            // Redirect back with validation errors and old input
-            return redirect()->back()->withInput()->withErrors($e->errors());
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollback();
-            // Handle general exception
-            return redirect()->back()->with('error', 'An error occurred. Please try again. ' . $e->getMessage());
+            // Log::error("Application submission error: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage());
         }
     }
 
