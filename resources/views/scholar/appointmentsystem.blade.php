@@ -197,7 +197,7 @@
             dialog.classList.remove('hidden');
             // Update the 'Yes' button href attribute dynamically based on the passed appointmentId
             const yesButton = dialog.querySelector('.btn-danger');
-            yesButton.href = `{{ route('cancelappointment') }}/${appointmentId}`;
+            yesButton.href = `{{ url('cancelappointment') }}/${appointmentId}`;
         }
 
         // Function to close the dialog
