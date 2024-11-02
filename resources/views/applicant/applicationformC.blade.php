@@ -429,6 +429,7 @@
 
                     <fieldset class="custom-fieldset">
                         <legend>Other Information</legend>
+                        <span>Each answer must not exceed 255 characters.</span>
                         <div class="row">
                             <div class="column">
                                 <label for="grant">Grant/Assistance from other Government and Non-Government
@@ -457,6 +458,8 @@
 
                     <fieldset class="custom-fieldset">
                         <legend>Requirements Submission</legend>
+                        <span>Each document must not exceed 2MB otherwise the system will not accept your
+                            application.</span>
                         <div class="row">
                             <div class="column">
                                 <label for="idpic">1x1 ID Picture</label>

@@ -160,8 +160,8 @@
                                 <a href="{{ route('appointmentinfo', $appointment->id) }}"
                                     class="btn-view">View</a><br>
                                 @if ($appointment->status != 'Cancelled')
-                                    <button class="btn-cancel" id="cancel"
-                                        onclick="showDialog('confirmDialog')">Cancel</button>
+                                    <button class="btn-cancel"
+                                        onclick="showDialog('confirmDialog', {{ $appointment->id }})">Cancel</button>
                                 @endif
                             </td>
                         </tr>
@@ -183,7 +183,7 @@
                     <a class="btn btn-dark w-100" onclick="closeDialog('confirmDialog')">No</a>
                 </div>
                 <div class="col-md-4">
-                    <a class="btn btn-danger w-100" href="{{ route('cancelappointment', $appointment->id) }}">Yes</a>
+                    <a class="btn btn-danger w-100">Yes</a>
                 </div>
             </div>
         </div>
@@ -192,8 +192,12 @@
     <script src="{{ asset('js/scholar.js') }}"></script>
     <script>
         // Function to show the dialog
-        function showDialog(dialogId) {
-            document.getElementById(dialogId).classList.remove('hidden');
+        function showDialog(dialogId, appointmentId) {
+            const dialog = document.getElementById(dialogId);
+            dialog.classList.remove('hidden');
+            // Update the 'Yes' button href attribute dynamically based on the passed appointmentId
+            const yesButton = dialog.querySelector('.btn-danger');
+            yesButton.href = `{{ route('cancelappointment') }}/${appointmentId}`;
         }
 
         // Function to close the dialog
