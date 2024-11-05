@@ -359,8 +359,8 @@
                         <label for="course">Course/Strand/Section</label>
                         <select id="courseSectionSelect" name="courseSection" required
                             style="display: none;"></select>
-                        <input type="text" id="courseSectionInput" name="courseSection"
-                            placeholder="Enter course or section" style="display: none;">
+                        <input type="text" id="courseSectionInput" placeholder="Enter course or section"
+                            style="display: none;">
                         @error('courseSection')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
