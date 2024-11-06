@@ -21,6 +21,7 @@ engine = create_engine(connection_string)
 
 # Load data from the 'datasets' table in the database
 data = pd.read_sql_table('datasets', engine)
+criteria = pd.read_sql_table('criteria', engine)
 
 # Ensure 'startcontract' and 'endcontract' columns are in date format
 data['startcontract'] = pd.to_datetime(data['startcontract'])
@@ -30,8 +31,8 @@ data['endcontract'] = pd.to_datetime(data['endcontract'])
 data['acadyear'] = data['startcontract'].dt.year.astype(str) + "-" + data['endcontract'].dt.year.astype(str)
 
 # Define criteria thresholds
-MIN_GWA = 1.5
-REQUIRED_CS_HOURS = 6
+MIN_GWA = criteria['cgwa'].iloc[0]
+REQUIRED_CS_HOURS = criteria['cshours'].iloc[0]
 
 # Add columns to evaluate each criterion
 data['meets_gwasem1'] = data['gwasem1'] <= MIN_GWA
@@ -42,11 +43,11 @@ data['meets_penalty'] = data['penaltycount'] == 0
 
 # Assign weights to each criterion
 weights = {
-    'meets_penalty': 40,  # Penalty count takes 40% of the evaluation
+    'meets_penalty': 40,
     'meets_gwasem1': 15,
-    'meets_gwasem2': 15,  # GWA takes 30% of the evaluation
-    'meets_lte': 20,      # LTE count takes 20% of the evaluation
-    'meets_cshours': 10   # CS hours take 10% of the evaluation
+    'meets_gwasem2': 15,
+    'meets_lte': 20,
+    'meets_cshours': 10
 }
 
 # Calculate yearly evaluation score based on weighted criteria
@@ -67,5 +68,42 @@ scholar_evaluations = data.groupby(['caseCode', 'acadyear'], as_index=False)['ev
 # Define the hiring threshold and create the target column `isPassed`
 scholar_evaluations['isPassed'] = (scholar_evaluations['evalscore'] >= 75).astype(int)
 
-# Write the results to the database
-scholar_evaluations[['caseCode', 'acadyear', 'evalscore', 'isPassed']].to_sql('evalresults', con=engine, if_exists='replace', index=False) 
+# Prepare features and target variable
+X = scholar_evaluations[['evalscore']]  # Input features
+y = scholar_evaluations['isPassed']     # Target variable
+
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Initialize and train the logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Predict on test set
+y_pred = model.predict(X_test)
+
+# Calculate and print performance metrics
+accuracy = accuracy_score(y_test, y_pred)
+classification_rep = classification_report(y_test, y_pred)
+confusion_mat = confusion_matrix(y_test, y_pred)
+
+print(f"Accuracy: {accuracy * 100:.2f}%")
+print("Classification Report:")
+print(classification_rep)
+print("Confusion Matrix:")
+print(confusion_mat)
+
+# Store the list of scholars with their evaluation score and remark (strong candidate for hiring or not)
+scholar_evaluations[['caseCode', 'acadyear', 'evalscore', 'isPassed']].to_sql('evalresults', con=engine, if_exists='replace', index=False)
+
+# Export performance metrics to a JSON file for client review
+metrics = {
+    "accuracy": accuracy,
+    "classification_report": classification_rep,
+    "confusion_matrix": confusion_mat.tolist()
+}
+
+with open('storage/app/python/performance_metrics.json', 'w') as f:
+    json.dump(metrics, f)
+
+print("Performance metrics saved to 'performance_metrics.json'")
