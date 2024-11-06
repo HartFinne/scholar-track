@@ -17,6 +17,7 @@ use App\Models\evalresults;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 class PDFController extends Controller
 {
@@ -71,10 +72,8 @@ class PDFController extends Controller
     public function evaluatescholars()
     {
         try {
-            // Truncate datasets before processing
             DB::table('datasets')->truncate();
 
-            // Fetch users and loop through each to gather data
             $users = User::with('scholarshipinfo', 'education', 'basicInfo')
                 ->whereHas('scholarshipinfo', fn($query) => $query->where('scholarshipstatus', 'Continuing'))
                 ->whereHas('education', fn($query) => $query->where('scSchoolLevel', 'College'))
@@ -134,7 +133,7 @@ class PDFController extends Controller
             exec($command . ' 2>&1', $output, $return_var);
 
             if ($return_var !== 0) {
-                $errorMessage = implode("\n", $output); // Join the output array into a single string
+                $errorMessage = implode("\n", $output);
                 return redirect()->back()->with('error', 'Evaluation script failed to execute. Error: ' . $errorMessage);
             }
 
@@ -150,5 +149,13 @@ class PDFController extends Controller
         $acadyears = evalresults::selectRaw('acadyear')->distinct()->get();
 
         return view('staff.scholarsevaluation', compact('results', 'acadyears'));
+    }
+
+    public function showMetrics()
+    {
+        $jsonString = File::get(storage_path('app/python/performance_metrics.json'));
+        $data = json_decode($jsonString, true);
+
+        return view('staff.metrics', compact('data'));
     }
 }

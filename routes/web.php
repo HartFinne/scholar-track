@@ -230,4 +230,5 @@ Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->g
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
     Route::get('/evaluate-scholars', 'evaluatescholars')->name('evaluatescholars');
     Route::get('/scholars-evaluation', 'showevalresults')->name('showevalresults');
+    Route::get('/model-performance-metrics', 'showmetrics')->name('showmetrics');
 });

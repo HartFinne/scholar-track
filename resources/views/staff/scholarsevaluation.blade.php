@@ -16,8 +16,13 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <div class="row">
-            <span class="pagetitle">Scholars Performance Evaluation (College Only)</span>
+        <div class="row align-items-center">
+            <div class="col-md-9">
+                <span class="pagetitle">Scholars Performance Evaluation (College Only)</span>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ route('showmetrics') }}" class="btn btn-success w-100">Model Performance Metrics</a>
+            </div>
         </div>
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
@@ -59,7 +64,8 @@
                                         <td class="text-center align-middle">{{ $index++ }}</td>
                                         <td class="text-center align-middle">{{ $result->caseCode }}</td>
                                         <td class="text-center align-middle">{{ $result->basicInfo->scLastname }},
-                                            {{ $result->basicInfo->scFirstname }} {{ $result->basicInfo->scMiddlename }}
+                                            {{ $result->basicInfo->scFirstname }}
+                                            {{ $result->basicInfo->scMiddlename }}
                                         </td>
                                         <td class="text-center align-middle">{{ $result->evalscore }}%</td>
                                         <td class="text-center align-middle">
