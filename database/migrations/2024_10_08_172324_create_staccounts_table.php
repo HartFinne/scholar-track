@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('area', 25);
             $table->string('role', 25);
             $table->string('status', 25);
+            $table->string('remember_token', 100)->nullable();
             $table->string('password', 255);
             $table->timestamps();
         });

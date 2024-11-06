@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password', 255);
             $table->string('scStatus', 15);
             $table->string('notification_preference')->default('sms');
+            $table->string('remember_token', 100)->nullable();
             $table->timestamp('created_at')->nullable()->default(null);
             $table->timestamp('updated_at')->useCurrent();
         });

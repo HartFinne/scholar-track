@@ -18,6 +18,11 @@ Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
 Route::get('forgot-password', [PasswordController::class, 'showforgotpass'])->name('forgotpass');
 Route::post('verify-forgot-password-request', [PasswordController::class, 'verifyfprequest'])->name('verifyfprequest');
+Route::get('/reset-password/{token}', [PasswordController::class, 'passwordReset'])->name('password.reset');
+Route::post('/reset-password', [PasswordController::class, 'passwordUpdate'])->name('password.update');
+
+
+
 Route::get('/{usertype}/{casecode}/change-password', [PasswordController::class, 'showchangepass'])->name('changepassword');
 Route::post('/change-password/{usertype}/{casecode}', [PasswordController::class, 'submitchangepass'])->name('submitchangepass');
 Route::get('/exit-change-password/{usertype}/{casecode}', [PasswordController::class, 'exitchangepass'])->name('exitchangepass');
