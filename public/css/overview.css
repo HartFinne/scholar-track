@@ -136,9 +136,10 @@
     border-radius: 20px;
     background-color: transparent;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
-.filter-btn:active{
+.filter-btn.active{
     background-color: #2e7c55;
     color: #fff;
 }

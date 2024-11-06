@@ -43,16 +43,20 @@
     <div class="ctn-main">
         <div class="mt-3 mb-3">
             <h2 id="announce-title" class="fw-bold announce-title">ANNOUNCEMENTS</h2>
-            <div class="status">
+            <div class="status" id="filter-announce">
                 <div class="filter">
-                    <button class="filter-btn">All</button>
-                    <button class="filter-btn">Latest</button>
-                    <button class="filter-btn">Humanities Class</button>
-                    <button class="filter-btn">Community Service</button>
+                    <form action="{{ route('schome') }}" method="GET" id="filter-form">
+                        <button type="submit" name="filter" value="all" class="filter-btn {{ request()->input('filter') === 'all' || !request()->has('filter') ? 'active' : '' }}">All</button>
+                        <button type="submit" name="filter" value="latest" class="filter-btn {{ request()->input('filter') == 'latest' ? 'active' : '' }}">Latest</button>
+                        <button type="submit" name="filter" value="humanities" class="filter-btn {{ request()->input('filter') == 'humanities' ? 'active' : '' }}">Humanities</button>
+                        <button type="submit" name="filter" value="community_service" class="filter-btn {{ request()->input('filter') == 'community_service' ? 'active' : '' }}">Community Service</button>
+                    </form>
                 </div>
                 <div class="search-container">
-                    <input type="search" class="search-input" placeholder="Search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <form action="{{ route('schome') }}" method="GET">
+                        <input type="search" name="search" class="search-input" placeholder="Search" value="{{ request()->input('search') }}">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </form>
                 </div>
             </div>
 

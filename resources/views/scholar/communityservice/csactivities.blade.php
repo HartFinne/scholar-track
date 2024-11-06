@@ -30,13 +30,16 @@
         <p class="title-desc">Welcome, Scholar! Monitor your community service effectively.</p>
         <hr>
         <div class="search-container">
-            <input type="search" class="search-input" placeholder="Search">
-            <select class="cs-area" aria-label="area">
-                <option value="" disabled selected hidden>Select Area</option>
-                <option value="mindong">Mindong</option>
-                <option value="minxi">Minxi</option>
-                <option value="minzhong">Minzhong</option>
-            </select>
+            <form action="{{ route('csactivities') }}" method="GET">
+                <input type="search" name="search" class="search-input" placeholder="Search" value="{{ request()->input('search') }}">
+             
+                <select class="cs-area" aria-label="area">
+                    <option value="" disabled selected hidden>Select Area</option>
+                    <option value="mindong">Mindong</option>
+                    <option value="minxi">Minxi</option>
+                    <option value="minzhong">Minzhong</option>
+                </select>
+            </form>
         </div>
 
         <div class="activity-container">
@@ -47,7 +50,7 @@
                         @if ($registrations[$activity->csid]['registatus'] === 'Cancelled')
                             {{-- If the registration is cancelled, show a message and make it non-clickable --}}
                             <div>
-                                <!-- <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt=""> -->
+                                <img src="{{ asset('images/tzu-chi-bg.jpg') }}" alt="">
                                 <div class="card-content">
                                     <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
                                     <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>

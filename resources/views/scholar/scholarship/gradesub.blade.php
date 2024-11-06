@@ -75,10 +75,13 @@
 
         <div class="status">
             <p class="table-title">Grades Status</p>
-            <div class="filter">
-                <button class="filter-btn">All</button>
-                <button class="filter-btn">Passed</button>
-                <button class="filter-btn">Failed</button>
+            <div class="filter" id="filter-grades">
+                <form action="{{ route('gradesub') }}" method="GET" id="filter-form">
+                    <button type="submit" name="status" value="all" class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                    <button type="submit" name="status" value="Pending" class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
+                    <button type="submit" name="status" value="Passed" class="filter-btn {{ request('status') == 'Passed' ? 'active' : '' }}">Passed</button>
+                    <button type="submit" name="status" value="Failed" class="filter-btn {{ request('status') == 'Failed' ? 'active' : '' }}">Failed</button>
+                </form>
             </div>
         </div>
 

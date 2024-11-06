@@ -56,11 +56,13 @@
         <div class="status">
             <p class="table-title"> STATUS : </p>
             <div class="filter">
-                <button class="filter-btn">All</button>
-                <button class="filter-btn">Pending</button>
-                <button class="filter-btn">Accepted</button>
-                <button class="filter-btn">Completed</button>
-                <button class="filter-btn">Rejected</button>
+                <form action="{{ route('scspecial') }}" method="GET" id="filter-form">
+                    <button type="submit" name="status" value="all" class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                    <button type="submit" name="status" value="Pending" class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
+                    <button type="submit" name="status" value="Accepted" class="filter-btn {{ request('status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
+                    <button type="submit" name="status" value="Completed" class="filter-btn {{ request('status') == 'Completed' ? 'active' : '' }}">Completed</button>
+                    <button type="submit" name="status" value="Rejected" class="filter-btn {{ request('status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
+                </form>
             </div>
         </div>
         <div class="ctn-table table-responsive">

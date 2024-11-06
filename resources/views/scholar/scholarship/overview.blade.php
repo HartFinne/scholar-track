@@ -88,19 +88,20 @@
 
 
         <p class="sub-title">Summary of Penalties/Deductions</p>
-        <div class="filter">
-            <button class="filter-btn">All</button>
-            <button class="filter-btn">1st offense</button>
-            <button class="filter-btn">2nd offense</button>
-            <button class="filter-btn">3rd offense</button>
-            <button class="filter-btn">4th offense</button>
+        <div class="filter" id="filter-penalty">
+            <form action="{{ route('overview') }}" method="GET" id="penalty-filter-form">
+                <button type="submit" name="penalty_status" value="all" class="filter-btn {{ request('penalty_status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                <button type="submit" name="penalty_status" value="1st offense" class="filter-btn {{ request('penalty_status') == '1st offense' ? 'active' : '' }}">1st offense</button>
+                <button type="submit" name="penalty_status" value="2nd offense" class="filter-btn {{ request('penalty_status') == '2nd offense' ? 'active' : '' }}">2nd offense</button>
+                <button type="submit" name="penalty_status" value="3rd offense" class="filter-btn {{ request('penalty_status') == '3rd offense' ? 'active' : '' }}">3rd offense</button>
+                <button type="submit" name="penalty_status" value="4th offense" class="filter-btn {{ request('penalty_status') == '4th offense' ? 'active' : '' }}">4th offense</button>
+            </form>
         </div>
         <div class="ctn-table table-responsive">
             <table class="table table-bordered" id="table">
                 <thead>
                     <tr>
                         <th class="text-center align-middle">Date</th>
-                        <th class="text-center align-middle">Condition</th>
                         <th class="text-center align-middle">Condition</th>
                         <th class="text-center align-middle">Penalty</th>
                     </tr>
@@ -110,8 +111,8 @@
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($penalty->dateofpenalty)->format('m/d/Y') }}</td>
                             <!-- Formatting the date -->
-                            <td>{{ $penalty->pendCondition }}</td>
-                            <td>{{ $penalty->penalty }}</td>
+                            <td>{{ $penalty->condition }}</td>
+                            <td>{{ $penalty->remark }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -119,10 +120,13 @@
         </div>
 
         <p class="sub-title">Scholarship Renewal</p>
-        <div class="filter">
-            <button class="filter-btn">All</button>
-            <button class="filter-btn">Pending</button>
-            <button class="filter-btn">Accepted</button>
+        <div class="filter" id="filter-renewal">
+            <form action="{{ route('overview') }}" method="GET" id="renewal-filter-form">
+                <button type="submit" name="renewal_status" value="all" class="filter-btn {{ request('renewal_status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                <button type="submit" name="renewal_status" value="Pending" class="filter-btn {{ request('renewal_status') == 'Pending' ? 'active' : '' }}">Pending</button>
+                <button type="submit" name="renewal_status" value="Accepted" class="filter-btn {{ request('renewal_status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
+                <button type="submit" name="renewal_status" value="Rejected" class="filter-btn {{ request('renewal_status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
+            </form>
         </div>
         <div class="ctn-table table-responsive">
             <table class="table table-bordered" id="table">
@@ -211,8 +215,26 @@
             });
         };
     </script>
+    
+    <script>
+        function handleFilterButtons(filterContainerId) {
+        document.querySelectorAll(`#${filterContainerId} .filter-btn`).forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove "active" class from all buttons in this filter set
+                document.querySelectorAll(`#${filterContainerId} .filter-btn`).forEach(btn => btn.classList.remove('active'));
+
+                // Add "active" class to the clicked button
+                this.classList.add('active');
+            });
+        });
+    }
+
+    // Initialize for each filter container
+    handleFilterButtons('filter-penalty');
+    handleFilterButtons('filter-renewal');
 
 
+    </script>
 </body>
 
 </html>

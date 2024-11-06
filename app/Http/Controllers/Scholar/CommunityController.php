@@ -22,39 +22,81 @@ use Illuminate\Support\Facades\Storage;
 class CommunityController extends Controller
 {
     // cs activies page to show
-    public function showCSActivities()
+    // public function showCSActivities()
+    // {
+    //     $user = Auth::user(); // Get the authenticated user
+    //     $caseCode = $user->caseCode; // Access the user's caseCode
+
+    //     // Step 1: Retrieve all activities that are in the future or today
+    //     $activities = communityservice::where('eventdate', '>=', now()->toDateString())->get();
+    //     // dd($activities);
+
+    //     // Step 2: Get the registration status for each activity
+    //     $registrations = csregistration::where('caseCode', $caseCode)
+    //         ->get(['csid', 'registatus'])
+    //         ->keyBy('csid')
+    //         ->toArray(); // Get all registered activities with status
+
+    //     // dd($registrations);
+
+    //     // Step 3: Filter out activities that the user has already submitted attendance for
+    //     $attendedActivities = csattendance::where('caseCode', $caseCode)
+    //         ->pluck('csid')
+    //         ->toArray(); // Get the CSIDs of activities the user has attended
+
+    //     // dd($attendedActivities);
+
+    //     // Step 4: Filter out activities from the collection if the user has already attended them
+    //     $filteredActivities = $activities->filter(function ($activity) use ($attendedActivities) {
+    //         return !in_array($activity->csid, $attendedActivities);
+    //     });
+
+    //     // dd($filteredActivities);
+
+    //     // Step 5: Pass the filtered activities and registrations to the view
+    //     return view('scholar.communityservice.csactivities', compact('filteredActivities', 'registrations'));
+    // }
+
+    public function showCSActivities(Request $request)
     {
         $user = Auth::user(); // Get the authenticated user
         $caseCode = $user->caseCode; // Access the user's caseCode
 
-        // Step 1: Retrieve all activities that are in the future or today
-        $activities = communityservice::where('eventdate', '>=', now()->toDateString())->get();
-        // dd($activities);
+        // Step 1: Get the search query and area from the request
+        $search = $request->input('search');
+        $area = $request->input('area');
 
-        // Step 2: Get the registration status for each activity
+        // Step 2: Retrieve all activities that are in the future or today
+        $activities = communityservice::where('eventdate', '>=', now()->toDateString());
+
+        // Step 3: Filter activities based on search query if provided
+        if ($search) {
+            $activities->where('title', 'like', '%' . $search . '%')
+                        ->orWhere('eventloc', 'like', '%' . $search . '%')
+                        ->orWhere('facilitator', 'like', '%' . $search . '%')
+                        ->orWhere('meetingplace', 'like', '%' . $search . '%');
+        }
+
+        $activities = $activities->get();
+
+        // Step 4: Get the registration status for each activity
         $registrations = csregistration::where('caseCode', $caseCode)
             ->get(['csid', 'registatus'])
             ->keyBy('csid')
             ->toArray(); // Get all registered activities with status
 
-        // dd($registrations);
-
-        // Step 3: Filter out activities that the user has already submitted attendance for
+        // Step 5: Filter out activities that the user has already submitted attendance for
         $attendedActivities = csattendance::where('caseCode', $caseCode)
             ->pluck('csid')
             ->toArray(); // Get the CSIDs of activities the user has attended
 
-        // dd($attendedActivities);
-
-        // Step 4: Filter out activities from the collection if the user has already attended them
+        // Step 6: Filter out activities from the collection if the user has already attended them
         $filteredActivities = $activities->filter(function ($activity) use ($attendedActivities) {
             return !in_array($activity->csid, $attendedActivities);
         });
 
-        // dd($filteredActivities);
-
-        // Step 5: Pass the filtered activities and registrations to the view
-        return view('scholar.communityservice.csactivities', compact('filteredActivities', 'registrations'));
+        // Step 7: Pass the filtered activities and registrations to the view
+        return view('scholar.communityservice.csactivities', compact('filteredActivities', 'registrations', 'search', 'area'));
     }
 
     // cs details
@@ -292,7 +334,42 @@ class CommunityController extends Controller
 
 
     // show cs attendance
-    public function showCSAttendance()
+    // public function showCSAttendance()
+    // {
+    //     $user = Auth::user(); // Get the authenticated user
+    //     $caseCode = $user->caseCode; // Get user's caseCode
+
+    //     // Fetch the total attendance (number of entries in the attendance table)
+    //     $totalAttendance = csattendance::where('caseCode', $caseCode)->count();
+
+    //     // Fetch the total tardiness (assuming there's a field indicating tardiness duration)
+    //     $totalTardiness = csattendance::where('caseCode', $caseCode)
+    //         ->where('csastatus', 'Late')
+    //         ->count();
+
+    //     // Fetch the total absences (assuming absence means no attendance record for an event the user was registered for)
+    //     $totalAbsences = csregistration::where('caseCode', $caseCode)
+    //         ->where('registatus', 'ABSENT')
+    //         ->count();
+
+    //     // Fetch the attendance details joined with the community service information
+    //     $attendances = csattendance::where('caseCode', $caseCode)
+    //         ->join('communityservice', 'csattendance.csid', '=', 'communityservice.csid')
+    //         ->select(
+    //             'csattendance.*',
+    //             'communityservice.title as activity_title',
+    //             'communityservice.eventloc as location',
+    //             'communityservice.eventdate as date',
+    //             'communityservice.calltime as time', // Use calltime as the event time
+    //             'communityservice.facilitator'
+    //         )
+    //         ->get();
+
+    //     // Pass the data to the view
+    //     return view('scholar.communityservice.csattendance', compact('totalAttendance', 'totalTardiness', 'totalAbsences', 'attendances'));
+    // }
+
+    public function showCSAttendance(Request $request)
     {
         $user = Auth::user(); // Get the authenticated user
         $caseCode = $user->caseCode; // Get user's caseCode
@@ -310,8 +387,11 @@ class CommunityController extends Controller
             ->where('registatus', 'ABSENT')
             ->count();
 
+        // Get the selected attendance status filter from the request
+        $attendanceStatus = $request->input('attendance_status', 'all');
+
         // Fetch the attendance details joined with the community service information
-        $attendances = csattendance::where('caseCode', $caseCode)
+        $attendanceQuery = csattendance::where('caseCode', $caseCode)
             ->join('communityservice', 'csattendance.csid', '=', 'communityservice.csid')
             ->select(
                 'csattendance.*',
@@ -320,11 +400,18 @@ class CommunityController extends Controller
                 'communityservice.eventdate as date',
                 'communityservice.calltime as time', // Use calltime as the event time
                 'communityservice.facilitator'
-            )
-            ->get();
+            );
+        
+        // Apply filter based on the attendance status if it is not "all"
+        if ($attendanceStatus !== 'all') {
+            $attendanceQuery->where('csattendance.csastatus', $attendanceStatus);
+        }
+
+        // Get the filtered results
+        $attendances = $attendanceQuery->get();
 
         // Pass the data to the view
-        return view('scholar.communityservice.csattendance', compact('totalAttendance', 'totalTardiness', 'totalAbsences', 'attendances'));
+        return view('scholar.communityservice.csattendance', compact('totalAttendance', 'totalTardiness', 'totalAbsences', 'attendances', 'attendanceStatus'));
     }
 
 

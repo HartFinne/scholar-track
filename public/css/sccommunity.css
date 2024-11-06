@@ -194,7 +194,14 @@
     font-style: bold;
     color: red;
 }
-.search-container {
+/* .search-container{
+    display: flex;
+    justify-content: center; 
+    margin-top: 20px; 
+    font-size: 15px;
+} */
+
+.search-container form{
     display: flex;
     justify-content: center; 
     margin-top: 20px; 
@@ -227,6 +234,7 @@
 }
 
 .card{
+    height: auto;
     width: 300px;
     border-radius: 10px;
     overflow: hidden;

@@ -36,12 +36,49 @@ use Illuminate\Validation\ValidationException;
 class ScholarController extends Controller
 {
 
-    public function showHome()
+    // public function showHome()
+    // {
+    //     $user = Auth::user();
+    //     $announcements = Announcement::whereJsonContains('recipients', 'all')
+    //         ->orWhereJsonContains('recipients', $user->caseCode)
+    //         ->get();
+    //     return view('scholar.schome', compact('announcements'));
+    // }
+    public function showHome(Request $request)
     {
         $user = Auth::user();
-        $announcements = Announcement::whereJsonContains('recipients', 'all')
-            ->orWhereJsonContains('recipients', $user->caseCode)
+        $search = $request->input('search'); 
+        $filter = $request->input('filter', 'all');
+
+        $announcements = Announcement::where(function ($query) use ($user) {
+                $query->whereJsonContains('recipients', 'all')
+                    ->orWhereJsonContains('recipients', $user->caseCode);
+            })
+            // Add search functionality if a search term is provided
+            ->when($search, function ($query) use ($search) {
+                return $query->where('title', 'like', '%' . $search . '%')
+                            ->orWhere('description', 'like', '%' . $search . '%')
+                            ->orWhere('author', 'like', '%' . $search . '%');
+            })
+            // Apply filter based on selected filter
+            ->when($filter === 'latest', function ($query) {
+                return $query->orderBy('created_at', 'desc');
+            })
+            
+            ->when($filter === 'humanities', function ($query) {
+                return $query->where(function ($q) {
+                    $q->where('title', 'like', '%humanities%')
+                    ->orWhere('description', 'like', '%humanities%');
+                });
+            })
+            ->when($filter === 'community_service', function ($query) {
+                return $query->where(function ($q) {
+                    $q->where('title', 'like', '%community service%')
+                    ->orWhere('description', 'like', '%community service%');
+                });
+            })
             ->get();
+
         return view('scholar.schome', compact('announcements'));
     }
 
@@ -124,67 +161,142 @@ class ScholarController extends Controller
     }
 
     // for the show of basic info in scholarship overview
-    public function showScholarshipOverview()
-    {
+    // public function showScholarshipOverview()
+    // {
 
+    //     $user = User::with(['basicInfo', 'education'])
+    //         ->where('id', Auth::id())
+    //         ->first();
+
+    //     // Fetch the penalties associated with the user
+    //     $penalty = penalty::where('caseCode', $user->caseCode)->get();
+
+    //     // Fetch grades associated with the user's education
+    //     // Fetch academic performance data using a join
+    //     $academicData = grades::selectRaw("CONCAT(grades.schoolyear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
+    //         ->where('grades.caseCode', $user->caseCode) // Filter by user's caseCode
+    //         ->orderBy('grades.schoolyear', 'asc')
+    //         ->orderBy('grades.SemesterQuarter', 'asc')
+    //         ->get();
+
+
+    //     // Prepare data for the chart
+    //     $chartData = [
+    //         'labels' => $academicData->pluck('period')->toArray(),
+    //         'grades' => $academicData->pluck('GWA')->toArray(), // Make sure to use the correct column name
+    //     ];
+
+    //     // Fetch the community service activities and calculate hours
+    //     $communityServiceData = csattendance::where('caseCode', $user->caseCode)
+    //         ->join('communityservice', 'csattendance.csid', '=', 'communityservice.csid')
+    //         ->select(DB::raw('SUM(csattendance.hoursspent) as total_hours'))
+    //         ->first();
+
+    //     // Set the total required hours (example value)
+    //     $totalRequiredHours = criteria::selectRaw('criteria.cshours')->first()->cshours ?? 0;
+
+    //     $completedHours = $communityServiceData->total_hours ?? 0;
+    //     $remainingHours = max($totalRequiredHours - $completedHours, 0);
+
+    //     // Pass the community service data to the view
+    //     $communityServiceChart = [
+    //         'completed' => $completedHours,
+    //         'remaining' => $remainingHours,
+    //     ];
+
+    //     $renewal = applicationforms::where('formname', 'Renewal')->first();
+
+    //     // If the user is authenticated, show the overview page
+    //     return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal'));
+    // }
+
+    public function showScholarshipOverview(Request $request)
+    {
         $user = User::with(['basicInfo', 'education'])
             ->where('id', Auth::id())
             ->first();
 
-        // Fetch the penalties associated with the user
-        $penalty = penalty::where('caseCode', $user->caseCode)->get();
+        // Retrieve the penalty filter status
+        $penaltyStatus = $request->input('penalty_status', 'all');
 
-        // Fetch grades associated with the user's education
-        // Fetch academic performance data using a join
+        // Fetch penalties based on the filter status
+        $penalty = penalty::where('caseCode', $user->caseCode)
+            ->when($penaltyStatus !== 'all', function ($query) use ($penaltyStatus) {
+                return $query->where('remark', $penaltyStatus);
+            })
+            ->get();
+
+        // Retrieve the renewal filter status
+        $renewalStatus = $request->input('renewal_status', 'all');
+
+        // Fetch renewal applications based on the filter status
+        $renewal = applicationforms::where('formname', 'Renewal')
+            ->when($renewalStatus !== 'all', function ($query) use ($renewalStatus) {
+                return $query->where('status', $renewalStatus);
+            })
+            ->first();
+
         $academicData = grades::selectRaw("CONCAT(grades.schoolyear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
-            ->where('grades.caseCode', $user->caseCode) // Filter by user's caseCode
+            ->where('grades.caseCode', $user->caseCode)
             ->orderBy('grades.schoolyear', 'asc')
             ->orderBy('grades.SemesterQuarter', 'asc')
             ->get();
 
-
-        // Prepare data for the chart
         $chartData = [
             'labels' => $academicData->pluck('period')->toArray(),
-            'grades' => $academicData->pluck('GWA')->toArray(), // Make sure to use the correct column name
+            'grades' => $academicData->pluck('GWA')->toArray(),
         ];
 
-        // Fetch the community service activities and calculate hours
         $communityServiceData = csattendance::where('caseCode', $user->caseCode)
             ->join('communityservice', 'csattendance.csid', '=', 'communityservice.csid')
             ->select(DB::raw('SUM(csattendance.hoursspent) as total_hours'))
             ->first();
 
-        // Set the total required hours (example value)
         $totalRequiredHours = criteria::selectRaw('criteria.cshours')->first()->cshours ?? 0;
 
         $completedHours = $communityServiceData->total_hours ?? 0;
         $remainingHours = max($totalRequiredHours - $completedHours, 0);
 
-        // Pass the community service data to the view
         $communityServiceChart = [
             'completed' => $completedHours,
             'remaining' => $remainingHours,
         ];
 
-        $renewal = applicationforms::where('formname', 'Renewal')->first();
-
-        // If the user is authenticated, show the overview page
         return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal'));
     }
 
-    public function showGradeSubmission()
+
+    // public function showGradeSubmission()
+    // {
+    //     // Retrieve the currently authenticated user's caseCode
+    //     $user = Auth::user(); // Get the authenticated user
+    //     $educ = ScEducation::where('caseCode', $user->caseCode)->first(); // Access the caseCode property
+
+    //     // Fetch grades associated with the education entry
+    //     $grades = grades::where('caseCode', $user->caseCode)->get();
+
+    //     // Pass the grades and academic year to the view
+    //     return view('scholar/scholarship.gradesub', compact('grades', 'educ'));
+    // }
+
+    public function showGradeSubmission(Request $request)
     {
         // Retrieve the currently authenticated user's caseCode
-        $user = Auth::user(); // Get the authenticated user
-        $educ = ScEducation::where('caseCode', $user->caseCode)->first(); // Access the caseCode property
+        $user = Auth::user();
+        $educ = ScEducation::where('caseCode', $user->caseCode)->first();
 
-        // Fetch grades associated with the education entry
-        $grades = grades::where('caseCode', $user->caseCode)->get();
+        $status = $request->input('status', 'all');
 
-        // Pass the grades and academic year to the view
-        return view('scholar/scholarship.gradesub', compact('grades', 'educ'));
+        // Fetch grades based on the filter status
+        $grades = grades::where('caseCode', $user->caseCode)
+            ->when($status !== 'all', function ($query) use ($status) {
+                return $query->where('GradeStatus', $status);
+            })
+            ->get();
+
+        return view('scholar/scholarship.gradesub', compact('grades', 'educ', 'status'));
     }
+
 
     public function storeGradeSubmission(Request $request)
     {
@@ -267,34 +379,87 @@ class ScholarController extends Controller
     }
 
     // HUMANITIES CLASS
-    public function showHumanitiesClass()
+    // public function showHumanitiesClass()
+    // {
+    //     $scholar = Auth::user();
+
+    //     $totalattendance = hcattendance::where('caseCode', $scholar->caseCode)->count();
+
+    //     $totaltardiness = hcattendance::where('caseCode', $scholar->caseCode)->sum('tardinessduration');
+
+    //     $totalabsences = hcattendance::where('caseCode', $scholar->caseCode)
+    //         ->where('hcastatus', 'Absent')
+    //         ->count();
+
+    //     $classes = humanitiesclass::with(['hcattendance' => function ($query) use ($scholar) {
+    //         $query->where('caseCode', $scholar->caseCode);
+    //     }])->get();
+
+    //     return view('scholar.scholarship.schumanities', compact('classes', 'totalattendance', 'totaltardiness', 'totalabsences'));
+    // }
+    public function showHumanitiesClass(Request $request)
     {
         $scholar = Auth::user();
 
+        // Get the search and attendance status filters
+        $search = $request->input('search');
+        $attendanceStatus = $request->input('attendance_status', 'all');
+
+        // Query the humanities class with attendance data
+        $query = humanitiesclass::with(['hcattendance' => function ($query) use ($scholar, $attendanceStatus) {
+            $query->where('caseCode', $scholar->caseCode);
+
+            if ($attendanceStatus !== 'all') {
+                $query->where('hcastatus', $attendanceStatus);
+            }
+        }]);
+
+        // Apply search filter if a search term is provided
+        if ($search) {
+            $query->where('topic', 'like', "%{$search}%");
+        }
+
+        $classes = $query->get();
+
         $totalattendance = hcattendance::where('caseCode', $scholar->caseCode)->count();
-
         $totaltardiness = hcattendance::where('caseCode', $scholar->caseCode)->sum('tardinessduration');
-
         $totalabsences = hcattendance::where('caseCode', $scholar->caseCode)
             ->where('hcastatus', 'Absent')
             ->count();
 
-        $classes = humanitiesclass::with(['hcattendance' => function ($query) use ($scholar) {
-            $query->where('caseCode', $scholar->caseCode);
-        }])->get();
-
         return view('scholar.scholarship.schumanities', compact('classes', 'totalattendance', 'totaltardiness', 'totalabsences'));
     }
 
-    public function showLTE()
+
+    // public function showLTE()
+    // {
+    //     $scholar = Auth::user();
+    //     $noresponseletters = lte::with(['hcattendance', 'csattendance', 'csregistration'])
+    //         ->where('caseCode', $scholar->caseCode)->where('ltestatus', "No Response")->get();
+
+    //     $letters = lte::where('caseCode', $scholar->caseCode)
+    //         ->whereIn('ltestatus', ['To Review', 'Excused', 'Unexcused'])
+    //         ->get();
+
+    //     return view('scholar.scholarship.sclte', compact('noresponseletters', 'letters'));
+    // }
+
+    public function showLTE(Request $request)
     {
         $scholar = Auth::user();
         $noresponseletters = lte::with(['hcattendance', 'csattendance', 'csregistration'])
             ->where('caseCode', $scholar->caseCode)->where('ltestatus', "No Response")->get();
 
+        // Retrieve the status from the request
+        $status = $request->input('lte_status', 'all');
+
         $letters = lte::where('caseCode', $scholar->caseCode)
-            ->whereIn('ltestatus', ['To Review', 'Excused', 'Unexcused'])
-            ->get();
+        ->when($status === 'all', function ($query) {
+            return $query->where('ltestatus', '!=', 'No Response');
+        }, function ($query) use ($status) {
+            return $query->where('ltestatus', $status)->where('ltestatus', '!=', 'No Response');
+        })
+        ->get();
 
         return view('scholar.scholarship.sclte', compact('noresponseletters', 'letters'));
     }
@@ -449,7 +614,34 @@ class ScholarController extends Controller
     }
 
 
-    public function showspecialallowance()
+    // public function showspecialallowance()
+    // {
+    //     $scholar = User::with('education')
+    //         ->where('id', Auth::id())
+    //         ->first();
+
+    //     $reqbook = allowancebook::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+    //     $reqevent = allowanceevent::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+    //     $reqthesis = allowancethesis::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+    //     $reqproj = allowanceproject::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+    //     $reqtranspo = allowancetranspo::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+    //     $requnif = allowanceuniform::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+    //     $reqgrad = allowancegraduation::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
+
+    //     $mergedrequests = $reqbook
+    //         ->concat($reqevent)
+    //         ->concat($reqthesis)
+    //         ->concat($reqproj)
+    //         ->concat($reqtranspo)
+    //         ->concat($requnif)
+    //         ->concat($reqgrad);
+
+    //     $requests = $mergedrequests->sortBy('created_at')->values();
+
+    //     return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar'));
+    // }
+
+    public function showspecialallowance(Request $request)
     {
         $scholar = User::with('education')
             ->where('id', Auth::id())
@@ -471,9 +663,15 @@ class ScholarController extends Controller
             ->concat($requnif)
             ->concat($reqgrad);
 
-        $requests = $mergedrequests->sortBy('created_at')->values();
+            $status = $request->input('status', 'all');
 
-        return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar'));
+            if ($status !== 'all') {
+                $requests = $mergedrequests->where('status', $status)->sortBy('created_at')->values();
+            } else {
+                $requests = $mergedrequests->sortBy('created_at')->values();
+            }
+        
+            return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar', 'status'));
     }
 
     public function showrequestinstruction($requesttype)
@@ -1082,13 +1280,29 @@ class ScholarController extends Controller
         }
     }
 
-    public function showappointmentsystem()
+    // public function showappointmentsystem()
+    // {
+    //     $user = Auth::user();
+
+    //     $userappointments = Appointments::where('caseCode', $user->caseCode)->get();
+
+    //     return view('scholar.appointmentsystem', compact('userappointments', 'user'));
+    // }
+
+    public function showappointmentsystem(Request $request)
     {
         $user = Auth::user();
+        $status = $request->input('status', 'all');
 
-        $userappointments = Appointments::where('caseCode', $user->caseCode)->get();
+        if ($status === 'all') {
+            $userappointments = Appointments::where('caseCode', $user->caseCode)->get();
+        } else {
+            $userappointments = Appointments::where('caseCode', $user->caseCode)
+                ->where('status', $status)
+                ->get();
+        }
 
-        return view('scholar.appointmentsystem', compact('userappointments', 'user'));
+        return view('scholar.appointmentsystem', compact('userappointments', 'user', 'status'));
     }
 
     public function makeappointment($caseCode, Request $request)

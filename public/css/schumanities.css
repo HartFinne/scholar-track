@@ -79,7 +79,7 @@
     font-size: 14px;
 }
 
-.filter-btn:active{
+.filter-btn.active{
     background-color: #2e7c55;
     color: #fff;
 }
@@ -127,6 +127,14 @@
     position: relative;
     font-size: 15px;
 }
+
+/* .search-container form {
+    display: flex;
+    justify-content: center; 
+    position: relative;
+    font-size: 15px;
+} */
+
 
 .search-container i{
     position: absolute;

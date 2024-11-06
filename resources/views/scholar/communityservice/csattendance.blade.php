@@ -59,12 +59,14 @@
         <div class="status">
             <div class="filter-status">
                 <p class="attendance-title">Attendance Status</p>
-                <div class="filter">
-                <button class="filter-btn">All</button>
-                    <button class="filter-btn">Present</button>
-                    <button class="filter-btn">Late</button>
-                    <button class="filter-btn">Left Early</button>
-                    <button class="filter-btn">Absent</button>
+                <div class="filter" id="filter-cs">
+                    <form action="{{ route('csattendance') }}" method="GET" id="filter-form">
+                        <button type="submit" name="attendance_status" value="all" class="filter-btn {{ request('attendance_status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                        <button type="submit" name="attendance_status" value="Present" class="filter-btn {{ request('attendance_status') == 'Present' ? 'active' : '' }}">Present</button>
+                        <button ctype="submit" name="attendance_status" value="Late" class="filter-btn {{ request('attendance_status') == 'Late' ? 'active' : '' }}">Late</button>
+                        <button type="submit" name="attendance_status" value="Left Early" class="filter-btn {{ request('attendance_status') == 'Left Early' ? 'active' : '' }}">Left Early</button>
+                        <button type="submit" name="attendance_status" value="Absent" class="filter-btn {{ request('attendance_status') == 'Absent' ? 'active' : '' }}">Absent</button>
+                    </form>
                 </div>
             </div>
             <div class="submit-attendance">

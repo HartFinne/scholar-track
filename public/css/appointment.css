@@ -42,7 +42,7 @@
     cursor: pointer;
 }
 
-.filter-btn:active {
+.filter-btn.active {
     background-color: #2e7c55;
     color: #fff;
 }

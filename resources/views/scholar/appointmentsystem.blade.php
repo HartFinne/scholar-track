@@ -126,12 +126,14 @@
         <div class="status">
             <p class="table-title">APPOINTMENT STATUS: </p>
             <div class="filter">
-                <button class="filter-btn">All</button>
-                <button class="filter-btn">Pending</button>
-                <button class="filter-btn">Approved</button>
-                <button class="filter-btn">Completed</button>
-                <button class="filter-btn">Rejected</button>
-                <button class="filter-btn">Cancelled</button>
+                <form action="{{ route('appointment') }}" method="GET" id="filter-form">
+                    <button type="submit" name="status" value="all" class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                    <button type="submit" name="status" value="Pending" class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
+                    <button type="submit" name="status" value="Approved" class="filter-btn {{ request('status') == 'Approved' ? 'active' : '' }}">Approved</button>
+                    <button type="submit" name="status" value="Completed" class="filter-btn {{ request('status') == 'Completed' ? 'active' : '' }}">Completed</button>
+                    <button type="submit" name="status" value="Rejected" class="filter-btn {{ request('status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
+                    <button ctype="submit" name="status" value="Cancelled" class="filter-btn {{ request('status') == 'Cancelled' ? 'active' : '' }}">Cancelled</button>
+                </form>
             </div>
         </div>
 
