@@ -4,6 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import json
+import os
 
 # Database connection details
 DB_CONNECTION = 'mysql'
@@ -103,7 +104,13 @@ metrics = {
     "confusion_matrix": confusion_mat.tolist()
 }
 
-with open('storage/app/python/performance_metrics.json', 'w') as f:
+# Define the path for the JSON file
+file_path = 'storage/app/python/performance_metrics.json'
+
+# Ensure the directory exists
+os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+with open(file_path, 'w') as f:
     json.dump(metrics, f)
 
 print("Performance metrics saved to 'performance_metrics.json'")
