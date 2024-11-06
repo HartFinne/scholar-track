@@ -81,7 +81,6 @@ class HomeController extends Controller
                             ->mixedCase()
                             ->numbers()
                             ->symbols()
-                            ->uncompromised(), // Ensures password is not a common one
                     ],
                     'agreement' => 'accepted',
                 ],
@@ -189,7 +188,7 @@ class HomeController extends Controller
                 // Dump the error message directly to the screen for debugging
                 dd($e->getMessage());
 
-                return redirect()->route('registration')->with('failure', 'Registration failed. Please try again.');
+                return redirect()->back()->withErrors(['error' => 'Registration failed. Please try again.']);
             }
         } else {
             return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address');

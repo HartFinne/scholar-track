@@ -360,7 +360,7 @@
                         <label for="course">Course/Strand/Section</label>
                         <select id="courseSectionSelect" name="courseSection" required
                             style="display: none;"></select>
-                        <input type="text" maxlength="255" id="courseSectionInput" name="courseSection"
+                        <input type="text" maxlength="255" id="courseSectionInput"
                             placeholder="Enter course or section" style="display: none;">
                         @error('courseSection')
                             <span class="text-danger">{{ $message }}</span>
