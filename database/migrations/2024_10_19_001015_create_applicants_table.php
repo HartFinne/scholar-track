@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('applicationstatus', 25);
             $table->unsignedTinyInteger('prioritylevel');
             $table->string('accountstatus', 10)->default('Active');
+            $table->string('remember_token', 100)->nullable();
             $table->timestamps();
         });
 
