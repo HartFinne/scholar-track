@@ -110,7 +110,9 @@ file_path = 'storage/app/python/performance_metrics.json'
 # Ensure the directory exists
 os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-with open(file_path, 'w') as f:
-    json.dump(metrics, f)
-
-print("Performance metrics saved to 'performance_metrics.json'")
+try:
+    with open(file_path, 'w') as f:
+        json.dump(metrics, f)
+    print("Performance metrics saved successfully.")
+except Exception as e:
+    print(f"Error saving performance metrics: {e}")
