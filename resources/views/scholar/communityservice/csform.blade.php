@@ -75,7 +75,7 @@
                     <div class="row">
                         <div class="column">
                             <label for="activity">Activity</label>
-                            <select name="csid" id="activity">
+                            <select name="csid" id="activity" required>
                                 <option value="" disabled selected hidden>Select Activity</option>
                                 @foreach ($csRecord as $cs)
                                     <option value="{{ $cs->csid }}" data-location="{{ $cs->eventloc }}"
@@ -131,7 +131,7 @@
                     <div class="row">
                         <div class="column">
                             <label for="attendanceStatus">Attendance Status</label>
-                            <select name="attendanceStatus" id="attendanceStatus">
+                            <select name="attendanceStatus" id="attendanceStatus" required>
                                 <option value="" disabled selected hidden>Select Status</option>
                                 <option value="Present">Present</option>
                                 <option value="Late">Late</option>
@@ -146,7 +146,9 @@
                     <div class="row">
                         <div class="column">
                             <label for="proofImg">Proof of Attendance</label>
-                            <input type="file" id="proofImg" name="proofImg" required>
+                            <input type="file" id="proofImg" name="proofImg" accept="image/jpeg, image/png"
+                                required>
+                            <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, or PNG.</small>
                         </div>
                     </div>
                 </fieldset>

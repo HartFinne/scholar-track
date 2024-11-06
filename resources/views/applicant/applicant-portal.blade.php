@@ -30,7 +30,9 @@
     </div>
 
     <div class="ctn-profilemenu" id="profilemenu" style="display: none;">
-        <a href="changepass.html" id="btnchangepass"><i class="fa-solid fa-key"></i>Change Password</a><br>
+        <a href="{{ route('changepassword', ['applicant', $applicant->casecode]) }}" id="btnchangepass"><i
+                class="fa-solid fa-key"></i>Change
+            Password</a><br>
         <a href="{{ route('logout-applicant') }}" id="btnsignout"><i class="fa-solid fa-right-from-bracket"></i>Sign
             out</a>
     </div>
@@ -186,8 +188,8 @@
                                 <tr>
                                     <td>
                                         <span class="flabel">Facebook name</span><br>
-                                        <a href="{{ $applicant->fblink }}" class="fvalue"
-                                            id="fbName">{{ $applicant->fblink }}</a>
+                                        <a href="{{ $applicant->fblink }}" class="fvalue" id="fbName"
+                                            target="_blank">{{ $applicant->fblink }}</a>
                                     </td>
                                     <td colspan="4">
                                         <span class="flabel">Are you a member of any indigenous group?</span><br>
@@ -383,7 +385,7 @@
                         </strong>
                     </div>
                     <div class="row px-3">
-                        <span id="grant">{{ $applicant->otherinfo->grant }}</span>
+                        <span style="white-space: pre-wrap" id="grant">{{ $applicant->otherinfo->grant }}</span>
                     </div>
                     <div class="row mt-2">
                         <strong>
@@ -392,7 +394,7 @@
                         </strong>
                     </div>
                     <div class="row px-3">
-                        <span id="talents">{{ $applicant->otherinfo->talent }}</span>
+                        <span style="white-space: pre-wrap" id="talents">{{ $applicant->otherinfo->talent }}</span>
                     </div>
                     <div class="row mt-2">
                         <strong>
@@ -400,7 +402,8 @@
                         </strong>
                     </div>
                     <div class="row px-3">
-                        <span id="expectations">{{ $applicant->otherinfo->expectations }}</span>
+                        <span style="white-space: pre-wrap"
+                            id="expectations">{{ $applicant->otherinfo->expectations }}</span>
                     </div>
                 </div>
 

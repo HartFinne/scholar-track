@@ -101,6 +101,7 @@
             </div>
         </div>
     </div>
+    <script src="{{ asset('js/headercontrol.js') }}"></script>
 </body>
 
 </html>

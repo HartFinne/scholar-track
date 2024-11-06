@@ -86,28 +86,34 @@
                     <div class="form-group">
                         <label for="totalPrice">Total Price<br>
                             <em>NOTE: Total Price from the Receipts</em></label>
-                        <input type="text" id="totalPrice" name="totalprice" required>
+                        <input type="number" min="1" id="totalPrice" name="totalprice" required>
                     </div>
                     <div class="form-group">
                         <label for="listGrad">Official List of Graduates</label>
-                        <input type="file" id="listGrad" name="gradlist" required>
+                        <input type="file" id="listGrad" name="gradlist"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="receipt">Receipt or Acknowledgement Receipt</label>
-                        <input type="file" id="receipt" name="acknowledgement" required>
+                        <input type="file" id="receipt" name="acknowledgement"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="liquidation">Liquidation Form</label>
-                        <input type="file" id="liquidation" name="liquidation" required>
+                        <input type="file" id="liquidation" name="liquidation"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group note">
                         <p class="fw-bold">Note:</p>
                         <ul>
-                            <li>Kung maraming picture, I-compile sa iisang zip or pdf ang mga pictures.</li>
+                            <li>Kung maraming picture, I-compile sa iisang pdf or docx ang mga pictures.</li>
                         </ul>
                     </div>
                 </div>

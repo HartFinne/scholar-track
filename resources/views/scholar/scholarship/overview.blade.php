@@ -15,13 +15,6 @@
 </head>
 
 <body>
-
-    {{-- @if (Auth::check())
-        <p>Your Scholar ID (Case Code): {{ Auth::user()->caseCode }}</p>
-    @else
-        <p>You are not logged in.</p>
-    @endif --}}
-
     <!-- Include Sidebar -->
     @include('partials._sidebar')
 
@@ -74,22 +67,25 @@
             </div>
         </div>
 
-        <div class="sc-renewal ">
-            <hr>
-            <div class="text">
-                <h5>SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h5>
+        @if ($renewal->status == 'Closed')
+            <div class="sc-renewal">
+                <hr>
+                <div class="text">
+                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h5>
+                </div>
+                <hr>
             </div>
-            <hr>
-        </div>
+        @else
+            <div class="sc-renewal">
+                <hr>
+                <div class="text">
+                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
+                    <button onclick="window.location.href='screnewal.html'">Renew Scholarship</button>
+                </div>
+                <hr>
+            </div>
+        @endif
 
-        <div class="sc-renewal hide">
-            <hr>
-            <div class="text">
-                <h5>SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
-                <button onclick="window.location.href='screnewal.html'">Renew Scholarship</button>
-            </div>
-            <hr>
-        </div>
 
         <p class="sub-title">Summary of Penalties/Deductions</p>
         <div class="filter">

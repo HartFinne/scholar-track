@@ -25,7 +25,7 @@
     <div class="ctnmain">
         <div class="container mt-5">
             <div class="col-md-1 mb-2" style="margin-left: auto;">
-                <a href="{{ route('allowancerequests-special') }}" class="btn btn-success w-100">Go back</a>
+                <a href="{{ route('allowancerequests-regular') }}" class="btn btn-success w-100">Go back</a>
             </div>
             <div class="row" id="confirmmsg">
                 @if (session('success'))
@@ -46,29 +46,22 @@
                     <h4 class="mb-0"><strong>REGULAR ALLOWANCES REQUEST</strong></h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('update-requests-regular.post', ['id' => $id]) }}">>
-                        @csrf
+                    <form method="POST" action="#">
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label"><strong>Update Request Status</strong></label>
                             <div class="col-sm-8">
                                 <select name="status" class="form-select">
-                                    <option value="Pending" {{ $requests->status == 'Pending' ? 'selected' : '' }}>
-                                        Pending</option>
-                                    <option value="Accepted" {{ $requests->status == 'Accepted' ? 'selected' : '' }}>
-                                        Accepted</option>
-                                    <option value="Rejected" {{ $requests->status == 'Rejected' ? 'selected' : '' }}>
-                                        Rejected</option>
-                                    <option value="Completed" {{ $requests->status == 'Completed' ? 'selected' : '' }}>
-                                        Completed</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Accepted">Accepted</option>
+                                    <option value="Rejected">Rejected</option>
+                                    <option value="Completed">Completed</option>
                                 </select>
                             </div>
                         </div>
                         <div class="mb-3 row">
                             <label class="col-sm-4 col-form-label"><strong>Set Release Date</strong></label>
                             <div class="col-sm-8">
-                                <input type="date" name="releasedate" class="form-control"
-                                    value="{{ $requests->date_of_release ? $requests->date_of_release : '' }}"
-                                    min="{{ date('Y-m-d', strtotime('+1 day')) }}">
+                                <input type="date" name="releasedate" class="form-control" min="2024-11-03">
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -81,47 +74,47 @@
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Date of Request</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">: {{ $requests->created_at->format('F d, Y') }}</p>
+                            <p class="form-control-plaintext">: March 10, 2023</p>
                         </div>
                     </div>
-                    {{-- SCHOLAR INFO --}}
+
+                    <!-- SCHOLAR INFO -->
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Area</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">: {{ $requests->area }}</p>
+                            <p class="form-control-plaintext">: Sample Area</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Name</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">: {{ $requests->scLastname }},
-                                {{ $requests->scFirstname }}, {{ $requests->scMiddlename }}</p>
+                            <p class="form-control-plaintext">: Doe, John A.</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">School</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">: {{ $requests->scSchoolName }}</p>
+                            <p class="form-control-plaintext">: Sample University</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Year Level</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">: {{ $requests->scYearGrade }}</p>
+                            <p class="form-control-plaintext">: Third Year</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Course</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">: {{ $requests->scCourseStrandSec }}</p>
+                            <p class="form-control-plaintext">: Computer Science</p>
                         </div>
                     </div>
-                    {{-- REQUEST INFO --}}
+
+                    <!-- REQUEST INFO -->
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Class Schedule</label>
                         <div class="col-sm-8">
-                            <a href="{{ url('storage/' . $regularAllowance->classReference->registration_form) }}"
-                                target="_blank">View File</a>
+                            <a href="#" target="_blank">View File</a>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -139,27 +132,31 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($regularAllowance->classReference && $regularAllowance->classReference->classSchedules->isNotEmpty())
-                                    @foreach ($regularAllowance->classReference->classSchedules as $schedule)
-                                        <tr>
-                                            <td>{{ $schedule->time_slot }}</td>
-                                            <td>{{ $schedule->mon ?? '--' }}</td>
-                                            <td>{{ $schedule->tue ?? '--' }}</td>
-                                            <td>{{ $schedule->wed ?? '--' }}</td>
-                                            <td>{{ $schedule->thu ?? '--' }}</td>
-                                            <td>{{ $schedule->fri ?? '--' }}</td>
-                                            <td>{{ $schedule->sat ?? '--' }}</td>
-                                            <td>{{ $schedule->sun ?? '--' }}</td>
-                                        </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="8" class="text-center">No class schedule available</td>
-                                    </tr>
-                                @endif
+                                <tr>
+                                    <td>8:00 AM - 9:00 AM</td>
+                                    <td>Math</td>
+                                    <td>Science</td>
+                                    <td>History</td>
+                                    <td>English</td>
+                                    <td>PE</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                </tr>
+                                <tr>
+                                    <td>9:00 AM - 10:00 AM</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                    <td>--</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Travel Itinerary -->
                     <label class="col-sm-4 col-form-label">Travel Itinerary</label>
                     <div class="row mb-3">
                         <table>
@@ -174,81 +171,65 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($regularAllowance->travelItinerary->travelLocations as $location)
-                                    <tr>
-                                        <td>{{ $location->travel_from ?? '--' }}</td>
-                                        <td>{{ $location->travel_to ?? '--' }}</td>
-                                        <td>{{ $location->estimated_time ?? '--' }}</td>
-                                        <td>{{ $location->vehicle_type ?? '--' }}</td>
-                                        <td>{{ $location->fare_rate ?? '--' }}</td>
-                                        <td>
-                                            @php
-                                                $totalCost = $regularAllowance->travelItinerary->travelLocations->sum(
-                                                    'fare_rate',
-                                                );
-                                            @endphp
-                                            {{ $totalCost > 0 ? number_format($totalCost, 2) : '--' }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" style="text-align: center;">No travel itinerary data
-                                            available</td>
-                                    </tr>
-                                @endforelse
+                                <tr>
+                                    <td>City A</td>
+                                    <td>City B</td>
+                                    <td>1 hour</td>
+                                    <td>Bus</td>
+                                    <td>$2.00</td>
+                                    <td>$2.00</td>
+                                </tr>
+                                <tr>
+                                    <td>City B</td>
+                                    <td>City C</td>
+                                    <td>30 mins</td>
+                                    <td>Train</td>
+                                    <td>$1.50</td>
+                                    <td>$1.50</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Lodging Info -->
                     <label class="col-sm-4 col-form-label">Lodging Info</label>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Owner Name</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">:
-                                {{ $regularAllowance->lodgingInfo->name_owner ?? '--' }}</p>
+                            <p class="form-control-plaintext">: John Doe</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Contact number</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">:
-                                {{ $regularAllowance->lodgingInfo->contact_no_owner ?? '--' }}</p>
+                            <p class="form-control-plaintext">: 123-456-7890</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Monthly rent</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">:
-                                {{ $regularAllowance->lodgingInfo->monthly_rent ?? '--' }}</p>
+                            <p class="form-control-plaintext">: $300</p>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Type of lodging</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext">:
-                                {{ $regularAllowance->lodgingInfo->lodging_type ?? '--' }}</p>
+                            <p class="form-control-plaintext">: Apartment</p>
                         </div>
                     </div>
+
+                    <!-- OJT Travel Itinerary Info -->
                     <label class="col-sm-4 col-form-label">OJT Travel Itinerary Info</label>
                     <div class="row mb-3">
                         <label class="col-sm-4 col-form-label">Photocopy of Endorsement</label>
                         <div class="col-sm-8">
-                            @if ($regularAllowance->ojtTravelItinerary && $regularAllowance->ojtTravelItinerary->endorsement)
-                                <a href="{{ url('storage/' . $regularAllowance->ojtTravelItinerary->endorsement) }}"
-                                    target="_blank">View File</a>
-                            @else
-                                <span>No file available</span>
-                            @endif
+                            <a href="#" target="_blank">View File</a>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label"> Letter of Acceptance</label>
+                        <label class="col-sm-4 col-form-label">Letter of Acceptance</label>
                         <div class="col-sm-8">
-                            @if ($regularAllowance->ojtTravelItinerary && $regularAllowance->ojtTravelItinerary->acceptance)
-                                <a href="{{ url('storage/' . $regularAllowance->ojtTravelItinerary->acceptance) }}"
-                                    target="_blank">View File</a>
-                            @else
-                                <span>No file available</span>
-                            @endif
+                            <a href="#" target="_blank">View File</a>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -264,30 +245,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($regularAllowance->travelItinerary->travelLocations as $location)
-                                    <tr>
-                                        <td>{{ $location->ojt_from ?? '--' }}</td>
-                                        <td>{{ $location->ojt_to ?? '--' }}</td>
-                                        <td>{{ $location->ojt_estimated_time ?? '--' }}</td>
-                                        <td>{{ $location->ojt_vehicle_type ?? '--' }}</td>
-                                        <td>{{ $location->ojt_fare_rate ?? '--' }}</td>
-                                        <td>
-                                            @php
-                                                $totalCost = $regularAllowance->ojtTravelItinerary
-                                                    ? $regularAllowance->ojtTravelItinerary->ojtLocations->sum(
-                                                        'ojt_fare_rate',
-                                                    )
-                                                    : 0;
-                                            @endphp
-                                            {{ $totalCost > 0 ? number_format($totalCost, 2) : '--' }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" style="text-align: center;">No travel itinerary data
-                                            available</td>
-                                    </tr>
-                                @endforelse
+                                <tr>
+                                    <td>City D</td>
+                                    <td>City E</td>
+                                    <td>45 mins</td>
+                                    <td>Taxi</td>
+                                    <td>$5.00</td>
+                                    <td>$5.00</td>
+                                </tr>
+                                <tr>
+                                    <td>City E</td>
+                                    <td>City F</td>
+                                    <td>1.5 hours</td>
+                                    <td>Bus</td>
+                                    <td>$3.50</td>
+                                    <td>$3.50</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

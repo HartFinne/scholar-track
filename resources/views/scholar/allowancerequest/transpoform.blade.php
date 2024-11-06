@@ -82,11 +82,11 @@
                 <div class="row">
                     <div class="form-group">
                         <label for="totalPrice">Total Price</label>
-                        <input type="number" id="totalPrice" name="totalprice" required>
+                        <input type="number" min="1" id="totalPrice" name="totalprice" required>
                     </div>
                     <div class="form-group">
                         <label for="purpose">Purpose/Activity</label>
-                        <input type="text" id="purpose" name="purpose" required>
+                        <input type="text" maxlength="100" id="purpose" name="purpose" required>
                     </div>
                 </div>
                 <div class="row">
@@ -96,7 +96,9 @@
                     </div>
                     <div class="form-group">
                         <label for="reimbursementForm">Transportation Reimbursement Form</label>
-                        <input type="file" id="reimbursementForm" name="transpoform" required>
+                        <input type="file" id="reimbursementForm" name="transpoform"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                 </div>
 

@@ -60,11 +60,12 @@
             </select>
 
             <!-- GWA Input -->
-            <input type="text" class="gwa" id="gwa" name="gwa" placeholder="General Weighted Average"
-                value="{{ old('gwa') }}">
+            <input type="number" class="gwa" id="gwa" name="gwa" placeholder="General Weighted Average"
+                value="{{ old('gwa') }}" required>
 
             <!-- Grade Image Input -->
-            <input type="file" class="file" name="gradeImage">
+            <input type="file" class="file" name="gradeImage" accept="application/pdf, image/jpeg, image/png"
+                required>
 
             <!-- Submit Button -->
             <button type="submit" class="btn-submit fw-bold">Submit</button>

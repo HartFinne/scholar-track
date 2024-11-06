@@ -1,6 +1,3 @@
-<!-- NAVBAR -->
-
-
 <div class="ctn-navbar">
     <div class="logo">
         <img src="{{ asset('images/logo.png') }}" alt="Logo">
@@ -11,7 +8,8 @@
 
 <div class="ctn-profilemenu" id="profilemenu" style="display: none;">
     <a href="{{ route('manageprofile') }}"><i class="fa-solid fa-user"></i>Profile</a><br>
-    <a href="{{ route('changepassword') }}"><i class="fa-solid fa-key"></i>Change Password</a><br>
+    <a href="{{ route('changepassword', ['scholar', auth()->user()->caseCode]) }}"><i class="fa-solid fa-key"></i>Change
+        Password</a><br>
     <span><i class="fa-solid fa-language"></i>Language</span>
     <button class="toggle-btn active">English</button>
     <button class="toggle-btn">Tagalog</button><br>
@@ -58,15 +56,15 @@
                         // Remove the active state and reset styles for both buttons
                         document.getElementById('sms-btn').classList.remove('active');
                         document.getElementById('sms-btn').style.backgroundColor =
-                        '#f0f0f0'; // Reset to default
+                            '#f0f0f0'; // Reset to default
                         document.getElementById('sms-btn').style.color =
-                        'black'; // Reset text color to black
+                            'black'; // Reset text color to black
 
                         document.getElementById('email-btn').classList.remove('active');
                         document.getElementById('email-btn').style.backgroundColor =
-                        '#f0f0f0'; // Reset to default
+                            '#f0f0f0'; // Reset to default
                         document.getElementById('email-btn').style.color =
-                        'black'; // Reset text color to black
+                            'black'; // Reset text color to black
 
                         // Add the active state and style for the clicked button
                         this.classList.add('active');

@@ -25,6 +25,7 @@ use App\Models\allowancethesis;
 use App\Models\allowancetranspo;
 use App\Models\allowanceuniform;
 use App\Models\Announcement;
+use App\Models\applicationforms;
 use App\Models\Appointments;
 use App\Models\communityservice;
 use App\Models\criteria;
@@ -122,13 +123,6 @@ class ScholarController extends Controller
         }
     }
 
-
-    // for viewing page the change password
-    public function changePassword()
-    {
-        return view('scholar.scholarship.changepassword');
-    }
-
     // for the show of basic info in scholarship overview
     public function showScholarshipOverview()
     {
@@ -173,10 +167,11 @@ class ScholarController extends Controller
             'remaining' => $remainingHours,
         ];
 
-        // If the user is authenticated, show the overview page
-        return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart'));
-    }
+        $renewal = applicationforms::where('formname', 'Renewal')->first();
 
+        // If the user is authenticated, show the overview page
+        return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal'));
+    }
 
     public function showGradeSubmission()
     {

@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -96,7 +95,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($renewals as $index->$renewal)
+                    {{-- @foreach ($renewals as $index => $renewal)
                         @if ($renewals->caseCode == $scholars->CaseCode && $scholars->education->scSchoolLevel == 'College')
                             <td class="text-center align-middle"> {{ $index + 1 }} </th>
                             <td class="text-center align-middle"> {{ $renewal->datesubmitted }} </td>
@@ -104,10 +103,17 @@
                                 {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}</td>
                             <td class="text-center align-middle"> {{ $renewal->status }}</td>
                             <td class="text-center align-middle">
-                                <a href="#">View</a>
+                                <a href="{{ route('renewalinfo', $renewal->rid) }}" class="btn btn-success">View</a>
                             </td>
                         @endif
-                    @endforeach
+                    @endforeach --}}
+                    <td class="text-center align-middle"> 1 </th>
+                    <td class="text-center align-middle"> November 2, 2024 </td>
+                    <td class="text-center align-middle"> Cruz, Juan Santos</td>
+                    <td class="text-center align-middle"> Pending </td>
+                    <td class="text-center align-middle">
+                        <a href="{{ route('renewalinfo') }}" class="btn btn-success">View</a>
+                    </td>
                 </tbody>
             </table>
         </div>

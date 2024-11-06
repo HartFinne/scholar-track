@@ -85,39 +85,47 @@
                 <div class="row">
                     <div class="form-group">
                         <label for="thesisTitle">Thesis Title</label>
-                        <textarea name="thesistitle" id="thesisTitle" rows="3" cols="50" required></textarea>
+                        <textarea name="thesistitle" id="thesisTitle" rows="3" cols="50" maxlength="255" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="totalprice">Total Price<br>
                             <em>NOTE: Total Price from the Receipts</em></label>
-                        <input type="text" id="totalprice" name="totalprice" required>
+                        <input type="number" min="1" id="totalprice" name="totalprice" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="titlePage">Thesis Title Page</label>
-                        <input type="file" id="titlepage" name="titlepage" required>
+                        <input type="file" id="titlepage" name="titlepage"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="receipt">Receipt or Acknowledgement Receipt</label>
-                        <input type="file" id="receipt" name="acknowledgement" required>
+                        <input type="file" id="receipt" name="acknowledgement"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="proofPic">Proof of Purchase (Picture ng biniling materials)</label>
-                        <input type="file" id="proofPic" name="purchaseproof" required>
+                        <input type="file" id="proofPic" name="purchaseproof"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="liquidation">Liquidation Form</label>
-                        <input type="file" id="liquidation" name="liquidation" required>
+                        <input type="file" id="liquidation" name="liquidation"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group note">
                         <p class="fw-bold">Note:</p>
                         <ul>
-                            <li>Kung maraming picture, I-compile sa iisang zip or pdf ang mga pictures.</li>
+                            <li>Kung maraming picture, I-compile sa iisang pdf or docx ang mga pictures.</li>
                             <li>Siguraduhing malinaw at nakuhanan ang materials na nasa resibo.</li>
                         </ul>
                     </div>

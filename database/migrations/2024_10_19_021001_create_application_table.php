@@ -38,6 +38,12 @@ return new class extends Migration
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'formname' => 'Renewal',
+                'status' => 'Closed',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 

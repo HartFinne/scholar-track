@@ -114,7 +114,7 @@
                             <td class="text-center align-middle">{{ $letter->reason ?? '--' }}</td>
                             <td class="text-center align-middle">{{ $letter->ltestatus }}</td>
                             <td class="text-center align-middle">
-                                <a href="#" class="btn btn-primary">View</a>
+                                <a href="{{ route('showlteinfo', $letter->lid) }}" class="btn btn-primary">View</a>
                             </td>
                         </tr>
                     @endforeach

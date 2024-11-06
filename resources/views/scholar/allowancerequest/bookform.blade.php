@@ -85,42 +85,50 @@
                 <div class="row">
                     <div class="form-group">
                         <label for="bookTitle">Title of the Book</label>
-                        <input type="text" id="bookTitle" name="booktitle" required>
+                        <input type="text" id="bookTitle" name="booktitle" maxlength="255" required>
                     </div>
                     <div class="form-group">
                         <label for="author">Author</label>
-                        <input type="text" id="author" name="author" required>
+                        <input type="text" id="author" name="author" maxlength="255" required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="price">Price</label>
-                        <input type="number" id="price" name="price" required>
+                        <input type="number" id="price" name="price" min="1" required>
                     </div>
                     <div class="form-group">
                         <label for="bookCert">Book Certification</label>
-                        <input type="file" id="bookCert" name="certification" required>
+                        <input type="file" id="bookCert" name="certification"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="receipt">Receipt or Acknowledgement Receipt</label>
-                        <input type="file" id="receipt" name="acknowledgement" required>
+                        <input type="file" id="receipt" name="acknowledgement"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                     <div class="form-group">
                         <label for="proofPic">Proof of Purchase (Picture ng biniling libro)</label>
-                        <input type="file" id="proofPic" name="purchaseproof" required>
+                        <input type="file" id="proofPic" name="purchaseproof"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group">
                         <label for="liquidation">Liquidation Form</label>
-                        <input type="file" id="liquidation" name="liquidation" required>
+                        <input type="file" id="liquidation" name="liquidation"
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            required>
                     </div>
                     <div class="form-group note">
                         <p class="fw-bold">Note:</p>
                         <ul>
-                            <li>Kung maraming picture, I-compile sa iisang zip or pdf ang mga pictures.</li>
+                            <li>Kung maraming picture, I-compile sa iisang pdf or docx ang mga pictures.</li>
                             <li>Siguraduhing malinaw at nakuhanan ang Title at Author ng Libro.</li>
                         </ul>
                     </div>

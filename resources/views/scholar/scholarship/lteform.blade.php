@@ -24,7 +24,7 @@
 
     <!-- MAIN -->
     <div class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
+        <a href="{{ route('sclte') }}" class="goback">&lt Go back</a>
 
 
         <form action="{{ route('lteform.post', ['lid' => $lid]) }}" method="POST" enctype="multipart/form-data">
@@ -38,7 +38,8 @@
                     <div class="explanation mb-3">
                         <label for="explanation"><b>Explanation Letter</b></label>
                         <input type="file" id="explanation" name="explanation"
-                            class="form-control {{ $errors->has('explanation') ? 'is-invalid' : '' }}">
+                            accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                            class="form-control {{ $errors->has('explanation') ? 'is-invalid' : '' }}" required>
                         @if ($errors->has('explanation'))
                             <div class="invalid-feedback">
                                 {{ $errors->first('explanation') }}
@@ -51,13 +52,13 @@
                             <div class="rad">
                                 <input type="radio" id="medical" name="reason" value="Medical"
                                     onclick="toggleFileInputs('medical')"
-                                    {{ old('reason') == 'Medical' ? 'checked' : '' }}>
+                                    {{ old('reason') == 'Medical' ? 'checked' : '' }} required>
                                 <label for="medical">Medical</label>
                             </div>
                             <div class="rad">
                                 <input type="radio" id="academic" name="reason" value="Academic Activity"
                                     onclick="toggleFileInputs('academic')"
-                                    {{ old('reason') == 'Academic Activity' ? 'checked' : '' }}>
+                                    {{ old('reason') == 'Academic Activity' ? 'checked' : '' }} required>
                                 <label for="academic">Academic Activity</label>
                             </div>
                         </div>
@@ -65,13 +66,15 @@
                             <div class="rad">
                                 <input type="radio" id="death" name="reason"
                                     value="Death of an Immediate Family Member" onclick="toggleFileInputs('death')"
-                                    {{ old('reason') == 'Death of an Immediate Family Member' ? 'checked' : '' }}>
+                                    {{ old('reason') == 'Death of an Immediate Family Member' ? 'checked' : '' }}
+                                    required>
                                 <label for="death">Death of an Immediate Family Member</label>
                             </div>
                             <div class="rad">
                                 <input type="radio" id="disaster" name="reason"
                                     value="Natural and Human induced disasters" onclick="toggleFileInputs('disaster')"
-                                    {{ old('reason') == 'Natural and Human induced disasters' ? 'checked' : '' }}>
+                                    {{ old('reason') == 'Natural and Human induced disasters' ? 'checked' : '' }}
+                                    required>
                                 <label for="disaster">Natural and Human induced disasters</label>
                             </div>
                         </div>
@@ -88,8 +91,9 @@
                             <div class="medfile">
                                 <label for="medical-file">Photocopy of Medical or Doctor's Certificate</label><br>
                                 <input type="file" id="medical-file" name="medical-file"
+                                    accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
                                     class="form-control {{ $errors->has('medical-file') ? 'is-invalid' : '' }}"
-                                    disabled>
+                                    disabled required>
                                 @if ($errors->has('medical-file'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('medical-file') }}
@@ -100,8 +104,9 @@
                                 <label for="academic-file">Duly Signed Letter<br>(School
                                     Official/Chairperson/Professor)</label><br>
                                 <input type="file" id="academic-file" name="academic-file"
+                                    accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
                                     class="form-control {{ $errors->has('academic-file') ? 'is-invalid' : '' }}"
-                                    disabled>
+                                    disabled required>
                                 @if ($errors->has('academic-file'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('academic-file') }}
@@ -113,7 +118,9 @@
                             <div class="deathfile">
                                 <label for="death-file">Photocopy of Death Certificate</label><br>
                                 <input type="file" id="death-file" name="death-file"
-                                    class="form-control {{ $errors->has('death-file') ? 'is-invalid' : '' }}" disabled>
+                                    accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
+                                    class="form-control {{ $errors->has('death-file') ? 'is-invalid' : '' }}" disabled
+                                    required>
                                 @if ($errors->has('death-file'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('death-file') }}
@@ -124,8 +131,9 @@
                                 <label for="disaster-file">Proof of Calamity<br>(Photo/News Clipping/LGU
                                     Declaration)</label><br>
                                 <input type="file" id="disaster-file" name="disaster-file"
+                                    accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
                                     class="form-control {{ $errors->has('disaster-file') ? 'is-invalid' : '' }}"
-                                    disabled>
+                                    disabled required>
                                 @if ($errors->has('disaster-file'))
                                     <div class="invalid-feedback">
                                         {{ $errors->first('disaster-file') }}
@@ -137,7 +145,7 @@
                 </div>
                 <div class="agreement mb-3">
                     <input type="checkbox" id="agreement" name="agreement"
-                        class="{{ $errors->has('agreement') ? 'is-invalid' : '' }}">
+                        class="{{ $errors->has('agreement') ? 'is-invalid' : '' }}" required>
                     <label for="agreement"><i>I hereby attest that the information I have provided is true and correct.
                             I also give my consent to Tzu Chi Foundation to obtain, retain and verify my
                             letter.</i></label>

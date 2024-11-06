@@ -12,9 +12,15 @@ use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Scholar\RegularAllowanceForm;
+use App\Http\Controllers\PasswordController;
 
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
+Route::get('forgot-password', [PasswordController::class, 'showforgotpass'])->name('forgotpass');
+Route::post('verify-forgot-password-request', [PasswordController::class, 'verifyfprequest'])->name('verifyfprequest');
+Route::get('/{usertype}/{casecode}/change-password', [PasswordController::class, 'showchangepass'])->name('changepassword');
+Route::post('/change-password/{usertype}/{casecode}', [PasswordController::class, 'submitchangepass'])->name('submitchangepass');
+Route::get('/exit-change-password/{usertype}/{casecode}', [PasswordController::class, 'exitchangepass'])->name('exitchangepass');
 
 //routing for applicant page
 Route::prefix('applicant')->group(function () {
@@ -76,7 +82,6 @@ Route::prefix('scholar/scholarship')->middleware('scholar')->group(function () {
     // user profile
     Route::get('/manageprofile', [ScholarController::class, 'showProfile'])->name('manageprofile');
     Route::post('/manageprofile', [ScholarController::class, 'updateProfile'])->name('manageprofile.post');
-    Route::get('/changepassword', [ScholarController::class, 'changePassword'])->name('changepassword');
     // sms | email notif preference
     Route::post('/update-notification-preference', [ScholarController::class, 'updateNotificationPreference'])->name('update.notification.preference');
 });
@@ -139,6 +144,8 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/createcsevent', [StaffController::class, 'createcsevent'])->name('createcsevent');
     Route::post('/updatecsevent/{csid}', [StaffController::class, 'updatecsevent'])->name('updatecsevent');
     Route::get('/community-service-info/{csid}', [StaffController::class, 'showcseventinfo'])->name('viewcseventinfo');
+    // Route::get('/community-service-attendance/{csid}/{casecode}', [StaffController::class, 'viewcsattendance'])->name('viewcsattendance');
+    Route::get('/community-service-attendance', [StaffController::class, 'viewcsattendance'])->name('viewcsattendance');
     // HUMANITIES CLASS
     Route::get('/humanities-class', [StaffController::class, 'showHumanitiesClass'])->name('humanitiesclass');
     Route::post('/createhc', [StaffController::class, 'createhc'])->name('createhc');
@@ -152,12 +159,15 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // PENALTY | LTE
     Route::get('/penalty', [StaffController::class, 'showPenalty'])->name('penalty');
     Route::post('/penalty', [StaffController::class, 'storePenalty'])->name('penalty.post');
+    Route::get('/penalty-info/{pid}', [StaffController::class, 'showpenaltyinfo'])->name('showpenaltyinfo');
     Route::get('/letter-of-explanation', [StaffController::class, 'showLTE'])->name('lte');
-    // ALLOWANCE REQUESTS
+    Route::get('/letter-of-explanation-info/{lid}', [StaffController::class, 'showlteinfo'])->name('showlteinfo');
+    // ALLOWANCE REQUESTS - REGULAR
     Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');
-    Route::get('/allowance-requests-regular/{id}', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
+    Route::get('/allowance-requests-regular-details', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
+    // Route::get('/allowance-requests-regular-details/{id}', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
     Route::post('/update-requests-regular/{id}', [StaffController::class, 'updateRegularAllowance'])->name('update-requests-regular.post');
-
+    // ALLOWANCE REQUESTS - SPECIAL
     Route::get('/allowance-requests-special', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
     Route::post('/upload-transpo', [StaffController::class, 'updatetransporeimbursenment'])->name('transporeimbursement');
     Route::post('/upload-acknowledgement', [StaffController::class, 'updateacknowledgementreceipt'])->name('acknowledgement');
@@ -168,7 +178,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // APPLICATION CRITERIA
     Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
     Route::post('/update-application-forms/{formname}', [StaffController::class, 'updateappformstatus'])->name('updateappformstatus');
-    Route::get('/application-qualification', [StaffController::class, 'showQualification'])->name('qualification');
+    Route::get('/scholarship-settings', [StaffController::class, 'showQualification'])->name('qualification');
     Route::post('/updatecriteria', [StaffController::class, 'updatecriteria'])->name('updatecriteria');
     Route::post('/addinstitution', [StaffController::class, 'addinstitution'])->name('addinstitution');
     Route::post('/updateinstitution/{inid}', [StaffController::class, 'updateinstitution'])->name('updateinstitution');
@@ -182,6 +192,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/renewal-college', [StaffController::class, 'showRenewalCollege'])->name('renewal-college');
     Route::get('/renewal-elementary', [StaffController::class, 'showRenewalElem'])->name('renewal-elementary');
     Route::get('/renewal-highschool', [StaffController::class, 'showRenewalHS'])->name('renewal-highschool');
+    Route::get('/renewal-info', [StaffController::class, 'showRenewalinfo'])->name('renewalinfo');
     // SYSTEM ADMIN
     Route::get('/dashboard-admin', [StaffController::class, 'showDashboard'])->name('dashboard');
     Route::get('/users-scholar', [StaffController::class, 'showUsersScholar'])->name('users-scholar');

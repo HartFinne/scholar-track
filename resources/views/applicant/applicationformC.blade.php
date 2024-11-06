@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
@@ -81,19 +82,22 @@
             </div>
 
             <div class="app-form">
-                <form method="POST" action="{{ route('saveapplicant') }}" enctype="multipart/form-data">
+                <form autocomplete="on" method="POST" action="{{ route('saveapplicant') }}"
+                    enctype="multipart/form-data">
                     @csrf
                     <fieldset class="custom-fieldset">
                         <legend>Personal Information</legend>
                         <div class="row">
                             <div class="column">
                                 <label for="scholarname">Name</label>
-                                <input type="text" name="scholarname" value="{{ old('scholarname') }}"
-                                    placeholder="(Last Name, First Name, Middle Name)" required>
+                                <input type="text" id="scholarname" name="scholarname" maxlength="255"
+                                    value="{{ old('scholarname') }}" placeholder="(Last Name, First Name, Middle Name)"
+                                    required>
                             </div>
                             <div class="column">
                                 <label for="chinesename">Chinese Name</label>
-                                <input type="text" name="chinesename" value="{{ old('chinesename') }}" required>
+                                <input type="text" id="chinesename" name="chinesename" maxlength="255"
+                                    value="{{ old('chinesename') }}" required>
                             </div>
                         </div>
                         <div class="row">
@@ -112,14 +116,16 @@
                             </div>
                             <div class="column">
                                 <label for="birthdate">Birthdate</label>
-                                <input type="date" name="birthdate" value="{{ old('birthdate') }}" required>
+                                <input type="date" name="birthdate"
+                                    max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}"
+                                    value="{{ old('birthdate') }}" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="homeaddress">Home Address</label>
                                 <input type="text" name="homeaddress" value="{{ old('homeaddress') }}"
-                                    placeholder="(House #/Unit #/Floor/Bldg. Name/Street Name)" required>
+                                    max="255" placeholder="(House #/Unit #/Floor/Bldg. Name/Street Name)" required>
                             </div>
                         </div>
                         <div class="row">
@@ -128,35 +134,38 @@
                                 <input type="text" name="barangay" value="{{ old('barangay') }}" required>
                             </div>
                             <div class="column">
-                                <label for="city">City</label>
+                                <label for="city">City/Municipality</label>
                                 <input type="text" name="city" value="{{ old('city') }}" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="email">Email Address</label>
-                                <input type="email" name="email" value="{{ old('email') }}" required>
+                                <input type="email" name="email" maxlength="255" value="{{ old('email') }}"
+                                    required>
                             </div>
                             <div class="column">
                                 <label for="phonenum">Cellphone No./Landline</label>
-                                <input type="tel" name="phonenum" value="{{ old('phonenum') }}" required>
+                                <input type="tel" minlength="11" maxlength="12" name="phonenum"
+                                    value="{{ old('phonenum') }}" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="occupation">Occupation</label>
-                                <input type="text" name="occupation" value="{{ old('occupation') }}" required>
+                                <input type="text" name="occupation" maxlength="100"
+                                    value="{{ old('occupation') }}" required>
                             </div>
                             <div class="column">
                                 <label for="income">Income</label>
                                 <input type="number" name="income" value="{{ old('income') }}"
-                                    placeholder="If none, input number zero" required>
+                                    placeholder="0 if none" min="0" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="fblink">Facebook Link</label>
-                                <input type="text" name="fblink" value="{{ old('fblink') }}" required>
+                                <input type="url" name="fblink" value="{{ old('fblink') }}" required>
                             </div>
                             <div class="column">
                                 <p>Are you a member of any indigenous group?</p>
@@ -172,7 +181,7 @@
                                 </div>
                                 <input type="text" name="indigenousgroup" id="indigenousInput"
                                     placeholder="Please specify the group you belong to" disabled
-                                    value="{{ old('indigenousgroup') }}">
+                                    value="{{ old('indigenousgroup') }}" maxlength="100">
                             </div>
                         </div>
                     </fieldset>
@@ -196,7 +205,8 @@
                         <div class="row">
                             <div class="column">
                                 <label for="collegedept">College Department</label>
-                                <input type="text" name="collegedept" value="{{ old('collegedept') }}" required>
+                                <input type="text" name="collegedept" value="{{ old('collegedept') }}"
+                                    maxlength="255" required>
                             </div>
                             <div class="column">
                                 <label for="incomingyear">Incoming Year Level</label>
@@ -227,7 +237,8 @@
                             </div>
                             <div class="column">
                                 <label for="gwa">General Average Last Sem</label>
-                                <input type="text" name="gwa" value="{{ old('gwa') }}" required>
+                                <input type="number" name="gwa" value="{{ old('gwa') }}" min="1"
+                                    max="5" step="0.01" required>
                             </div>
                         </div>
                     </fieldset>
@@ -240,11 +251,11 @@
                                 <div class="column">
                                     <label for="fname">Name (Last Name, First Name)</label>
                                     <input type="text" id="fname" value="{{ old('fname') }}" name="fname"
-                                        required>
+                                        required maxlength="255">
                                 </div>
                                 <div class="column">
                                     <label for="fage">Age</label>
-                                    <input type="text" id="fage" value="{{ old('fage') }}" name="fage"
+                                    <input type="number" id="fage" value="{{ old('fage') }}" name="fage"
                                         required>
                                 </div>
                                 <div class="column">
@@ -259,6 +270,7 @@
                                 <div class="column">
                                     <label for="fbirthdate">Birthdate</label>
                                     <input type="date" id="fbirthdate" value="{{ old('fbirthdate') }}"
+                                        max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}"
                                         name="fbirthdate" required>
                                 </div>
                                 <div class="column">
@@ -269,31 +281,31 @@
                                 <div class="column">
                                     <label for="freligion">Religion</label>
                                     <input type="text" id="freligion" value="{{ old('freligion') }}"
-                                        name="freligion" required>
+                                        name="freligion" required maxlength="100">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="column">
                                     <label for="fattainment">Educational Attainment</label>
                                     <input type="text" id="fattainment" value="{{ old('fattainment') }}"
-                                        name="fattainment" required>
+                                        name="fattainment" required maxlength="100">
                                 </div>
                                 <div class="column">
                                     <label for="foccupation">School/Occupation</label>
                                     <input type="text" id="foccupation" value="{{ old('foccupation') }}"
-                                        name="foccupation" required>
+                                        name="foccupation" required maxlength="100">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="column">
                                     <label for="fcompany">Company</label>
                                     <input type="text" id="fcompany" value="{{ old('fcompany') }}"
-                                        name="fcompany" required>
+                                        name="fcompany" required maxlength="100">
                                 </div>
                                 <div class="column">
                                     <label for="fincome">Income</label>
-                                    <input type="text" id="fincome" value="{{ old('fincome') }}"
-                                        name="fincome" placeholder="If none, input number zero" required>
+                                    <input type="number" id="fincome" value="{{ old('fincome') }}"
+                                        name="fincome" placeholder="0 if none" min="0" required>
                                 </div>
                             </div>
                         </div>
@@ -303,11 +315,11 @@
                                 <div class="column">
                                     <label for="mname">Name (Last Name, First Name)</label>
                                     <input type="text" id="mname" value="{{ old('mname') }}" name="mname"
-                                        required>
+                                        required maxlength="255">
                                 </div>
                                 <div class="column">
                                     <label for="mage">Age</label>
-                                    <input type="text" id="mage" value="{{ old('mage') }}" name="mage"
+                                    <input type="number" id="mage" value="{{ old('mage') }}" name="mage"
                                         required>
                                 </div>
                                 <div class="column">
@@ -322,6 +334,7 @@
                                 <div class="column">
                                     <label for="mbirthdate">Birthdate</label>
                                     <input type="date" id="mbirthdate" value="{{ old('mbirthdate') }}"
+                                        max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}"
                                         name="mbirthdate" required>
                                 </div>
                                 <div class="column">
@@ -332,50 +345,50 @@
                                 <div class="column">
                                     <label for="mreligion">Religion</label>
                                     <input type="text" id="mreligion" value="{{ old('mreligion') }}"
-                                        name="mreligion" required>
+                                        name="mreligion" required maxlength="100">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="column">
                                     <label for="mattainment">Educational Attainment</label>
                                     <input type="text" id="mattainment" value="{{ old('mattainment') }}"
-                                        name="mattainment" required>
+                                        name="mattainment" required maxlength="100">
                                 </div>
                                 <div class="column">
                                     <label for="moccupation">School/Occupation</label>
                                     <input type="text" id="moccupation" value="{{ old('moccupation') }}"
-                                        name="moccupation" required>
+                                        name="moccupation" required maxlength="100">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="column">
                                     <label for="mcompany">Company</label>
                                     <input type="text" id="mcompany" value="{{ old('mcompany') }}"
-                                        name="mcompany" required>
+                                        name="mcompany" required maxlength="100">
                                 </div>
                                 <div the="column">
                                     <label for="mincome">Income</label>
-                                    <input type="text" id="mincome" value="{{ old('mincome') }}"
-                                        name="mincome" placeholder="If none, input number zero" required>
+                                    <input type="number" id="mincome" value="{{ old('mincome') }}"
+                                        name="mincome" placeholder="0 if none" min="0" required>
                                 </div>
                             </div>
                         </div>
                         <div id="siblings-container">
-                            <div class="siblingsinfo">
+                            <div class="siblingsinfo" style="display: none;">
                                 <p class="family">SIBLING INFORMATION</p>
                                 <div class="row">
                                     <div class="column">
                                         <label for="sname[]">Name (Last Name, First Name)</label>
-                                        <input type="text" id="sname[]" value="" name="sname[]" required>
+                                        <input type="text" name="sname[]" value="" maxlength="255">
                                     </div>
                                     <div class="column">
                                         <label for="sage[]">Age</label>
-                                        <input type="text" id="sage[]" value="" name="sage[]" required>
+                                        <input type="number" name="sage[]" min="1" value="">
                                     </div>
                                     <div class="column">
                                         <label for="ssex[]">Sex</label>
                                         <select name="ssex[]" id="ssex[]">
-                                            <option value="" disabled selected hidden></option>
+                                            <option value="" selected hidden></option>
                                             <option value="F">F</option>
                                             <option value="M">M</option>
                                         </select>
@@ -384,58 +397,60 @@
                                 <div class="row">
                                     <div class="column">
                                         <label for="sbirthdate[]">Birthdate</label>
-                                        <input type="date" id="sbirthdate[]" value="" name="sbirthdate[]"
-                                            required>
+                                        <input type="date" name="sbirthdate[]" value=""
+                                            max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}">
                                     </div>
                                     <div class="column">
                                         <label for="srelationship">Relationship</label>
-                                        <input type="text" id="srelationship" value="Sibling"
-                                            name="srelationship" readonly>
+                                        <input type="text" name="srelationship" maxlength="100" value="Sibling"
+                                            readonly>
                                     </div>
                                     <div class="column">
                                         <label for="sreligion[]">Religion</label>
-                                        <input type="text" id="sreligion[]" value="" name="sreligion[]"
-                                            required>
+                                        <input type="text" name="sreligion[]" maxlength="100" value=""
+                                            maxlength="100">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="column">
                                         <label for="sattainment[]">Educational Attainment</label>
-                                        <input type="text" id="sattainment[]" value="" name="sattainment[]"
-                                            required>
+                                        <input type="text" name="sattainment[]" maxlength="100" value=""
+                                            maxlength="100">
                                     </div>
                                     <div class="column">
                                         <label for="soccupation[]">School/Occupation</label>
-                                        <input type="text" id="soccupation[]" value="" name="soccupation[]"
-                                            required>
+                                        <input type="text" name="soccupation[]" maxlength="100" value=""
+                                            maxlength="100">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="column">
                                         <label for="scompany[]">Company</label>
-                                        <input type="text" id="scompany[]" value="" name="scompany[]"
-                                            required>
+                                        <input type="text" name="scompany[]" maxlength="100" value=""
+                                            maxlength="100">
                                     </div>
                                     <div class="column">
                                         <label for="sincome[]">Income</label>
-                                        <input type="text" id="sincome[]" value="" name="sincome[]"
-                                            placeholder="If none, input number zero" required>
+                                        <input type="number" name="sincome[]" maxlength="100" value=""
+                                            placeholder="0 if none" min="0">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <button id="addSibling">Add Sibling</button>
+                        <input id="siblingCount" name="siblingcount" value="0" hidden>
+                        <div class="row mx-auto">
+                            <button id="addSibling">Add Sibling</button>
+                        </div>
                     </fieldset>
-
                     <fieldset class="custom-fieldset">
                         <legend>Other Information</legend>
-                        <span>Each answer must not exceed 255 characters.</span>
+                        <span>Each answer <strong>must not exceed 255</strong> characters.</span>
                         <div class="row">
                             <div class="column">
                                 <label for="grant">Grant/Assistance from other Government and Non-Government
                                     scholarships, School Discount (How much per sem?)</label>
                                 <textarea id="grant" name="grant" rows="2" cols="50" placeholder="Input your answer here..."
-                                    required>{{ old('grant') }}</textarea>
+                                    maxlength="255" required>{{ old('grant') }}</textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -444,86 +459,119 @@
                                     Extracurricular/Community
                                     Involvement/Employment</label>
                                 <textarea id="talent" name="talent" rows="2" cols="50" placeholder="Input your answer here..."
-                                    required>{{ old('talent') }}</textarea>
+                                    maxlength="255" required>{{ old('talent') }}</textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="expectation">What are your expectations from Tzu Chi Foundation?</label>
+                                <label for="expectation">What are your expectations from Tzu Chi
+                                    Foundation?</label>
                                 <textarea id="expectation" name="expectation" rows="2" cols="50" placeholder="Input your answer here..."
-                                    required>{{ old('expectation') }}</textarea>
+                                    maxlength="255" required>{{ old('expectation') }}</textarea>
                             </div>
                         </div>
                     </fieldset>
 
                     <fieldset class="custom-fieldset">
                         <legend>Requirements Submission</legend>
-                        <span>Each document must not exceed 2MB otherwise the system will not accept your
+                        <span>Each document <strong>must not exceed 2MB</strong> or the system will not accept your
                             application.</span>
+
                         <div class="row">
                             <div class="column">
                                 <label for="idpic">1x1 ID Picture</label>
-                                <input type="file" name="idpic" required>
+                                <input type="file" name="idpic" accept="image/jpeg, image/png" required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, or
+                                    PNG.</small>
                             </div>
                             <div class="column">
                                 <label for="reportcard">Scanned copy of latest Report Card</label>
-                                <input type="file" name="reportcard" required>
+                                <input type="file" name="reportcard"
+                                    accept="image/jpeg, image/png, application/pdf" required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, PNG, or
+                                    PDF.</small>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="regiform">Scanned copy of latest Registration Form</label>
-                                <input type="file" name="regiform" required>
+                                <input type="file" name="regiform" accept="image/jpeg, image/png, application/pdf"
+                                    required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, PNG, or
+                                    PDF.</small>
                             </div>
                             <div class="column">
                                 <label for="autobiography">Autobiography</label>
-                                <input type="file" name="autobiography" required>
+                                <input type="file" name="autobiography" accept="application/pdf" required>
+                                <small class="fst-italic text-muted">Accepted file type: PDF only.</small>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="familypic">Family Picture</label>
-                                <input type="file" name="familypic" required>
+                                <input type="file" name="familypic" accept="image/jpeg, image/png" required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, or
+                                    PNG.</small>
                             </div>
                             <div class="column">
                                 <label for="insidehouse">Picture of the inside of the house</label>
-                                <input type="file" name="insidehouse" required>
+                                <input type="file" name="insidehouse" accept="image/jpeg, image/png" required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, or
+                                    PNG.</small>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="outsidehouse">Picture of the outside of the house</label>
-                                <input type="file" name="outsidehouse" required>
+                                <input type="file" name="outsidehouse" accept="image/jpeg, image/png" required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, or
+                                    PNG.</small>
                             </div>
                             <div class="column">
                                 <label for="utility">Scanned copy of latest Utility Bills</label>
-                                <input type="file" name="utility" required>
+                                <input type="file" name="utility" accept="image/jpeg, image/png, application/pdf"
+                                    required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, PNG, or
+                                    PDF.</small>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="sketchmap">Detailed Sketch Map of Home Address</label>
-                                <input type="file" name="sketchmap" required>
+                                <input type="file" name="sketchmap" accept="image/jpeg, image/png" required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, or
+                                    PNG.</small>
                             </div>
                             <div class="column">
-                                <label for="payslip">Scanned copy latest ITR/ Official Pay Slip of parent/s (if
+                                <label for="payslip">Scanned copy of latest ITR/ Official Pay Slip of parent/s (if
                                     applicable)</label>
-                                <input type="file" name="payslip">
+                                <input type="file" name="payslip" accept="image/jpeg, image/png, application/pdf">
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, PNG, or PDF.
+                                    (Optional)</small>
                             </div>
                         </div>
+
                         <div class="row">
                             <div class="column">
                                 <label for="indigencycert">Barangay Certificate of Indigency</label>
-                                <input type="file" name="indigencycert" required>
+                                <input type="file" name="indigencycert"
+                                    accept="image/jpeg, image/png, application/pdf" required>
+                                <small class="fst-italic text-muted">Accepted file types: JPG, JPEG, PNG, or
+                                    PDF.</small>
                             </div>
                         </div>
                     </fieldset>
 
                     <div class="agreement">
-                        <input type="checkbox" value="" name="agreement" id="agreement">
+                        <input type="checkbox" value="" name="agreement" id="agreement" required>
                         <label for="agreement">
                             <i>I hereby attest that the information I have provided is true and correct. I also
-                                consents Tzu Chi Foundation to obtain and retain my personal information for the purpose
+                                consents Tzu Chi Foundation to obtain and retain my personal information for the
+                                purpose
                                 of
                                 this application.</i>
                         </label>
@@ -537,6 +585,50 @@
     </div>
 
     <script src="{{ asset('js/applicant.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load saved data from sessionStorage for all input types
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                if (element.type === 'radio' || element.type === 'checkbox') {
+                    // Restore checked state for radio buttons and checkboxes
+                    const savedValue = sessionStorage.getItem(element.name);
+                    if (savedValue) {
+                        element.checked = savedValue === 'true';
+                    }
+                } else if (element.type === 'file') {
+                    // Skip file inputs (cannot persist due to security reasons)
+                    return;
+                } else {
+                    // Restore value for text, textarea, number, date, and select inputs
+                    const savedValue = sessionStorage.getItem(element.name);
+                    if (savedValue) {
+                        element.value = savedValue;
+                    }
+                }
+            });
+
+            // Save data to sessionStorage on input change
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                element.addEventListener('input', () => {
+                    if (element.type === 'radio' || element.type === 'checkbox') {
+                        // Save checked state as true/false for radio buttons and checkboxes
+                        sessionStorage.setItem(element.name, element.checked);
+                    } else if (element.type === 'file') {
+                        // Skip file inputs (cannot be saved for security reasons)
+                        return;
+                    } else {
+                        // Save value for text, textarea, number, date, and select inputs
+                        sessionStorage.setItem(element.name, element.value);
+                    }
+                });
+            });
+
+            // Clear sessionStorage on form submit
+            document.querySelector('form').addEventListener('submit', () => {
+                sessionStorage.clear();
+            });
+        });
+    </script>
 </body>
 
 </html>

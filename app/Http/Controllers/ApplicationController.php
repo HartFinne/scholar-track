@@ -44,6 +44,13 @@ class ApplicationController extends Controller
 
     public function saveapplicant(Request $request)
     {
+        // dd($request->all());
+        $emailExists = applicants::where('email', $request->email)->exists();
+
+        if ($emailExists) {
+            return redirect()->back()->with('error', 'Your application was unsuccessful because the email address is already in use. If you believe this is an error, please contact us at inquiriescholartrack@gmail.com.')->withInput();
+        }
+
         DB::beginTransaction();
         try {
             $request->validate([
@@ -71,7 +78,7 @@ class ApplicationController extends Controller
                 // Father info
                 'fname' => 'string|max:255',
                 'fage' => 'integer',
-                'fsex' => '',
+                'fsex' => 'required',
                 'fbirthdate' => 'date',
                 'freligion' => 'string|max:100',
                 'fattainment' => 'string|max:100',
@@ -81,23 +88,13 @@ class ApplicationController extends Controller
                 // Mother info
                 'mname' => 'string|max:255',
                 'mage' => 'integer',
-                'msex' => '',
+                'msex' => 'required',
                 'mbirthdate' => 'date',
                 'mreligion' => 'string|max:100',
                 'mattainment' => 'string|max:100',
                 'moccupation' => 'string|max:100',
                 'mcompany' => 'string|max:100',
                 'mincome' => 'numeric|min:0',
-                // Sibling info
-                'sname.*' => 'string|max:255',
-                'sage.*' => 'integer',
-                'ssex.*' => '',
-                'sbirthdate.*' => 'date',
-                'sreligion.*' => 'string|max:100',
-                'sattainment.*' => 'string|max:100',
-                'soccupation.*' => 'string|max:100',
-                'scompany.*' => 'string|max:100',
-                'sincome.*' => 'numeric|min:0',
                 // Other info
                 'grant' => 'string|max:255',
                 'talent' => 'string|max:255',
@@ -115,7 +112,6 @@ class ApplicationController extends Controller
                 'payslip'        => ['mimes:jpeg,png,pdf', 'max:2048'],
                 'indigencycert'  => ['mimes:jpeg,png,pdf', 'max:2048'],
             ], [
-
                 'scholarname.string' => 'The scholar name must be a valid string.',
                 'scholarname.max' => 'The scholar name may not be greater than 255 characters.',
                 'chinesename.string' => 'The Chinese name must be a valid string.',
@@ -179,21 +175,6 @@ class ApplicationController extends Controller
                 'mcompany.max' => 'The mother\'s company name may not be greater than 100 characters.',
                 'mincome.numeric' => 'The mother\'s income must be a number.',
                 'mincome.min' => 'The mother\'s income must be at least 0.',
-                // Sibling info
-                'sname.*.string' => 'Each sibling\'s name must be a valid string.',
-                'sname.*.max' => 'Each sibling\'s name may not be greater than 255 characters.',
-                'sage.*.integer' => 'Each sibling\'s age must be a number.',
-                'sbirthdate.*.date' => 'Each sibling\'s birthdate must be a valid date.',
-                'sreligion.*.string' => 'Each sibling\'s religion must be a valid string.',
-                'sreligion.*.max' => 'Each sibling\'s religion may not be greater than 100 characters.',
-                'sattainment.*.string' => 'Each sibling\'s educational attainment must be a valid string.',
-                'sattainment.*.max' => 'Each sibling\'s educational attainment may not be greater than 100 characters.',
-                'soccupation.*.string' => 'Each sibling\'s occupation must be a valid string.',
-                'soccupation.*.max' => 'Each sibling\'s occupation may not be greater than 100 characters.',
-                'scompany.*.string' => 'Each sibling\'s company name must be a valid string.',
-                'scompany.*.max' => 'Each sibling\'s company name may not be greater than 100 characters.',
-                'sincome.*.numeric' => 'Each sibling\'s income must be a number.',
-                'sincome.*.min' => 'Each sibling\'s income must be at least 0.',
                 // Other info
                 'grant.string' => 'The grant details must be a valid string.',
                 'grant.max' => 'The grant details may not be greater than 255 characters.',
@@ -235,6 +216,42 @@ class ApplicationController extends Controller
                 'indigencycert.mimes' => 'The indigency certificate must be a valid file (jpeg, jpg, png, or pdf).',
                 'indigencycert.max' => 'The indigency certificate must not exceed 2 MB.',
             ]);
+
+
+            // Sibling info
+            if ($request->siblingcount > 0) {
+                $rules = [];
+                $messages = [];
+
+                for ($i = 1; $i <= $request->siblingcount; $i++) {
+                    $rules['sname.' . $i] = 'string|max:255';
+                    $rules['sage.' . $i] = 'integer';
+                    $rules['ssex.' . $i] = 'required';
+                    $rules['sbirthdate.' . $i] = 'date';
+                    $rules['sreligion.' . $i] = 'string|max:100';
+                    $rules['sattainment.' . $i] = 'string|max:100';
+                    $rules['soccupation.' . $i] = 'string|max:100';
+                    $rules['scompany.' . $i] = 'string|max:100';
+                    $rules['sincome.' . $i] = 'numeric|min:0';
+
+                    $messages['sname.' . $i . '.string'] = 'The name for sibling at index ' . $i . ' must be a valid string.';
+                    $messages['sname.' . $i . '.max'] = 'The name for sibling at index ' . $i . ' may not be greater than 255 characters.';
+                    $messages['sage.' . $i . '.integer'] = 'The age for sibling at index ' . $i . ' must be a number.';
+                    $messages['sbirthdate.' . $i . '.date'] = 'The birthdate for sibling at index ' . $i . ' must be a valid date.';
+                    $messages['sreligion.' . $i . '.string'] = 'The religion for sibling at index ' . $i . ' must be a valid string.';
+                    $messages['sreligion.' . $i . '.max'] = 'The religion for sibling at index ' . $i . ' may not be greater than 100 characters.';
+                    $messages['sattainment.' . $i . '.string'] = 'The educational attainment for sibling at index ' . $i . ' must be a valid string.';
+                    $messages['sattainment.' . $i . '.max'] = 'The educational attainment for sibling at index ' . $i . ' may not be greater than 100 characters.';
+                    $messages['soccupation.' . $i . '.string'] = 'The occupation for sibling at index ' . $i . ' must be a valid string.';
+                    $messages['soccupation.' . $i . '.max'] = 'The occupation for sibling at index ' . $i . ' may not be greater than 100 characters.';
+                    $messages['scompany.' . $i . '.string'] = 'The company name for sibling at index ' . $i . ' must be a valid string.';
+                    $messages['scompany.' . $i . '.max'] = 'The company name for sibling at index ' . $i . ' may not be greater than 100 characters.';
+                    $messages['sincome.' . $i . '.numeric'] = 'The income for sibling at index ' . $i . ' must be a number.';
+                    $messages['sincome.' . $i . '.min'] = 'The income for sibling at index ' . $i . ' must be at least 0.';
+                }
+
+                $request->validate($rules, $messages);
+            }
 
             $casecode = $this->generatecasecode($request->incomingyear);
             $sincome = array_sum($request->sincome);
@@ -312,21 +329,28 @@ class ApplicationController extends Controller
                 'income' => $request->mincome,
             ]);
 
-            // Sibling info
-            foreach ($request->sname as $index => $name) {
-                apfamilyinfo::create([
-                    'casecode' => $casecode,
-                    'name' => $name,
-                    'age' => $request->sage[$index],
-                    'sex' => $request->ssex[$index],
-                    'birthdate' => $request->sbirthdate[$index],
-                    'relationship' => 'Sibling',
-                    'religion' => $request->sreligion[$index],
-                    'educattainment' => $request->sattainment[$index],
-                    'occupation' => $request->soccupation[$index],
-                    'company' => $request->scompany[$index],
-                    'income' => $request->sincome[$index],
-                ]);
+            if (!empty($request->siblingcount) && $request->siblingcount > 0) {
+                foreach ($request->sname as $index => $name) {
+                    // Skip index 0
+                    if ($index == 0) {
+                        continue;
+                    }
+
+                    // Create new sibling record starting from index 1
+                    apfamilyinfo::create([
+                        'casecode' => $casecode,
+                        'name' => $name,
+                        'age' => $request->sage[$index],
+                        'sex' => $request->ssex[$index],
+                        'birthdate' => $request->sbirthdate[$index],
+                        'relationship' => 'Sibling',
+                        'religion' => $request->sreligion[$index],
+                        'educattainment' => $request->sattainment[$index],
+                        'occupation' => $request->soccupation[$index],
+                        'company' => $request->scompany[$index],
+                        'income' => $request->sincome[$index],
+                    ]);
+                }
             }
 
             apotherinfo::create([
@@ -401,11 +425,10 @@ class ApplicationController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages);
+            return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages)->withInput();
         } catch (\Exception $e) {
             DB::rollback();
-            // Log::error("Application submission error: " . $e->getMessage());
-            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage())->withInput();
         }
     }
 

@@ -28,18 +28,13 @@
             Service</button>
         <button id="btnhc" class="sbarmainopt"
             onclick="window.location.href='{{ route('humanitiesclass') }}';">Humanities Class</button>
-        <a href="{{ route('qualification') }}" class="sbarmainopt">Scholarship Criteria</a>
-        <button id="btncriteria" class="sbarmainopt" onclick="togglesubopt3()">Application<i
-                class="fas fa-caret-right"></i></button>
-        <div class="ctnsuboptions" id="subopt3" style="display: none;">
-            <a href="{{ route('applicants') }}" class="sbarsubopt">Applicants</a>
-            <a href="{{ route('applicationforms') }}" class="sbarsubopt">Application Forms</a>
-        </div>
+        <a id="btnhc" class="sbarmainopt" href='{{ route('appointments') }}'>Appointments</a>
+        <a href="{{ route('applicants') }}" class="sbarmainopt">Applicants</a>
         <a id="evaluate-link" class="sbarmainopt" href='{{ route('evaluatescholars') }}'>Scholars
             Evaluation</a>
         <a id="btnhc" class="sbarmainopt" href='{{ route('generatescholarshipreport') }}' target="_blank">Generate
             Report</a>
-        <a id="btnhc" class="sbarmainopt" href='{{ route('appointments') }}'>Appointments</a>
+        <a href="{{ route('qualification') }}" class="sbarmainopt">Scholarship Settings</a>
     </div>
 </div>
 
@@ -83,6 +78,19 @@
                 const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
                 loadingModal.show();
             });
+        }
+    });
+    // Save the scroll position before navigating away
+    window.addEventListener('beforeunload', () => {
+        sessionStorage.setItem('scrollPosition', window.scrollY);
+    });
+
+    // Restore the scroll position on page load
+    window.addEventListener('load', () => {
+        const scrollPosition = sessionStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo(0, parseInt(scrollPosition));
+            sessionStorage.removeItem('scrollPosition');
         }
     });
 </script>

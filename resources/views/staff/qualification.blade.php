@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/applicationforms.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -33,8 +34,56 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <!-- COLLEGE-->
-        <h2 class="mb-4">Scholarship Criteria</h2>
+        <div class="row" id="formmsg">
+            @if (session('formsuccess'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('formsuccess') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if (session('formerror'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('formerror') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
+        <fieldset class="row">
+            <legend class="pagetitle">Manage Application Forms</legend>
+            <div class="ctntable table-responsive">
+                <table class="table table-bordered" id="tblapplicationforms">
+                    <thead>
+                        <tr>
+                            <th class="text-center align-middle">Form</th>
+                            <th class="text-center align-middle">Status</th>
+                            <th class="text-center align-middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($forms as $form)
+                            <tr>
+                                <td class="text-center align-middle">{{ $form->formname }}</td>
+                                <td class="text-center align-middle">{{ $form->status }}</td>
+                                <td class="text-center align-middle">
+                                    <form action="{{ route('updateappformstatus', $form->formname) }}" method="POST">
+                                        @csrf <!-- Ensure CSRF protection is enabled for the form -->
+                                        @if ($form->status == 'Closed')
+                                            <input type="hidden" name="status" value="Open">
+                                            <button type="submit" class="btn btn-success">Open</button>
+                                        @else
+                                            <input type="hidden" name="status" value="Closed">
+                                            <button type="submit" class="btn btn-danger">Close</button>
+                                        @endif
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </fieldset>
+        <div class="divider"></div>
         <div class="row">
             @if (session('importsuccess'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -50,8 +99,8 @@
                 </div>
             @endif
         </div>
-        <fieldset class="row">
-            <legend><strong>Import Scholar Emails</strong></legend>
+        <fieldset class="row mb-3" id="import">
+            <span class="pagetitle">Import Scholar Emails</span>
             <span class="col-12 mb-2">
                 Please upload the Excel file containing scholar emails for registration verification.
                 Ensure the file contains only email addresses, and they must be placed in the first column of the sheet.
@@ -60,7 +109,7 @@
                 @csrf <!-- Ensure CSRF protection for Laravel applications -->
                 <div class="input-group">
                     <input type="file" class="form-control" id="file" name="file" required
-                        aria-describedby="fileHelp">
+                        accept=".xlsx,.xls" aria-describedby="fileHelp">
                     <button class="btn btn-success" type="submit">Upload</button>
                 </div>
                 <small id="fileHelp" class="form-text text-muted">
@@ -68,7 +117,8 @@
                 </small>
             </form>
         </fieldset>
-        <div class="row" id="confirmmsg1">
+        <div class="divider"></div>
+        <div class="row">
             @if (session('critsuccess'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('critsuccess') }}
@@ -83,14 +133,13 @@
                 </div>
             @endif
         </div>
-
         <div class="row">
-            <fieldset class="col-12">
+            <fieldset class="col-12" id="criteria">
                 <form method="POST" action="{{ route('updatecriteria') }}">
                     @csrf
                     <div class="row">
                         <div class="col-md-11">
-                            <legend><strong>Requirements</strong></legend>
+                            <legend class="pagetitle">Requirements</legend>
                         </div>
                         <div class="col-md-1">
                             <button type="submit" class="btn btn-success" style="width: 100%">Save</button>
@@ -100,49 +149,54 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="cshours" class="form-label">Required CS Hours</label>
-                                <input type="text" class="form-control" id="cshours" name="cshours"
-                                    value="{{ $criteria->cshours ?? '' }}" placeholder="Not Set" required>
+                                <input type="number" min="1" class="form-control" id="cshours"
+                                    name="cshours" value="{{ $criteria->cshours ?? '' }}" placeholder="Not Set"
+                                    required>
                             </div>
                             <div class="mb-3">
-                                <label for="cgwa" class="form-label">College GWA</label>
-                                <input type="text" class="form-control" id="cgwa" name="cgwa"
+                                <label for="cgwa" min="1" max="5" class="form-label">College
+                                    GWA</label>
+                                <input type="number" class="form-control" id="cgwa" name="cgwa"
                                     value="{{ $criteria->cgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
-                                <label for="shsgwa" class="form-label">Senior High GWA</label>
-                                <input type="text" class="form-control" id="shsgwa" name="shsgwa"
+                                <label for="shsgwa" min="1" max="100" class="form-label">Senior High
+                                    GWA</label>
+                                <input type="number" class="form-control" id="shsgwa" name="shsgwa"
                                     value="{{ $criteria->shsgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
-                                <label for="jhsgwa" class="form-label">Junior High GWA</label>
-                                <input type="text" class="form-control" id="jhsgwa" name="jhsgwa"
+                                <label for="jhsgwa" min="1" max="100" class="form-label">Junior High
+                                    GWA</label>
+                                <input type="number" class="form-control" id="jhsgwa" name="jhsgwa"
                                     value="{{ $criteria->jhsgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
-                                <label for="elemgwa" class="form-label">Elementary GWA</label>
-                                <input type="text" class="form-control" id="elemgwa" name="elemgwa"
+                                <label for="elemgwa" min="1" max="100" class="form-label">Elementary
+                                    GWA</label>
+                                <input type="number" class="form-control" id="elemgwa" name="elemgwa"
                                     value="{{ $criteria->elemgwa ?? '' }}" placeholder="Not Set" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="fincome" class="form-label">Father's Income</label>
-                                <input type="text" class="form-control" id="fincome" name="fincome"
+                                <label for="fincome" min="1" class="form-label">Father's Income</label>
+                                <input type="number" class="form-control" id="fincome" name="fincome"
                                     value="{{ $criteria->fincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
-                                <label for="mincome" class="form-label">Mother's Income</label>
-                                <input type="text" class="form-control" id="mincome" name="mincome"
+                                <label for="mincome" min="1" class="form-label">Mother's Income</label>
+                                <input type="number" class="form-control" id="mincome" name="mincome"
                                     value="{{ $criteria->mincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
-                                <label for="sincome" class="form-label">Siblings' Income</label>
-                                <input type="text" class="form-control" id="sincome" name="sincome"
+                                <label for="sincome" min="1" class="form-label">Siblings' Income</label>
+                                <input type="number" class="form-control" id="sincome" name="sincome"
                                     value="{{ $criteria->sincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                             <div class="mb-3">
-                                <label for="aincome" class="form-label">Applicant's Income</label>
-                                <input type="text" class="form-control" id="aincome" name="aincome"
+                                <label for="aincome" min="1" class="form-label">Applicant's Income</label>
+                                <input type="number" class="form-control" id="aincome" name="aincome"
                                     value="{{ $criteria->aincome ?? '' }}" placeholder="Not Set" required>
                             </div>
                         </div>
@@ -150,7 +204,8 @@
                 </form>
             </fieldset>
         </div>
-        <div class="row" id="confirmmsg2">
+        <div class="divider"></div>
+        <div class="row">
             @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
                     {{ session('success') }}
@@ -166,8 +221,8 @@
             @endif
         </div>
         <div class="row">
-            <fieldset class="col-12 col-md-4">
-                <legend><strong>Institutions</strong></legend>
+            <fieldset class="col-12 col-md-4" id="ics">
+                <legend class="pagetitle">Institutions</legend>
                 <form class="mb-3" method="POST" action="{{ route('addinstitution') }}">
                     @csrf
                     <div class="input-group mb-3">
@@ -215,7 +270,7 @@
         </fieldset>
 
         <fieldset class="col-12 col-md-4">
-            <legend><strong>Courses</strong></legend>
+            <legend class="pagetitle">Courses</legend>
             <form class="mb-3" method="POST" action="{{ route('addcourse', 'College') }}">
                 @csrf
                 <div class="input-group mb-3">
@@ -260,7 +315,7 @@
     </fieldset>
 
     <fieldset class="col-12 col-md-4">
-        <legend><strong>Strand</strong></legend>
+        <legend class="pagetitle">Strand</legend>
         <form class="mb-3" method="POST" action="{{ route('addcourse', 'Senior High') }}">
             @csrf
             <div class="input-group mb-3">

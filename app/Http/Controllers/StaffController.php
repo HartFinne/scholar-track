@@ -67,7 +67,7 @@ class StaffController extends Controller
     public function showApplicants()
     {
         $totalapplicants = applicants::get()->count();
-        $applicants = applicants::get();
+        $applicants = applicants::orderBy('prioritylevel', 'DESC')->get();
         $pending = applicants::whereNotIn('applicationstatus', ['Accepted', 'Rejected', 'Withdrawn'])->count();
         $accepted = applicants::where('applicationstatus', 'Accepted')->count();
         $rejected = applicants::where('applicationstatus', 'Rejected')->count();
@@ -112,12 +112,6 @@ class StaffController extends Controller
         }
     }
 
-    public function showApplicationForms()
-    {
-        $forms = applicationforms::all();
-        return view('staff.applicationforms', compact('forms'));
-    }
-
     public function  updateappformstatus($formname, Request $request)
     {
         DB::beginTransaction();
@@ -128,14 +122,14 @@ class StaffController extends Controller
 
             DB::commit();
             if ($request->status == 'Open') {
-                return redirect()->back()->with('success', "{$formname} application is now open.");
+                return redirect()->back()->with('formsuccess', "{$formname} application is now open.");
             } else {
-                return redirect()->back()->with('success', "{$formname} application is now closed.");
+                return redirect()->back()->with('formsuccess', "{$formname} application is now closed.");
             }
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to update form status. ');
+            return redirect()->back()->with('formerror', 'Failed to update form status. ');
         }
     }
 
@@ -337,8 +331,20 @@ class StaffController extends Controller
     public function showLTE()
     {
         $lte = lte::with('hcattendance', 'csattendance')->get();
-        $scholars = User::with(['basicInfo'])->get();
+        $scholars = User::with(['basicInfo', 'education'])->get();
         return view('staff.lte', compact('lte', 'scholars'));
+    }
+
+    public function showlteinfo($lid)
+    {
+        $letter = lte::with('hcattendance', 'csattendance')->where('lid', $lid)->first();
+        $scholar = User::with(['basicInfo'])->where('caseCode', $letter->caseCode)->first();
+        if ($letter->eventtype = 'Humanities Class') {
+            $eventinfo = humanitiesclass::where('hcid', $letter->conditionid)->first();
+        } elseif ($letter->eventtype = 'Community Service') {
+            $eventinfo = communityservice::where('csid', $letter->conditionid)->first();
+        }
+        return view('staff.lteinfo', compact('letter', 'scholar', 'eventinfo'));
     }
 
     public function showPenalty()
@@ -354,6 +360,14 @@ class StaffController extends Controller
             $penalties[$scholar->caseCode] = $latestPenalty;
         }
         return view('staff.penalty', compact('penalties', 'scholars', 'penalty'));
+    }
+
+    public function showpenaltyinfo($pid)
+    {
+        $penalty = penalty::where('pid', $pid)->first();
+        $scholar = user::with('basicInfo')->where('caseCode', $penalty->caseCode)->first();
+
+        return view('staff.penaltyinfo', compact('penalty', 'scholar'));
     }
 
     public function storePenalty(Request $request)
@@ -457,15 +471,15 @@ class StaffController extends Controller
         }
     }
 
-
     // SCHOLARSHIP CRITERIA
     public function showQualification()
     {
+        $forms = applicationforms::all();
         $criteria = criteria::first();
         $courses = courses::where('level', 'College')->get();
         $strands = courses::where('level', 'Senior High')->get();
         $institutions = institutions::all();
-        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands'));
+        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands', 'forms'));
     }
 
     public function updatecriteria(Request $request)
@@ -551,7 +565,7 @@ class StaffController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Successfully added an institution.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('success', 'Successfully added an institution.');
         } catch (ValidationException $e) {
             DB::rollback();
             return redirect()->back()->with('error', $e->getMessage());
@@ -559,10 +573,10 @@ class StaffController extends Controller
             DB::rollback();
 
             if (institutions::where('schoolname', $request->institute)->exists()) {
-                return redirect()->back()->with('error', 'Failed to add institution. Duplicate institution.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', 'Failed to add institution. Duplicate institution.');
             }
 
-            return redirect()->back()->with('error', 'Failed to add institution.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('error', 'Failed to add institution.');
         }
     }
 
@@ -581,7 +595,7 @@ class StaffController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Successfully updated the institution name.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('success', 'Successfully updated the institution name.');
         } catch (ValidationException $e) {
             DB::rollback();
             return redirect()->back()->with('error', $e->getMessage());
@@ -589,10 +603,10 @@ class StaffController extends Controller
             DB::rollback();
 
             if (institutions::where('schoolname', $request->institute)->exists()) {
-                return redirect()->back()->with('error', 'Failed to update institution name. Duplicate institution.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', 'Failed to update institution name. Duplicate institution.');
             }
 
-            return redirect()->back()->with('error', 'Failed to update institution name.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('error', 'Failed to update institution name.');
         }
     }
 
@@ -605,10 +619,10 @@ class StaffController extends Controller
             $institution->delete();
 
             DB::commit();
-            return redirect()->back()->with('success', 'Successfully deleted the institution.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('success', 'Successfully deleted the institution.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Failed to delete institution.')->withFragment('confirmmsg2');
+            return redirect()->back()->with('error', 'Failed to delete institution.');
         }
     }
 
@@ -628,7 +642,7 @@ class StaffController extends Controller
 
                 DB::commit();
 
-                return redirect()->back()->with('success', 'Successfully added a course.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('success', 'Successfully added a course.');
             } catch (ValidationException $e) {
                 DB::rollback();
                 return redirect()->back()->with('error', $e->getMessage());
@@ -636,10 +650,10 @@ class StaffController extends Controller
                 DB::rollback();
 
                 if (courses::where('coursename', $request->course)->exists()) {
-                    return redirect()->back()->with('error', 'Failed to add course. Duplicate course.')->withFragment('confirmmsg2');
+                    return redirect()->back()->with('error', 'Failed to add course. Duplicate course.');
                 }
 
-                return redirect()->back()->with('error', 'Failed to add course.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', 'Failed to add course.');
             }
         } elseif ($level == 'Senior High') {
             try {
@@ -654,7 +668,7 @@ class StaffController extends Controller
 
                 DB::commit();
 
-                return redirect()->back()->with('success', 'Successfully added a strand.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('success', 'Successfully added a strand.');
             } catch (ValidationException $e) {
                 DB::rollback();
                 return redirect()->back()->with('error', $e->getMessage());
@@ -662,10 +676,10 @@ class StaffController extends Controller
                 DB::rollback();
 
                 if (courses::where('coursename', $request->strand)->exists()) {
-                    return redirect()->back()->with('error', 'Failed to add strand. Duplicate strand.')->withFragment('confirmmsg2');
+                    return redirect()->back()->with('error', 'Failed to add strand. Duplicate strand.');
                 }
 
-                return redirect()->back()->with('error', 'Failed to add strand.')->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', 'Failed to add strand.');
             }
         }
     }
@@ -693,7 +707,7 @@ class StaffController extends Controller
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', "Successfully updated {$type}.")->withFragment('confirmmsg2');
+            return redirect()->back()->with('success', "Successfully updated {$type}.");
         } catch (ValidationException $e) {
             DB::rollback();
             return redirect()->back()->with('error', $e->getMessage());
@@ -701,10 +715,10 @@ class StaffController extends Controller
             DB::rollback();
 
             if (courses::where('coursename', $request->newcoursename)->exists()) {
-                return redirect()->back()->with('error', "Failed to update {$type}. Duplicate {$type}.")->withFragment('confirmmsg2');
+                return redirect()->back()->with('error', "Failed to update {$type}. Duplicate {$type}.");
             }
 
-            return redirect()->back()->with('error', "Failed to update {$type}.")->withFragment('confirmmsg2');
+            return redirect()->back()->with('error', "Failed to update {$type}.");
         }
     }
 
@@ -725,10 +739,10 @@ class StaffController extends Controller
             $course->delete();
 
             DB::commit();
-            return redirect()->back()->with('success', "Successfully deleted {$type}.")->withFragment('confirmmsg2');
+            return redirect()->back()->with('success', "Successfully deleted {$type}.");
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', "Failed to delete {$type}.")->withFragment('confirmmsg2');
+            return redirect()->back()->with('error', "Failed to delete {$type}.");
         }
     }
 
@@ -762,6 +776,11 @@ class StaffController extends Controller
         return view('staff.renewhighschool', compact('renewals', 'scholars'));
     }
 
+    public function showRenewalinfo()
+    {
+        return view('staff.renewalinfo');
+    }
+
     public function showAllowanceRegular()
     {
         $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
@@ -772,27 +791,32 @@ class StaffController extends Controller
         return view('staff.regularallowance', compact('requests'));
     }
 
-    public function viewAllowanceRegularInfo($id)
+    // public function viewAllowanceRegularInfo($id)
+    // {
+
+    //     $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
+    //         ->join('users', 'users.caseCode', '=', 'grades.caseCode')
+    //         ->join('sc_basicinfo', 'sc_basicinfo.caseCode', '=', 'users.caseCode') // Join basic info
+    //         ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'users.caseCode') // Join scholarship info
+    //         ->join('sc_education', 'sc_education.caseCode', '=', 'users.caseCode') // Join education info
+    //         ->where('regular_allowance.regularID', $id) // Filter by specific RegularAllowance ID
+    //         ->firstOrFail(); // Retrieve single record or fail if not found
+
+
+    //     // Retrieve the regular allowance request by ID with related information
+    //     $regularAllowance = RegularAllowance::with([
+    //         'classReference.classSchedules',
+    //         'travelItinerary.travelLocations',
+    //         'lodgingInfo',
+    //         'ojtTravelItinerary.ojtLocations'
+    //     ])->findOrFail($id);
+
+    //     return view('staff.regularallowanceinfo', compact('id', 'requests', 'regularAllowance'));
+    // }
+
+    public function viewAllowanceRegularInfo()
     {
-
-        $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
-            ->join('users', 'users.caseCode', '=', 'grades.caseCode')
-            ->join('sc_basicinfo', 'sc_basicinfo.caseCode', '=', 'users.caseCode') // Join basic info
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'users.caseCode') // Join scholarship info
-            ->join('sc_education', 'sc_education.caseCode', '=', 'users.caseCode') // Join education info
-            ->where('regular_allowance.regularID', $id) // Filter by specific RegularAllowance ID
-            ->firstOrFail(); // Retrieve single record or fail if not found
-
-
-        // Retrieve the regular allowance request by ID with related information
-        $regularAllowance = RegularAllowance::with([
-            'classReference.classSchedules',
-            'travelItinerary.travelLocations',
-            'lodgingInfo',
-            'ojtTravelItinerary.ojtLocations'
-        ])->findOrFail($id);
-
-        return view('staff.regularallowanceinfo', compact('id', 'requests', 'regularAllowance'));
+        return view('staff.regularallowanceinfo');
     }
 
 
@@ -1484,7 +1508,6 @@ class StaffController extends Controller
         );
     }
 
-
     public function showcseventinfo($csid)
     {
         $event = communityservice::findOrFail($csid);
@@ -1576,6 +1599,11 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Updating activity details was unsuccessful.');
         }
+    }
+
+    public function viewcsattendance()
+    {
+        return view('staff.csattendance');
     }
 
     public function showHumanitiesClass()
@@ -1926,8 +1954,7 @@ class StaffController extends Controller
                 'file.max' => 'The uploaded file may not be larger than 25MB.',
             ]);
 
-            // Check if the Email table is empty
-            if (Email::exists()) { // Returns true if there are records
+            if (Email::exists()) {
                 Email::truncate();
             }
 

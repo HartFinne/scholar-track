@@ -103,16 +103,30 @@
                         <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Name</th>
                         <th class="text-center align-middle">Status</th>
+                        <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($volunteers as $index => $volunteer)
+                    {{-- @foreach ($volunteers as $index => $volunteer)
                         <tr>
                             <td class="text-center align-middle">{{ $index + 1 }}</td>
                             <td class="text-center align-middle">{{ $volunteer->caseCode }}</td>
                             <td class="text-center align-middle">{{ $volunteer->registatus }}</td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('viewcsattendance', [$volunteer->csid, $volunteer->casecode]) }}" class="btn btn-success">View
+                                    Attendance</a>
+                            </td>
                         </tr>
-                    @endforeach
+                    @endforeach --}}
+                    <tr>
+                        <td class="text-center align-middle">1</td>
+                        <td class="text-center align-middle">Juan Dela Cruz</td>
+                        <td class="text-center align-middle">Going</td>
+                        <td class="text-center align-middle">
+                            <a href="{{ route('viewcsattendance') }}" class="btn btn-success">View
+                                Attendance</a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

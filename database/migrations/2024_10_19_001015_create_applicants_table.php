@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('homeaddress', 255);
             $table->string('barangay', 50);
             $table->string('city', 50);
-            $table->string('email', 255);
+            $table->string('email', 255)->unique();
             $table->string('phonenum', 12);
             $table->string('occupation', 100);
             $table->integer('income');
@@ -122,7 +122,7 @@ return new class extends Migration
             $table->string('houseoutside', 100);
             $table->string('utilitybill', 100);
             $table->string('sketchmap', 100);
-            $table->string('payslip', 100);
+            $table->string('payslip', 100)->nullable();
             $table->string('indigencycert', 100);
             $table->timestamps();
 

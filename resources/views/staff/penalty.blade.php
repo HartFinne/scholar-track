@@ -152,7 +152,8 @@
                             <td class="text-center align-middle">{{ $penalty->remark }}</td>
                             <td class="text-center align-middle">{{ $penalty->dateofpenalty }}</td>
                             <td class="text-center align-middle">
-                                <a href="#" class="btn btn-primary">View</a>
+                                <a href="{{ route('showpenaltyinfo', $penalty->pid) }}"
+                                    class="btn btn-primary">View</a>
                             </td>
                         </tr>
                     @endforeach

@@ -14,6 +14,7 @@ use App\Models\Email;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Validation\Rules\Password;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -49,7 +50,6 @@ class HomeController extends Controller
             $request->validate(
                 [
                     'startdate' => 'required|date',
-                    'enddate' => 'required|date',
                     'firstName' => 'required|string|max:50',
                     'middleName' => 'required|string|max:50',
                     'lastName' => 'required|string|max:50',
@@ -94,6 +94,7 @@ class HomeController extends Controller
                 ]
             );
 
+            $enddate = Carbon::parse($request->startdate)->addYear();
             // Adjust phone numbers
             $phoneNumber = $request->input('phoneNumber');
             $guardianPhoneNumber = $request->input('guardianPhoneNumber');
@@ -127,7 +128,7 @@ class HomeController extends Controller
                     'area' => $request->assignedArea,
                     'scholartype' => $request->scholartype,
                     'startdate' => $request->startdate,
-                    'enddate' => $request->enddate,
+                    'enddate' => $enddate,
                     'scholarshipstatus' => $ScholarShipStatus,
                 ]);
 

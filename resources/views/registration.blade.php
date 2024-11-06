@@ -83,17 +83,10 @@
 
                     <div class="row">
                         <label for="startdate">Start of Scholarship</label>
-                        <input type="date" class="reg-input" name="startdate" value="{{ old('startdate') }}"
+                        <input type="date" class="reg-input" name="startdate"
+                            max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" value="{{ old('startdate') }}"
                             required>
                         @error('startdate')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <div class="row">
-                        <label for="enddate">End of Scholarship</label>
-                        <input type="date" class="reg-input" name="enddate" value="{{ old('enddate') }}" required>
-                        @error('enddate')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
@@ -104,7 +97,7 @@
 
                     <div class="row">
                         <label for="fname">First Name</label>
-                        <input type="text" id="fname" class="reg-input" name="firstName"
+                        <input type="text" id="fname" maxlength="50" class="reg-input" name="firstName"
                             value="{{ old('firstName') }}" required>
                         @error('firstName')
                             <span class="text-danger">{{ $message }}</span>
@@ -113,7 +106,7 @@
 
                     <div class="row">
                         <label for="mname">Middle Name</label>
-                        <input type="text" id="mname" class="reg-input" name="middleName"
+                        <input type="text" id="mname" maxlength="50" class="reg-input" name="middleName"
                             value="{{ old('middleName') }}" required>
                         @error('middleName')
                             <span class="text-danger">{{ $message }}</span>
@@ -122,7 +115,7 @@
 
                     <div class="row">
                         <label for="lname">Last Name</label>
-                        <input type="text" id="lname" class="reg-input" name="lastName"
+                        <input type="text" id="lname" maxlength="50" class="reg-input" name="lastName"
                             value="{{ old('lastName') }}" required>
                         @error('lastName')
                             <span class="text-danger">{{ $message }}</span>
@@ -131,7 +124,7 @@
 
                     <div class="row">
                         <label for="cname">Chinese Name</label>
-                        <input type="text" id="cname" class="reg-input"
+                        <input type="text" id="cname" maxlength="255" class="reg-input"
                             placeholder="if none, input 'Not Applicable'" name="chineseName"
                             value="{{ old('chineseName') }}" required>
                         @error('chineseName')
@@ -142,7 +135,8 @@
                     <div class="row">
                         <label for="date">Date of Birth</label>
                         <input type="date" id="date" class="reg-input" name="birthdate"
-                            value="{{ old('birthdate') }}" required>
+                            value="{{ old('birthdate') }}"
+                            max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}" required>
                         @error('birthdate')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -234,16 +228,19 @@
                     <p>Are you a member of any indigenous group?</p>
                     <div class="row-checkbox">
                         <input type="checkbox" name="isIndigenous" id="indigenousCheck" value="Yes"
-                            onclick="toggleInput()" style="cursor: pointer"
+                            onclick="toggleInput(true)" style="cursor: pointer"
                             {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }}>
                         <label for="indigenousCheck" style="cursor: pointer"> Yes</label>
+
                         <input type="text" name="indigenousGroup" id="indigenousInput"
                             placeholder="If Yes, please specify" value="{{ old('indigenousGroup') }}"
                             {{ old('isIndigenous') == 'Yes' ? '' : 'disabled' }}>
+
                         <input type="checkbox" name="isIndigenous" id="noCheck" value="No"
-                            onclick="disableInput()" style="cursor: pointer"
+                            onclick="toggleInput(false)" style="cursor: pointer"
                             {{ old('isIndigenous') == 'No' ? 'checked' : '' }}>
                         <label for="noCheck" style="cursor: pointer"> No</label>
+
                         @error('indigenousGroup')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -264,7 +261,8 @@
                     <div class="row">
                         <label for="phoneNum">Phone Number</label>
                         <input type="tel" id="phoneNum" class="reg-input" name="phoneNumber"
-                            value="{{ old('phoneNumber') }}" required>
+                            value="{{ old('phoneNumber') }}" maxlength="12" minlength="11"
+                            pattern="^(09\d{9}|63\d{9})$" placeholder="e.g. 09xxxxxxxxx or 63xxxxxxxxx" required>
                         @error('phoneNumber')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -278,8 +276,9 @@
 
                     <div class="row">
                         <label for="resAddress">Home Address</label>
-                        <input type="text" id="resAddress" placeholder="please provide complete address"
-                            name="homeAddress" value="{{ old('homeAddress') }}" required>
+                        <input type="text" maxlength="255" id="resAddress"
+                            placeholder="please provide complete address" name="homeAddress"
+                            value="{{ old('homeAddress') }}" required>
                         @error('homeAddress')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -287,7 +286,7 @@
 
                     <div class="row">
                         <label for="brgy">Barangay</label>
-                        <input type="text" id="brgy" placeholder="" name="barangay"
+                        <input type="text" maxlength="50" id="brgy" placeholder="" name="barangay"
                             value="{{ old('barangay') }}" required>
                         @error('barangay')
                             <span class="text-danger">{{ $message }}</span>
@@ -296,7 +295,7 @@
 
                     <div class="row">
                         <label for="city">City/Municipality</label>
-                        <input type="text" id="city" placeholder="" name="city"
+                        <input type="text" maxlength="50" id="city" placeholder="" name="city"
                             value="{{ old('city') }}" required>
                         @error('city')
                             <span class="text-danger">{{ $message }}</span>
@@ -305,8 +304,9 @@
 
                     <div class="row">
                         <label for="permAddress">Permanent Address</label>
-                        <input type="text" id="permAddress" placeholder="please provide complete address"
-                            name="permanentAddress" value="{{ old('permanentAddress') }}" required>
+                        <input type="text" maxlength="255" id="permAddress"
+                            placeholder="please provide complete address" name="permanentAddress"
+                            value="{{ old('permanentAddress') }}" required>
                         @error('permanentAddress')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -339,7 +339,8 @@
 
                     <div class="row">
                         <label for="school">Name of School</label>
-                        <input type="text" id="school" placeholder="" name="nameOfSchool" required>
+                        <input type="text" maxlength="255" id="school" placeholder="" name="nameOfSchool"
+                            required>
                     </div>
 
                     <!-- Grade/Year Level Dropdown -->
@@ -359,7 +360,7 @@
                         <label for="course">Course/Strand/Section</label>
                         <select id="courseSectionSelect" name="courseSection" required
                             style="display: none;"></select>
-                        <input type="text" id="courseSectionInput" name="courseSection"
+                        <input type="text" maxlength="255" id="courseSectionInput" name="courseSection"
                             placeholder="Enter course or section" style="display: none;">
                         @error('courseSection')
                             <span class="text-danger">{{ $message }}</span>
@@ -368,8 +369,9 @@
 
                     <div class="row">
                         <label for="acadyear">Academic Year</label>
-                        <input type="text" id="acadyear" placeholder="ex: 2024-2025" name="acadyear"
-                            value="{{ old('acadyear') }}" required>
+                        <input type="text" maxlength="9" id="acadyear" pattern="^\d{4}-\d{4}$"
+                            title="Please enter a valid academic year in the format YYYY-YYYY"
+                            placeholder="ex: 2024-2025" name="acadyear" value="{{ old('acadyear') }}" required>
                         @error('acadyear')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -434,7 +436,7 @@
 
                     <div class="row">
                         <label for="guardianName">Guardian's Full Name</label>
-                        <input type="text" id="guardianName" placeholder="" name="guardianName"
+                        <input type="text" maxlength="50" id="guardianName" placeholder="" name="guardianName"
                             value="{{ old('guardianName') }}" required>
                         @error('guardianName')
                             <span class="text-danger">{{ $message }}</span>
@@ -443,8 +445,8 @@
 
                     <div class="row">
                         <label for="relation">Relation to Guardian</label>
-                        <input type="text" id="relation" placeholder="" name="relationToGuardian"
-                            value="{{ old('relationToGuardian') }}" required>
+                        <input type="text" maxlength="50" id="relation" placeholder=""
+                            name="relationToGuardian" value="{{ old('relationToGuardian') }}" required>
                         @error('relationToGuardian')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -461,8 +463,9 @@
 
                     <div class="row">
                         <label for="guardianNum">Guardian's Phone Number</label>
-                        <input type="tel" id="guardianNum" placeholder="" name="guardianPhoneNumber"
-                            value="{{ old('guardianPhoneNumber') }}" required>
+                        <input type="tel" maxlength="12" minlength="11" id="guardianNum"
+                            pattern="^(09\d{9}|63\d{9})$" placeholder="e.g. 09xxxxxxxxx or 63xxxxxxxxx"
+                            name="guardianPhoneNumber" value="{{ old('guardianPhoneNumber') }}" required>
                         @error('guardianPhoneNumber')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -477,18 +480,25 @@
                     @enderror
                     <div class="row">
                         <label for="password">Password</label>
-                        <input type="password" id="password" placeholder="must be at least 8 characters"
-                            name="password" required>
+                        <input type="password" minlength="8" id="password"
+                            placeholder="must be at least 8 characters" name="password" required>
+                    </div>
+                    <div class="row">
+                        <span></span>
+                        <small id="passwordLengthWarning" class="text-danger d-none">Password must be at least 8
+                            characters long.</small>
                     </div>
                     @error('password_confirmation')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
 
                     <div class="row">
-                        <label for="conPassword">Confirm Password</label>
-                        <input type="password" id="password_confirmation" placeholder=""
-                            name="password_confirmation" required>
-
+                        <label for="password_confirmation">Confirm Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation" required>
+                    </div>
+                    <div class="row">
+                        <span></span>
+                        <small id="passwordMatchWarning" class="text-danger d-none">Passwords do not match.</small>
                     </div>
                 </fieldset>
 
@@ -503,34 +513,89 @@
                 <div class="register">
                     <button type="submit" class="btn-register fw-bold">Register</button>
                 </div>
+
+                <script>
+                    const passwordInput = document.getElementById('password');
+                    const confirmPasswordInput = document.getElementById('password_confirmation');
+                    const passwordLengthWarning = document.getElementById('passwordLengthWarning');
+                    const passwordMatchWarning = document.getElementById('passwordMatchWarning');
+                    const registerButton = document.querySelector('.btn-register');
+
+                    // Disable register button initially
+                    registerButton.disabled = true;
+
+                    passwordInput.addEventListener('input', function() {
+                        // Check password length
+                        if (passwordInput.value.length < 8) {
+                            passwordLengthWarning.classList.remove('d-none');
+                        } else {
+                            passwordLengthWarning.classList.add('d-none');
+                        }
+
+                        // Check if passwords match if confirm password has input
+                        if (confirmPasswordInput.value) {
+                            checkPasswordMatch();
+                        }
+
+                        // Enable or disable the register button based on conditions
+                        toggleRegisterButton();
+                    });
+
+                    confirmPasswordInput.addEventListener('input', function() {
+                        checkPasswordMatch();
+                        toggleRegisterButton();
+                    });
+
+                    function checkPasswordMatch() {
+                        // Show warning if passwords do not match
+                        if (passwordInput.value !== confirmPasswordInput.value) {
+                            passwordMatchWarning.classList.remove('d-none');
+                        } else {
+                            passwordMatchWarning.classList.add('d-none');
+                        }
+                    }
+
+                    function toggleRegisterButton() {
+                        // Enable the register button only if both conditions are met
+                        if (passwordInput.value.length >= 8 && passwordInput.value === confirmPasswordInput.value) {
+                            registerButton.disabled = false;
+                        } else {
+                            registerButton.disabled = true;
+                        }
+                    }
+                </script>
             </form>
         </div>
     </div>
 
     <script>
-        function toggleInput() {
-            var indigenousCheck = document.getElementById("indigenousCheck");
-            var indigenousInput = document.getElementById("indigenousInput");
-            var noCheck = document.getElementById("noCheck");
+        function toggleInput(isYesChecked) {
+            const indigenousInput = document.getElementById('indigenousInput');
+            const yesCheck = document.getElementById('indigenousCheck');
+            const noCheck = document.getElementById('noCheck');
 
-            if (indigenousCheck.checked) {
-                indigenousInput.disabled = false; // Enable input if Yes is checked
-                noCheck.checked = false; // Uncheck No if Yes is checked
+            if (isYesChecked) {
+                // Enable the input if "Yes" is selected, and require it
+                indigenousInput.disabled = false;
+                indigenousInput.required = true;
+                noCheck.checked = false; // Uncheck "No"
             } else {
-                indigenousInput.disabled = true; // Disable input if Yes is unchecked
+                // Disable the input if "No" is selected, and remove requirement
+                indigenousInput.disabled = true;
+                indigenousInput.required = false;
+                indigenousInput.value = ''; // Clear input if not needed
+                yesCheck.checked = false; // Uncheck "Yes"
             }
         }
 
-        function disableInput() {
-            var noCheck = document.getElementById("noCheck");
-            var indigenousCheck = document.getElementById("indigenousCheck");
-            var indigenousInput = document.getElementById("indigenousInput");
-
-            if (noCheck.checked) {
-                indigenousInput.disabled = true; // Disable input if No is checked
-                indigenousCheck.checked = false; // Uncheck Yes if No is checked
+        // Initial call in case of pre-existing selection (e.g., from old() in Laravel)
+        document.addEventListener("DOMContentLoaded", function() {
+            if (document.getElementById('indigenousCheck').checked) {
+                toggleInput(true);
+            } else if (document.getElementById('noCheck').checked) {
+                toggleInput(false);
             }
-        }
+        });
     </script>
 
 </body>

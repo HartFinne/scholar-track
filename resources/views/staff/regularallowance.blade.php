@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -128,10 +127,21 @@
                             </td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('allowancerequests-regular-info', ['id' => $request->id]) }}"
-                                    class="btn btn-secondary btn-sm">Update</a>
+                                    class="btn btn-secondary btn-sm">View</a>
                             </td>
                         </tr>
                     @endforeach
+                    <tr>
+                        <td class="text-center align-middle">Doe, John</td>
+                        <td class="text-center align-middle">Regular</td>
+                        <td class="text-center align-middle">March 15, 2023</td>
+                        <td class="text-center align-middle">Approved</td>
+                        <td class="text-center align-middle">April 10, 2023</td>
+                        <td class="text-center align-middle">
+                            <a href="{{ route('allowancerequests-regular-info') }}"
+                                class="btn btn-success btn-sm">View</a>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

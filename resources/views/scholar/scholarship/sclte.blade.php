@@ -27,6 +27,33 @@
         <a href="{{ route('schome') }}" class="goback">&lt Go back</a>
         <h1 class="sub-title text-center">Letter of Explanation</h1>
 
+        @foreach ($noresponseletters as $nonletter)
+            @if (\Carbon\Carbon::parse($nonletter->deadline)->toDateString() == now()->addDay()->toDateString())
+                <div class="card px-4 py-3 mb-3 border-0" style="background-color: #ffeeac;">
+                    <div class="row d-flex align-items-center">
+                        <div class="col-md-10">
+                            <span class="fw-bold" style="font-size: 18px; color: #1e5430;">
+                                You have not yet responded to the LTE of
+                                {{ $nonletter->violation }}
+                                @if (in_array($nonletter->eventtype, ['Humanities Class', 'Community Service']))
+                                    in {{ $nonletter->eventtype }}
+                                @endif
+                                that is due tomorrow.
+                            </span>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn w-100 text-white fw-bold"
+                                style="background-color: #1e5430; border-color: #1e5430;"
+                                href="{{ route('lteinfo', $nonletter->lid) }}">
+                                <!-- Replace href="" with actual URL if available -->
+                                View here
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+
         <p class="table-title">Unsubmitted Letter of Explanation</p>
         <div class="ctn-table table-responsive">
             <table class="table table-bordered" id="table">
@@ -41,7 +68,7 @@
                 <tbody>
                     @foreach ($noresponseletters as $nonletter)
                         <tr>
-                            <td>{{ $nonletter->dateissued }}</td>
+                            <td>{{ \Carbon\Carbon::parse($nonletter->dateissued)->format('F d, Y') }}</td>
                             @if ($nonletter->eventtype == 'Humanities Class')
                                 <td>{{ $nonletter->violation }} in
                                     {{ $nonletter->eventtype }}</td>
@@ -51,8 +78,12 @@
                                     in {{ $nonletter->eventtype }}
 
                                 </td>
+                            @else
+                                <td>
+                                    {{ $nonletter->violation }}
+                                </td>
                             @endif
-                            <td>{{ $nonletter->deadline }}</td>
+                            <td>{{ \Carbon\Carbon::parse($nonletter->deadline)->format('F d, Y') }}</td>
                             <td>
                                 <a href="{{ route('lteinfo', $nonletter->lid) }}" id="view">View</a>
                             </td>

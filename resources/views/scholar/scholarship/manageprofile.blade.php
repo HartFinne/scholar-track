@@ -117,7 +117,7 @@
 
                         {{-- change --}}
                         <div class="label">Contact Number</div>
-                        <div class="value">: <input type="text" name="scPhoneNum"
+                        <div class="value">: <input type="tel" minlength="11" maxlength="12" name="scPhoneNum"
                                 value="{{ old('scPhoneNum', $data->scPhoneNum) }}"></div>
                     </div>
                 </div>
@@ -155,21 +155,22 @@
                     <div class="info">
                         {{-- change --}}
                         <div class="label">Name</div>
-                        <div class="value">: <input type="text" name="scGuardianName"
+                        <div class="value">: <input type="text" maxlength="50" name="scGuardianName"
                                 value="{{ old('scGuardianName', $data->basicInfo->scGuardianName) }}"></div>
 
                         <div class="label">Relation</div>
-                        <div class="value">: <input type="text" name="scRelationToGuardian"
+                        <div class="value">: <input type="text" maxlength="50" name="scRelationToGuardian"
                                 value="{{ old('scRelationToGuardian', $data->basicInfo->scRelationToGuardian) }}">
                         </div>
 
                         <div class="label">Email Address</div>
-                        <div class="value">: <input type="text" name="scGuardianEmailAddress"
+                        <div class="value">: <input type="email" maxlength="255" name="scGuardianEmailAddress"
                                 value="{{ old('scGuardianEmailAddress', $data->basicInfo->scGuardianEmailAddress) }}">
                         </div>
 
                         <div class="label">Contact Number</div>
-                        <div class="value">: <input type="text" name="scGuardianPhoneNumber"
+                        <div class="value">: <input type="tel" minlength="11" maxlength="12"
+                                name="scGuardianPhoneNumber"
                                 value="{{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}">
                         </div>
                     </div>

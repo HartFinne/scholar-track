@@ -50,7 +50,7 @@
             <input class="input" type="password" name="password" id="inpassword" required>
 
             <!-- Forgot password link -->
-            <a href="forgotpass.html" id="btnforgotpass">Forgot password?</a>
+            <a href="{{ route('forgotpass') }}" id="btnforgotpass">Forgot password?</a>
 
             <!-- Submit Button -->
             <button type="submit" id="btnlogin">Sign In</button>

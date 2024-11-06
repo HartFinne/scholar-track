@@ -42,7 +42,7 @@
             <span class="label">Password</span>
             <input class="input" type="password" name="password" id="inpassword" value="{{ old('password') }}"
                 required>
-            <a href="forgotpass.html" id="btnforgotpass">Forgot password?</a>
+            <a href="{{ route('forgotpass') }}" id="btnforgotpass">Forgot password?</a>
             <button type="submit" id="btnlogin">Sign In</button>
             <a href="{{ route('registration') }}" id="btnregister">Don't have an account? Register here.</a>
         </form>
