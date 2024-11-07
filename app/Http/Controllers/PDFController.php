@@ -100,7 +100,7 @@ class PDFController extends Controller
                         ->select('GWA as grade')
                         ->first()?->grade;
 
-                    if (is_null($gwasem1) && is_null($gwasem2)) continue;
+                    if (is_null($gwasem1) || is_null($gwasem2)) continue;
 
                     $cshours = csattendance::where('caseCode', $user->caseCode)
                         ->whereHas('communityservice', fn($query) => $query->whereBetween('eventdate', [$startdate, $enddate]))
