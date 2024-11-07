@@ -80,7 +80,9 @@
                     <button type="submit" name="status" value="all" class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
                     <button type="submit" name="status" value="Pending" class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
                     <button type="submit" name="status" value="Passed" class="filter-btn {{ request('status') == 'Passed' ? 'active' : '' }}">Passed</button>
-                    <button type="submit" name="status" value="Failed" class="filter-btn {{ request('status') == 'Failed' ? 'active' : '' }}">Failed</button>
+                    <button type="submit" name="status" value="Failed GWA" class="filter-btn {{ request('status') == 'Failed GWA' ? 'active' : '' }}">Failed GWA</button>
+                    <button type="submit" name="status" value="Failed Grade" class="filter-btn {{ request('status') == 'Failed Grade' ? 'active' : '' }}">Failed Grade</button>
+                    <button type="submit" name="status" value="Mismatched GWA" class="filter-btn {{ request('status') == 'Mismatched GWA' ? 'active' : '' }}">Mismatched GWA</button>
                 </form>
             </div>
         </div>

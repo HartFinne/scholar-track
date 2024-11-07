@@ -9,7 +9,7 @@
 
 .ctn-navbar{
     width: 100%;
-    padding: 20px 70px;
+    padding: 20px 40px 20px 70px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -160,7 +160,7 @@
 
 @media only screen and (max-width: 768px) {
     .ctn-navbar{
-        padding: 20px 40px 20px 70px;            
+        padding: 20px 30px 20px 70px;            
     }
     .ctn-navbar h3{
         font-size: 18px;

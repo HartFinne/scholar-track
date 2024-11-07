@@ -194,12 +194,6 @@
     font-style: bold;
     color: red;
 }
-/* .search-container{
-    display: flex;
-    justify-content: center; 
-    margin-top: 20px; 
-    font-size: 15px;
-} */
 
 .search-container form{
     display: flex;
@@ -231,6 +225,7 @@
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 10px;
+    align-items: flex-start;
 }
 
 .card{
@@ -435,13 +430,14 @@ input:focus, select:focus{
     table{
         font-size: 14px;
     }
-    .search-container{
+    .search-container form{
         display: block;
         font-size: 1rem;
     }
     .search-container .search-input, .search-container .cs-area {
         width: 100%; 
         margin-bottom: 10px;
+        padding: 8px;
     }
     .activity-details-container{
         display: block;
@@ -478,10 +474,18 @@ input:focus, select:focus{
     }
     .cs-form input, .cs-form select{
         font-size: 14px;
+        width: 90%;
     }
     .cs-form .row{
-        grid-gap: 20px 0;
+        grid-gap: 10px 0;
         margin: 10px 0;
+    }
+    .cs-form .row .column{
+        padding: 0;
+    }
+    .submit-attendance button{
+        padding: 8px 40px;
+        font-size: 14px;
     }
 }
 @media only screen and (max-width: 1024px) {

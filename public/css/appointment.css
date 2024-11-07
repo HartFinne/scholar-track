@@ -40,6 +40,7 @@
     border-radius: 20px;
     background-color: transparent;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
 .filter-btn.active {
@@ -330,7 +331,7 @@
     }
     .filter-btn {
         font-size: 12px;
-        padding: 5px;
+        padding: 2px 8px;
     }
     .table, .table-title{
         font-size: 14px;

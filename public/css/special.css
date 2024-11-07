@@ -72,6 +72,7 @@
     border-radius: 20px;
     background-color: transparent;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
 .filter-btn.active {
@@ -173,7 +174,8 @@
         gap: 0;
     }
     .filter-btn {
-        font-size: 13px;
+        font-size: 12px;
+        padding: 2px 8px;
     }
     .table{
         font-size: 14px;
