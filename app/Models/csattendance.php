@@ -30,6 +30,11 @@ class csattendance extends Model
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
 
+    public function basicInfo()
+    {
+        return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
+
     public function lte()
     {
         return $this->hasOne(lte::class, 'conditionid', 'csaid');

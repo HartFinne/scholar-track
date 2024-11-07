@@ -19,7 +19,7 @@
     <div class="ctnmain">
         <div class="appformview">
             <div class="mx-auto mb-2" style="width: 8.5in">
-                <div class="col-md-2">
+                <div class="col-md-2" style="margin-left:auto;">
                     <a href="{{ route('applicants') }}" class="btn btn-success w-100">Go back</a>
                 </div>
             </div>

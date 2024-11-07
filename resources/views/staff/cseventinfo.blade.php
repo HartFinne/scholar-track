@@ -107,26 +107,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- @foreach ($volunteers as $index => $volunteer)
+                    @foreach ($volunteers as $index => $volunteer)
                         <tr>
                             <td class="text-center align-middle">{{ $index + 1 }}</td>
-                            <td class="text-center align-middle">{{ $volunteer->caseCode }}</td>
+                            <td class="text-center align-middle">{{ $volunteer->basicInfo->scLastname }},
+                                {{ $volunteer->basicInfo->scFirstname }} {{ $volunteer->basicInfo->scMiddlename }}
+                            </td>
                             <td class="text-center align-middle">{{ $volunteer->registatus }}</td>
                             <td class="text-center align-middle">
-                                <a href="{{ route('viewcsattendance', [$volunteer->csid, $volunteer->casecode]) }}" class="btn btn-success">View
-                                    Attendance</a>
+                                @php
+                                    $matchingAttendance = $attendances->firstWhere('caseCode', $volunteer->caseCode);
+                                @endphp
+
+                                @if ($matchingAttendance)
+                                    <a href="{{ route('viewcsattendance', ['csid' => $volunteer->csid, 'casecode' => $volunteer->caseCode]) }}"
+                                        class="btn btn-success">View Attendance</a>
+                                @else
+                                    <span class="text-danger">No Attendance Submitted</span>
+                                @endif
                             </td>
                         </tr>
-                    @endforeach --}}
-                    <tr>
-                        <td class="text-center align-middle">1</td>
-                        <td class="text-center align-middle">Juan Dela Cruz</td>
-                        <td class="text-center align-middle">Going</td>
-                        <td class="text-center align-middle">
-                            <a href="{{ route('viewcsattendance') }}" class="btn btn-success">View
-                                Attendance</a>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

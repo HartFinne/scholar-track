@@ -48,4 +48,19 @@ class ScBasicInfo extends Model
     {
         return $this->hasMany(Appointments::class, 'caseCode', 'caseCode');
     }
+
+    public function csregistration()
+    {
+        return $this->hasMany(csregistration::class, 'caseCode', 'caseCode');
+    }
+
+    public function csattendance()
+    {
+        return $this->hasMany(csattendance::class, 'caseCode', 'caseCode');
+    }
+
+    public function penalty()
+    {
+        return $this->hasMany(penalty::class, 'caseCode', 'caseCode');
+    }
 }

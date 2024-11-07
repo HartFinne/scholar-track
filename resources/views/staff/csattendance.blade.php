@@ -21,8 +21,8 @@
 
     <div class="ctnmain">
         <div class="col-md-1" style="margin-left: auto">
-            {{-- <a href="{{ route('viewcseventinfo', $event->csid) }}" class="btn btn-success">Go back</a> --}}
-            <a href="" class="btn btn-success">Go back</a>
+            <a href="{{ route('viewcseventinfo', $event->csid) }}" class="btn btn-success">Go back</a>
+            {{-- <a href="" class="btn btn-success">Go back</a> --}}
         </div>
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
@@ -45,19 +45,19 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Event Title</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">Community Clean-Up Day</p>
+                            <p class="form-control-plaintext">{{ $event->title ?? '' }}</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Event Location</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">Riverbank Park</p>
+                            <p class="form-control-plaintext">{{ $event->eventloc ?? '' }}</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Meeting Place</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">Main Entrance Gate</p>
+                            <p class="form-control-plaintext">{{ $event->meetingplace ?? '' }}</p>
                         </div>
                     </div>
                 </div>
@@ -66,19 +66,22 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Start Time</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">8:00 AM</p>
+                            <p class="form-control-plaintext">
+                                {{ \Carbon\Carbon::parse($event->starttime)->format('h:i A') ?? '' }}</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">End Time</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">1:00 PM</p>
+                            <p class="form-control-plaintext">
+                                {{ \Carbon\Carbon::parse($event->starttime)->addHours(2)->format('h:i A') ?? '' }}</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Call Time</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">7:45 AM</p>
+                            <p class="form-control-plaintext">
+                                {{ \Carbon\Carbon::parse($event->calltime)->format('h:i A') ?? '' }}</p>
                         </div>
                     </div>
                 </div>
@@ -93,19 +96,23 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Name</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">Luisa Gomez</p>
+                            <p class="form-control-plaintext">{{ $scholar->basicInfo->scLastname ?? '' }},
+                                {{ $scholar->basicInfo->scFirstname ?? '' }}
+                                {{ $scholar->basicInfo->scMiddlename ?? '' }}</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Time In</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">8:03 AM</p>
+                            <p class="form-control-plaintext">
+                                {{ \Carbon\Carbon::parse($scholar->timein)->format('h:i A') ?? '' }}</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Time Out</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">12:57 PM</p>
+                            <p class="form-control-plaintext">
+                                {{ \Carbon\Carbon::parse($scholar->timeout)->format('h:i A') ?? '' }}</p>
                         </div>
                     </div>
                 </div>
@@ -114,19 +121,19 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Tardiness Duration</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">3 Minutes Late</p>
+                            <p class="form-control-plaintext">{{ $scholar->tardinessduration ?? '' }} Minutes</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Total Hours Rendered</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">4.9 Hours</p>
+                            <p class="form-control-plaintext">{{ $scholar->hoursspent ?? '' }} Hours</p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Attendance Status</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">Completed</p>
+                            <p class="form-control-plaintext">{{ $scholar->status ?? '' }}</p>
                         </div>
                     </div>
                 </div>
@@ -135,7 +142,8 @@
             <div class="form-group row">
                 <label class="col-md-2 col-form-label">Attendance Proof</label>
                 <div class="col-md-10">
-                    <img src="images/proof.jpg" alt="Attendance Proof Photo" class="img-thumbnail">
+                    <img src="{{ Storage::url($scholar->attendanceproof) }}" alt="Attendance Proof Photo"
+                        class="img-thumbnail">
                 </div>
             </div>
         </fieldset>

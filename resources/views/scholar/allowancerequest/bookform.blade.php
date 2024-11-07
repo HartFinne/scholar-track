@@ -95,7 +95,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label for="price">Price</label>
-                        <input type="number" id="price" name="price" min="1" required>
+                        <input type="number" id="price" name="price" min="1" required step="0.01">
                     </div>
                     <div class="form-group">
                         <label for="bookCert">Book Certification</label>

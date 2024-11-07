@@ -86,7 +86,7 @@
                     <div class="form-group">
                         <label for="totalPrice">Total Price<br>
                             <em>NOTE: Total Price from the Receipts</em></label>
-                        <input type="number" min="1" id="totalPrice" name="totalprice" required>
+                        <input type="number" min="1" id="totalPrice" name="totalprice" required step="0.01">
                     </div>
                     <div class="form-group">
                         <label for="listGrad">Official List of Graduates</label>

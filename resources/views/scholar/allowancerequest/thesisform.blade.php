@@ -90,7 +90,7 @@
                     <div class="form-group">
                         <label for="totalprice">Total Price<br>
                             <em>NOTE: Total Price from the Receipts</em></label>
-                        <input type="number" min="1" id="totalprice" name="totalprice" required>
+                        <input type="number" min="1" id="totalprice" name="totalprice" required step="0.01">
                     </div>
                 </div>
                 <div class="row">

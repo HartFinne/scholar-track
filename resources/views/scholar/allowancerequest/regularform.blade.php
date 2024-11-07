@@ -298,8 +298,8 @@
                                 </div>
                                 <div class="column">
                                     <label for="fareRate">Student Fare Rate</label>
-                                    <input type="text" name="fareRate[]" value="{{ old('fareRate.0') }}"
-                                        required>
+                                    <input type="number" name="fareRate[]" value="{{ old('fareRate.0') }}" required
+                                        step="0.01">
                                     @error('fareRate.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -314,8 +314,8 @@
                     <div class="row">
                         <div class="column">
                             <label for="totalCosts">Total Costs per day</label>
-                            <input type="text" name="totalCosts" id="totalCosts" value="{{ old('totalCosts') }}"
-                                required>
+                            <input type="number" name="totalCosts" id="totalCosts" value="{{ old('totalCosts') }}"
+                                required step="0.01">
                             @error('totalCosts')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -377,7 +377,8 @@
                     <div class="row">
                         <div class="column">
                             <label for="rent">Monthly Rent</label>
-                            <input type="text" name="rent" id="rent" value="{{ old('rent') }}">
+                            <input type="number" name="rent" id="rent" step="0.01"
+                                value="{{ old('rent') }}">
                             @error('rent')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -476,7 +477,7 @@
                                 <div class="column">
                                     <label for="OJTfareRate">Student Fare Rate</label>
                                     <input type="number" name="OJTfareRate[]" class="fareRate"
-                                        value="{{ old('OJTfareRate.0') }}">
+                                        value="{{ old('OJTfareRate.0') }}" step="0.01">
                                     @error('OJTfareRate.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -491,8 +492,8 @@
                     <div class="row">
                         <div class="column">
                             <label for="OJTtotalCosts">Total Costs per day</label>
-                            <input type="text" name="OJTtotalCosts" id="OJTtotalCosts" readonly
-                                value="{{ old('OJTtotalCosts') }}">
+                            <input type="number" name="OJTtotalCosts" id="OJTtotalCosts" readonly
+                                value="{{ old('OJTtotalCosts') }}" step="0.01">
                             @error('OJTtotalCosts')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror

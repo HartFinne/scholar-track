@@ -159,7 +159,7 @@
                             <div class="column">
                                 <label for="income">Income</label>
                                 <input type="number" name="income" value="{{ old('income') }}"
-                                    placeholder="0 if none" min="0" required>
+                                    placeholder="0 if none" min="0" required step="0.01">
                             </div>
                         </div>
                         <div class="row">
@@ -305,7 +305,8 @@
                                 <div class="column">
                                     <label for="fincome">Income</label>
                                     <input type="number" id="fincome" value="{{ old('fincome') }}"
-                                        name="fincome" placeholder="0 if none" min="0" required>
+                                        name="fincome" placeholder="0 if none" min="0" required
+                                        step="0.01">
                                 </div>
                             </div>
                         </div>
@@ -369,7 +370,8 @@
                                 <div the="column">
                                     <label for="mincome">Income</label>
                                     <input type="number" id="mincome" value="{{ old('mincome') }}"
-                                        name="mincome" placeholder="0 if none" min="0" required>
+                                        name="mincome" placeholder="0 if none" min="0" required
+                                        step="0.01">
                                 </div>
                             </div>
                         </div>
@@ -432,7 +434,7 @@
                                     <div class="column">
                                         <label for="sincome[]">Income</label>
                                         <input type="number" name="sincome[]" maxlength="100" value=""
-                                            placeholder="0 if none" min="0">
+                                            placeholder="0 if none" min="0" step="0.01">
                                     </div>
                                 </div>
                             </div>

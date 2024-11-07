@@ -132,28 +132,24 @@
                         <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Scholar's Name</th>
                         <th class="text-center align-middle">Condition</th>
-                        <th class="text-center align-middle">Remark</th>
-                        <th class="text-center align-middle">Date</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($penalty as $index => $penalty)
+                    @foreach ($penaltys as $penalty)
                         <tr>
-                            <td class="text-center align-middle">{{ $index + 1 }}</td>
-                            @foreach ($scholars as $scholar)
-                                @if ($penalty->caseCode == $scholar->caseCode)
-                                    <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
-                                        {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}
-                                    </td>
-                                @endif
-                            @endforeach
-                            <td class="text-center align-middle">{{ $penalty->condition }}</td>
-                            <td class="text-center align-middle">{{ $penalty->remark }}</td>
-                            <td class="text-center align-middle">{{ $penalty->dateofpenalty }}</td>
+                            <td class="text-center align-middle">{{ $loop->iteration }}</td>
                             <td class="text-center align-middle">
-                                <a href="{{ route('showpenaltyinfo', $penalty->pid) }}"
-                                    class="btn btn-primary">View</a>
+                                {{ $penalty['basicInfo']->scLastname }},
+                                {{ $penalty['basicInfo']->scFirstname }}
+                                {{ $penalty['basicInfo']->scMiddlename }}
+                            </td>
+                            <td class="text-center align-middle">
+                                {!! $penalty['conditions'] !!}
+                            </td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('showpenaltyinfo', $penalty['caseCode']) }}"
+                                    class="btn btn-success">View</a>
                             </td>
                         </tr>
                     @endforeach
@@ -201,7 +197,7 @@
                     </select>
                 </div>
 
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label class="formlabel">Remark</label>
                     <select name="remark" id="inremark" required>
                         <option value="" disabled selected>Select a Remark</option>
@@ -215,7 +211,7 @@
                 <div class="form-group">
                     <label class="formlabel">Date</label>
                     <input type="date" name="date" id="indate" required>
-                </div>
+                </div> --}}
 
                 <span class="formnote">The scholar will be notified of this penalty once submitted.</span>
                 <button type="submit" id="btnsubmit">Submit</button>

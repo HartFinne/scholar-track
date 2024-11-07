@@ -149,8 +149,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/createcsevent', [StaffController::class, 'createcsevent'])->name('createcsevent');
     Route::post('/updatecsevent/{csid}', [StaffController::class, 'updatecsevent'])->name('updatecsevent');
     Route::get('/community-service-info/{csid}', [StaffController::class, 'showcseventinfo'])->name('viewcseventinfo');
-    // Route::get('/community-service-attendance/{csid}/{casecode}', [StaffController::class, 'viewcsattendance'])->name('viewcsattendance');
-    Route::get('/community-service-attendance', [StaffController::class, 'viewcsattendance'])->name('viewcsattendance');
+    Route::get('/community-service-attendance/{csid}/{casecode}', [StaffController::class, 'viewcsattendance'])->name('viewcsattendance');
     // HUMANITIES CLASS
     Route::get('/humanities-class', [StaffController::class, 'showHumanitiesClass'])->name('humanitiesclass');
     Route::post('/createhc', [StaffController::class, 'createhc'])->name('createhc');
@@ -164,7 +163,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // PENALTY | LTE
     Route::get('/penalty', [StaffController::class, 'showPenalty'])->name('penalty');
     Route::post('/penalty', [StaffController::class, 'storePenalty'])->name('penalty.post');
-    Route::get('/penalty-info/{pid}', [StaffController::class, 'showpenaltyinfo'])->name('showpenaltyinfo');
+    Route::get('/penalty-info/{casecode}', [StaffController::class, 'showpenaltyinfo'])->name('showpenaltyinfo');
     Route::get('/letter-of-explanation', [StaffController::class, 'showLTE'])->name('lte');
     Route::get('/letter-of-explanation-info/{lid}', [StaffController::class, 'showlteinfo'])->name('showlteinfo');
     // ALLOWANCE REQUESTS - REGULAR

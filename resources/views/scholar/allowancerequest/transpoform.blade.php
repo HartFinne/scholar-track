@@ -82,7 +82,7 @@
                 <div class="row">
                     <div class="form-group">
                         <label for="totalPrice">Total Price</label>
-                        <input type="number" min="1" id="totalPrice" name="totalprice" required>
+                        <input type="number" min="1" id="totalPrice" name="totalprice" required step="0.01">
                     </div>
                     <div class="form-group">
                         <label for="purpose">Purpose/Activity</label>

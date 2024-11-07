@@ -100,7 +100,6 @@
                 @php
                     $filePath = Storage::url($grade->ReportCard);
                     $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
-
                 @endphp
 
                 <div class="grades-img text-center row my-2">

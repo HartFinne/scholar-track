@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('penalty', function (Blueprint $table) {
             $table->increments('pid');
-            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
+            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
             $table->string('condition', 150);
             $table->string('remark', 50)->default('');
             $table->date('dateofpenalty');

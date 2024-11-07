@@ -350,9 +350,20 @@ class StaffController extends Controller
 
     public function showPenalty()
     {
-        $penalty = penalty::all();
+        $penaltys = Penalty::with('basicInfo')
+            ->get(['caseCode', 'condition'])
+            ->groupBy('caseCode')
+            ->map(function ($penaltyGroup, $caseCode) {
+                $conditions = $penaltyGroup->pluck('condition')->unique()->join('<br>');
+                $basicInfo = $penaltyGroup->first()->basicInfo;
+                return [
+                    'caseCode' => $caseCode,
+                    'conditions' => $conditions,
+                    'basicInfo' => $basicInfo
+                ];
+            });
+        // dd($penalty);
         $scholars = User::with(['basicInfo'])->get();
-
         $penalties = [];
         foreach ($scholars as $scholar) {
             $latestPenalty = penalty::where('caseCode', $scholar->caseCode)
@@ -360,59 +371,51 @@ class StaffController extends Controller
                 ->first();
             $penalties[$scholar->caseCode] = $latestPenalty;
         }
-        return view('staff.penalty', compact('penalties', 'scholars', 'penalty'));
+        return view('staff.penalty', compact('penalties', 'scholars', 'penaltys'));
     }
 
-    public function showpenaltyinfo($pid)
+    public function showpenaltyinfo($casecode)
     {
-        $penalty = penalty::where('pid', $pid)->first();
-        $scholar = user::with('basicInfo')->where('caseCode', $penalty->caseCode)->first();
+        $penalties = Penalty::with('basicInfo')
+            ->where('caseCode', $casecode)
+            ->get()
+            ->groupBy('condition');
+        $scholar = user::with('basicInfo')->where('caseCode', $casecode)->first();
 
-        return view('staff.penaltyinfo', compact('penalty', 'scholar'));
+        return view('staff.penaltyinfo', compact('penalties', 'scholar'));
     }
 
     public function storePenalty(Request $request)
     {
         $validatedData = $request->validate([
-            'scholar_id' => 'required|string|exists:users,caseCode', // Ensures the scholar ID exists in the users table
-            'condition' => 'required|string|in:Lost Cash Card,Dress Code Violation', // Restrict to specific values
-            'remark' => 'required|string|in:1st Offense,2nd Offense,3rd Offense,4th Offense', // Restrict to specific values
-            'date' => 'required|date', // Ensure the date is a valid date format
+            'scholar_id' => 'required|string|exists:users,caseCode',
+            'condition' => 'required|string|in:Lost Cash Card,Dress Code Violation',
         ]);
 
-        // Check if a penalty already exists for the given scholar ID and condition
-        $penalty = penalty::where('caseCode', $validatedData['scholar_id'])
+        $currentpenalty = penalty::where('caseCode', $validatedData['scholar_id'])
+            ->where('condition', $validatedData['condition'])
+            ->orderBy('remark', 'desc')
             ->first();
 
-        if ($penalty) {
-            // Map the offense levels for comparison
-            $offenseLevels = [
-                '1st Offense' => 1,
-                '2nd Offense' => 2,
-                '3rd Offense' => 3,
-                '4th Offense' => 4,
+        $date = today()->toDateString();
+
+        if ($currentpenalty) {
+            $offenses = [
+                '1st Offense' => '2nd Offense',
+                '2nd Offense' => '3rd Offense',
+                '3rd Offense' => '4th Offense',
             ];
 
-            // Check if the new remark is greater than the current remark
-            if ($offenseLevels[$validatedData['remark']] <= $offenseLevels[$penalty->remark]) {
-                return redirect()->route('penalty')->with('failure', 'The remark must be greater than the current remark level.');
-            }
-
-            // Update the existing penalty record
-            $penalty->update([
-                'condition' => $validatedData['condition'],
-                'remark' => $validatedData['remark'],
-                'dateofpenalty' => $validatedData['date'],
-            ]);
+            $remark = $offenses[$currentpenalty->remark] ?? null;
         } else {
-            // If no penalty exists, create a new record
-            $penalty = penalty::create([
-                'caseCode' => $validatedData['scholar_id'],
-                'condition' => $validatedData['condition'],
-                'remark' => $validatedData['remark'],
-                'dateofpenalty' => $validatedData['date'],
-            ]);
+            $remark = '1st Offense';
         }
+        $penalty = penalty::create([
+            'caseCode' => $validatedData['scholar_id'],
+            'condition' => $validatedData['condition'],
+            'remark' => $remark,
+            'dateofpenalty' => $date,
+        ]);
 
         // Prepare notification settings
         $api_key = config('services.movider.api_key');
@@ -424,7 +427,7 @@ class StaffController extends Controller
         $client = new \GuzzleHttp\Client();
         $failedSMS = [];
         $failedEmail = [];
-        $message = "Your penalty has been updated: " . $validatedData['condition'] . " (" . $validatedData['remark'] . ")";
+        $message = "Your penalty has been updated: " . $validatedData['condition'] . " (" . $remark . ")";
 
         // Send notification based on user preference
         if ($user->notification_preference === 'sms') {
@@ -1512,8 +1515,16 @@ class StaffController extends Controller
     public function showcseventinfo($csid)
     {
         $event = communityservice::findOrFail($csid);
-        $volunteers = csregistration::where('csid', $csid)->get();
-        return view('staff.cseventinfo', compact('event', 'volunteers'));
+        $volunteers = csregistration::with('basicInfo')->where('csid', $csid)->get();
+        $attendances = csattendance::where('csid', $csid)->get();
+        return view('staff.cseventinfo', compact('event', 'volunteers', 'attendances'));
+    }
+
+    public function viewcsattendance($csid, $caseCode)
+    {
+        $event = communityservice::findOrFail($csid);
+        $scholar = csattendance::with('basicInfo')->where('csid', $csid)->where('caseCode', $caseCode)->first();
+        return view('staff.csattendance', compact('event', 'scholar'));
     }
 
     public function createcsevent(Request $request)
@@ -1600,11 +1611,6 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Updating activity details was unsuccessful.');
         }
-    }
-
-    public function viewcsattendance()
-    {
-        return view('staff.csattendance');
     }
 
     public function showHumanitiesClass()

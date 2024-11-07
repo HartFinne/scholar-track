@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -18,31 +17,41 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle mb-4">Penalty Details | {{ $scholar->basicInfo->scLastname }},
-            {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}</span>
-
-        <div class="card mx-auto border border-success rounded shadow-md col-md-6">
-            <div class="card-header bg-success text-white text-center font-weight-bold">
-                {{ $penalty->condition }}
+        <div class="container">
+            <div class="col-md-1" style="margin-left: auto;">
+                <a href="{{ route('penalty') }}" class="btn btn-success">Go back</a>
             </div>
-            <div class="card-body p-4">
-                <div class="row mb-3">
-                    <div class="text-right font-weight-bold col-md-4">
-                        <span>Remark:</span>
+            <div class="pagetitle mb-4 mt-2">Penalty Details | {{ $scholar->basicInfo->scLastname }},
+                {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}</div>
+            @foreach ($penalties as $condition => $group)
+                <div class="card mx-auto border border-success rounded shadow-md col-md-6">
+                    <div class="card-header bg-success text-white text-center fw-bold h5">
+                        {{ $condition }}
                     </div>
-                    <div class=" col-md-8">
-                        <span>{{ $penalty->remark }}</span>
+                    <div class="card-body p-4">
+                        @foreach ($group as $penalty)
+                            <div class="row mb-3 border-bottom border-success">
+                                <div class="row mb-2">
+                                    <div class="text-right font-weight-bold col-md-4">
+                                        <span>Remark:</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span>{{ $penalty->remark }}</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="text-right font-weight-bold col-md-4">
+                                        <span>Date Issued:</span>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <span>{{ \Carbon\Carbon::parse($penalty->date_of_penalty)->format('F d, Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-                <div class="row">
-                    <div class="text-right font-weight-bold col-md-4">
-                        <span>Date Issued:</span>
-                    </div>
-                    <div class=" col-md-8">
-                        <span>{{ \Carbon\Carbon::parse($penalty->dateofpenalty)->format('F d, Y') }}</span>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 
