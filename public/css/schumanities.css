@@ -77,6 +77,7 @@
     background-color: transparent;
     cursor: pointer;
     font-size: 14px;
+    transition: 0.3s ease;
 }
 
 .filter-btn.active{
@@ -121,29 +122,21 @@
     font-size: 15px;
 }
 
-.search-container {
+.search-container form {
     display: flex;
     justify-content: center; 
     position: relative;
     font-size: 15px;
 }
 
-/* .search-container form {
-    display: flex;
-    justify-content: center; 
-    position: relative;
-    font-size: 15px;
-} */
-
-
-.search-container i{
+.search-container form i{
     position: absolute;
     top: 30%;
     left: 5%;
     color: gray;
 }
 
-.search-input {
+ form .search-input {
     width: 100%; 
     padding: 10px 40px 10px 15px; 
     border: 2px solid #ccc; 
@@ -153,7 +146,7 @@
     transition: border-color 0.3s; 
 }
 
-.search-input:focus {
+form .search-input:focus {
     border-color: #4CAF50; 
 }
 
@@ -163,10 +156,10 @@
         width: 100%;
        flex-direction: column;
     }
-    .search-container {
+    .search-container form{
         width: 100%;
     }
-    .search-container i{
+    .search-container form i{
         left: 3%;
     }
     .filter-status{
@@ -183,7 +176,8 @@
     }
     .filter-btn{
         margin-bottom: 5px;
-        font-size: 13px;
+        font-size: 12px;
+        padding: 2px 8px;
     }
     .attendance-details{
         width: 100%;
@@ -220,8 +214,8 @@
     .filter-status{
         gap: 30px;
     }
-    .search-input {
-        padding: 10px 30px 10px 10px; 
+    form .search-input {
+        padding: 8px 30px 8px 8px; 
     }
     .total-attendance, .total-tardiness, .total-absences{
         padding: 15px 20px;

@@ -209,17 +209,22 @@
     .sc-info-2 .text p, .filter-btn, .ctn-table{
         font-size: 14px;
     }
-    .overview-graph{
+    .ctn-main .overview-graph{
         padding: 0;
     }
-    .overview-graph .card1, .card2{
-        width: 85%;
+    .ctn-main .overview-graph .card1, .ctn-main .overview-graph .card2{
+        width: 100%;
         padding: 15px;
         margin: 0;
     }
     .sub-title{
         font-size: 15px;
         margin: 20px 0 10px;
+    }
+    .filter-btn{
+        padding: 2px 6px;
+        font-size: 12px;
+        margin-bottom: 10px;
     }
 }
 @media only screen and (max-width: 1024px) {

@@ -63,24 +63,17 @@
     padding: 5px 25px;
     margin-right: 10px;
     border-radius: 15px;
-    background-color: #fff;
+    background-color: transparent;
     color: #1a5319;
     cursor: pointer;
     font-size: 15px;
-    transition: 0.3s ease-in-out;
+    transition: 0.3s ease;
 }
 
 .filter-btn.active{
     background-color: #1a5319;
     color: #fff;
 }
-
-/* .search-container{
-    display: flex;
-    justify-content: center; 
-    position: relative;
-    width: 300px;
-} */
 
 .search-container form{
     display: flex;
@@ -191,9 +184,10 @@
     .search-container i{
         left: 3%;
     }
-    .filter-btn{
-        font-size: 14px; 
-        margin-bottom: 10px;
+    .filter .filter-btn{
+        font-size: 12px; 
+        padding: 3px 6px;
+        margin: 0 0 10px 0;
     }
 }
 @media only screen and (max-width: 1024px) {
@@ -220,247 +214,4 @@
     }
 
 }
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-.ctn-main{
-    width: 90%;
-    margin: auto;
-}
-
-.ctn-main .goback{
-    text-decoration: none;
-    color: #1a5319;
-    font-size: 1.1rem;
-}
-
-.ctn-main .title{
-    font-family: 'League Spartan', sans-serif;
-    font-weight: bold;
-    margin: 25px 0;
-}
-
-.renewal-form{
-    width: 100%;
-    margin: auto;
-    font-size: 1.1rem;
-}
-
-.custom-fieldset {
-    border: 2px solid #1a5319;
-    padding: 25px;
-    border-radius: 10px;
-    position: relative;
-    margin: 40px 0px;
-}
-
-.custom-fieldset legend {
-    color: #eaebea;
-    font-size: 1.2rem;
-    font-weight: bold;
-    width: auto; 
-    padding: 0 10px; 
-    margin-bottom: 0;
-    margin-left: 20px;
-    border-bottom: none;
-    border-radius: 10px;
-    position: absolute;
-    top: -12px; 
-    left: 10px; 
-    background-color: #1e5430;
-}
-
-.custom-fieldset .family{
-    text-align: center;
-    margin-top: 25px;
-    text-decoration: underline;
-    color: #1a5319;
-    font-weight: 700;
-}
-
-.renewal-form .row{
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
-    grid-gap: 20px 30px;
-    margin-bottom: 20px;
-}
-
-label{
-    font-weight: bold;
-}
-
-input, select, textarea{
-    width: 100%;
-    padding: 5px;
-    border-radius: 10px;
-    outline: none;
-    border: 2px solid #bfbfbf;
-    transition: border-color 0.3s ease-in-out;
-}
-
-input:focus, select:focus, textarea:focus{
-    border-color:#4CAF50;
-}
-
-.row-radio{
-    display: inline-flex;
-    align-items: center;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-}
-
-.row-radio input[type="radio"] {
-    margin-left: 30px;
-    transform: scale(1.5);
-}
-
-.row-radio label {
-    margin-left: 15px;
-}
-
-.familyinfo{
-    font-weight: 700;
-    color: #1a5319;
-    font-size: 1.1rem;
-}
-
-.ctn-table{
-    margin-bottom: 50px;
-    font-size: 1.1rem;
-}
-
-.table thead tr th{
-    background-color: #1a5319;
-    color: #fff;
-}
-
-.table tr td{
-    text-align: center;
-}
-
-.table th span{
-    font-size: 0.9rem;
-    font-style: italic;
-}
-
-.ctn-table input, select{
-    font-size: 0.9rem;
-}
-
-.ctn-table .col1{
-    width: 250px;
-}
-
-.ctn-table .col2{
-    width: 50px;
-}
-
-.ctn-table .col3{
-    width: 70px;
-}
-
-/* .ctn-table .col7{
-    width: 200px;
-}
-
-.ctn-table .col6,  .col9, .col10{
-    width: 150px;
-}
- */
-
-.btn-submit{
-    background-color: #8bc34a;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 50px;
-    margin-bottom: 50px;
-    transition: 0.3s ease;
-}
-
-.btn-submit:hover{
-    background-color: #1a5319;
-}
-
-.ren-stat{
-    background-color: #c1ff72;
-    font-weight: bold;
-    padding: 10px;
-    width: 150px;
-    text-align: center;
-    float: right;
-    border-radius: 10px;
-    margin: 0 30px;
-}
-
-.ren-view{
-    border: 1px solid #fff;
-}
-
-.ren-info{
-    border: 1px solid #8eb79c;
-    background-color: #eaebea;
-    border-radius: 10px;
-    margin: 50px 30px;
-    padding: 20px 30px;
-}
-
-.ren-info h4{
-    background-color: #1a5319;
-    color: #d6efd8;
-    font-weight: bold;
-    padding: 10px;
-}
-
-.ren-info .info{
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 10px; 
-    align-items: center; 
-    padding: 10px;
-}
-
-.ren-info .other{
-    display: block; 
-}
-
-.ren-info .other .value{
-    text-align: justify;
-    margin-bottom: 25px;
-}
-
-.label {
-    text-align: left; 
-    margin-bottom: 5px;
-}
-
-.ren-info span{
-    color: #1e5430;
-    font-weight: bold;
-    margin-left: 20px;
-}
-
-@media only screen and (max-width: 768px) {
-    .custom-fieldset {
-        padding: 15px;
-    }
-    .custom-fieldset legend {
-        font-size: 1.1rem;
-    }
-    .renewal-form{
-        font-size: 1rem;
-    }
-    .ren-info .info{
-        display: block;
-    }
-    .ren-info span{
-        margin-left: 5px;
-    }
-}

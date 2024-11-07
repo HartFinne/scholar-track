@@ -391,3 +391,46 @@ body {
 #btnsignout:hover {
     color: #ed0e0e;
 }
+
+.card-body a{
+    padding: 5px 25px;
+    background-color: #2e7c55;
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.3s ease;
+}
+
+.card-body a span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+  }
+  
+.card-body a span:after {
+    content: '\276f';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+  }
+  
+.card-body a:hover span {
+    padding-right: 25px;
+  }
+  
+.card-body a:hover span:after {
+    opacity: 1;
+    right: 0;
+  }
+
+.card-body a i{
+    margin-right: 10px;
+}
+
+.card-body .file{
+    text-indent: 80px;
+}

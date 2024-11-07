@@ -475,6 +475,16 @@
 
                 <fieldset class="custom-fieldset">
                     <legend>SET PASSWORD</legend>
+                    <div class="description">
+                        <p>Your password must:<br></p>
+                            <ul>
+                                <li>Be at least<strong>8 characters long</strong>.</li>
+                                <li>Include at least <strong>one uppercase letter (A-Z)</strong>.</li>
+                                <li>Include at least <strong>one lowercase letter (a-z)</strong>.</li>
+                                <li>Include at least <strong>one numeric digit (0-9)</strong>.</li>
+                                <li>Include at least <strong>one special character (such as ! @ # $ % ^ & *)</strong>.</li>
+                            </ul>
+                    </div>
                     @error('password')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror

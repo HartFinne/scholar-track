@@ -52,8 +52,8 @@ body {
     margin: 50px 0 0;
 }
 
-.registration-form .description{
-    font-size: 15px;
+.registration-form .description, .description ul{
+    font-size: 14px;
     color: #1a5319;
 }
 
@@ -154,12 +154,18 @@ input:focus, select:focus{
 }
 
 @media (max-width: 768px) {
+    .custom-fieldset{
+        padding: 20px;
+    }
     .custom-fieldset legend{
         font-size: 16px;
     }
-    .form, .row-checkbox, .registration-form .description, .agreement{
+    .form, .row-checkbox, .agreement{
         font-size: 14px;
-    } 
+    }
+    .registration-form .description, .description ul{
+        font-size: 13px;
+    }
     .registration-form .custom-fieldset legend{
         margin-left: 0;
     }
