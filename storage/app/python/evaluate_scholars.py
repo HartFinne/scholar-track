@@ -67,7 +67,7 @@ data['evalscore'] = data['evalscore'] / sum(weights.values()) * 100
 scholar_evaluations = data.groupby(['caseCode', 'acadyear'], as_index=False)['evalscore'].mean()
 
 # Define the hiring threshold and create the target column `isPassed`
-scholar_evaluations['isPassed'] = (scholar_evaluations['evalscore'] >= 50).astype(int)
+scholar_evaluations['isPassed'] = (scholar_evaluations['evalscore'] >= 75).astype(int)
 
 # Prepare features and target variable
 X = scholar_evaluations[['evalscore']]  # Input features

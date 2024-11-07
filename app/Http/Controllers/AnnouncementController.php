@@ -12,18 +12,11 @@ use Illuminate\Support\Facades\Log;
 
 class AnnouncementController extends Controller
 {
-    // //
-    // public function viewAnnouncement()
-    // {
-    //     $users = User::all();
-    //     return view('scholar.home', compact('users'));
-    // }
-
     public function showHome()
     {
         $users = User::with('basicInfo')->get();
         $worker = Auth::guard('staff')->user();
-        $announcements = Announcement::where('author', $worker->name)->get();
+        $announcements = Announcement::where('author', $worker->name)->orderBy('created_at', 'DESC')->get();
 
         return view('staff.home', compact('users', 'announcements', 'worker'));
     }

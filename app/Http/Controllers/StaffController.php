@@ -139,6 +139,7 @@ class StaffController extends Controller
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'College');
             })
+            ->orderBy('caseCode', 'ASC')
             ->get();
 
         // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
