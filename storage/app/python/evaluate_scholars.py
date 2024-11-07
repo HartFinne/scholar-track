@@ -111,8 +111,6 @@ file_path = os.path.join(base_directory, 'storage/app/python/performance_metrics
 # Ensure the directory exists
 os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-metrics = {}  # Ensure you have this initialized appropriately
-
 try:
     with open(file_path, 'w') as f:
         json.dump(metrics, f)
