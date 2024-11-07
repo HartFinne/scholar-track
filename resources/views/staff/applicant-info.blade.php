@@ -153,8 +153,8 @@
                                 <tr>
                                     <td>
                                         <span class="flabel">Facebook name</span><br>
-                                        <a href="{{ $applicant->fblink }}" class="fvalue"
-                                            id="fbName">{{ $applicant->fblink }}</a>
+                                        <a href="{{ $applicant->fblink }}" class="fvalue" id="fbName"
+                                            target="_blank">{{ $applicant->fblink }}</a>
                                     </td>
                                     <td colspan="4">
                                         <span class="flabel">Are you a member of any indigenous group?</span><br>
@@ -534,6 +534,107 @@
                 <button type="submit" class="col-md-1 btn btn-success mx-auto">Save</button>
             </div>
         </form>
+        <div class="card mx-auto mt-3 shadow-sm" style="width: 8.5in;">
+            <div class="card-header py-3 bg-success text-white">
+                <span class="h5 fw-bold">Submitted Documents</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-2 pb-2 border-bottom">
+                    <div class="col-md-5">Latest Report Card</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->reportcard) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-file-earmark-text-fill me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Latest Registration Card</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->regiform) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-file-earmark-text-fill me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Autobiography</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->autobio) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-file-earmark-text-fill me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Family Picture</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->familypic) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-file-earmark-image-fill me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Picture of House (Inside)</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->houseinside) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-house-fill me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Picture of House (Outside)</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->houseoutside) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-house-fill me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Latest Utility Bill</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->utilitybill) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-receipt me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Sketch Map of Home Address</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->sketchmap) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-map me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Latest Pay Slip of Parent/s</div>
+                    <div class="col-md-7 text-center">
+                        @if (!empty($applicant->requirements) && !empty($applicant->requirements->payslip))
+                            <a href="{{ asset('storage/' . $applicant->requirements->payslip) }}"
+                                class="link-success text-decoration-none">
+                                <i class="bi bi-file-earmark-text-fill me-1"></i> View document
+                            </a>
+                        @else
+                            <span class="text-muted">No document available</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="row mb-2 py-2 border-bottom">
+                    <div class="col-md-5">Certificate of Indigency</div>
+                    <div class="col-md-7 text-center">
+                        <a href="{{ asset('storage/' . $applicant->requirements->indigencycert) }}"
+                            class="link-success text-decoration-none">
+                            <i class="bi bi-file-earmark-check-fill me-1"></i> View document
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
 </body>

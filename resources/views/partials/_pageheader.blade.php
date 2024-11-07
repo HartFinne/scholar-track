@@ -28,13 +28,18 @@
             Service</button>
         <button id="btnhc" class="sbarmainopt"
             onclick="window.location.href='{{ route('humanitiesclass') }}';">Humanities Class</button>
-        <a id="btnhc" class="sbarmainopt" href='{{ route('appointments') }}'>Appointments</a>
-        <a href="{{ route('applicants') }}" class="sbarmainopt">Applicants</a>
-        <a id="evaluate-link" class="sbarmainopt" href='{{ route('evaluatescholars') }}'>Scholars
-            Evaluation</a>
-        <a id="btnhc" class="sbarmainopt" href='{{ route('generatescholarshipreport') }}' target="_blank">Generate
-            Report</a>
-        <a href="{{ route('qualification') }}" class="sbarmainopt">Scholarship Settings</a>
+        <button id="btnappointments" class="sbarmainopt"
+            onclick="window.location.href='{{ route('appointments') }}';">Appointments</button>
+        <button id="btnapplicants" class="sbarmainopt"
+            onclick="window.location.href='{{ route('applicants') }}';">Applicants</button>
+        <button id="evaluate-link" class="sbarmainopt"
+            onclick="window.location.href='{{ route('evaluatescholars') }}';">Scholars Evaluation</button>
+        <button id="btnreport" class="sbarmainopt"
+            onclick="window.location.href='{{ route('generatescholarshipreport') }}';" target="_blank">Generate
+            Report</button>
+        <button id="btnsettings" class="sbarmainopt"
+            onclick="window.location.href='{{ route('qualification') }}';">Scholarship Settings</button>
+
     </div>
 </div>
 

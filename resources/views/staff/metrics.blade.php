@@ -13,9 +13,9 @@
     @include('partials._pageheader')
     <div class="ctnmain">
         <div class="container">
-            <div class="row align-items-center">
+            <div class="row align-items-center mb-3">
                 <div class="col-md-10">
-                    <h1 class="mb-4 fw-bold">Performance Metrics</h1>
+                    <span class="mb-4 h1 fw-bold">Performance Metrics</span>
                 </div>
                 <div class="col-md-2">
                     <a href="{{ route('showevalresults') }}" class="btn btn-success btn-block">Go back</a>
@@ -39,7 +39,7 @@
                 <div class="card-body">
                     <h2 class="h4 card-title">Confusion Matrix</h2>
                     <table class="table table-bordered">
-                        <thead class="thead-dark">
+                        <thead class="bg-dark text-light">
                             <tr>
                                 <th class="text-right align-middle">Predicted</th>
                                 @foreach ($data['confusion_matrix'][0] as $value)
