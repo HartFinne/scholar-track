@@ -110,26 +110,39 @@ class PasswordController extends Controller
     {
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email', // Use a generic 'email' field
-            'password' => 'required|min:8|confirmed',
+            'email' => 'required|email',
+            'password' => [
+                'required',
+                'min:8',
+                'confirmed',
+                'regex:/[A-Z]/',       // must contain at least one uppercase letter
+                'regex:/[a-z]/',       // must contain at least one lowercase letter
+                'regex:/[0-9]/',       // must contain at least one digit
+                'regex:/[@$!%*?&]/',   // must contain a special character
+            ],
+        ], [
+            'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+            'password.min' => 'The password must be at least 8 characters.',
+            'password.confirmed' => 'The password confirmation does not match.',
         ]);
+
 
         // Identify which user type we are resetting the password for
         $isApplicant = applicants::where('email', $request->email)->first();
-        $isScholar = user::where('scEmail', $request->email)->first();
+        $isScholar = User::where('scEmail', $request->email)->first();
         $isStaff = staccount::where('email', $request->email)->first();
 
         if ($isApplicant) {
             $broker = Password::broker('applicant');
             $credentials = ['email' => $request->email, 'password' => $request->password, 'password_confirmation' => $request->password_confirmation, 'token' => $request->token];
         } elseif ($isScholar) {
-            $broker = Password::broker('users'); // Broker for scholars
+            $broker = Password::broker('users');
             $credentials = ['scEmail' => $request->email, 'password' => $request->password, 'password_confirmation' => $request->password_confirmation, 'token' => $request->token];
         } elseif ($isStaff) {
             $broker = Password::broker('staff');
             $credentials = ['email' => $request->email, 'password' => $request->password, 'password_confirmation' => $request->password_confirmation, 'token' => $request->token];
         } else {
-            return back()->withErrors(['email' => ['User not found in the database']]);
+            return back()->withErrors(['email' => 'User not found in the database']);
         }
 
         // Perform the password reset with the identified broker
@@ -146,8 +159,13 @@ class PasswordController extends Controller
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('roleselection')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+        // Redirect with success or error message
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('roleselection')
+                ->with('status', __($status))
+                ->with('success', 'Your password has been reset successfully.'); // Success message
+        } else {
+            return back()->withErrors(['email' => [__($status)]]);
+        }
     }
 }
