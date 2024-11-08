@@ -24,10 +24,12 @@
                 <a href="{{ route('showmetrics') }}" class="btn btn-success w-100">Model Performance Metrics</a>
             </div> --}}
         </div>
-        <div class="row">
-            <div class="card mb-3">
-                <div class="col-md-2 h5 fw-bold">Accuracy</div>
-                <div class="col-md-10 h5">{{ intval($data['accuracy']) * 100 }}%</div>
+        <div class="row px-4">
+            <div class="card mb-3 p-2 bg-light">
+                <div class="row">
+                    <div class="col-md-2 fw-bold">Model Accuracy</div>
+                    <div class="col-md-10">: {{ intval($data['accuracy']) * 100 }}%</div>
+                </div>
             </div>
         </div>
         @if (session('success'))
