@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('ojt_travel_itinerary', function (Blueprint $table) {
             $table->increments('ojtID');
             $table->unsignedInteger('regularID');
-            $table->date('start_of_ojt');
-            $table->date('end_of_ojt');
-            $table->string('endorsement', 255);
-            $table->string('acceptance', 255);
+            $table->date('start_of_ojt')->nullable();
+            $table->date('end_of_ojt')->nullable();
+            $table->string('endorsement', 255)->nullable();
+            $table->string('acceptance', 255)->nullable();
             $table->timestamps();
 
             $table->foreign('regularID')->references('regularID')->on('regular_allowance')->onDelete('cascade');

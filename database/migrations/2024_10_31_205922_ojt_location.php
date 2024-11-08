@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('ojt_location', function (Blueprint $table) {
             $table->increments('ojtLocationID');
-            $table->unsignedInteger('ojtID');
-            $table->string('ojt_from', 100);
-            $table->string('ojt_to', 100);
-            $table->string('ojt_estimated_time', 100);
-            $table->string('ojt_vehicle_type', 100);
-            $table->integer('ojt_fare_rate');
+            $table->unsignedInteger('ojtID')->nullable();
+            $table->string('ojt_from', 100)->nullable();
+            $table->string('ojt_to', 100)->nullable();
+            $table->string('ojt_estimated_time', 100)->nullable();
+            $table->string('ojt_vehicle_type', 100)->nullable();
+            $table->integer('ojt_fare_rate')->nullable();
             $table->timestamps();
 
             $table->foreign('ojtID')->references('ojtID')->on('ojt_travel_itinerary')->onDelete('cascade');
