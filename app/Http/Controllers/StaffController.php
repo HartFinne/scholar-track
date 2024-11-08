@@ -345,11 +345,11 @@ class StaffController extends Controller
             $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
 
             if ($violation->hcastatus == "Absent") {
-                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
+                return view('staff.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
             } elseif ($violation->hcastatus == "Late") {
-                return view('scholar.scholarship.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
+                return view('staff.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
             } elseif ($violation->hcastatus == "Left Early") {
-                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+                return view('staff.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
             }
         } elseif ($letter->eventtype == 'Community Service') {
             $csviolation = csregistration::where('csrid', $letter->conditionid)->first();
@@ -357,11 +357,11 @@ class StaffController extends Controller
             $eventinfo = communityservice::where('csid', $csviolation->csid)->first();
 
             if ($csviolation->registatus == "Cancelled") {
-                return view('scholar.scholarship.lteinfo-cancelled', compact('letter', 'scholar', 'eventinfo', 'csviolation'));
+                return view('staff.lteinfo-cancelled', compact('letter', 'scholar', 'eventinfo', 'csviolation'));
             } elseif ($csviolation->registatus == "ABSENT") {
-                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar',  'eventinfo', 'csviolation'));
+                return view('staff.lteinfo-absent', compact('letter', 'scholar',  'eventinfo', 'csviolation'));
             } elseif ($csviolation->hcastatus == "Left Early") {
-                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+                return view('staff.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
             }
         }
     }
