@@ -103,7 +103,8 @@
                                 @endif
                             @endforeach
                             <td class="text-center align-middle">
-                                {{ \Carbon\Carbon::parse($letter->datesubmitted)->format('F d, Y') ?? '--' }}</td>
+                                {{ $letter->datesubmitted ? \Carbon\Carbon::parse($letter->datesubmitted)->format('F d, Y') : '--' }}
+                            </td>
                             @if ($letter->eventtype == 'Humanities Class')
                                 <td class="text-center align-middle">{{ $letter->hcattendance->hcastatus }} in
                                     {{ $letter->eventtype }}</td>
