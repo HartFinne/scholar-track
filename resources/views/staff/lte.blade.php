@@ -93,7 +93,8 @@
                     @foreach ($lte as $index => $letter)
                         <tr>
                             <td class="text-center align-middle">{{ $index + 1 }}</td>
-                            <td class="text-center align-middle">{{ $letter->dateissued }}</td>
+                            <td class="text-center align-middle">
+                                {{ \Carbon\Carbon::parse($letter->dateissued)->format('F d, Y') }}</td>
                             @foreach ($scholars as $scholar)
                                 @if ($letter->caseCode == $scholar->caseCode)
                                     <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
@@ -101,12 +102,14 @@
                                     </td>
                                 @endif
                             @endforeach
-                            <td class="text-center align-middle">{{ $letter->dateissued }}</td>
+                            <td class="text-center align-middle">
+                                {{ \Carbon\Carbon::parse($letter->datesubmitted)->format('F d, Y') ?? '--' }}</td>
                             @if ($letter->eventtype == 'Humanities Class')
                                 <td class="text-center align-middle">{{ $letter->hcattendance->hcastatus }} in
                                     {{ $letter->eventtype }}</td>
                             @elseif ($letter->eventtype == 'Community Service')
-                                <td class="text-center align-middle">{{ $letter->csattendance->csastatus }} in
+                                <td class="text-center align-middle">
+                                    {{ ucfirst(strtolower($letter->csattendance->csastatus)) }} in
                                     {{ $letter->eventtype }}</td>
                             @elseif ($letter->eventtype == null)
                                 <td class="text-center align-middle">{{ $letter->violation }}</td>

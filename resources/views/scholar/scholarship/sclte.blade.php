@@ -97,12 +97,17 @@
             <p class="table-title">Letter Status</p>
             <div class="filter" id="filter-lte">
                 <form action="{{ route('sclte') }}" method="GET" id="filter-form">
-                    <button type="submit" name="lte_status" value="all" class="filter-btn {{ request('lte_status', 'all') == 'all' ? 'active' : '' }}">All</button>
-                    <button type="submit" name="lte_status" value="To Review" class="filter-btn {{ request('lte_status') == 'To Review' ? 'active' : '' }}">To Review</button>
-                    <button type="submit" name="lte_status" value="Excused" class="filter-btn {{ request('lte_status') == 'Excused' ? 'active' : '' }}">Excused</button>
-                    <button type="submit" name="lte_status" value="Unexcused" class="filter-btn {{ request('lte_status') == 'Unexcused' ? 'active' : '' }}">Unexcused</button>
+                    <button type="submit" name="lte_status" value="all"
+                        class="filter-btn {{ request('lte_status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                    <button type="submit" name="lte_status" value="To Review"
+                        class="filter-btn {{ request('lte_status') == 'To Review' ? 'active' : '' }}">To
+                        Review</button>
+                    <button type="submit" name="lte_status" value="Excused"
+                        class="filter-btn {{ request('lte_status') == 'Excused' ? 'active' : '' }}">Excused</button>
+                    <button type="submit" name="lte_status" value="Unexcused"
+                        class="filter-btn {{ request('lte_status') == 'Unexcused' ? 'active' : '' }}">Unexcused</button>
                 </form>
-                
+
             </div>
         </div>
 

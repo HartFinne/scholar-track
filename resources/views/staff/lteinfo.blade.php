@@ -29,28 +29,28 @@
         <div class="lte">
             <h6 class="text-center fw-bold">Buddhist Compassion Relief Tzu Chi Foundation Philippines, Inc.</h6>
             <p class="text-center">Educational Assistance Program</p>
-            <p class="date" id="lte-date">October 15, 2023</p>
+            <p class="date" id="lte-date">{{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}</p>
 
             <div class="receipient">
-                <p id="name">Doe, John</p>
-                <p id="casecode">CASE-12345</p>
-                <p id="school">Philippine State University</p>
+                <p id="name">{{ $scholar->basicInfo->scLastname }}, {{ $scholar->basicInfo->scFirstname }}</p>
+                <p id="casecode">{{ $scholar->caseCode }}</p>
+                <p id="school">{{ $scholar->education->scSchoolName }}</p>
             </div>
 
             <div class="lte-subject">
-                <p>Subject: <b>NOTICE TO EXPLAIN</b></p>
+                <p>Subject: <b>NOTICE TO EXPLAIN</b> </p>
             </div>
 
             <div class="salutation-lte">
                 <p>Greetings!</p>
             </div>
-
             <div class="lte-body">
                 <p>
-                    Last October 15, 2023, was the Annual Scholarship Orientation that took place in the Tzu Chi Center,
-                    Manila.
-                    Upon checking the attendance, we noticed that you did not participate despite the Foundation's
-                    effort to inform you beforehand.
+                    Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
+                    {{ $eventinfo->topic ?? $eventinfo->title }} that took place in the
+                    {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}. Upon checking the
+                    attendance,
+                    we noticed that you did not participate despite the Foundation's effort to inform you beforehand.
                 </p>
                 <p>
                     In connection with this, you are advised to <b>submit your written explanation letter within
@@ -65,7 +65,7 @@
                     <div class="signature">
                         <p>SIGNATURE</p>
                     </div>
-                    <p><b>Jane Smith</b><br>Social Welfare Officer</p>
+                    <p><b>{{ $letter->workername }}</b><br>Social Welfare Officer</p>
                 </div>
                 <div class="closing-2">
                     <p>Noted by:</p>
