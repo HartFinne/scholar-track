@@ -47,34 +47,34 @@ class ScholarController extends Controller
     public function showHome(Request $request)
     {
         $user = Auth::user();
-        $search = $request->input('search'); 
+        $search = $request->input('search');
         $filter = $request->input('filter', 'all');
 
         $announcements = Announcement::where(function ($query) use ($user) {
-                $query->whereJsonContains('recipients', 'all')
-                    ->orWhereJsonContains('recipients', $user->caseCode);
-            })
+            $query->whereJsonContains('recipients', 'all')
+                ->orWhereJsonContains('recipients', $user->caseCode);
+        })
             // Add search functionality if a search term is provided
             ->when($search, function ($query) use ($search) {
                 return $query->where('title', 'like', '%' . $search . '%')
-                            ->orWhere('description', 'like', '%' . $search . '%')
-                            ->orWhere('author', 'like', '%' . $search . '%');
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('author', 'like', '%' . $search . '%');
             })
             // Apply filter based on selected filter
             ->when($filter === 'latest', function ($query) {
                 return $query->orderBy('created_at', 'desc');
             })
-            
+
             ->when($filter === 'humanities', function ($query) {
                 return $query->where(function ($q) {
                     $q->where('title', 'like', '%humanities%')
-                    ->orWhere('description', 'like', '%humanities%');
+                        ->orWhere('description', 'like', '%humanities%');
                 });
             })
             ->when($filter === 'community_service', function ($query) {
                 return $query->where(function ($q) {
                     $q->where('title', 'like', '%community service%')
-                    ->orWhere('description', 'like', '%community service%');
+                        ->orWhere('description', 'like', '%community service%');
                 });
             })
             ->get();
@@ -454,12 +454,12 @@ class ScholarController extends Controller
         $status = $request->input('lte_status', 'all');
 
         $letters = lte::where('caseCode', $scholar->caseCode)
-        ->when($status === 'all', function ($query) {
-            return $query->where('ltestatus', '!=', 'No Response');
-        }, function ($query) use ($status) {
-            return $query->where('ltestatus', $status)->where('ltestatus', '!=', 'No Response');
-        })
-        ->get();
+            ->when($status === 'all', function ($query) {
+                return $query->where('ltestatus', '!=', 'No Response');
+            }, function ($query) use ($status) {
+                return $query->where('ltestatus', $status)->where('ltestatus', '!=', 'No Response');
+            })
+            ->get();
 
         return view('scholar.scholarship.sclte', compact('noresponseletters', 'letters'));
     }
@@ -487,7 +487,6 @@ class ScholarController extends Controller
             $csviolation = csregistration::where('csrid', $letter->conditionid)->first();
 
             $eventinfo = communityservice::where('csid', $csviolation->csid)->first();
-
 
             if ($csviolation->registatus == "Cancelled") {
                 return view('scholar.scholarship.lteinfo-cancelled', compact('letter', 'scholar', 'eventinfo', 'csviolation'));
@@ -663,15 +662,15 @@ class ScholarController extends Controller
             ->concat($requnif)
             ->concat($reqgrad);
 
-            $status = $request->input('status', 'all');
+        $status = $request->input('status', 'all');
 
-            if ($status !== 'all') {
-                $requests = $mergedrequests->where('status', $status)->sortBy('created_at')->values();
-            } else {
-                $requests = $mergedrequests->sortBy('created_at')->values();
-            }
-        
-            return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar', 'status'));
+        if ($status !== 'all') {
+            $requests = $mergedrequests->where('status', $status)->sortBy('created_at')->values();
+        } else {
+            $requests = $mergedrequests->sortBy('created_at')->values();
+        }
+
+        return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar', 'status'));
     }
 
     public function showrequestinstruction($requesttype)

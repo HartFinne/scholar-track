@@ -70,7 +70,7 @@
                     <div class="signature">
                         <p>SIGNATURE</p>
                     </div>
-                    <p><b>Social Worker's Name</b><br>Social Welfare Officer</p>
+                    <p><b>{{ $letter->workername }}</b><br>Social Welfare Officer</p>
                 </div>
                 <div class="closing-2">
                     <p>Noted by:</p>

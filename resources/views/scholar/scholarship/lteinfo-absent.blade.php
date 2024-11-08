@@ -33,7 +33,7 @@
         <div class="lte">
             <h6 class="text-center fw-bold">Buddhist Compassion Relief Tzu Chi Foundation Philippines, Inc.</h6>
             <p class="text-center">Educational Assistance Program</p>
-            <p class="date" id="lte-date">{{ $letter->dateissued }}</p>
+            <p class="date" id="lte-date">{{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}</p>
 
             <div class="receipient">
                 <p id="name">{{ $scholar->basicInfo->scLastname }}, {{ $scholar->basicInfo->scFirstname }}</p>
@@ -50,8 +50,9 @@
             </div>
             <div class="lte-body">
                 <p>
-                    Last {{ $letter->dateissued }}, was the {{ $eventinfo->topic }} that took place in the
-                    {{ $eventinfo->hclocation }}. Upon checking the
+                    Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
+                    {{ $eventinfo->topic ?? $eventinfo->title }} that took place in the
+                    {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}. Upon checking the
                     attendance,
                     we noticed that you did not participate despite the Foundation's effort to inform you beforehand.
                 </p>
@@ -68,7 +69,7 @@
                     <div class="signature">
                         <p>SIGNATURE</p>
                     </div>
-                    <p><b>Social Worker's Name</b><br>Social Welfare Officer</p>
+                    <p><b>{{ $letter->workername }}</b><br>Social Welfare Officer</p>
                 </div>
                 <div class="closing-2">
                     <p>Noted by:</p>
