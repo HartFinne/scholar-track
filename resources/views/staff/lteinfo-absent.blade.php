@@ -76,13 +76,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="submit-lte text-center">
-            <button type="button" class="btn-submit"
-                onclick="window.location.href='{{ route('lteform', $letter->lid) }}';">Submit
-                your
-                response here</button>
-        </div>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
