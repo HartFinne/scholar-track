@@ -19,7 +19,7 @@
     @include('partials._pageheader')
 
     <!-- MAIN -->
-    <div class="ctn-main">
+    <div class="ctnmain">
         <a href="{{ route('lte') }}" class="goback">&lt Go back</a>
         <div class="text-center">
             <h1 class="sub-title">Letter of Explanation</h1>
@@ -86,7 +86,7 @@
         </div>
     </div>
 
-    <script src="{{ asset('js/scholar.js') }}"></script>
+    <script src="{{ asset('js/headercontrol.js') }}"></script>
 </body>
 
 </html>
