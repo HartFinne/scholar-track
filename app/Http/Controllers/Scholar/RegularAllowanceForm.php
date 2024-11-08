@@ -186,7 +186,7 @@ class RegularAllowanceForm extends Controller
 
 
 
-
+        DB::beginTransaction();
         try {
             // Step 1: Insert into regular_allowance table
             $regularAllowance = RegularAllowance::create([
@@ -312,9 +312,10 @@ class RegularAllowanceForm extends Controller
                 ]);
             }
 
-
+            DB::commit();
             return redirect()->back()->with('success', 'Data successfully saved!');
         } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('failure', 'Error saving data: ' . $e->getMessage());
         }
     }
