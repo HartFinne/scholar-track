@@ -296,7 +296,7 @@
                                             <td class="text-center align-middle">{{ $attendance->timein }}</td>
                                             <td class="text-center align-middle">{{ $attendance->timeout }}</td>
                                             <td class="text-center align-middle">{{ $attendance->facilitator }}</td>
-                                            <td class="text-center align-middle">{{ $attendance->status }}</td>
+                                            <td class="text-center align-middle">{{ $attendance->csastatus }}</td>
                                         </tr>
                                     @endforeach
                                 @endif
