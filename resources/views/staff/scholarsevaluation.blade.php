@@ -27,7 +27,7 @@
         <div class="row">
             <div class="card mb-3">
                 <div class="col-md-2 h5 fw-bold">Accuracy</div>
-                <div class="col-md-10 h5">{{ toInteger($data['accuracy']) * 100 }}</div>
+                <div class="col-md-10 h5">{{ intval($data['accuracy']) * 100 }}%</div>
             </div>
         </div>
         @if (session('success'))
