@@ -74,7 +74,8 @@
                         <label class="col-md-4 col-form-label">End Time</label>
                         <div class="col-md-8">
                             <p class="form-control-plaintext">
-                                {{ \Carbon\Carbon::parse($event->starttime)->addHours(2)->format('h:i A') ?? '' }}</p>
+                                {{ \Carbon\Carbon::parse($event->starttime)->addHours(2)->format('h:i A') ?? '' }}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -105,14 +106,16 @@
                         <label class="col-md-4 col-form-label">Time In</label>
                         <div class="col-md-8">
                             <p class="form-control-plaintext">
-                                {{ \Carbon\Carbon::parse($scholar->timein)->format('h:i A') ?? '' }}</p>
+                                {{ $scholar->timein ? \Carbon\Carbon::parse($scholar->timein)->format('h:i A') : '--' }}
+                            </p>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Time Out</label>
                         <div class="col-md-8">
                             <p class="form-control-plaintext">
-                                {{ \Carbon\Carbon::parse($scholar->timeout)->format('h:i A') ?? '' }}</p>
+                                {{ $scholar->timein ? \Carbon\Carbon::parse($scholar->timeout)->format('h:i A') : '--' }}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -133,19 +136,20 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label">Attendance Status</label>
                         <div class="col-md-8">
-                            <p class="form-control-plaintext">{{ $scholar->status ?? '' }}</p>
+                            <p class="form-control-plaintext">{{ $scholar->csastatus ?? '' }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Single Column for Image Proof -->
-            <div class="form-group row">
-                <label class="col-md-2 col-form-label">Attendance Proof</label>
-                <div class="col-md-10">
-                    <img src="{{ Storage::url($scholar->attendanceproof) }}" alt="Attendance Proof Photo"
-                        class="img-thumbnail">
+            @if ($scholar->attendanceproof)
+                <div class="form-group row">
+                    <label class="col-md-2 col-form-label">Attendance Proof</label>
+                    <div class="col-md-10">
+                        <img src="{{ Storage::url($scholar->attendanceproof) }}" alt="Attendance Proof Photo"
+                            class="img-thumbnail">
+                    </div>
                 </div>
-            </div>
+            @endif
         </fieldset>
         <div class="row justify-content-center align-items-center">
             <div class="col-auto">
