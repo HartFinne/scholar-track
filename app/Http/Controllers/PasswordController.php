@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\applicant;
 use Illuminate\Http\Request;
-use App\Models\user;
+use App\Models\User;
 use App\Models\staccount;
 use App\Models\applicants;
 use App\Notifications\ResetPassword;
