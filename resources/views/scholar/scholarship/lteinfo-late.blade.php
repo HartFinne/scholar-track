@@ -24,7 +24,7 @@
 
     <!-- MAIN -->
     <div class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
+        <a href="{{ route('sclte') }}" class="goback">&lt Go back</a>
         <div class="text-center">
             <h1 class="sub-title">Letter of Explanation</h1>
         </div>
