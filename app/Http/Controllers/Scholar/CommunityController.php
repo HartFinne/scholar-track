@@ -72,9 +72,9 @@ class CommunityController extends Controller
         // Step 3: Filter activities based on search query if provided
         if ($search) {
             $activities->where('title', 'like', '%' . $search . '%')
-                        ->orWhere('eventloc', 'like', '%' . $search . '%')
-                        ->orWhere('facilitator', 'like', '%' . $search . '%')
-                        ->orWhere('meetingplace', 'like', '%' . $search . '%');
+                ->orWhere('eventloc', 'like', '%' . $search . '%')
+                ->orWhere('facilitator', 'like', '%' . $search . '%')
+                ->orWhere('meetingplace', 'like', '%' . $search . '%');
         }
 
         $activities = $activities->get();
@@ -401,7 +401,7 @@ class CommunityController extends Controller
                 'communityservice.calltime as time', // Use calltime as the event time
                 'communityservice.facilitator'
             );
-        
+
         // Apply filter based on the attendance status if it is not "all"
         if ($attendanceStatus !== 'all') {
             $attendanceQuery->where('csattendance.csastatus', $attendanceStatus);
@@ -422,14 +422,20 @@ class CommunityController extends Controller
             ->where('id', Auth::id())
             ->first();
 
-        // Get only registered activities
+        // Assuming 'caseCode' is an attribute of the authenticated user
+        $caseCode = $data->caseCode; // Retrieve caseCode from the user's data
+
+        // Get only registered activities for the authenticated user
         $csRecord = communityservice::join('csregistration', 'communityservice.csid', '=', 'csregistration.csid')
             ->where('csregistration.registatus', 'Going')
+            ->where('csregistration.caseCode', $caseCode) // Use the retrieved caseCode
             ->select('communityservice.*')
             ->get();
 
         return view('scholar.communityservice.csform', compact('data', 'csRecord'));
     }
+
+
 
     // store the cs form 
     public function storeCSForm(Request $request)
