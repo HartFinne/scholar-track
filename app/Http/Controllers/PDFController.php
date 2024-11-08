@@ -148,7 +148,10 @@ class PDFController extends Controller
         $results = evalresults::with('basicInfo')->orderBy('acadyear', 'ASC')->get();
         $acadyears = evalresults::selectRaw('acadyear')->distinct()->get();
 
-        return view('staff.scholarsevaluation', compact('results', 'acadyears'));
+        $jsonString = File::get(storage_path('app/python/performance_metrics.json'));
+        $data = json_decode($jsonString, true);
+
+        return view('staff.scholarsevaluation', compact('results', 'acadyears', 'data'));
     }
 
     public function showMetrics()
