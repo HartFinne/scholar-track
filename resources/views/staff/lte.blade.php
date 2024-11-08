@@ -106,7 +106,7 @@
                                 <td class="text-center align-middle">{{ $letter->hcattendance->hcastatus }} in
                                     {{ $letter->eventtype }}</td>
                             @elseif ($letter->eventtype == 'Community Service')
-                                <td class="text-center align-middle">{{ $letter->csattendance->status }} in
+                                <td class="text-center align-middle">{{ $letter->csattendance->csastatus }} in
                                     {{ $letter->eventtype }}</td>
                             @elseif ($letter->eventtype == null)
                                 <td class="text-center align-middle">{{ $letter->violation }}</td>
