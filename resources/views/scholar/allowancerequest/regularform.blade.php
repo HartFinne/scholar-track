@@ -386,6 +386,8 @@
                         <div class="column">
                             <label for="lodgingType">Type of Lodging</label>
                             <div class="radio-group">
+                                <input type="hidden" name="lodgingType" value="">
+
                                 <div class="row-radio">
                                     <input type="radio" id="dorm" name="lodgingType" value="Dorm"
                                         {{ old('lodgingType') == 'Dorm' ? 'checked' : '' }}>
