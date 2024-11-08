@@ -338,14 +338,32 @@ class StaffController extends Controller
 
     public function showlteinfo($lid)
     {
-        $letter = lte::with('hcattendance', 'csattendance')->where('lid', $lid)->first();
+        $letter = lte::where('lid', $lid)->first();
         $scholar = User::with(['basicInfo'])->where('caseCode', $letter->caseCode)->first();
-        if ($letter->eventtype = 'Humanities Class') {
-            $eventinfo = humanitiesclass::where('hcid', $letter->conditionid)->first();
-        } elseif ($letter->eventtype = 'Community Service') {
-            $eventinfo = communityservice::where('csid', $letter->conditionid)->first();
+        if ($letter->eventtype == 'Humanities Class') {
+            $violation = hcattendance::where('hcaid', $letter->conditionid)->first();
+            $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
+
+            if ($violation->hcastatus == "Absent") {
+                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
+            } elseif ($violation->hcastatus == "Late") {
+                return view('scholar.scholarship.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
+            } elseif ($violation->hcastatus == "Left Early") {
+                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+            }
+        } elseif ($letter->eventtype == 'Community Service') {
+            $csviolation = csregistration::where('csrid', $letter->conditionid)->first();
+
+            $eventinfo = communityservice::where('csid', $csviolation->csid)->first();
+
+            if ($csviolation->registatus == "Cancelled") {
+                return view('scholar.scholarship.lteinfo-cancelled', compact('letter', 'scholar', 'eventinfo', 'csviolation'));
+            } elseif ($csviolation->registatus == "ABSENT") {
+                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar',  'eventinfo', 'csviolation'));
+            } elseif ($csviolation->hcastatus == "Left Early") {
+                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+            }
         }
-        return view('staff.lteinfo', compact('letter', 'scholar', 'eventinfo'));
     }
 
     public function showPenalty()
