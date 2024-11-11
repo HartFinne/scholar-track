@@ -138,7 +138,7 @@
                         <td class="text-center align-middle">Approved</td>
                         <td class="text-center align-middle">April 10, 2023</td>
                         <td class="text-center align-middle">
-                            <a href="{{ route('allowancerequests-regular-info') }}"
+                            <a href="{{ route('viewregulardetails') }}"
                                 class="btn btn-success btn-sm">View</a>
                         </td>
                     </tr>

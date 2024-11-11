@@ -343,10 +343,11 @@ td {
 
 .file-info{
     border: 1px solid #8eb79c;
-    background-color: #eaebea;
     border-radius: 10px;
     margin: 50px 30px;
     padding: 20px;
+    margin: auto;
+    width: 8.5in;
 }
 
 .file-info .info{
