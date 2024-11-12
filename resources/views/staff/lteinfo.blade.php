@@ -45,18 +45,24 @@
                 <p>Greetings!</p>
             </div>
             <div class="lte-body">
-                <p>
-                    Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
-                    {{ $eventinfo->topic ?? $eventinfo->title }} that took place in the
-                    {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}. Upon checking the
-                    attendance,
-                    we noticed that you did not participate despite the Foundation's effort to inform you beforehand.
-                </p>
-                <p>
-                    In connection with this, you are advised to <b>submit your written explanation letter within
-                        three (3) days of receipt of this notice.</b>
-                </p><br>
-                <p>Kindly give this matter your priority attention.</p><br>
+                @if ($letter->violation == 'Absent')
+                    <p>
+                        Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
+                        {{ $eventinfo->topic ?? $eventinfo->title }} that took
+                        place at
+                        {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}.
+                        Upon checking the
+                        attendance,
+                        we noticed that you left the event early, despite the Foundation's prior communication and
+                        efforts
+                        to ensure your full participation.
+                    </p>
+                    <p>
+                        In connection with this, you are advised to <b>submit your written explanation letter within
+                            three (3) days of receipt of this notice.</b>
+                    </p><br>
+                    <p>Kindly give this matter your priority attention.</p><br>
+                @endif
             </div>
 
             <div class="closing-lte">

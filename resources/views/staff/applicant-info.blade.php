@@ -23,7 +23,7 @@
                     <a href="{{ route('applicants') }}" class="btn btn-success w-100">Go back</a>
                 </div>
             </div>
-            <div class="appinfo">
+            <div class="appinfo p-4">
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
                         {{ session('success') }}
@@ -37,39 +37,71 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
-                <div class="row my-2">
-                    <span class="col-md-3 label">Applicant Name</span>
-                    <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $applicant->name }}"
-                        readonly>
+
+                <div class="row mb-3">
+                    <label class="col-md-3 col-form-label">Applicant Name</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" value="{{ $applicant->name }}" readonly>
+                    </div>
                 </div>
-                <div class="row my-2">
-                    <span class="col-md-3 label">Applicant Case Code</span>
-                    <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $applicant->casecode }}"
-                        readonly>
+
+                <div class="row mb-3">
+                    <label class="col-md-3 col-form-label">Applicant Case Code</label>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" value="{{ $applicant->casecode }}" readonly>
+                    </div>
                 </div>
-                <form class="row my-2" method="POST"
-                    action="{{ route('updateapplicantstatus', $applicant->casecode) }}">
+
+                <form method="POST" action="{{ route('updateapplicantstatus', $applicant->casecode) }}">
                     @csrf
-                    <span class="col-md-3 label">Application Status</span>
-                    <span class="col-md-1 label">: </span>
-                    <select name="applicationstatus" class="col-md-8" style="max-width: 35%; padding: 2px 5px;"
-                        {{ $applicant->applicationstatus == 'WITHDRAWN' ? 'disabled' : '' }}>
-                        <option value="UNDER REVIEW"
-                            {{ $applicant->applicationstatus == 'UNDER REVIEW' ? 'selected' : '' }}>UNDER REVIEW
-                        </option>
-                        <option value="ACCEPTED" {{ $applicant->applicationstatus == 'ACCEPTED' ? 'selected' : '' }}>
-                            ACCEPTED</option>
-                        <option value="REJECTED" {{ $applicant->applicationstatus == 'REJECTED' ? 'selected' : '' }}>
-                            REJECTED</option>
-                        <option value="WITHDRAWN" {{ $applicant->applicationstatus == 'WITHDRAWN' ? 'selected' : '' }}>
-                            WITHDRAWN</option>
-                    </select>
-                    <button class="rounded border border-success mx-3" id="btnupdate"
-                        {{ $applicant->applicationstatus == 'WITHDRAWN' ? 'disabled' : '' }}>Save</button>
+
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label">Application Status</label>
+                        <div class="col-md-9">
+                            <select name="applicationstatus" class="form-select"
+                                {{ $applicant->applicationstatus == 'Withdrawn' ? 'disabled' : '' }}>
+                                <option value="Under Review"
+                                    {{ $applicant->applicationstatus == 'Under Review' ? 'selected' : '' }}>Under
+                                    Review</option>
+                                <option value="For Initial Interview"
+                                    {{ $applicant->applicationstatus == 'For Initial Interview' ? 'selected' : '' }}>
+                                    For Initial Interview</option>
+                                <option value="For Panel Interview"
+                                    {{ $applicant->applicationstatus == 'For Panel Interview' ? 'selected' : '' }}>For
+                                    Panel Interview</option>
+                                <option value="For Virtual Home Visit"
+                                    {{ $applicant->applicationstatus == 'For Virtual Home Visit' ? 'selected' : '' }}>
+                                    For Virtual Home Visit</option>
+                                <option value="Accepted"
+                                    {{ $applicant->applicationstatus == 'Accepted' ? 'selected' : '' }}>Accepted
+                                </option>
+                                <option value="Rejected"
+                                    {{ $applicant->applicationstatus == 'Rejected' ? 'selected' : '' }}>Rejected
+                                </option>
+                                <option value="Withdrawn"
+                                    {{ $applicant->applicationstatus == 'Withdrawn' ? 'selected' : '' }}>Withdrawn
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-md-3 col-form-label">Comment</label>
+                        <div class="col-md-9">
+                            <textarea rows="8" name="comment" class="form-control" placeholder="Type here..." style="resize: none;">{{ $applicant->comment }}
+                            </textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2" style="margin-left: auto">
+                            <button type="submit" class="btn btn-light fw-bold w-100"
+                                {{ $applicant->applicationstatus == 'Withdrawn' ? 'disabled' : '' }}>Save</button>
+                        </div>
+                    </div>
                 </form>
             </div>
+
             <div class="page1">
                 <div class="header">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
@@ -542,16 +574,15 @@
                 <div class="row mb-2 pb-2 border-bottom">
                     <div class="col-md-7 file">Latest Report Card</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->reportcard) }}">
-                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                        <a href="{{ asset('storage/' . $applicant->requirements->reportcard) }}" target="_blank">
+                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
                 </div>
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Latest Registration Card</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->regiform) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->regiform) }}" target="_blank">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -559,8 +590,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Autobiography</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->autobio) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->autobio) }}" target="_blank">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -568,8 +598,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Family Picture</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->familypic) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->familypic) }}" target="_blank">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -577,8 +606,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Picture of House (Inside)</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->houseinside) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->houseinside) }}" target="_blank">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -586,8 +614,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Picture of House (Outside)</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->houseoutside) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->houseoutside) }}" target="_blank">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -595,8 +622,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Latest Utility Bill</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->utilitybill) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->utilitybill) }}" target="_blank">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -604,8 +630,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Sketch Map of Home Address</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->sketchmap) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->sketchmap) }}" target="_blank">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -614,8 +639,7 @@
                     <div class="col-md-7 file">Latest Pay Slip of Parent/s</div>
                     <div class="col-md-5 text-center">
                         @if (!empty($applicant->requirements) && !empty($applicant->requirements->payslip))
-                            <a href="{{ asset('storage/' . $applicant->requirements->payslip) }}"
-                                >
+                            <a href="{{ asset('storage/' . $applicant->requirements->payslip) }}" target="_blank">
                                 <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                             </a>
                         @else
@@ -626,9 +650,8 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Certificate of Indigency</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->indigencycert) }}"
-                            >
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span> 
+                        <a href="{{ asset('storage/' . $applicant->requirements->indigencycert) }}" target="_blank">
+                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
                 </div>

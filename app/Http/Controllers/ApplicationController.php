@@ -285,7 +285,7 @@ class ApplicationController extends Controller
                 'fblink' => $request->fblink,
                 'isIndigenous' => $request->isIndigenous,
                 'indigenousgroup' => $request->indigenousgroup,
-                'applicationstatus' => "UNDER REVIEW",
+                'applicationstatus' => "Under Review",
                 'prioritylevel' => $prioritylevel,
             ]);
 
@@ -553,7 +553,7 @@ class ApplicationController extends Controller
         DB::beginTransaction();
         try {
             $applicant = applicants::where('casecode', $casecode)->first();
-            $applicant->applicationstatus = 'WITHDRAWN';
+            $applicant->applicationstatus = 'Withdrawn';
             $applicant->save();
             DB::commit();
 

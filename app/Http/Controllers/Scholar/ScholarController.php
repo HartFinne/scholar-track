@@ -30,8 +30,12 @@ use App\Models\Appointments;
 use App\Models\communityservice;
 use App\Models\criteria;
 use App\Models\csregistration;
+use App\Models\institutions;
+use App\Models\scholarshipinfo;
+use App\Models\staccount;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
 
 class ScholarController extends Controller
 {
@@ -302,7 +306,6 @@ class ScholarController extends Controller
     {
         $user = Auth::user();
         $educ = ScEducation::where('caseCode', $user->caseCode)->first();
-        // Validate the form data
         $gwaRules = ['required', 'numeric'];
 
         if ($educ->scSchoolLevel == 'College') {
@@ -320,9 +323,6 @@ class ScholarController extends Controller
         ]);
 
         try {
-            // Retrieve the currently authenticated user's caseCode // Get the authenticated user
-
-            // Check if an entry for the same academic year and semester already exists
             $existingGrade = grades::where('caseCode', $user->caseCode)
                 ->where('SemesterQuarter', $request->semester)
                 ->where('schoolyear', $educ->scAcademicYear)
@@ -345,9 +345,15 @@ class ScholarController extends Controller
                 return redirect()->back()->withErrors(['gradeImage' => 'File upload failed. Please try again.'])->withInput();
             }
 
-            // Determine the grade status based on the GWA value
-            $gradeStatus = ($request->gwa >= 3 && $request->gwa <= 5) ? 'Failed' : 'Pending';
+            $criteria = criteria::first();
+            $gradingsystem = institutions::where('schoolname', $educ->scSchoolName)->first();
 
+            if ($gradingsystem->highestgwa == 1) {
+                $gradeStatus = ($request->gwa > $criteria->cgwa && $request->gwa <= 5) ? 'Failed GWA' : 'Passed';
+            } else {
+                $gradeStatus = ($request->gwa < $criteria->cgwa && $request->gwa >= 1) ? 'Failed GWA' : 'Passed';
+            }
+            DB::beginTransaction();
             // Save the grade entry and link it to the educationID
             grades::create([
                 'caseCode' => $user->caseCode, // Link the grade to the scholar
@@ -355,12 +361,38 @@ class ScholarController extends Controller
                 'SemesterQuarter' => $request->semester,
                 'GWA' => $request->gwa,
                 'ReportCard' => $filePath, // Store the file path
-                'GradeStatus' => 'Pending' // Default status or modify based on your logic
+                'GradeStatus' => $gradeStatus
             ]);
 
+            $scinfo = scholarshipinfo::where('caseCode', $user->caseCode)->first();
+            $worker = staccount::where('area', $scinfo->area)->first();
+
+            $gradeinfo = grades::where('caseCode', $user->caseCode)
+                ->where('schoolyear', $educ->scAcademicYear)
+                ->where('SemesterQuarter', $request->semester)->first();
+
+            if ($gradeStatus == 'Failed GWA') {
+                lte::create([
+                    'caseCode' => $user->caseCode,
+                    'violation' => $gradeStatus,
+                    'conditionid' => $gradeinfo->gid,
+                    'eventtype' => null,
+                    'dateissued' => now(),
+                    'deadline' => Carbon::now()->addDays(3),
+                    'datesubmitted' => null,
+                    'reason' => null,
+                    'explanation' => null,
+                    'proof' => null,
+                    'ltestatus' => 'No Response',
+                    'workername' => strtoupper($worker->name) . ', RSW',
+                ]);
+            }
+
+            DB::commit();
             // Redirect on success and pass the grades data
             return redirect()->route('gradesub')->with('success', 'Grade submission uploaded successfully!');
         } catch (\Exception $e) {
+            DB::rollBack();
             // Log the error for debugging purposes
             Log::error('Grade submission failed: ' . $e->getMessage());
 
@@ -378,25 +410,6 @@ class ScholarController extends Controller
         return view('scholar.scholarship.gradesinfo', compact('grade'));
     }
 
-    // HUMANITIES CLASS
-    // public function showHumanitiesClass()
-    // {
-    //     $scholar = Auth::user();
-
-    //     $totalattendance = hcattendance::where('caseCode', $scholar->caseCode)->count();
-
-    //     $totaltardiness = hcattendance::where('caseCode', $scholar->caseCode)->sum('tardinessduration');
-
-    //     $totalabsences = hcattendance::where('caseCode', $scholar->caseCode)
-    //         ->where('hcastatus', 'Absent')
-    //         ->count();
-
-    //     $classes = humanitiesclass::with(['hcattendance' => function ($query) use ($scholar) {
-    //         $query->where('caseCode', $scholar->caseCode);
-    //     }])->get();
-
-    //     return view('scholar.scholarship.schumanities', compact('classes', 'totalattendance', 'totaltardiness', 'totalabsences'));
-    // }
     public function showHumanitiesClass(Request $request)
     {
         $scholar = Auth::user();
@@ -472,29 +485,20 @@ class ScholarController extends Controller
             ->where('id', Auth::id())
             ->first();
 
-        if ($letter->eventtype == 'Humanities Class') {
-            $violation = hcattendance::where('hcaid', $letter->conditionid)->first();
-            $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
+        if ($letter->violation == 'Failed GWA' || $letter->violation == 'Failed Grade' || $letter->violation == 'Mismatched GWA') {
+            $academicData = grades::where('gid', $letter->conditionid)->first();
 
-            if ($violation->hcastatus == "Absent") {
-                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
-            } elseif ($violation->hcastatus == "Late") {
-                return view('scholar.scholarship.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
-            } elseif ($violation->hcastatus == "Left Early") {
-                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
+            return view('scholar.scholarship.lteinfo', compact('letter', 'scholar', 'academicData'));
+        } else {
+            if ($letter->eventtype == 'Humanities Class') {
+                $violation = hcattendance::where('hcaid', $letter->conditionid)->first();
+                $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
+            } elseif ($letter->eventtype == 'Community Service') {
+                $violation = csregistration::where('csrid', $letter->conditionid)->first();
+                $eventinfo = communityservice::where('csid', $violation->csid)->first();
             }
-        } elseif ($letter->eventtype == 'Community Service') {
-            $csviolation = csregistration::where('csrid', $letter->conditionid)->first();
 
-            $eventinfo = communityservice::where('csid', $csviolation->csid)->first();
-
-            if ($csviolation->registatus == "Cancelled") {
-                return view('scholar.scholarship.lteinfo-cancelled', compact('letter', 'scholar', 'eventinfo', 'csviolation'));
-            } elseif ($csviolation->registatus == "ABSENT") {
-                return view('scholar.scholarship.lteinfo-absent', compact('letter', 'scholar',  'eventinfo', 'csviolation'));
-            } elseif ($csviolation->hcastatus == "Left Early") {
-                return view('scholar.scholarship.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
-            }
+            return view('scholar.scholarship.lteinfo', compact('letter', 'scholar', 'eventinfo'));
         }
     }
 

@@ -15,5 +15,6 @@ class institutions extends Model
 
     protected $fillable = [
         'schoolname',
+        'highestgwa'
     ];
 }

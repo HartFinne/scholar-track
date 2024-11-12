@@ -10,6 +10,7 @@ use App\Models\csregistration;
 use App\Models\lte;
 use App\Models\staccount;
 use App\Models\User;
+use App\Models\scholarshipinfo;
 use App\Notifications\LteAnnouncementCreated;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Support\Carbon;
@@ -447,7 +448,7 @@ class CommunityController extends Controller
             'csid' => 'required|integer', // Integer representing the activity ID
             'timeIn' => 'required|date_format:H:i', // Time input should match the format, e.g., "14:30"
             'timeOut' => 'required|date_format:H:i', // Time input should match the format, e.g., "15:30"
-            'attendanceStatus' => 'required|string|in:Present,Late,Left the Activity Early', // Validate against allowed statuses
+            'attendanceStatus' => 'required|string', // Validate against allowed statuses
             'hrSpent' => 'required|integer|min:0', // Integer value for hours spent, minimum 0
             'proofImg' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Image validation for proof of attendance, 2MB max size
         ]);
@@ -483,6 +484,7 @@ class CommunityController extends Controller
         }
 
         try {
+            DB::beginTransaction();
             // Save the validated data
             $attendance = new csattendance(); // Assuming you have an Attendance model
             $attendance->csid = $validatedData['csid'];
@@ -528,10 +530,31 @@ class CommunityController extends Controller
                 $csRegistration->save();
             }
 
+            $scinfo = scholarshipinfo::where('caseCode', $user->caseCode)->first();
+            $worker = staccount::where('area', $scinfo->area)->first();
 
+            if ($validatedData['attendanceStatus'] != 'Present') {
+                lte::create([
+                    'caseCode' => $user->caseCode,
+                    'violation' => $validatedData['attendanceStatus'],
+                    'conditionid' => $attendance->csaid,
+                    'eventtype' => 'Community Service',
+                    'dateissued' => now(),
+                    'deadline' => Carbon::now()->addDays(3),
+                    'datesubmitted' => null,
+                    'reason' => null,
+                    'explanation' => null,
+                    'proof' => null,
+                    'ltestatus' => 'No Response',
+                    'workername' => strtoupper($worker->name) . ', RSW',
+                ]);
+            }
+
+            DB::commit();
             // Return success response
             return back()->with('success', 'Attendance recorded successfully.');
         } catch (\Exception $e) {
+            DB::rollBack();
             // Log the error for debugging
             Log::error('Attendance save failed: ' . $e->getMessage());
 

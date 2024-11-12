@@ -17,12 +17,7 @@
 
     <div class="ctnmain">
         <div class="row align-items-center">
-            {{-- <div class="col-md-9"> --}}
             <span class="pagetitle">Scholars Performance Evaluation (College Only)</span>
-            {{-- </div> --}}
-            {{-- <div class="col-md-3">
-                <a href="{{ route('showmetrics') }}" class="btn btn-success w-100">Model Performance Metrics</a>
-            </div> --}}
         </div>
         <div class="row px-4">
             <div class="card mb-3 p-2 bg-light">

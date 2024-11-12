@@ -30,7 +30,8 @@ return new class extends Migration
             $table->text('fblink');
             $table->string('isIndigenous', 3);
             $table->string('Indigenousgroup', 100)->nullable();
-            $table->string('applicationstatus', 25);
+            $table->string('applicationstatus', 50);
+            $table->text('comment')->nullable();
             $table->unsignedTinyInteger('prioritylevel');
             $table->string('accountstatus', 10)->default('Active');
             $table->string('remember_token', 100)->nullable();

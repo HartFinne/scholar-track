@@ -29,6 +29,7 @@ return new class extends Migration
         Schema::create('institutions', function (Blueprint $table) {
             $table->increments('inid');
             $table->string('schoolname', 255)->unique();
+            $table->float('highestgwa');
             $table->timestamps();
         });
 
@@ -58,26 +59,37 @@ return new class extends Migration
         DB::table('institutions')->insert([
             [
                 'schoolname' => "Polytechnic University of the Philippines",
+                'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "University of the Philippines",
+                'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "Pamantasan ng Lungsod ng Maynila",
+                'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "Technological University of the Philippines",
+                'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "Universidad De Manila",
+                'highestgwa' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'schoolname' => "Philippine Normal University",
+                'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

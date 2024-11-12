@@ -101,6 +101,7 @@ class StaffController extends Controller
         try {
             $applicant = applicants::where('casecode', $casecode)->first();
             $applicant->applicationstatus = $request->applicationstatus;
+            $applicant->comment = $request->comment;
             $applicant->save();
             DB::commit();
 
@@ -301,12 +302,15 @@ class StaffController extends Controller
             $grade->GradeStatus = $request->gradestatus;
             $grade->save();
 
+            $lteExists = lte::where('caseCode', $grade->caseCode)
+                ->where('conditionid', $gid)->exists();
+
             // Check if the grade status is neither "Passed" nor "Pending"
-            if ($request->gradestatus != 'Passed' && $request->gradestatus != 'Pending') {
+            if ($request->gradestatus != 'Passed' && $request->gradestatus != 'Pending' && !$lteExists) {
                 lte::create([
                     'caseCode' => $grade->caseCode,
                     'violation' => $request->gradestatus,
-                    'conditionid' => null,
+                    'conditionid' => $gid,
                     'eventtype' => null,
                     'dateissued' => now(),
                     'deadline' => Carbon::now()->addDays(3),
@@ -343,27 +347,12 @@ class StaffController extends Controller
         if ($letter->eventtype == 'Humanities Class') {
             $violation = hcattendance::where('hcaid', $letter->conditionid)->first();
             $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
-
-            if ($violation->hcastatus == "Absent") {
-                return view('staff.lteinfo-absent', compact('letter', 'scholar', 'eventinfo'));
-            } elseif ($violation->hcastatus == "Late") {
-                return view('staff.lteinfo-late', compact('letter', 'scholar', 'eventinfo'));
-            } elseif ($violation->hcastatus == "Left Early") {
-                return view('staff.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
-            }
         } elseif ($letter->eventtype == 'Community Service') {
-            $csviolation = csregistration::where('csrid', $letter->conditionid)->first();
-
-            $eventinfo = communityservice::where('csid', $csviolation->csid)->first();
-
-            if ($csviolation->registatus == "Cancelled") {
-                return view('staff.lteinfo-cancelled', compact('letter', 'scholar', 'eventinfo', 'csviolation'));
-            } elseif ($csviolation->registatus == "ABSENT") {
-                return view('staff.lteinfo-absent', compact('letter', 'scholar',  'eventinfo', 'csviolation'));
-            } elseif ($csviolation->hcastatus == "Left Early") {
-                return view('staff.lteinfo-leftearly', compact('letter', 'scholar', 'eventinfo'));
-            }
+            $violation = csregistration::where('csrid', $letter->conditionid)->first();
+            $eventinfo = communityservice::where('csid', $violation->csid)->first();
         }
+
+        return view('staff.lteinfo', compact('letter', 'scholar', 'eventinfo'));
     }
 
     public function showPenalty()
@@ -579,10 +568,12 @@ class StaffController extends Controller
         try {
             $request->validate([
                 'institute' => 'required|string|max:255',
+                'highestgwa' => 'required|numeric|max:5|min:1',
             ]);
 
             institutions::create([
                 'schoolname' => $request->institute,
+                'highestgwa' => $request->highestgwa,
             ]);
 
             DB::commit();
@@ -606,6 +597,7 @@ class StaffController extends Controller
     {
         $request->validate([
             'newschoolname' => 'required|string|max:255',
+            'newgwa' => 'required|numeric|max:5|min:1',
         ]);
 
         DB::beginTransaction();
@@ -613,7 +605,8 @@ class StaffController extends Controller
             $institution = institutions::findOrFail($inid);
 
             $institution->update([
-                'schoolname' => $request->newschoolname
+                'schoolname' => $request->newschoolname,
+                'highestgwa' => $request->newgwa,
             ]);
 
             DB::commit();
@@ -624,11 +617,11 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            if (institutions::where('schoolname', $request->institute)->exists()) {
+            if (institutions::where('schoolname', $request->newschoolname)->exists()) {
                 return redirect()->back()->with('error', 'Failed to update institution name. Duplicate institution.');
             }
 
-            return redirect()->back()->with('error', 'Failed to update institution name.');
+            return redirect()->back()->with('error', 'Failed to update institution name.') . $e->getMessage();
         }
     }
 

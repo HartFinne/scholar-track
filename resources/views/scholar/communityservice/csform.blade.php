@@ -79,7 +79,8 @@
                                 <option value="" disabled selected hidden>Select Activity</option>
                                 @foreach ($csRecord as $cs)
                                     <option value="{{ $cs->csid }}" data-location="{{ $cs->eventloc }}"
-                                        data-facilitator="{{ $cs->facilitator }}" data-date="{{ $cs->eventdate }}">
+                                        data-facilitator="{{ $cs->facilitator }}" data-date="{{ $cs->eventdate }}"
+                                        data-starttime="{{ $cs->starttime }}">
                                         {{ $cs->title }}
                                     </option>
                                 @endforeach
@@ -131,12 +132,8 @@
                     <div class="row">
                         <div class="column">
                             <label for="attendanceStatus">Attendance Status</label>
-                            <select name="attendanceStatus" id="attendanceStatus" required>
-                                <option value="" disabled selected hidden>Select Status</option>
-                                <option value="Present">Present</option>
-                                <option value="Late">Late</option>
-                                <option value="Left the Activity Early">Left the Activity Early</option>
-                            </select>
+                            <input name="attendanceStatus" id="attendanceStatus" value='' placeholder="--"
+                                readonly>
                         </div>
                         <div class="column">
                             <label for="hrSpent">Total Hours Spent</label>
@@ -158,29 +155,40 @@
                         var timeIn = document.getElementById('timeIn').value;
                         var timeOut = document.getElementById('timeOut').value;
                         var hrSpent = document.getElementById('hrSpent');
+                        var attendanceStatus = document.getElementById('attendanceStatus');
 
-                        if (timeIn && timeOut) {
-                            var start = new Date('1970-01-01T' + timeIn + 'Z');
-                            var end = new Date('1970-01-01T' + timeOut + 'Z');
+                        var activitySelect = document.getElementById('activity');
+                        var starttime = activitySelect.selectedOptions[0].dataset.starttime;
 
-                            // Calculate the difference in milliseconds
-                            var diff = end - start;
-
-                            // Convert milliseconds to hours
-                            var hours = Math.floor(diff / (1000 * 60 * 60));
-
-                            // If hours is negative, it means the timeOut is on the next day
-                            if (hours < 0) {
-                                hours += 24;
-                            }
-
-                            // Set hours to 0 if the time difference is less than an hour
-                            hrSpent.value = hours > 0 ? hours : 0;
-                        } else {
+                        if (!timeIn || !timeOut || !starttime) {
                             hrSpent.value = '';
+                            attendanceStatus.value = '--';
+                            return;
+                        }
+
+                        // Parse start, timeIn, and timeOut values as Date objects for comparison
+                        var scheduledStartTime = new Date('1970-01-01T' + starttime + 'Z');
+                        var actualTimeIn = new Date('1970-01-01T' + timeIn + 'Z');
+                        var actualTimeOut = new Date('1970-01-01T' + timeOut + 'Z');
+                        var scheduledEndTime = new Date(scheduledStartTime.getTime() + 2 * 60 * 60 * 1000);
+
+                        // Calculate time difference in milliseconds for hours spent
+                        var diff = actualTimeOut - scheduledStartTime;
+                        var hours = Math.floor(diff / (1000 * 60 * 60)); // Rounded down to the nearest whole number
+
+                        hrSpent.value = hours > 0 ? hours : 0;
+
+                        // Determine attendance status
+                        if (actualTimeIn > scheduledStartTime) {
+                            attendanceStatus.value = "Late";
+                        } else if (actualTimeOut < scheduledEndTime) {
+                            attendanceStatus.value = "Left Early";
+                        } else {
+                            attendanceStatus.value = "Present";
                         }
                     }
 
+                    // Event listeners for changes in timeIn and timeOut fields
                     document.getElementById('timeIn').addEventListener('change', calculateHours);
                     document.getElementById('timeOut').addEventListener('change', calculateHours);
                 </script>
