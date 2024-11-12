@@ -170,6 +170,9 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');
     Route::get('/allowance-requests-regular-details', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
     // Route::get('/allowance-requests-regular-details/{id}', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
+    Route::view('/viewregularform', 'staff.viewregularform')->name('viewregulardetails');
+
+
     Route::post('/update-requests-regular/{id}', [StaffController::class, 'updateRegularAllowance'])->name('update-requests-regular.post');
     // ALLOWANCE REQUESTS - SPECIAL
     Route::get('/allowance-requests-special', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
