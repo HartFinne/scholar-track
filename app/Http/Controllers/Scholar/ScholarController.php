@@ -36,6 +36,8 @@ use App\Models\staccount;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
+use Svg\Tag\Rect;
 
 class ScholarController extends Controller
 {
@@ -1233,7 +1235,44 @@ class ScholarController extends Controller
                 ->get();
         }
 
-        return view('scholar.appointmentsystem', compact('userappointments', 'user', 'status'));
+        $timeoptions = [
+            '07:00 AM - 08:00 AM',
+            '08:00 AM - 09:00 AM',
+            '09:00 AM - 10:00 AM',
+            '10:00 AM - 11:00 AM',
+            '01:00 PM - 02:00 PM',
+            '02:00 PM - 03:00 PM',
+            '03:00 PM - 04:00 PM',
+            '04:00 PM - 05:00 PM',
+        ];
+
+        return view('scholar.appointmentsystem', compact('userappointments', 'user', 'status', 'timeoptions'));
+    }
+
+    public function appointmentsfilter(Request $request)
+    {
+        $date = $request->input('date');
+        $timeoptions = [
+            '07:00 AM - 08:00 AM',
+            '08:00 AM - 09:00 AM',
+            '09:00 AM - 10:00 AM',
+            '10:00 AM - 11:00 AM',
+            '01:00 PM - 02:00 PM',
+            '02:00 PM - 03:00 PM',
+            '03:00 PM - 04:00 PM',
+            '04:00 PM - 05:00 PM',
+        ];
+
+        $timeslots = [];
+
+        foreach ($timeoptions as $time) {
+            $timeslots[$time] = Appointments::where('status', '!=', 'Cancelled')
+                ->where('date', $date)
+                ->where('time', $time)
+                ->count();
+        }
+
+        return response()->json($timeslots);
     }
 
     public function makeappointment($caseCode, Request $request)
@@ -1244,11 +1283,18 @@ class ScholarController extends Controller
             ->where('status', '!=', 'Cancelled')
             ->first();
 
+        $formattedDate = \Carbon\Carbon::parse($request->date)->format('F d, Y');
         if ($recordexists) {
-            $formattedDate = \Carbon\Carbon::parse($recordexists->date)->format('F d, Y');
             $error_message = "You have already made an appointment for " . strtolower($recordexists->reason) . " on " . $formattedDate;
-            return redirect()->route('appointment')->with('error', $error_message);
+            return redirect()->route('appointment')->with('failure', $error_message);
         }
+
+        $fullybooked = Appointments::where('status', '!=', 'Cancelled')->where('date', $request->date)->count() === 16;
+        if ($fullybooked) {
+            $error_message = "We're sorry, but all appointments are booked for " . $formattedDate . ". Please consider selecting an alternative date. Thank you for your patience and understanding.";
+            return redirect()->route('appointment')->with('failure', $error_message);
+        }
+
         try {
             DB::beginTransaction();
             // Create a new appointment record
@@ -1266,7 +1312,7 @@ class ScholarController extends Controller
             return redirect()->route('appointment')->with('success', 'Successfully made an appointment. Please wait for approval.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->route('appointment')->with('error', 'Failed to make appointment: ' . $e->getMessage());
+            return redirect()->route('appointment')->with('failure', 'Failed to make appointment: ' . $e->getMessage());
         }
     }
 
@@ -1297,7 +1343,7 @@ class ScholarController extends Controller
             DB::rollBack();
 
             // Redirect with an error message
-            return redirect()->back()->with('error', 'Failed to cancel appointment: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to cancel appointment: ' . $e->getMessage());
         }
     }
 

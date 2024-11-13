@@ -24,14 +24,20 @@
     @include('partials._navbar')
 
     <div class="ctn-main">
-        <a href="{{ route('appointment') }}" class="btn btn-success">&lt Go back</a>
 
-        <div class="appointment-view">
-            <div class="appointment-status">
-                <h6 class="appointment-stat">{{ $appointment->status }}</h6>
+        <div class="container mt-5">
+            <div class="card border-0 mx-auto" style="max-width: 75%">
+                <div class="row d-flex justify-content-between">
+                    <div class="col-md-2 mb-2">
+                        <a href="{{ route('appointment') }}" class="btn btn-success w-100">&lt Go back</a>
+                    </div>
+                    <div class="col-md-2">
+                        <span class="h6 appointment-stat w-100">{{ $appointment->status }}</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="appointment-info">
+            <div class="appointment-info mx-auto" style="max-width: 75%">
                 <h5>SCHEDULED APPOINTMENT</h5>
                 <div class="info">
                     <div class="label">Name:</div>

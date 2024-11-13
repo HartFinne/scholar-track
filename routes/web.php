@@ -52,6 +52,7 @@ Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::post('/make-appointment/{caseCode}', [ScholarController::class, 'makeappointment'])->name('makeappointment');
     Route::get('/cancel-appointment/{id}', [ScholarController::class, 'cancelappointment'])->name('cancelappointment');
     Route::get('/appointment-info/{id}', [ScholarController::class, 'showappointmentinfo'])->name('appointmentinfo');
+    Route::get('/appointments/filter', [ScholarController::class, 'appointmentsfilter'])->name('appointmentsfilter');
     // Humanities Class
     Route::get('/schumanities', [ScholarController::class, 'showHumanitiesClass'])->name('schumanities');
 });

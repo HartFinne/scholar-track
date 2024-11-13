@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+#timeoptions label {
+    font-family: "Noto Sans JP", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    width: 60%;
+    cursor: pointer;
+    text-align: center;
+}
 
 * {
     margin: 0;
@@ -8,24 +18,24 @@
     font-family: 'Poppins', Arial;
 }
 
-.ctn-main{
+.ctn-main {
     width: 90%;
     margin: auto;
 }
 
-.ctn-main .goback{
+.ctn-main .goback {
     text-decoration: none;
     color: #1a5319;
     font-size: 15px;
 }
 
-.ctn-main .title{
+.ctn-main .title {
     font-family: 'League Spartan', sans-serif;
     font-weight: bold;
     margin: 25px 0;
 }
 
-.status{
+.status {
     margin-top: 30px;
     display: flex;
     gap: 20px;
@@ -48,27 +58,28 @@
     color: #fff;
 }
 
-.table-title{
+.table-title {
     font-weight: bold;
     padding: 0;
 }
 
-.table{
+.table {
     font-size: 15px;
     margin-bottom: 50px;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     text-align: center;
     vertical-align: middle;
 }
 
-.table th{
+.table th {
     background-color: #1a5319;
     color: #fff;
 }
 
-.btn-view{
+.btn-view {
     text-decoration: none;
     padding: 5px 15px;
     background-color: #56a72e;
@@ -77,12 +88,13 @@
     transition: 0.3s ease;
 }
 
-.btn-view:hover, .btn-submit:hover{
+.btn-view:hover,
+.btn-submit:hover {
     background-color: #1a5319;
 
 }
 
-.btn-cancel{
+.btn-cancel {
     background-color: red;
     color: #fff;
     border-radius: 20px;
@@ -92,7 +104,7 @@
     transition: 0.3s ease;
 }
 
-.btn-cancel:hover{
+.btn-cancel:hover {
     background-color: rgb(246, 81, 81);
 }
 
@@ -118,9 +130,10 @@
     border-top-right-radius: 10px;
 }
 
-.form-body{
+.form-body {
     padding: 20px;
 }
+
 .form-group {
     margin-bottom: 10px;
 }
@@ -144,7 +157,7 @@
     margin-bottom: 10px;
 }
 
-.time-selection .time{
+.time-selection .time {
     display: flex;
     align-items: center;
     padding: 0 50px;
@@ -153,7 +166,7 @@
     width: 300px;
 }
 
-.time-selection .time label{
+.time-selection .time label {
     margin-left: 10px;
 }
 
@@ -172,13 +185,13 @@
     transition: 0.3s ease;
 }
 
-.appointment-view{
+.appointment-view {
     width: 70%;
     margin: auto;
     border: 1px solid #fff;
 }
 
-.appointment-stat{
+.appointment-stat {
     background-color: #ffde59;
     font-weight: bold;
     padding: 10px;
@@ -186,45 +199,44 @@
     text-align: center;
     float: right;
     border-radius: 10px;
-    margin: 0 30px;
 }
 
-.appointment-info{
+.appointment-info {
     border: 1px solid #8eb79c;
     background-color: #eaebea;
     border-radius: 10px;
-    margin: 50px 30px;
+    /* margin: 50px 30px; */
     padding: 20px;
 }
 
-.appointment-info h5{
+.appointment-info h5 {
     background-color: #1a5319;
     color: #d6efd8;
     font-weight: bold;
     padding: 8px;
 }
 
-.appointment-info .info{
+.appointment-info .info {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 10px; 
-    align-items: center; 
+    gap: 10px;
+    align-items: center;
     padding: 10px;
     font-size: 15px;
 }
 
 .label {
-    text-align: left; 
+    text-align: left;
     margin-bottom: 5px;
 }
 
-.appointment-info span{
+.appointment-info span {
     color: #1e5430;
     font-weight: bold;
     margin-left: 20px;
 }
 
-.dialog.hidden{
+.dialog.hidden {
     display: none;
 }
 
@@ -254,7 +266,7 @@
     margin-bottom: 50px;
 }
 
-.dialog-content p{
+.dialog-content p {
     margin-bottom: 50px;
 }
 
@@ -281,12 +293,12 @@
     color: white;
 }
 
-.dialog-actions button#yesBtn:hover{
+.dialog-actions button#yesBtn:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(240, 81, 81);
 }
 
-.dialog-actions button#noBtn:hover{
+.dialog-actions button#noBtn:hover {
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgb(92, 87, 87);
 }
@@ -303,75 +315,90 @@
     font-weight: bold;
 }
 
-.dialog .fa-circle-exclamation{
+.dialog .fa-circle-exclamation {
     margin: 30px 0;
     color: #f15e5e;
     font-size: 50px;
 }
 
-.dialog .fa-circle-check{
+.dialog .fa-circle-check {
     margin: 30px 0;
     color: #6bdc6a;
     font-size: 50px;
 }
 
 @media (max-width: 768px) {
-    .ctn-main{
+    .ctn-main {
         width: 90%;
     }
+
     .appointmentform {
         width: 100%;
         font-size: 14px;
     }
+
     .time-selection {
         display: block;
     }
-    .status{
+
+    .status {
         gap: 0;
     }
+
     .filter-btn {
         font-size: 12px;
         padding: 2px 8px;
     }
-    .table, .table-title{
+
+    .table,
+    .table-title {
         font-size: 14px;
     }
-    .appointment-view{
+
+    .appointment-view {
         width: 100%;
     }
-    .appointment-stat{
+
+    .appointment-stat {
         padding: 10px;
         width: 100px;
         margin: 0;
     }
-    .appointment-info{
+
+    .appointment-info {
         padding: 10px;
         margin: 50px 0 0;
     }
-    .appointment-info h5{
+
+    .appointment-info h5 {
         font-size: 17px;
         padding: 8px;
     }
-    .appointment-info .info{
+
+    .appointment-info .info {
         display: block;
         font-size: 14px;
     }
-    .appointment-info span{
+
+    .appointment-info span {
         margin-left: 0;
     }
+
     .label {
         margin-bottom: 0;
     }
-    .value{
+
+    .value {
         margin-bottom: 10px;
     }
+
     .dialog-content {
         padding: 15px;
         width: 85%;
     }
+
     .dialog-actions button {
         margin: 5px;
     }
-    
-}
 
+}
