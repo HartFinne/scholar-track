@@ -22,42 +22,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CommunityController extends Controller
 {
-    // cs activies page to show
-    // public function showCSActivities()
-    // {
-    //     $user = Auth::user(); // Get the authenticated user
-    //     $caseCode = $user->caseCode; // Access the user's caseCode
-
-    //     // Step 1: Retrieve all activities that are in the future or today
-    //     $activities = communityservice::where('eventdate', '>=', now()->toDateString())->get();
-    //     // dd($activities);
-
-    //     // Step 2: Get the registration status for each activity
-    //     $registrations = csregistration::where('caseCode', $caseCode)
-    //         ->get(['csid', 'registatus'])
-    //         ->keyBy('csid')
-    //         ->toArray(); // Get all registered activities with status
-
-    //     // dd($registrations);
-
-    //     // Step 3: Filter out activities that the user has already submitted attendance for
-    //     $attendedActivities = csattendance::where('caseCode', $caseCode)
-    //         ->pluck('csid')
-    //         ->toArray(); // Get the CSIDs of activities the user has attended
-
-    //     // dd($attendedActivities);
-
-    //     // Step 4: Filter out activities from the collection if the user has already attended them
-    //     $filteredActivities = $activities->filter(function ($activity) use ($attendedActivities) {
-    //         return !in_array($activity->csid, $attendedActivities);
-    //     });
-
-    //     // dd($filteredActivities);
-
-    //     // Step 5: Pass the filtered activities and registrations to the view
-    //     return view('scholar.communityservice.csactivities', compact('filteredActivities', 'registrations'));
-    // }
-
     public function showCSActivities(Request $request)
     {
         $user = Auth::user(); // Get the authenticated user
@@ -137,7 +101,7 @@ class CommunityController extends Controller
         $registration = new csregistration();
         $registration->csid = $csid;
         $registration->caseCode = $caseCode;
-        $registration->registatus = 'GOING';
+        $registration->registatus = 'Going';
         $registration->save();
 
         // Update the slot number and volunteers number
@@ -165,24 +129,6 @@ class CommunityController extends Controller
             ->join('communityservice', 'csregistration.csid', '=', 'communityservice.csid')
             ->select('communityservice.*', 'csregistration.created_at as registration_date', 'csregistration.registatus', 'csregistration.csid')
             ->get();
-
-        // Loop through the registrations to check if any "GOING" status needs to be updated
-        // foreach ($registrations as $registration) {
-        //     // Check if the event date is in the past and the status is "GOING"
-        //     if ($registration->registatus === 'GOING' && Carbon::parse($registration->eventdate)->toDateString() < $today) {
-        //         // Check if there is no attendance record for this activity
-        //         $attendanceExists = csattendance::where('caseCode', $caseCode)
-        //             ->where('csid', $registration->csid)
-        //             ->exists();
-
-        //         if (!$attendanceExists) {
-        //             // Update the status to "ABSENT"
-        //             csregistration::where('caseCode', $caseCode)
-        //                 ->where('csid', $registration->csid)
-        //                 ->update(['registatus' => 'ABSENT']);
-        //         }
-        //     }
-        // }
 
         // Refresh the registrations after updating statuses
         $registrations = csregistration::where('caseCode', $caseCode)
@@ -333,43 +279,6 @@ class CommunityController extends Controller
         }
     }
 
-
-    // show cs attendance
-    // public function showCSAttendance()
-    // {
-    //     $user = Auth::user(); // Get the authenticated user
-    //     $caseCode = $user->caseCode; // Get user's caseCode
-
-    //     // Fetch the total attendance (number of entries in the attendance table)
-    //     $totalAttendance = csattendance::where('caseCode', $caseCode)->count();
-
-    //     // Fetch the total tardiness (assuming there's a field indicating tardiness duration)
-    //     $totalTardiness = csattendance::where('caseCode', $caseCode)
-    //         ->where('csastatus', 'Late')
-    //         ->count();
-
-    //     // Fetch the total absences (assuming absence means no attendance record for an event the user was registered for)
-    //     $totalAbsences = csregistration::where('caseCode', $caseCode)
-    //         ->where('registatus', 'ABSENT')
-    //         ->count();
-
-    //     // Fetch the attendance details joined with the community service information
-    //     $attendances = csattendance::where('caseCode', $caseCode)
-    //         ->join('communityservice', 'csattendance.csid', '=', 'communityservice.csid')
-    //         ->select(
-    //             'csattendance.*',
-    //             'communityservice.title as activity_title',
-    //             'communityservice.eventloc as location',
-    //             'communityservice.eventdate as date',
-    //             'communityservice.calltime as time', // Use calltime as the event time
-    //             'communityservice.facilitator'
-    //         )
-    //         ->get();
-
-    //     // Pass the data to the view
-    //     return view('scholar.communityservice.csattendance', compact('totalAttendance', 'totalTardiness', 'totalAbsences', 'attendances'));
-    // }
-
     public function showCSAttendance(Request $request)
     {
         $user = Auth::user(); // Get the authenticated user
@@ -385,7 +294,7 @@ class CommunityController extends Controller
 
         // Fetch the total absences (assuming absence means no attendance record for an event the user was registered for)
         $totalAbsences = csregistration::where('caseCode', $caseCode)
-            ->where('registatus', 'ABSENT')
+            ->where('registatus', 'Absent')
             ->count();
 
         // Get the selected attendance status filter from the request
@@ -401,7 +310,8 @@ class CommunityController extends Controller
                 'communityservice.eventdate as date',
                 'communityservice.calltime as time', // Use calltime as the event time
                 'communityservice.facilitator'
-            );
+            )
+            ->orderBy('csattendance.created_at', 'desc');
 
         // Apply filter based on the attendance status if it is not "all"
         if ($attendanceStatus !== 'all') {
@@ -526,7 +436,7 @@ class CommunityController extends Controller
                 ->first();
 
             if ($csRegistration) {
-                $csRegistration->registatus = 'COMPLETED';
+                $csRegistration->registatus = 'Completed';
                 $csRegistration->save();
             }
 

@@ -248,7 +248,7 @@
                                 @foreach ($grades as $index => $grade)
                                     <tr>
                                         <td class="text-center align-middle">{{ $index + 1 }}</td>
-                                        <td class="text-center align-middle">School Year</td>
+                                        <td class="text-center align-middle">{{ $grade->schoolyear }}</td>
                                         <td class="text-center align-middle">{{ $grade->SemesterQuarter }}</td>
                                         <td class="text-center align-middle">{{ $grade->GWA }}</td>
                                         <td class="text-center align-middle">{{ $grade->GradeStatus }}</td>

@@ -21,7 +21,8 @@ class csattendance extends Model
         'tardinessduration',
         'hoursspent',
         'csastatus',
-        'attendanceproof'
+        'attendanceproof',
+        'status'
     ];
 
     // Define inverse relationship to account

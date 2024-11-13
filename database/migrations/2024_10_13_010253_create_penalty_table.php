@@ -15,6 +15,7 @@ return new class extends Migration
             $table->increments('pid');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
             $table->string('condition', 150);
+            $table->unsignedInteger('conditionid')->nullable();
             $table->string('remark', 50)->default('');
             $table->date('dateofpenalty');
             $table->timestamps();
@@ -23,6 +24,12 @@ return new class extends Migration
             $table->foreign('caseCode') // Column in the child table
                 ->references('caseCode') // Column in the parent table (sc_addressinfo)
                 ->on('users') // Parent table
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
+
+            $table->foreign('conditionid') // Column in the child table
+                ->references('lid') // Column in the parent table (sc_addressinfo)
+                ->on('lte') // Parent table
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });

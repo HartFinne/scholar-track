@@ -56,18 +56,16 @@ class AutomateAttendanceAndLTE extends Command
                     ->where('csid', $registration->csid)
                     ->update(['registatus' => 'ABSENT']);
 
-
-
                 // Create an "ABSENT" record in csattendance
                 csattendance::create([
                     'caseCode' => $registration->caseCode,
                     'csid' => $registration->csid,
-                    'timein' => null, // Use null instead of 'nullable'
-                    'timeout' => null, // Use null instead of 'nullable'
-                    'csastatus' => 'ABSENT',
+                    'timein' => null,
+                    'timeout' => null,
+                    'csastatus' => 'Absent',
                     'hoursspent' => 0,
-                    'attendanceproof' => null, // Use null instead of 'nullable'
-                    'status' => 'DONE',
+                    'attendanceproof' => null,
+                    'status' => 'Valid',
                     'created_at' => Carbon::now('Asia/Manila'),
                     'updated_at' => Carbon::now('Asia/Manila'),
                 ]);

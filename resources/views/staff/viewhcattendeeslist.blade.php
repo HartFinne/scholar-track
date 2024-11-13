@@ -18,6 +18,7 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
+    <x-alert />
 
     <div class="ctnmain">
         <span class="pagetitle">Humanities Class Attendees</span>
@@ -27,24 +28,14 @@
                 <button type="submit" id="btnsearch"><i class="fas fa-magnifying-glass"></i></button>
             </form>
             <div>
-                <a id="btnsave" href="{{ route('savehc', $event->hcid) }}">Mark as Done</a>
-                <a id="btngoback" href="{{ route('attendancesystem', $event->hcid) }}">Go back</a>
+                @if ($event->status == 'On Going')
+                    <a id="btnsave" href="{{ route('savehc', $event->hcid) }}">Mark as Done</a>
+                    <a id="btngoback" href="{{ route('attendancesystem', $event->hcid) }}">Go back</a>
+                @else
+                    <a id="btngoback" href="{{ route('humanitiesclass') }}">Go back</a>
+                @endif
             </div>
         </div>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
 
         <div class="column">
             <div class="row">
@@ -79,7 +70,9 @@
                         <th class="text-center align-middle">Time Out</th>
                         <th class="text-center align-middle">Tardiness Duration (Minutes)</th>
                         <th class="text-center align-middle">Status</th>
-                        <th class="text-center align-middle">Action</th>
+                        @if ($event->status == 'On Going')
+                            <th class="text-center align-middle">Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -92,10 +85,12 @@
                             <td class="text-center align-middle">{{ $attendee->timeout }}</td>
                             <td class="text-center align-middle">{{ $attendee->tardinessduration }}</td>
                             <td class="text-center align-middle">{{ $attendee->hcastatus }}</td>
-                            <td class="text-center align-middle">
-                                <a href="{{ route('checkouthc', $attendee->hcaid) }} "
-                                    class="btn btn-danger">Check-out</a>
-                            </td>
+                            @if ($event->status == 'On Going')
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('checkouthc', $attendee->hcaid) }} "
+                                        class="btn btn-danger">Check-out</a>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

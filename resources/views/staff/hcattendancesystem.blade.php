@@ -137,7 +137,7 @@
     <!-- VIEW ATTENDEES DIALOG -->
     <div class="ctndialog" id="savedialog" style="display: none;">
         <div class="groupA">
-            <form method="POST" action="{{ route('viewhcattendees', ['hcid' => $event->hcid]) }}">
+            <form method="post" action="{{ route('viewhcattendees', ['hcid' => $event->hcid]) }}">
                 @csrf
                 <i class="dialogicon2 fas fa-circle-exclamation"></i>
                 <span id="label2">

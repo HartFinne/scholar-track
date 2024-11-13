@@ -85,9 +85,15 @@
             });
         }
     });
+
     // Save the scroll position before navigating away
     window.addEventListener('beforeunload', () => {
-        sessionStorage.setItem('scrollPosition', window.scrollY);
+        // Only save the scroll position if the user is refreshing or coming back to the same page
+        if (document.referrer === window.location.href) {
+            sessionStorage.setItem('scrollPosition', window.scrollY);
+        } else {
+            sessionStorage.removeItem('scrollPosition'); // Clear it for other pages
+        }
     });
 
     // Restore the scroll position on page load
@@ -95,7 +101,7 @@
         const scrollPosition = sessionStorage.getItem('scrollPosition');
         if (scrollPosition) {
             window.scrollTo(0, parseInt(scrollPosition));
-            sessionStorage.removeItem('scrollPosition');
+            sessionStorage.removeItem('scrollPosition'); // Clear after use
         }
     });
 </script>

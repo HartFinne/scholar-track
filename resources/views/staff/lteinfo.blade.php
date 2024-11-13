@@ -17,69 +17,124 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
-
+    <x-alert />
     <!-- MAIN -->
     <div class="ctnmain">
-        <a href="{{ route('lte') }}" class="goback">&lt Go back</a>
-        <div class="text-center">
-            <h1 class="sub-title">Letter of Explanation</h1>
-
-        </div>
-
-        <div class="lte">
-            <h6 class="text-center fw-bold">Buddhist Compassion Relief Tzu Chi Foundation Philippines, Inc.</h6>
-            <p class="text-center">Educational Assistance Program</p>
-            <p class="date" id="lte-date">{{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}</p>
-
-            <div class="receipient">
-                <p id="name">{{ $scholar->basicInfo->scLastname }}, {{ $scholar->basicInfo->scFirstname }}</p>
-                <p id="casecode">{{ $scholar->caseCode }}</p>
-                <p id="school">{{ $scholar->education->scSchoolName }}</p>
+        <div class="container">
+            <div class="container rounded bg-success p-3 mx-auto mb-2" style="width: 80%">
+                <div class="row">
+                    <div class="col-md-10 text-light fw-bold h4 my-auto">{{ $scholar->basicInfo->scLastname }},
+                        {{ $scholar->basicInfo->scFirstname }}
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ route('lte') }}" class="btn btn-success w-100">&lt Go back</a>
+                    </div>
+                </div>
+                <div class="border-bottom my-3"></div>
+                <form class="row" method="post" action="{{ route('updateltestatus', $letter->lid) }}">
+                    @csrf
+                    <div class="col-md-4 text-light fw-bold h4 my-auto">LTE Status</div>
+                    <div class="col-md-6 ">
+                        <select class="fw-bold text-success form-select" name="ltestatus">
+                            <option value="No Response" {{ $letter->ltestatus == 'No Response' ? 'selected' : '' }}>No
+                                Response
+                            </option>
+                            <option value="To Review" {{ $letter->ltestatus == 'To Review' ? 'selected' : '' }}>To
+                                Review
+                            </option>
+                            <option value="Excused" {{ $letter->ltestatus == 'Excused' ? 'selected' : '' }}>Excused
+                            </option>
+                            <option value="Unexcused" {{ $letter->ltestatus == 'Unexcused' ? 'selected' : '' }}>
+                                Unexcused
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-outline-light w-100">Update</button>
+                    </div>
+                </form>
             </div>
 
-            <div class="lte-subject">
-                <p>Subject: <b>NOTICE TO EXPLAIN</b> </p>
-            </div>
+            <div class="lte mb-3 border rounded border-success">
+                <div class="container bg-success fw-bold h4 py-2 text-light text-center">Violation Details</div>
+                <div class="row mb-2">
+                    <div class="col-md-4">Name</div>
+                    <div class="col-md-8 fw-bold">{{ $scholar->basicInfo->scLastname }},
+                        {{ $scholar->basicInfo->scFirstname }}</div>
+                </div>
 
-            <div class="salutation-lte">
-                <p>Greetings!</p>
-            </div>
-            <div class="lte-body">
-                @if ($letter->violation == 'Absent')
-                    <p>
-                        Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
-                        {{ $eventinfo->topic ?? $eventinfo->title }} that took
-                        place at
-                        {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}.
-                        Upon checking the
-                        attendance,
-                        we noticed that you left the event early, despite the Foundation's prior communication and
-                        efforts
-                        to ensure your full participation.
-                    </p>
-                    <p>
-                        In connection with this, you are advised to <b>submit your written explanation letter within
-                            three (3) days of receipt of this notice.</b>
-                    </p><br>
-                    <p>Kindly give this matter your priority attention.</p><br>
+                <div class="row mb-2">
+                    <div class="col-md-4">Concern</div>
+                    <div class="col-md-8 fw-bold">
+                        {{ $letter->violation }}
+                        @if ($letter->eventtype)
+                            in {{ $letter->eventtype }}
+                        @endif
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-4">Date Issued</div>
+                    <div class="col-md-8 fw-bold">
+                        {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}
+                    </div>
+                </div>
+
+                @if ($letter->ltestatus == 'No Response')
+                    <div class="container bg-warning fw-bold h4 py-2 text-dark text-center mt-4">Scholar Have Not Yet
+                        Responded</div>
+                @else
+                    <div class="container bg-success fw-bold h4 py-2 text-light text-center mt-4">Scholar's Response
+                    </div>
+                    <div class="info">
+                        <div class="row mb-2">
+                            <div class="col-md-4">Date Submitted</div>
+                            <div class="col-md-8 fw-bold">
+                                {{ \Carbon\Carbon::parse($letter->datesubmitted)->format('F j, Y') }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-md-4">Reason</div>
+                            <div class="col-md-8 fw-bold">
+                                {{ $letter->reason }}
+                            </div>
+                        </div>
+
+                        <div class="container mt-3 mb-1 py-1 fw-bold bg-success text-center text-light">Explanation
+                            Letter
+                        </div>
+                        @php
+                            $explanationExtension = pathinfo($letter->explanation, PATHINFO_EXTENSION);
+                        @endphp @if (in_array($explanationExtension, ['jpeg', 'jpg', 'png']))
+                            <img src="{{ url('storage/' . $letter->explanation) }}" alt="Explanation Letter"
+                                style="width: 100%; height: auto; max-height: 600px">
+                        @elseif($explanationExtension === 'pdf')
+                            <!-- Display PDF files -->
+                            <iframe src="{{ url('storage/' . $letter->explanation) }}"
+                                style="width: 100%; height: 600px;">
+                                Your browser does not support iframes. Please download the PDF file
+                                <a href="{{ url('storage/' . $letter->explanation) }}" target="_blank">click here</a>.
+                            </iframe>
+                        @endif
+
+                        <div class="container mt-3 mb-1 py-1 fw-bold bg-success text-center text-light">Proof
+                        </div>
+                        @php
+                            $proofExtension = pathinfo($letter->proof, PATHINFO_EXTENSION);
+                        @endphp
+                        @if (in_array($proofExtension, ['jpeg', 'jpg', 'png']))
+                            <img src="{{ url('storage/' . $letter->proof) }}" alt="Proof"
+                                style="width: 100%; height: auto; max-height: 600px">
+                        @elseif($proofExtension === 'pdf')
+                            <!-- Display PDF files -->
+                            <iframe src="{{ url('storage/' . $letter->proof) }}" width="100%" height="600px">
+                                Your browser does not support iframes. Please download the PDF file
+                                <a href="{{ url('storage/' . $letter->proof) }}">here</a>.
+                            </iframe>
+                        @endif
+                    </div>
                 @endif
-            </div>
-
-            <div class="closing-lte">
-                <div class="closing-1">
-                    <p>Sincerely,</p>
-                    <div class="signature">
-                        <p>SIGNATURE</p>
-                    </div>
-                    <p><b>{{ $letter->workername }}</b><br>Social Welfare Officer</p>
-                </div>
-                <div class="closing-2">
-                    <p>Noted by:</p>
-                    <div class="signature">
-                        <p>SIGNATURE</p>
-                    </div>
-                    <p><b>MARIA CRISTINA N. PASION, RSW</b><br>Department Head</p>
-                </div>
             </div>
         </div>
     </div>

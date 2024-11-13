@@ -43,7 +43,8 @@
                         <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Topic</th>
                         <th class="text-center align-middle">Date</th>
-                        <th class="text-center align-middle">Number of Attendees</th>
+                        <th class="text-center align-middle">Attendees</th>
+                        <th class="text-center align-middle">Absentees</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
@@ -54,9 +55,12 @@
                             <td class="text-center align-middle">{{ $class->topic }}</td>
                             <td class="text-center align-middle">{{ $class->hcdate }}</td>
                             <td class="text-center align-middle">{{ $class->totalattendees }}</td>
+                            <td class="text-center align-middle">{{ $class->totalabsentees }}</td>
                             <td class="text-center align-middle">
-                                <a href="{{ route('attendancesystem', $class->hcid) }} " class="btn btn-primary">Open
-                                    Attendance System</a>
+                                @if ($class->status == 'On Going')
+                                    <a href="{{ route('attendancesystem', $class->hcid) }} "
+                                        class="btn btn-primary">Open Attendance System</a>
+                                @endif
                                 <a href="{{ route('viewattendeeslist', $class->hcid) }}" class="btn btn-primary">View
                                     Details</a>
                             </td>

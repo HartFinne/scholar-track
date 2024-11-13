@@ -48,4 +48,9 @@ class lte extends Model
     {
         return $this->belongsTo(hcattendance::class, 'conditionid', 'hcaid');
     }
+
+    public function penalty()
+    {
+        return $this->belongsTo(penalty::class, 'condition', 'lid');
+    }
 }

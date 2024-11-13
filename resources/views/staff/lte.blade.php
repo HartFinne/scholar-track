@@ -105,15 +105,11 @@
                             <td class="text-center align-middle">
                                 {{ $letter->datesubmitted ? \Carbon\Carbon::parse($letter->datesubmitted)->format('F d, Y') : '--' }}
                             </td>
-                            @if ($letter->eventtype == 'Humanities Class')
-                                <td class="text-center align-middle">{{ $letter->hcattendance->hcastatus }} in
-                                    {{ $letter->eventtype }}</td>
-                            @elseif ($letter->eventtype == 'Community Service')
-                                <td class="text-center align-middle">
-                                    {{ ucfirst(strtolower($letter->csattendance->csastatus)) }} in
-                                    {{ $letter->eventtype }}</td>
-                            @elseif ($letter->eventtype == null)
+                            @if ($letter->eventtype == null)
                                 <td class="text-center align-middle">{{ $letter->violation }}</td>
+                            @else
+                                <td class="text-center align-middle">{{ $letter->violation }} in
+                                    {{ $letter->eventtype }}</td>
                             @endif
                             <td class="text-center align-middle">{{ $letter->reason ?? '--' }}</td>
                             <td class="text-center align-middle">{{ $letter->ltestatus }}</td>

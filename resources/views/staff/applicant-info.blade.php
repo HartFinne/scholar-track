@@ -16,6 +16,7 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
+    <x-alert />
     <div class="ctnmain">
         <div class="appformview">
             <div class="mx-auto mb-2" style="width: 8.5in">
@@ -24,20 +25,6 @@
                 </div>
             </div>
             <div class="appinfo p-4">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
                 <div class="row mb-3">
                     <label class="col-md-3 col-form-label">Applicant Name</label>
                     <div class="col-md-9">
@@ -413,7 +400,8 @@
                 </div>
             </div>
         </div>
-        <form action="" method="post">
+        <form action="{{ route('updateapplicantcd', ['casecode' => $applicant->casecode]) }}" method="post">
+            @csrf
             <div class="page2">
                 <div class="header">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
@@ -480,24 +468,36 @@
                         <tr>
                             <td>
                                 <span class="slabel">Nature of Needs</span><br>
-                                <span class="svalue" id="natureOfneeds">
-                                    <input type="radio" id="financial" name="needs" value="Financial">
+                                <span class="svalue" id="natureofneeds">
+                                    <input type="radio" id="financial" name="needs" value="Financial"
+                                        {{ $applicant->casedetails->natureofneeds === 'Financial' ? 'checked' : '' }}>
                                     <label for="financial">Financial</label><br>
-                                    <input type="radio" id="medical" name="needs" value="Medical">
+
+                                    <input type="radio" id="medical" name="needs" value="Medical"
+                                        {{ $applicant->casedetails->natureofneeds === 'Medical' ? 'checked' : '' }}>
                                     <label for="medical">Medical</label><br>
-                                    <input type="radio" id="food" name="needs" value="Food">
+
+                                    <input type="radio" id="food" name="needs" value="Food"
+                                        {{ $applicant->casedetails->natureofneeds === 'Food' ? 'checked' : '' }}>
                                     <label for="food">Food</label><br>
-                                    <input type="radio" id="material" name="needs" value="Material">
+
+                                    <input type="radio" id="material" name="needs" value="Material"
+                                        {{ $applicant->casedetails->natureofneeds === 'Material' ? 'checked' : '' }}>
                                     <label for="material">Material</label><br>
-                                    <input type="radio" id="educ" name="needs" value="Education" checked>
-                                    <label for="educ"> Education</label><br>
-                                    <input type="radio" id="others" name="needs" value="Others">
-                                    <label for="others"> Others</label><br>
+
+                                    <input type="radio" id="educ" name="needs" value="Education"
+                                        {{ $applicant->casedetails->natureofneeds === 'Education' ? 'checked' : '' }}>
+                                    <label for="educ">Education</label><br>
+
+                                    <input type="radio" id="others" name="needs" value="Others"
+                                        {{ $applicant->casedetails->natureofneeds === 'Others' ? 'checked' : '' }}>
+                                    <label for="others">Others</label><br>
                                 </span>
                             </td>
                             <td style="width: 600px;">
                                 <span class="slabel"><strong>Problem Statement</strong></span><br>
-                                <textarea name="problemstatement" id="" rows="5" cols="6" placeholder="Type here..." required></textarea>
+                                <textarea name="problemstatement" id="" rows="5" cols="6" maxlength="255"
+                                    placeholder="Type here..." required>{{ $applicant->casedetails->problemstatement }}</textarea>
                             </td>
                         </tr>
                     </table>
@@ -507,22 +507,26 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Received By:
                             <input class="casedeets-input text-center" style="width: 65% !important" type="text"
-                                name="receiveby" required>
+                                name="receivedby" required maxlength="255"
+                                value="{{ $applicant->casedetails->receivedby ?? $worker->name }}">
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Date Receive:
-                            <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                                name="datereceived" required placeholder="MM DD, YYYY">
+                            <input class="casedeets-input text-center" style="width: 50% !important" type="date"
+                                name="datereceived" required min="{{ date('Y-m-d') }}"
+                                value="{{ $applicant->casedetails->datereceived ?? date('Y-m-d') }}">
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Assigned District:
                             <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                                name="district" required>
+                                name="district" required maxlength="50"
+                                value="{{ $applicant->casedetails->district ?? null }}">
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Assigned Volunteer:
                             <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                                name="volunteer" required>
+                                name="volunteer" required maxlength="255"
+                                value="{{ $applicant->casedetails->volunteer ?? null }}">
                         </div>
                     </div>
                     <div class="column col-md-7">
@@ -537,17 +541,20 @@
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Case Referred By:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
-                                    type="text" name="referredby" required>
+                                    type="text" name="referredby" required maxlength="255"
+                                    value="{{ $applicant->casedetails->referredby ?? null }}">
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Referral Contact no.:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
-                                    type="tel" name="referphonenum" required>
+                                    type="tel" name="referphonenum" required maxlength="12" minlength="11"
+                                    value="{{ $applicant->casedetails->referphonenum ?? null }}">
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
                                 Beneficiary:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
-                                    type="text" name="relationship" required>
+                                    type="text" name="relationship" required maxlength="50"
+                                    value="{{ $applicant->casedetails->relationship ?? null }}">
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Applicant's Signature:
@@ -556,7 +563,8 @@
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Date Reported:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
-                                    type="text" name="datereported" required placeholder="MM DD, YYYY">
+                                    type="date" name="datereported" required min="{{ date('Y-m-d') }}"
+                                    value="{{ $applicant->casedetails->datereported ?? date('Y-m-d') }}">
                             </div>
                         </div>
                     </div>

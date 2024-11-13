@@ -19,7 +19,9 @@ return new class extends Migration
             $table->date('hcdate');
             $table->time('hcstarttime');
             $table->time('hcendtime')->nullable();
+            $table->string('status', 25)->default('On Going');
             $table->smallInteger('totalattendees')->default(0);
+            $table->smallInteger('totalabsentees')->default(0);
             $table->timestamps();
         });
     }

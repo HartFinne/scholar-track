@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -28,6 +29,19 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
+
+        DB::unprepared('
+            CREATE TRIGGER after_scholarship_status_update
+            AFTER UPDATE ON scholarshipinfo
+            FOR EACH ROW
+            BEGIN
+                IF NEW.scholarshipstatus = "Terminated" THEN
+                    UPDATE users
+                    SET scStatus = "Inactive"
+                    WHERE caseCode = NEW.caseCode;
+                END IF;
+            END
+        ');
     }
 
     /**
@@ -36,5 +50,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('scholarshipinfo');
+        DB::unprepared('DROP TRIGGER IF EXISTS after_scholarship_status_update');
     }
 };

@@ -156,6 +156,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/humanities-class-attendance-system/{hcid}', [StaffController::class, 'showAttendanceSystem'])->name('attendancesystem');
     Route::post('/saveattendance/{hcid}', [StaffController::class, 'saveattendance'])->name('savehcattendance');
     Route::post('/viewhcattendees/{hcid}', [StaffController::class, 'viewhcattendees'])->name('viewhcattendees');
+    Route::post('/viewattendeeslist/{hcid}', [StaffController::class, 'viewattendeeslist'])->name('viewattendeeslist');
     Route::get('/humanities-class/{hcid}-attendees', [StaffController::class, 'viewattendeeslist'])->name('viewattendeeslist');
     Route::get('/humanities-class/{hcaid}', [StaffController::class, 'checkouthc'])->name('checkouthc');
     Route::get('/humanities-class/save/{hcid}', [StaffController::class, 'savehc'])->name('savehc');
@@ -166,6 +167,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/penalty-info/{casecode}', [StaffController::class, 'showpenaltyinfo'])->name('showpenaltyinfo');
     Route::get('/letter-of-explanation', [StaffController::class, 'showLTE'])->name('lte');
     Route::get('/letter-of-explanation-info/{lid}', [StaffController::class, 'showlteinfo'])->name('showlteinfo');
+    Route::post('/letter-of-explanation-info/{lid}', [StaffController::class, 'updateltestatus'])->name('updateltestatus');
     // ALLOWANCE REQUESTS - REGULAR
     Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');
     Route::get('/allowance-requests-regular-details', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
@@ -219,6 +221,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/applicants', [StaffController::class, 'showApplicants'])->name('applicants');
     Route::get('/applicant-info/{casecode}', [StaffController::class, 'showapplicantinfo'])->name('applicantinfo');
     Route::post('/applicant-info/{casecode}/update-status', [StaffController::class, 'updateapplicantstatus'])->name('updateapplicantstatus');
+    Route::post('/applicant-info/{casecode}/update-case-details', [StaffController::class, 'updateapplicantcd'])->name('updateapplicantcd');
     Route::get('/applicant-account-info/{apid}', [StaffController::class, 'showapplicantaccount'])->name('applicant.view');
     Route::post('/applicant/activate/{apid}', [StaffController::class, 'activateapplicant'])->name('applicant.activate');
     Route::post('/applicant/deactivate/{apid}', [StaffController::class, 'deactivateapplicant'])->name('applicant.deactivate');

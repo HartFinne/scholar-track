@@ -51,21 +51,36 @@
             <div class="lte-body">
                 <p style="text-align: justify">
                     @if ($letter->violation == 'Absent')
-                        Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
+                        Last
+                        {{ \Carbon\Carbon::parse($eventinfo->hcdate ?? $eventinfo->eventdate)->format('F j, Y') }}, was
+                        the
+                        {{ $eventinfo->topic ?? $eventinfo->title }} that took place at
+                        {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}. Upon checking the
+                        attendance,
+                        we noticed that you did not participate despite the Foundation's effort to inform you
+                        beforehand.
+                    @elseif ($letter->violation == 'Cancelled')
+                        Last
+                        {{ \Carbon\Carbon::parse($eventinfo->hcdate ?? $eventinfo->eventdate)->format('F j, Y') }}, was
+                        the
                         {{ $eventinfo->topic ?? $eventinfo->title }} that took place at
                         {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}. Upon checking the
                         attendance,
                         we noticed that you did not participate despite the Foundation's effort to inform you
                         beforehand.
                     @elseif ($letter->violation == 'Late')
-                        Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
+                        Last
+                        {{ \Carbon\Carbon::parse($eventinfo->hcdate ?? $eventinfo->eventdate)->format('F j, Y') }}, was
+                        the
                         {{ $eventinfo->topic ?? $eventinfo->title }} that took
                         place at
                         {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}. Upon reviewing the attendance,
                         we noticed that you arrived late to the event, despite the Foundation's prior communications and
                         efforts to ensure your timely participation.
                     @elseif ($letter->violation == 'Left Early')
-                        Last {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, was the
+                        Last
+                        {{ \Carbon\Carbon::parse($eventinfo->hcdate ?? $eventinfo->eventdate)->format('F j, Y') }}, was
+                        the
                         {{ $eventinfo->topic ?? $eventinfo->title }} that took
                         place at
                         {{ $eventinfo->hclocation ?? $eventinfo->eventloc }}.
@@ -75,7 +90,8 @@
                         efforts
                         to ensure your full participation.
                     @elseif ($letter->violation == 'Failed GWA')
-                        On {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, a review of your
+                        On {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }},
+                        a review of your
                         academic performance was conducted, during which it was observed that your General Weighted
                         Average (GWA) of {{ $academicData->GWA }} for the {{ $academicData->SemesterQuarter }} of this
                         academic year ({{ $academicData->schoolyear }}) did not meet the minimum standard required for
@@ -83,13 +99,21 @@
                         intended to assist you in achieving your academic objectives, your current GWA remains below the
                         established threshold.
                     @elseif ($letter->violation == 'Failed Grade')
-                        On {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, a review of your
+                        On {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }},
+                        a review of your
                         academic performance was conducted, and it was noted that you received a failing grade in
                         one of your subjects for the {{ $academicData->SemesterQuarter }} of this academic year
                         ({{ $academicData->schoolyear }}). This grade does not meet the minimum standard required
                         for satisfactory academic performance. Despite the Foundation's ongoing guidance and support
                         provided to assist you in achieving your academic objectives, your current performance
                         remains below the established threshold.
+                    @elseif ($letter->violation == 'Mismatched GWA')
+                        On {{ \Carbon\Carbon::parse($letter->dateissued)->format('F j, Y') }}, a review of your
+                        academic performance was conducted, and it was noted that the General Weighted Average (GWA) you
+                        provided does not align with the official GWA reflected on your report card for the
+                        {{ $academicData->SemesterQuarter }} of this academic year ({{ $academicData->schoolyear }}).
+                        This discrepancy does not align with the academic integrity and ethical standards that the
+                        Foundation upholds for its scholars.
                     @endif
                 </p>
                 <p>

@@ -164,56 +164,6 @@ class ScholarController extends Controller
         }
     }
 
-    // for the show of basic info in scholarship overview
-    // public function showScholarshipOverview()
-    // {
-
-    //     $user = User::with(['basicInfo', 'education'])
-    //         ->where('id', Auth::id())
-    //         ->first();
-
-    //     // Fetch the penalties associated with the user
-    //     $penalty = penalty::where('caseCode', $user->caseCode)->get();
-
-    //     // Fetch grades associated with the user's education
-    //     // Fetch academic performance data using a join
-    //     $academicData = grades::selectRaw("CONCAT(grades.schoolyear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
-    //         ->where('grades.caseCode', $user->caseCode) // Filter by user's caseCode
-    //         ->orderBy('grades.schoolyear', 'asc')
-    //         ->orderBy('grades.SemesterQuarter', 'asc')
-    //         ->get();
-
-
-    //     // Prepare data for the chart
-    //     $chartData = [
-    //         'labels' => $academicData->pluck('period')->toArray(),
-    //         'grades' => $academicData->pluck('GWA')->toArray(), // Make sure to use the correct column name
-    //     ];
-
-    //     // Fetch the community service activities and calculate hours
-    //     $communityServiceData = csattendance::where('caseCode', $user->caseCode)
-    //         ->join('communityservice', 'csattendance.csid', '=', 'communityservice.csid')
-    //         ->select(DB::raw('SUM(csattendance.hoursspent) as total_hours'))
-    //         ->first();
-
-    //     // Set the total required hours (example value)
-    //     $totalRequiredHours = criteria::selectRaw('criteria.cshours')->first()->cshours ?? 0;
-
-    //     $completedHours = $communityServiceData->total_hours ?? 0;
-    //     $remainingHours = max($totalRequiredHours - $completedHours, 0);
-
-    //     // Pass the community service data to the view
-    //     $communityServiceChart = [
-    //         'completed' => $completedHours,
-    //         'remaining' => $remainingHours,
-    //     ];
-
-    //     $renewal = applicationforms::where('formname', 'Renewal')->first();
-
-    //     // If the user is authenticated, show the overview page
-    //     return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal'));
-    // }
-
     public function showScholarshipOverview(Request $request)
     {
         $user = User::with(['basicInfo', 'education'])
@@ -268,20 +218,6 @@ class ScholarController extends Controller
 
         return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal'));
     }
-
-
-    // public function showGradeSubmission()
-    // {
-    //     // Retrieve the currently authenticated user's caseCode
-    //     $user = Auth::user(); // Get the authenticated user
-    //     $educ = ScEducation::where('caseCode', $user->caseCode)->first(); // Access the caseCode property
-
-    //     // Fetch grades associated with the education entry
-    //     $grades = grades::where('caseCode', $user->caseCode)->get();
-
-    //     // Pass the grades and academic year to the view
-    //     return view('scholar/scholarship.gradesub', compact('grades', 'educ'));
-    // }
 
     public function showGradeSubmission(Request $request)
     {
@@ -353,6 +289,7 @@ class ScholarController extends Controller
             } else {
                 $gradeStatus = ($request->gwa < $criteria->cgwa && $request->gwa >= 1) ? 'Failed GWA' : 'Passed';
             }
+
             DB::beginTransaction();
             // Save the grade entry and link it to the educationID
             grades::create([
@@ -1283,15 +1220,6 @@ class ScholarController extends Controller
         }
     }
 
-    // public function showappointmentsystem()
-    // {
-    //     $user = Auth::user();
-
-    //     $userappointments = Appointments::where('caseCode', $user->caseCode)->get();
-
-    //     return view('scholar.appointmentsystem', compact('userappointments', 'user'));
-    // }
-
     public function showappointmentsystem(Request $request)
     {
         $user = Auth::user();
@@ -1311,13 +1239,14 @@ class ScholarController extends Controller
     public function makeappointment($caseCode, Request $request)
     {
         $recordexists = Appointments::where('caseCode', $caseCode)
-            ->where('reason', $request->reason)
+            // ->where('reason', $request->reason)
             ->where('date', $request->date)
-            ->exists();
+            ->where('status', '!=', 'Cancelled')
+            ->first();
 
         if ($recordexists) {
-            $formattedDate = \Carbon\Carbon::parse($request->date)->format('F d, Y');
-            $error_message = "You have already made an appointment for " . strtolower($request->reason) . " on " . $formattedDate;
+            $formattedDate = \Carbon\Carbon::parse($recordexists->date)->format('F d, Y');
+            $error_message = "You have already made an appointment for " . strtolower($recordexists->reason) . " on " . $formattedDate;
             return redirect()->route('appointment')->with('error', $error_message);
         }
         try {

@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use PHPUnit\Framework\Attributes\UsesTrait;
 use App\Imports\EmailsImport;
+use App\Models\apcasedetails;
 use App\Models\applicationforms;
 use App\Models\Appointments;
 use App\Models\RegularAllowance;
@@ -92,7 +93,9 @@ class StaffController extends Controller
             ->where('relationship', 'Sibling')->get();
         $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
 
-        return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege'));
+        $worker = Auth::guard('staff')->user();
+
+        return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege', 'worker'));
     }
 
     public function updateapplicantstatus($casecode, Request $request)
@@ -109,9 +112,74 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to update application status. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update application status. ' . $e->getMessage());
         }
     }
+
+    public function updateApplicantCD($casecode, Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'needs' => 'required|string',
+                'problemstatement' => 'required|string|max:255',
+                'receivedby' => 'required|string|max:255',
+                'datereceived' => 'required|date',
+                'district' => 'required|string|max:50',
+                'volunteer' => 'required|string|max:255',
+                'referredby' => 'required|string|max:255',
+                'referphonenum' => 'required|string|max:12|min:11',
+                'relationship' => 'required|string|max:50',
+                'datereported' => 'required|date',
+            ]);
+
+            $applicantcd = apcasedetails::where('casecode', $casecode)->first();
+
+            // Format the phone number if it starts with 0
+            $formattedphonenum = $request->referphonenum;
+            if (str_starts_with($request->referphonenum, '0')) {
+                $formattedphonenum = '63' . substr($request->referphonenum, 1);
+            }
+
+            if ($applicantcd) {
+                $applicantcd->update([
+                    'casecode' => $casecode,
+                    'natureofneeds' => $request->needs,
+                    'problemstatement' => $request->problemstatement,
+                    'receivedby' => $request->receivedby,
+                    'datereceived' => $request->datereceived,
+                    'district' => $request->district,
+                    'volunteer' => $request->volunteer,
+                    'referredby' => $request->referredby,
+                    'referphonenum' => $formattedphonenum,
+                    'relationship' => $request->relationship,
+                    'datereported' => $request->datereported,
+                ]);
+            } else {
+                apcasedetails::create([
+                    'casecode' => $casecode,
+                    'natureofneeds' => $request->needs,
+                    'problemstatement' => $request->problemstatement,
+                    'receivedby' => $request->receivedby,
+                    'datereceived' => $request->datereceived,
+                    'district' => $request->district,
+                    'volunteer' => $request->volunteer,
+                    'referredby' => $request->referredby,
+                    'referphonenum' => $formattedphonenum,
+                    'relationship' => $request->relationship,
+                    'datereported' => $request->datereported,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "Successfully updated case details of applicant.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('failure', 'Failed to update case details of applicant. ' . $e->getMessage());
+        }
+    }
+
 
     public function  updateappformstatus($formname, Request $request)
     {
@@ -305,6 +373,8 @@ class StaffController extends Controller
             $lteExists = lte::where('caseCode', $grade->caseCode)
                 ->where('conditionid', $gid)->exists();
 
+            $scholarshipinfo = scholarshipinfo::where('caseCode', $grade->caseCode)->first();
+
             // Check if the grade status is neither "Passed" nor "Pending"
             if ($request->gradestatus != 'Passed' && $request->gradestatus != 'Pending' && !$lteExists) {
                 lte::create([
@@ -321,6 +391,19 @@ class StaffController extends Controller
                     'ltestatus' => 'No Response',
                     'workername' => strtoupper($worker->name) . ', RSW',
                 ]);
+
+
+                $ltecount = lte::where('caseCode', $grade->caseCode)
+                    ->whereIN('violation', ['Failed GWA', 'Failed Grade', 'Mismatched GWA'])
+                    ->count();
+
+                if ($ltecount <= 2) {
+                    $scholarshipinfo->scholarshipstatus = 'On-Hold';
+                } else {
+                    $scholarshipinfo->scholarshipstatus = 'Terminated';
+                }
+
+                $scholarshipinfo->save();
             }
 
             // Commit the transaction
@@ -344,15 +427,80 @@ class StaffController extends Controller
     {
         $letter = lte::where('lid', $lid)->first();
         $scholar = User::with(['basicInfo'])->where('caseCode', $letter->caseCode)->first();
-        if ($letter->eventtype == 'Humanities Class') {
-            $violation = hcattendance::where('hcaid', $letter->conditionid)->first();
-            $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
-        } elseif ($letter->eventtype == 'Community Service') {
-            $violation = csregistration::where('csrid', $letter->conditionid)->first();
-            $eventinfo = communityservice::where('csid', $violation->csid)->first();
-        }
+        if ($letter->violation == 'Failed GWA' || $letter->violation == 'Failed Grade' || $letter->violation == 'Mismatched GWA') {
+            $academicData = grades::where('gid', $letter->conditionid)->first();
 
-        return view('staff.lteinfo', compact('letter', 'scholar', 'eventinfo'));
+            return view('staff.lteinfo', compact('letter', 'scholar', 'academicData'));
+        } else {
+            if ($letter->eventtype == 'Humanities Class') {
+                $violation = hcattendance::where('hcaid', $letter->conditionid)->first();
+                $eventinfo = humanitiesclass::where('hcid', $violation->hcid)->first();
+            } elseif ($letter->eventtype == 'Community Service') {
+                $violation = csregistration::where('csrid', $letter->conditionid)->first();
+                $eventinfo = communityservice::where('csid', $violation->csid)->first();
+            }
+
+            return view('staff.lteinfo', compact('letter', 'scholar', 'eventinfo'));
+        }
+    }
+
+    public function updateltestatus($lid, Request $request)
+    {
+        try {
+            $letter = lte::where('lid', $lid)->first();
+            $letter->ltestatus = $request->ltestatus;
+            $letter->save();
+
+            $condition = $letter->violation . ' in ' . $letter->eventtype;
+
+            if ($request->ltestatus == 'Unexcused') {
+                $currentpenalty = penalty::where('caseCode', $letter->caseCode)
+                    ->where('condition', $condition)
+                    ->orderBy('remark', 'desc')
+                    ->first();
+
+                $date = today()->toDateString();
+
+                if ($currentpenalty) {
+                    $offenses = [
+                        '1st Offense' => '2nd Offense',
+                        '2nd Offense' => '3rd Offense',
+                        '3rd Offense' => '4th Offense',
+                    ];
+
+                    $remark = $offenses[$currentpenalty->remark] ?? null;
+                } else {
+                    $remark = '1st Offense';
+                }
+
+                penalty::create([
+                    'caseCode' => $letter->caseCode,
+                    'condition' => $condition,
+                    'conditionid' => $lid,
+                    'remark' => $remark,
+                    'dateofpenalty' => $date,
+                ]);
+
+                if (
+                    ($remark == '3rd Offense' && $letter->violation == 'Absent' && $letter->eventtype == 'Humanities Class') ||
+                    ($remark == '4th Offense' && in_array($letter->violation, ['Late', 'Left Early']) && $letter->eventtype == 'Humanities Class')
+                ) {
+                    $scinfo = scholarshipinfo::where('caseCode', $letter->caseCode)->first();
+                    if ($scinfo) {
+                        $scinfo->scholarshipstatus = 'On-Hold';
+                        $scinfo->save();
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Successfully updated LTE status.');
+        } catch (\Exception $e) {
+            DB::commit();
+
+            return redirect()->back()->with('failer', 'Failed to update LTE status. ' . $e->getMessage());
+        }
     }
 
     public function showPenalty()
@@ -417,9 +565,11 @@ class StaffController extends Controller
         } else {
             $remark = '1st Offense';
         }
+
         $penalty = penalty::create([
             'caseCode' => $validatedData['scholar_id'],
             'condition' => $validatedData['condition'],
+            'conditionid' => NULL,
             'remark' => $remark,
             'dateofpenalty' => $date,
         ]);
@@ -1664,7 +1814,10 @@ class StaffController extends Controller
     public function showAttendanceSystem($hcid)
     {
         $event = humanitiesclass::findOrFail($hcid);
-        $scholars = User::with(['basicInfo'])->get();
+        $attendees = hcattendance::where('hcid', $hcid)->pluck('caseCode')->toArray();
+        $scholars = User::with('basicInfo')
+            ->whereNotIn('caseCode', $attendees)
+            ->get();
 
         return view('staff.hcattendancesystem', compact('scholars', 'event'));
     }
@@ -1812,7 +1965,7 @@ class StaffController extends Controller
                 return redirect()->back()->with('error', 'Incorrect password.');
             }
 
-            return $this->viewattendeeslist($hcid);
+            return redirect()->route('viewattendeeslist', $hcid);
         } catch (\Exception $e) {
             return redirect()->route('attendancesystem', ['hcId' => $hcid])
                 ->with('error', 'Access failed.');
@@ -1849,16 +2002,62 @@ class StaffController extends Controller
     {
         try {
             DB::beginTransaction();
+
+            $worker = Auth::guard('staff')->user();
+
             hcattendance::where('hcid', $hcid)
                 ->whereNull('timeout')
                 ->update(['timeout' => Carbon::now(new \DateTimeZone('Asia/Manila'))]);
 
+            $event = humanitiesclass::where('hcid', $hcid)->first();
+            $event->status = 'Done';
+            $event->save();
+
+            // Get list of attendees' caseCodes
+            $attendees = hcattendance::where('hcid', $hcid)
+                ->pluck('caseCode');
+
+            // Get list of absentees whose caseCode is not in the attendees
+            $absentees = User::whereNotIn('caseCode', $attendees->toArray())
+                ->get();
+
+            // Iterate over each absentee and create a new attendance record marking them as absent
+            foreach ($absentees as $absent) {
+                hcattendance::create([
+                    'hcid' => $hcid,
+                    'caseCode' => $absent->caseCode,
+                    'timein' => null,
+                    'timeout' => null,
+                    'tardinessduration' => 0,
+                    'hcastatus' => 'Absent',
+                ]);
+
+                $event->increment('totalabsentees', 1);
+
+                $attendanceinfo = hcattendance::where('caseCode', $absent->caseCode)->where('hcid', $hcid)->first();
+
+                lte::create([
+                    'caseCode' => $absent->caseCode,
+                    'violation' => 'Absent',
+                    'conditionid' => $attendanceinfo->hcaid,
+                    'eventtype' => "Humanities Class",
+                    'dateissued' => $event->hcdate,
+                    'deadline' => Carbon::parse($event->hcdate)->addDays(3),
+                    'datesubmitted' => NULL,
+                    'reason' => NULL,
+                    'explanation' => NULL,
+                    'proof' => NULL,
+                    'ltestatus' => 'No Response',
+                    'workername' => strtoupper($worker->name) . ", RSW",
+                ]);
+            }
+
             DB::commit();
 
-            return $this->viewattendeeslist($hcid)->with('success', 'Checkout was successful.');
+            return redirect()->back()->with('success', "{$event->topic} has been successfully closed.");
         } catch (\Exception $e) {
             DB::rollBack();
-            return $this->viewattendeeslist($hcid)->with('error', 'Checkout was successful.');
+            return redirect()->back()->with('failure', 'Attempt to save event has failed');
         }
     }
 

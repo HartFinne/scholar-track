@@ -139,13 +139,13 @@ return new class extends Migration
             $table->increments('apcdid');
             $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('natureofneeds', 50);
-            $table->string('problemstatement', 50);
+            $table->string('problemstatement', 255);
             $table->string('receivedby', 255);
             $table->date('datereceived');
             $table->string('district', 50);
             $table->string('volunteer', 255);
             $table->string('referredby', 255);
-            $table->string('referphonenum', 11);
+            $table->string('referphonenum', 12);
             $table->string('relationship', 50);
             $table->date('datereported');
             $table->timestamps();

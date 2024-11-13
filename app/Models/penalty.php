@@ -16,6 +16,7 @@ class penalty extends Model
     protected $fillable = [
         'caseCode',
         'condition',
+        'conditionid',
         'remark',
         'dateofpenalty'
     ];
@@ -25,8 +26,14 @@ class penalty extends Model
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
+
     public function basicInfo()
     {
         return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
+
+    public function lte()
+    {
+        return $this->hasOne(lte::class, 'condition', 'lid');
     }
 }

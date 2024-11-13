@@ -19,7 +19,10 @@ Schedule::command('app:automate-commnunity-service-status')
     ->dailyAt('00:00')
     ->timezone('Asia/Manila');
 
+// Schedule::command('app:automate-humanities-class-absent-attendance')
+//     ->dailyAt('00:00')
+//     ->timezone('Asia/Manila');
 
-Schedule::command('app:automate-humanities-class-absent-attendance')
+Schedule::command('app:update-l-t-e-status')
     ->dailyAt('00:00')
     ->timezone('Asia/Manila');
