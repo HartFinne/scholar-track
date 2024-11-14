@@ -121,7 +121,7 @@ class StaffController extends Controller
             // Track failed SMS and failed email notifications
             $failedSMS = [];
             $failedEmail = [];
-            $message = 'You cancelled a cs activity';
+            $message = 'Application Updated';
 
             if ($user->notification_preference === 'sms') {
                 // Send the SMS using the Movider API
@@ -130,7 +130,7 @@ class StaffController extends Controller
                         'form_params' => [
                             'api_key' => $api_key,
                             'api_secret' => $api_secret,
-                            'to' => $user->scPhoneNum,
+                            'to' => $user->phonenum,
                             'text' => $message,
                         ],
                     ]);

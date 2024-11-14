@@ -34,6 +34,7 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->unsignedTinyInteger('prioritylevel');
             $table->string('accountstatus', 10)->default('Active');
+            $table->string('notification_preference')->default('sms');
             $table->string('remember_token', 100)->nullable();
             $table->timestamps();
         });
