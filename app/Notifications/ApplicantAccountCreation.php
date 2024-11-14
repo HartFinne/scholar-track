@@ -2,24 +2,26 @@
 
 namespace App\Notifications;
 
+use App\Http\Middleware\applicant;
+use App\Models\applicants;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ResetPassword extends Notification implements ShouldQueue
+class ApplicantAccountCreation extends Notification
 {
     use Queueable;
+
+    protected $applicant;
 
     /**
      * Create a new notification instance.
      */
-
-    protected $token;
-
-    public function __construct($token)
+    public function __construct(applicants $applicant)
     {
-        $this->token = $token;
+        //
+        $this->applicant = $applicant;
     }
 
     /**
@@ -38,12 +40,11 @@ class ResetPassword extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('You are receiving this email because we received a password reset request for your account.')
-            ->action('Reset Password', url(route('password.reset', [
-                'token' => $this->token,
-                'email' => $notifiable->getEmailForPasswordReset()
-            ])))
-            ->line('If you did not request a password reset, no further action is required.');
+            ->subject('Application Updated')
+            ->greeting('Hello ' . $this->applicant->name . '!')
+            ->line('Your account has been successfully updated by a worker please check your account:')
+            ->action('Login to Your Account', url('/login'))
+            ->line('Thank you for being part of our platform!');
     }
 
     /**
