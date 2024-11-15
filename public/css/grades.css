@@ -5,52 +5,30 @@
     font-family: 'Poppins', Arial;
 }
 
-.ctn-main{
+.ctn-main {
     width: 90%;
     margin: auto;
 }
 
-.ctn-main .goback{
+.ctn-main .goback {
     text-decoration: none;
     color: #1a5319;
     font-size: 15px;
 }
 
-.sub-title{
+.sub-title {
     color: #1a5319;
     font-weight: bolder;
     font-size: 1.6rem;
     margin: 30px 0;
 }
 
-.grade-form{
-    padding: 20px;
-}
-
-.grade-form input, select{
-    border: 2px solid darkgray;
-    margin-right: 10px;
-    border-radius: 10px;
-    outline: none;
-    transition: border-color 0.3s ease-in-out;
-}
-
-.sem, .gwa, .file{
-    padding: 5px;
-    margin-bottom: 20px;
-    width: 270px;
-}
-
-.grade-form input:focus, select:focus{
-    border-color:#4CAF50;
-}
-
-.status{
+.status {
     display: flex;
     gap: 40px;
 }
 
-.grade-stat{
+.grade-stat {
     background-color: #c1ff72;
     font-weight: bold;
     padding: 10px;
@@ -61,13 +39,13 @@
     margin: 0 30px;
 }
 
-.grades-view{
+.grades-view {
     width: 70%;
     margin: auto;
     border: 1px solid #fff;
 }
 
-.grades-info{
+.grades-info {
     border: 1px solid #8eb79c;
     background-color: #eaebea;
     border-radius: 10px;
@@ -75,79 +53,92 @@
     padding: 20px;
 }
 
-.grades-info h5{
+.grades-info h5 {
     background-color: #1a5319;
     color: #d6efd8;
     font-weight: bold;
     padding: 8px;
 }
 
-.grades-info .info{
+.grades-info .info {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 10px; 
-    align-items: center; 
+    gap: 10px;
+    align-items: center;
     padding: 8px;
     font-size: 15px;
 }
 
 .label {
-    text-align: left; 
+    text-align: left;
     margin-bottom: 5px;
 }
 
-.grades-info span{
+.grades-info span {
     color: #1e5430;
     font-weight: bold;
     margin-left: 20px;
 }
 
-.grades-img img{
+.grades-img img {
     width: 100%;
 }
 
 @media only screen and (max-width: 768px) {
-    .ctn-main{
+    .ctn-main {
         width: 85%;
     }
-    .sub-title{
+
+    .sub-title {
         font-size: 1.3rem;
         margin: 20px 0;
     }
-    .status{
+
+    .status {
         margin-top: 30px;
         font-size: 13px;
         display: block;
     }
-    .ctn-table, .grade-form{
+
+    .ctn-table,
+    .grade-form {
         font-size: 14px;
     }
-    .grade-stat, .grades-info h5{
+
+    .grade-stat,
+    .grades-info h5 {
         font-size: 1.1rem;
     }
-    .ctn-main .grades-view{
+
+    .ctn-main .grades-view {
         width: 100%;
     }
-    .grades-info{
+
+    .grades-info {
         padding: 15px;
     }
-    .grades-info span{
+
+    .grades-info span {
         margin-left: 8px;
     }
+
     .label {
         font-size: 14px;
     }
 }
+
 @media only screen and (max-width: 1024px) {
-    .grades-info{
+    .grades-info {
         margin: 50px 0;
     }
-    .grade-stat{
+
+    .grade-stat {
         margin: 0;
     }
 }
+
 @media only screen and (max-width: 1200px) {
-    .grades-view{
+    .grades-view {
         width: 90%;
     }
 }

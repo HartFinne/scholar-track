@@ -28,27 +28,41 @@ class HomeController extends Controller
             'College' => ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Fifth Year']
         ];
 
-        // Retrieve courses based on school levels
-        $courses = [
-            'Senior High' => DB::table('courses')->where('level', 'Senior High')->get(),
-            'College' => DB::table('courses')->where('level', 'College')->get()
+        $institutions = [
+            'Elementary' => DB::table('institutions')->where('schoollevel', 'Elementary')->get(),
+            'Junior High' => DB::table('institutions')->where('schoollevel', 'Junior High')->get(),
+            'Senior High' => DB::table('institutions')->where('schoollevel', 'Senior High')->get(),
+            'College' => DB::table('institutions')->where('schoollevel', 'College')->get()
         ];
 
-        return view('registration', compact('yearLevels', 'courses'));
+        // Retrieve courses based on school levels
+        $courses = [
+            'Senior High' => DB::table('courses')->where('level', 'Senior High')->orderBy('coursename', 'ASC')->get(),
+            'College' => DB::table('courses')->where('level', 'College')->orderBy('coursename', 'ASC')->get()
+        ];
+
+        return view('registration', compact('yearLevels', 'courses', 'institutions'));
     }
 
-
-    //
     function registerScholar(Request $request)
     {
-        $ScholarShipStatus = 'Continuing';
-        $scStatus = 'Active';
+        try {
+            $ScholarShipStatus = 'Continuing';
+            $scStatus = 'Active';
 
-        $isEmailValid = $this->verifyEmail($request->emailAddress);
+            $isEmailValid = $this->verifyEmail($request->emailAddress);
+            if (!$isEmailValid) {
+                return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
+            }
 
-        if ($isEmailValid) {
+            $alreadyRegistered = user::where('scEmail', $request->email)->first();
+            if ($alreadyRegistered) {
+                return redirect()->route('registration')->with('failure', 'Registration failed. Email address is already registered')->withInput();
+            }
+
             $request->validate(
                 [
+                    'assignedArea' => 'required|string|max:25',
                     'startdate' => 'required|date',
                     'firstName' => 'required|string|max:50',
                     'middleName' => 'required|string|max:50',
@@ -56,6 +70,8 @@ class HomeController extends Controller
                     'chineseName' => 'required|string|max:255',
                     'birthdate' => 'required|date',
                     'sex' => 'required|in:Male,Female',
+                    'occupation' => 'required|string|max:100',
+                    'income' => 'required|numeric|min:0',
                     'shoes' => 'required|integer|min:6|max:12',
                     'slippers' => 'required|integer|min:6|max:12',
                     'isIndigenous' => 'required|in:Yes,No',
@@ -63,12 +79,14 @@ class HomeController extends Controller
                     'emailAddress' => 'required|email|max:255',
                     'phoneNumber' => 'digits_between:11,12',
                     'homeAddress' => 'required|string|max:255',
-                    'barangay' => 'required|string|max:50',
+                    'region' => 'required|string|max:50',
                     'city' => 'required|string|max:50',
-                    'permanentAddress' => 'required|string|max:255',
+                    'barangay' => 'required|string|max:50',
+                    'schoolLevel' => 'required|string|max:255',
                     'nameOfSchool' => 'required|string|max:255',
-                    'courseSection' => 'required|string|max:255',
-                    'acadyear' => 'required|string|max:9',
+                    'courseStrand' => 'required_if:schoolLevel,College,Senior High',
+                    'section' => 'required_if:schoolLevel,Elementary,Junior High',
+                    'collegedept' => 'required_if:schoolLevel,College',
                     'guardianName' => 'required|string|max:50',
                     'relationToGuardian' => 'required|string|max:50',
                     'guardianEmailAddress' => 'required|email|max:100',
@@ -93,8 +111,28 @@ class HomeController extends Controller
                 ]
             );
 
-            $enddate = Carbon::parse($request->startdate)->addYear();
-            // Adjust phone numbers
+            $startdate = Carbon::parse($request->startdate);
+
+            if ($startdate->year == today()->year) {
+                $scholartype = 'New Scholar';
+            } else {
+                $scholartype = 'Old Scholar';
+            }
+
+            $currentYear = Carbon::now()->year;
+
+            // Set the target end date in the current year
+            $enddate = Carbon::create($currentYear, $startdate->month, $startdate->day);
+
+            // Check if the target end date has already passed in the current year
+            if ($enddate->isPast()) {
+                // If it has passed, set end date to the same month and day in the following year
+                $enddate->addYear();
+            }
+
+            // Create the academic year string in the format YYYY-YYYY
+            $academicYear = ($enddate->year - 1) . '-' . $enddate->year;
+            $age = \Carbon\Carbon::parse($request->birthdate)->age;
             $phoneNumber = $request->input('phoneNumber');
             $guardianPhoneNumber = $request->input('guardianPhoneNumber');
 
@@ -111,87 +149,85 @@ class HomeController extends Controller
             // Start a database transaction
             DB::beginTransaction();
 
-            try {
-                // Insert data into sc_account
-                $User = User::create([
-                    'caseCode' => $casecode,
-                    'scEmail' => $request->emailAddress,
-                    'password' => Hash::make($request->password),
-                    'scPhoneNum' => $phoneNumber,
-                    'scStatus' => $scStatus,
-                ]);
+            $User = User::create([
+                'caseCode' => $casecode,
+                'scEmail' => $request->emailAddress,
+                'password' => Hash::make($request->password),
+                'scPhoneNum' => $phoneNumber,
+                'scStatus' => $scStatus,
+            ]);
 
-                // Insert data into scholarshipinfo
-                $scholarshipinfo = scholarshipinfo::create([
-                    'caseCode' => $User->caseCode, // Foreign key from sc_account
-                    'area' => $request->assignedArea,
-                    'scholartype' => $request->scholartype,
-                    'startdate' => $request->startdate,
-                    'enddate' => $enddate,
-                    'scholarshipstatus' => $ScholarShipStatus,
-                ]);
+            // Insert data into scholarshipinfo
+            $scholarshipinfo = scholarshipinfo::create([
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
+                'area' => $request->assignedArea,
+                'scholartype' => $scholartype,
+                'startdate' => $request->startdate,
+                'enddate' => $enddate,
+                'scholarshipstatus' => $ScholarShipStatus,
+            ]);
 
-                // Insert data into sc_basicinfo
-                $scBasicInfo = ScBasicInfo::create([
-                    'caseCode' => $User->caseCode, // Foreign key from sc_account
-                    'scFirstname' => $request->firstName,
-                    'scLastname' => $request->lastName,
-                    'scMiddlename' => $request->middleName,
-                    'scChinesename' => $request->chineseName,
-                    'scDateOfBirth' => $request->birthdate,
-                    'scSex' => $request->sex,
-                    'scGuardianName' => $request->guardianName,
-                    'scRelationToGuardian' => $request->relationToGuardian,
-                    'scGuardianEmailAddress' => $request->guardianEmailAddress,
-                    'scGuardianPhoneNumber' => $guardianPhoneNumber,
-                    'scIsIndigenous' => $request->isIndigenous,
-                    'scIndigenousgroup' => $request->isIndigenous == 'Yes' ? $request->indigenousGroup : 'Not Applicable',
-                ]);
+            // Insert data into sc_basicinfo
+            $scBasicInfo = ScBasicInfo::create([
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
+                'scFirstname' => $request->firstName,
+                'scLastname' => $request->lastName,
+                'scMiddlename' => $request->middleName,
+                'scChinesename' => $request->chineseName,
+                'scDateOfBirth' => $request->birthdate,
+                'scAge' => $age,
+                'scSex' => $request->sex,
+                'scOccupation' => $request->occupation,
+                'scIncome' => $request->income,
+                'scFblink' => $request->fblink,
+                'scGuardianName' => $request->guardianName,
+                'scRelationToGuardian' => $request->relationToGuardian,
+                'scGuardianEmailAddress' => $request->guardianEmailAddress,
+                'scGuardianPhoneNumber' => $guardianPhoneNumber,
+                'scIsIndigenous' => $request->isIndigenous,
+                'scIndigenousgroup' => $request->isIndigenous == 'Yes' ? $request->indigenousGroup : 'Not Applicable',
+            ]);
 
-                // Insert data into sc_addressinfo
-                $scAddressInfo = ScAddressInfo::create([
-                    'caseCode' => $User->caseCode, // Foreign key from sc_account
-                    'scResidential' => $request->homeAddress, // homeAddress -> scResidential
-                    'scBarangay' => $request->barangay, // barangay -> scBarangay
-                    'scCity' => $request->city, // city -> scCity
-                    'scPermanent' => $request->permanentAddress, // permanentAddress -> scPermanent
-                ]);
+            // Insert data into sc_addressinfo
+            $scAddressInfo = ScAddressInfo::create([
+                'caseCode' => $User->caseCode,
+                'scResidential' => $request->homeAddress,
+                'scRegion' => $request->region,
+                'scCity' => $request->city,
+                'scBarangay' => $request->barangay,
+            ]);
 
-                // Insert data into sc_clothingsize
-                $scClothingSize = ScClothingSize::create([
-                    'caseCode' => $User->caseCode, // Foreign key from sc_account
-                    'scTShirtSize' => $request->tshirt,
-                    'scShoesSize' => $request->shoes,
-                    'scSlipperSize' => $request->slippers,
-                    'scPantsSize' => $request->pants,
-                    'scJoggingPantSize' => $request->joggingPants,
-                ]);
+            // Insert data into sc_clothingsize
+            $scClothingSize = ScClothingSize::create([
+                'caseCode' => $User->caseCode,
+                'scTShirtSize' => $request->tshirt,
+                'scShoesSize' => $request->shoes,
+                'scSlipperSize' => $request->slippers,
+                'scPantsSize' => $request->pants,
+                'scJoggingPantSize' => $request->joggingPants,
+            ]);
 
-                // Insert data into sc_education
-                $scEducation = ScEducation::create([
-                    'caseCode' => $User->caseCode, // Foreign key from sc_account
-                    'scSchoolLevel' => $request->schoolLevel,
-                    'scSchoolName' => $request->nameOfSchool,
-                    'scYearGrade' => $request->yearLevel,
-                    'scCourseStrandSec' => $request->courseSection,
-                    'scAcademicYear' => $request->acadyear,
-                ]);
+            // Insert data into sc_education
+            $scEducation = ScEducation::create([
+                'caseCode' => $User->caseCode, // Foreign key from sc_account
+                'scSchoolLevel' => $request->schoolLevel,
+                'scSchoolName' => $request->nameOfSchool,
+                'scYearGrade' => $request->yearLevel,
+                'scCourseStrandSec' => in_array($request->schoolLevel, ['College', 'Senior High']) ? $request->courseStrand : $request->section,
+                'scCollegedept' => $request->schoolLevel === 'College' ? $request->collegedept : null, // Only set if College
+                'scAcademicYear' => $academicYear,
+            ]);
 
-                // If everything is successful, commit the transaction
-                DB::commit();
 
-                // Redirect with a success message
-                return $this->showregiconfirmation($User->caseCode, $request->password);
-            } catch (\Exception $e) {
-                DB::rollBack();
+            // If everything is successful, commit the transaction
+            DB::commit();
 
-                // Dump the error message directly to the screen for debugging
-                dd($e->getMessage());
+            // Redirect with a success message
+            return $this->showregiconfirmation($User->caseCode, $request->password);
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-                return redirect()->back()->withErrors(['error' => 'Registration failed. Please try again.']);
-            }
-        } else {
-            return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address');
+            return redirect()->back()->with('failure', 'Registration failed. Please try again. ' . $e->getMessage())->withInput();
         }
     }
 

@@ -5,24 +5,24 @@
     font-family: 'Poppins', Arial;
 }
 
-.ctn-main{
+.ctn-main {
     width: 90%;
     margin: 0 auto 30px;
 }
 
-.ctn-main .goback{
+.ctn-main .goback {
     text-decoration: none;
     color: #1a5319;
     font-size: 15px;
 }
 
-.ctn-main .title{
+.ctn-main .title {
     font-family: 'League Spartan', sans-serif;
     font-weight: bold;
     margin: 20px 0;
 }
 
-.btn-edit{
+.btn-edit {
     background-color: #8bc34a;
     color: #fff;
     border: none;
@@ -31,17 +31,17 @@
     transition: 0.3s ease;
 }
 
-.btn-edit:hover{
+.btn-edit:hover {
     background-color: #1a5319;
 }
 
-.profile{
+.profile {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.profile-view{
+.profile-view {
     width: 100%;
     margin: auto;
     border: 1px solid #8eb79c;
@@ -50,66 +50,60 @@
     padding: 30px;
 }
 
-.profile-info{
+.profile-info {
     margin-bottom: 10px;
 }
 
-.profile-info h5{
+.profile-info h5 {
     background-color: #1a5319;
     color: #d6efd8;
     font-weight: bold;
     padding: 8px;
 }
 
-.profile-info .info{
+.profile-info .info {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 10px; 
-    align-items: center; 
+    gap: 10px;
+    align-items: center;
     padding: 10px;
     font-size: 15px;
 }
 
-.profile-info input{
-    width: 90%;
-    margin-left: 10px;
-    border-radius: 10px;
-    padding: 5px;
-    border: none;
-    outline: none;
-    font-size: 15px;
-}
-
 .label {
-    text-align: left; 
+    text-align: left;
     margin-bottom: 5px;
 }
 
-.profile-info span{
+.profile-info span {
     color: #1e5430;
     font-weight: bold;
-    margin-left: 20px;
 }
 
 @media only screen and (max-width: 768px) {
-    .ctn-main{
+    .ctn-main {
         width: 85%;
     }
-    .profile{
+
+    .profile {
         display: block;
     }
-    .btn-edit{
+
+    .btn-edit {
         margin-bottom: 20px;
     }
-    .profile-view{
+
+    .profile-view {
         padding: 15px;
     }
-    .profile-info .info{
-        gap: 5px; 
+
+    .profile-info .info {
+        gap: 5px;
         padding: 5px;
         font-size: 14px;
     }
-    .profile-info span{
+
+    .profile-info span {
         margin-left: 2px;
     }
 }

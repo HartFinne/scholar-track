@@ -20,6 +20,7 @@ class ScEducation extends Model
         'scSchoolName',
         'scYearGrade',
         'scCourseStrandSec',
+        'scCollegedept',
         'scAcademicYear'
     ];
 

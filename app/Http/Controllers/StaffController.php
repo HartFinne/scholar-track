@@ -191,14 +191,14 @@ class StaffController extends Controller
 
             DB::commit();
             if ($request->status == 'Open') {
-                return redirect()->back()->with('formsuccess', "{$formname} application is now open.");
+                return redirect()->back()->with('success', "{$formname} application is now open.");
             } else {
-                return redirect()->back()->with('formsuccess', "{$formname} application is now closed.");
+                return redirect()->back()->with('success', "{$formname} application is now closed.");
             }
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
-            return redirect()->back()->with('formerror', 'Failed to update form status. ');
+            return redirect()->back()->with('failure', 'Failed to update form status. ');
         }
     }
 
@@ -260,10 +260,22 @@ class StaffController extends Controller
             $acadyearstart = date('Y-m-d', strtotime('-1 year', strtotime($acadyearend)));  // Subtract one year from end date
 
             // Latest GWA based on `caseCode`
-            $scholar->latestgwa = DB::table('grades')
+            $scholar->latestgenave = DB::table('grades')
                 ->where('caseCode', $scholar->caseCode)
                 ->orderBy('schoolyear', 'desc')
-                ->value('gwa');
+                ->value('GWA');
+            $scholar->latestconduct = DB::table('grades')
+                ->where('caseCode', $scholar->caseCode)
+                ->orderBy('schoolyear', 'desc')
+                ->value('GWAConduct');
+            $scholar->latestchinesegenave = DB::table('grades')
+                ->where('caseCode', $scholar->caseCode)
+                ->orderBy('schoolyear', 'desc')
+                ->value('ChineseGWA');
+            $scholar->latestchineseconduct = DB::table('grades')
+                ->where('caseCode', $scholar->caseCode)
+                ->orderBy('schoolyear', 'desc')
+                ->value('ChineseGWAConduct');
 
             // Total Humanities Class Attendance within academic year
             $scholar->totalhcattendance = hcattendance::where('caseCode', $scholar->caseCode)
@@ -354,7 +366,7 @@ class StaffController extends Controller
     public function showgradesinfo($gid)
     {
         $grade = grades::where('gid', $gid)->first();
-        $scholar = user::with('basicInfo')->where('caseCode', $grade->caseCode)->first();
+        $scholar = user::with('basicInfo', 'education')->where('caseCode', $grade->caseCode)->first();
 
         return view('staff.gradesinfo', compact('grade', 'scholar'));
     }
@@ -412,7 +424,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to update grade status: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update grade status: ' . $e->getMessage());
         }
     }
 
@@ -701,28 +713,40 @@ class StaffController extends Controller
             }
 
             DB::commit();
-            return redirect()->back()->with('critsuccess', 'Successfully updated scholarship requirements');
+            return redirect()->back()->with('success', 'Successfully updated scholarship requirements');
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('criterror', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('criterror', 'Unable to update scholarship requirements.');
+            return redirect()->back()->with('failure', 'Unable to update scholarship requirements.');
         }
     }
 
     public function addinstitution(Request $request)
     {
-        DB::beginTransaction();
-
         try {
             $request->validate([
                 'institute' => 'required|string|max:255',
-                'highestgwa' => 'required|numeric|max:5|min:1',
+                'schoollevel' => 'required|string|max:25',
+                'academiccycle' => 'required|string|max:25',
+                'highestgwa' => 'required|numeric|max:100|min:1',
             ]);
+
+            $dataExists = institutions::where('schoolname', $request->institute)
+                ->where('schoollevel', $request->schoollevel)
+                ->exists();
+
+            if ($dataExists) {
+                return redirect()->back()->with('failure', 'Failed to add institution. Duplicate combination of institution and school level.');
+            }
+
+            DB::beginTransaction();
 
             institutions::create([
                 'schoolname' => $request->institute,
+                'schoollevel' => $request->schoollevel,
+                'academiccycle' => $request->academiccycle,
                 'highestgwa' => $request->highestgwa,
             ]);
 
@@ -731,15 +755,11 @@ class StaffController extends Controller
             return redirect()->back()->with('success', 'Successfully added an institution.');
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollback();
 
-            if (institutions::where('schoolname', $request->institute)->exists()) {
-                return redirect()->back()->with('error', 'Failed to add institution. Duplicate institution.');
-            }
-
-            return redirect()->back()->with('error', 'Failed to add institution.');
+            return redirect()->back()->with('failure', 'Failed to add institution.');
         }
     }
 
@@ -747,8 +767,19 @@ class StaffController extends Controller
     {
         $request->validate([
             'newschoolname' => 'required|string|max:255',
-            'newgwa' => 'required|numeric|max:5|min:1',
+            'newschoollevel' => 'required|string|max:25',
+            'newacademiccycle' => 'required|string|max:25',
+            'newgwa' => 'required|numeric|max:100|min:1',
         ]);
+
+        $dataExists = institutions::where('schoolname', $request->newschoolname)
+            ->where('schoollevel', $request->newschoollevel)
+            ->where('inid', '!=', $inid)
+            ->exists();
+
+        if ($dataExists) {
+            return redirect()->back()->with('failure', 'Failed to update institution. Duplicate combination of institution and school level.');
+        }
 
         DB::beginTransaction();
         try {
@@ -756,22 +787,20 @@ class StaffController extends Controller
 
             $institution->update([
                 'schoolname' => $request->newschoolname,
+                'schoollevel' => $request->newschoollevel,
+                'academiccycle' => $request->newacademiccycle,
                 'highestgwa' => $request->newgwa,
             ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Successfully updated the institution name.');
+            return redirect()->back()->with('success', 'Successfully updated the institution.');
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollback();
 
-            if (institutions::where('schoolname', $request->newschoolname)->exists()) {
-                return redirect()->back()->with('error', 'Failed to update institution name. Duplicate institution.');
-            }
-
-            return redirect()->back()->with('error', 'Failed to update institution name.') . $e->getMessage();
+            return redirect()->back()->with('failure', 'Failed to update institution.') . $e->getMessage();
         }
     }
 
@@ -780,14 +809,13 @@ class StaffController extends Controller
         DB::beginTransaction();
         try {
             $institution = institutions::findOrFail($inid);
-
             $institution->delete();
 
             DB::commit();
             return redirect()->back()->with('success', 'Successfully deleted the institution.');
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Failed to delete institution.');
+            return redirect()->back()->with('failure', 'Failed to delete institution.');
         }
     }
 
@@ -810,15 +838,15 @@ class StaffController extends Controller
                 return redirect()->back()->with('success', 'Successfully added a course.');
             } catch (ValidationException $e) {
                 DB::rollback();
-                return redirect()->back()->with('error', $e->getMessage());
+                return redirect()->back()->with('failure', $e->getMessage());
             } catch (\Exception $e) {
                 DB::rollback();
 
                 if (courses::where('coursename', $request->course)->exists()) {
-                    return redirect()->back()->with('error', 'Failed to add course. Duplicate course.');
+                    return redirect()->back()->with('failure', 'Failed to add course. Duplicate course.');
                 }
 
-                return redirect()->back()->with('error', 'Failed to add course.');
+                return redirect()->back()->with('failure', 'Failed to add course.');
             }
         } elseif ($level == 'Senior High') {
             try {
@@ -833,18 +861,18 @@ class StaffController extends Controller
 
                 DB::commit();
 
-                return redirect()->back()->with('success', 'Successfully added a strand.');
+                return redirect()->back()->with('failure', 'Successfully added a strand.');
             } catch (ValidationException $e) {
                 DB::rollback();
-                return redirect()->back()->with('error', $e->getMessage());
+                return redirect()->back()->with('failure', $e->getMessage());
             } catch (\Exception $e) {
                 DB::rollback();
 
                 if (courses::where('coursename', $request->strand)->exists()) {
-                    return redirect()->back()->with('error', 'Failed to add strand. Duplicate strand.');
+                    return redirect()->back()->with('failure', 'Failed to add strand. Duplicate strand.');
                 }
 
-                return redirect()->back()->with('error', 'Failed to add strand.');
+                return redirect()->back()->with('failure', 'Failed to add strand.');
             }
         }
     }
@@ -880,10 +908,10 @@ class StaffController extends Controller
             DB::rollback();
 
             if (courses::where('coursename', $request->newcoursename)->exists()) {
-                return redirect()->back()->with('error', "Failed to update {$type}. Duplicate {$type}.");
+                return redirect()->back()->with('failure', "Failed to update {$type}. Duplicate {$type}.");
             }
 
-            return redirect()->back()->with('error', "Failed to update {$type}.");
+            return redirect()->back()->with('failure', "Failed to update {$type}.");
         }
     }
 
@@ -907,7 +935,7 @@ class StaffController extends Controller
             return redirect()->back()->with('success', "Successfully deleted {$type}.");
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', "Failed to delete {$type}.");
+            return redirect()->back()->with('failure', "Failed to delete {$type}.");
         }
     }
 
@@ -2178,11 +2206,11 @@ class StaffController extends Controller
             // Import the file using Maatwebsite Excel
             Excel::import(new EmailsImport, $request->file('file'));
 
-            return redirect()->back()->with('importsuccess', 'File imported successfully.');
+            return redirect()->back()->with('success', 'File imported successfully.');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            return redirect()->back()->with('importerror', 'Import was unsuccessful. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Import was unsuccessful. Please follow the given instruction.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('importerror', 'Import was unsuccessful. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Import was unsuccessful. Please follow the given instruction.');
         }
     }
 

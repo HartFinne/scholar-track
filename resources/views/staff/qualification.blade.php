@@ -32,24 +32,10 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
+    <x-alert />
 
     <div class="ctnmain">
-        <div class="container">
-            <div class="row" id="formmsg">
-                @if (session('formsuccess'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('formsuccess') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('formerror'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ session('formerror') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-            </div>
+        <div class="container-fluid">
             <fieldset class="row">
                 <legend class="pagetitle">Manage Application Forms</legend>
                 <div class="ctntable table-responsive">
@@ -85,22 +71,7 @@
                     </table>
                 </div>
             </fieldset>
-            <div class="divider"></div>
-            <div class="row">
-                @if (session('importsuccess'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('importsuccess') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('importerror'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ session('importerror') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-            </div>
+            {{-- <div class="divider"></div> --}}
             <fieldset class="row mb-3" id="import">
                 <span class="pagetitle">Import Scholar Emails</span>
                 <span class="col-12 mb-2">
@@ -108,34 +79,20 @@
                     Ensure the file contains only email addresses, and they must be placed in the first column of the
                     sheet.
                 </span>
-                <form action="{{ route('importemails') }}" method="POST" enctype="multipart/form-data" class="col-12">
-                    @csrf <!-- Ensure CSRF protection for Laravel applications -->
+                <form action="{{ route('importemails') }}" method="POST" enctype="multipart/form-data" class="col-12"
+                    id="importForm">
+                    @csrf
                     <div class="input-group">
                         <input type="file" class="form-control" id="file" name="file" required
                             accept=".xlsx,.xls" aria-describedby="fileHelp">
-                        <button class="btn btn-success" type="submit">Upload</button>
+                        <button class="btn btn-success" type="submit" style="z-index: 1">Upload</button>
                     </div>
                     <small id="fileHelp" class="form-text text-muted">
                         File must be in .xlsx or .xls format.
                     </small>
                 </form>
             </fieldset>
-            <div class="divider"></div>
-            <div class="row">
-                @if (session('critsuccess'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('critsuccess') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('criterror'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ session('criterror') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-            </div>
+            {{-- <div class="divider"></div> --}}
             <div class="row">
                 <fieldset class="col-12" id="criteria">
                     <form method="POST" action="{{ route('updatecriteria') }}">
@@ -211,44 +168,45 @@
                     </form>
                 </fieldset>
             </div>
-            <div class="divider"></div>
-            <div class="row">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                            aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                            aria-label="Close"></button>
-                    </div>
-                @endif
-            </div>
+            {{-- <div class="divider"></div> --}}
             <div class="row">
                 <fieldset class="col-12 col-md-12" id="ics">
                     <legend class="pagetitle">Institutions</legend>
                     <form class="mb-3" method="POST" action="{{ route('addinstitution') }}">
                         @csrf
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" placeholder="Enter Institution"
+                            <input type="text" class="form-control" placeholder="Institution Name"
                                 name="institute" required>
-                            <input type="number" class="form-control" placeholder="Enter Highest GWA"
-                                name="highestgwa" required step="0.01" min="1" max="5">
-                            <button class="btn btn-success" type="submit" id="btnaddinsti">Add</button>
+                            <select type="text" class="form-control" style="cursor: pointer" name="schoollevel"
+                                required>
+                                <option value="" selected hidden>Select Level</option>
+                                <option value="College">College</option>
+                                <option value="Senior High">Senior High</option>
+                                <option value="Junior High">Junior High</option>
+                                <option value="Elementary">Elementary</option>
+                            </select>
+                            <select type="text" class="form-control" style="cursor: pointer" name="academiccycle"
+                                required>
+                                <option value="" selected hidden>Select Cycle</option>
+                                <option value="Semester">Semester</option>
+                                <option value="Trimester">Trimester</option>
+                                <option value="Quarter">Quarter</option>
+                            </select>
+                            <input type="number" class="form-control" placeholder="Highest GWA" name="highestgwa"
+                                required step="0.01" min="1" max="100">
+                            <button class="btn btn-success" type="submit" id="btnaddinsti"
+                                style="z-index: 1">Add</button>
                         </div>
                     </form>
-                    <div class="table-responsive">
+                    <div class="ctntable table-responsive">
                         <table class="table table-bordered" id="tblinstitutions">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width: 60%;">Institution</th>
-                                    <th class="text-center" style="width: 30%;">Highest GWA</th>
-                                    <th class="text-center" style="width: 10%;">Action</th>
+                                    <th class="text-center w-50">Institution Name</th>
+                                    <th class="text-center">School Level</th>
+                                    <th class="text-center">Academic Cycle</th>
+                                    <th class="text-center">Highest GWA</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -261,9 +219,42 @@
                                                 <textarea class="tblinput form-control text-center align-middle" name="newschoolname" required>{{ $institution->schoolname }}</textarea>
                                             </td>
                                             <td>
+                                                <select type="text"
+                                                    class="tblinput form-control text-center align-middle"
+                                                    style="cursor: pointer" name="newschoollevel" required>
+                                                    <option value="College"
+                                                        {{ $institution->schoollevel == 'College' ? 'selected' : '' }}>
+                                                        College</option>
+                                                    <option value="Senior High"
+                                                        {{ $institution->schoollevel == 'Senior High' ? 'selected' : '' }}>
+                                                        Senior High</option>
+                                                    <option value="Junior High"
+                                                        {{ $institution->schoollevel == 'Junior High' ? 'selected' : '' }}>
+                                                        Junior High</option>
+                                                    <option value="Elementary"
+                                                        {{ $institution->schoollevel == 'Elementary' ? 'selected' : '' }}>
+                                                        Elementary</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select type="text"
+                                                    class="tblinput form-control text-center align-middle"
+                                                    style="cursor: pointer" name="newacademiccycle" required>
+                                                    <option value="Semester"
+                                                        {{ $institution->academiccycle == 'Semester' ? 'selected' : '' }}>
+                                                        Semester</option>
+                                                    <option value="Trimester"
+                                                        {{ $institution->academiccycle == 'Trimester' ? 'selected' : '' }}>
+                                                        Trimester</option>
+                                                    <option value="Quarter"
+                                                        {{ $institution->academiccycle == 'Quarter' ? 'selected' : '' }}>
+                                                        Quarter</option>
+                                                </select>
+                                            </td>
+                                            <td>
                                                 <input class="tblinput form-control text-center align-middle"
-                                                    name="newgwa" required type="number" min="1"
-                                                    max="5" step="0.01"
+                                                    name="newgwa" required type="number" min='1'
+                                                    max='100' step="0.01"
                                                     value="{{ $institution->highestgwa }}">
                                             </td>
                                             <td class="col-2 text-center align-middle">
@@ -296,10 +287,11 @@
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="Enter Course" name="course"
                                 required>
-                            <button class="btn btn-success" type="submit" id="btnaddcourse">Add</button>
+                            <button class="btn btn-success" type="submit" id="btnaddcourse"
+                                style="z-index: 1">Add</button>
                         </div>
                     </form>
-                    <div class="table-responsive">
+                    <div class="ctntable table-responsive">
                         <table class="table table-bordered" id="tblcourses">
                             <thead>
                                 <tr>
@@ -342,10 +334,11 @@
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Enter Strand" name="strand"
                             required>
-                        <button class="btn btn-success" type="submit" id="btnaddcourse">Add</button>
+                        <button class="btn btn-success" type="submit" id="btnaddcourse"
+                            style="z-index: 1">Add</button>
                     </div>
                 </form>
-                <div class="table-responsive">
+                <div class="ctntable table-responsive">
                     <table class="table table-bordered" id="tblcourses">
                         <thead>
                             <tr>
@@ -384,6 +377,33 @@
     </div>
     </div>
 
+    <div class="modal fade" id="loadingImport" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-success">
+                <div class="modal-body text-center p-4">
+                    <div class="spinner-border text-success mt-3 mb-4" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p style="font-size: 1.25em; color: #28a745; font-weight: 500;">
+                        Importing your file...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const importForm = document.getElementById("importForm");
+
+            if (importForm) {
+                importForm.addEventListener("submit", function(event) {
+                    const loadingModal = new bootstrap.Modal(document.getElementById('loadingImport'));
+                    loadingModal.show();
+                });
+            }
+        });
+    </script>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/criteriacontrol.js') }}"></script>
 </body>

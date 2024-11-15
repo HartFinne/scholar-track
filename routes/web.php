@@ -44,7 +44,7 @@ Route::prefix('applicant')->group(function () {
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
-    Route::view('/screnewal', 'scholar.screnewal')->name('screnewal');
+    Route::get('/renewal-application-form', [ScholarController::class, 'showrenewalform'])->name('screnewal');
     Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
     Route::get('/schome', [ScholarController::class, 'showHome'])->name('schome');
     // Appointment system

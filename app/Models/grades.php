@@ -18,6 +18,9 @@ class grades extends Model
         'schoolyear',
         'SemesterQuarter',
         'GWA',
+        'GWAConduct',
+        'ChineseGWA',
+        'ChineseGWAConduct',
         'ReportCard',
         'GradeStatus',
     ];

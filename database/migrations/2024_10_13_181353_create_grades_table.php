@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('schoolyear', 10);
             $table->string('SemesterQuarter');
             $table->float('GWA');
+            $table->string('GWAConduct')->nullable();
+            $table->float('ChineseGWA')->nullable();
+            $table->string('ChineseGWAConduct')->nullable();
             $table->binary('ReportCard');
             $table->string('GradeStatus')->nullable();
             $table->timestamps();

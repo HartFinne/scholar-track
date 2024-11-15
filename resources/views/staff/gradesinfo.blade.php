@@ -18,23 +18,10 @@
 <body>
     <!-- Include Sidebar -->
     @include('partials._pageheader')
-
+    <x-alert />
     <!-- MAIN -->
     <div class="ctnmain">
         <div class="container">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
             <div class="row my-2 d-flex align-items-end">
                 <div class="col-md-10 px-4">
                     <span class="fw-bold" style="font-size: 20px">{{ $scholar->caseCode }} |
@@ -54,7 +41,7 @@
                         @csrf
                         <div class="col-md-2">Grade Status</div>
                         <div class="col-md-8">
-                            <select name="gradestatus" class="form-control">
+                            <select name="gradestatus" class="form-control" style="cursor: pointer">
                                 <option value="Pending" {{ $grade->GradeStatus == 'Pending' ? 'selected' : '' }}>
                                     Pending
                                 </option>
@@ -62,6 +49,9 @@
                                 </option>
                                 <option value="Failed GWA" {{ $grade->GradeStatus == 'Failed GWA' ? 'selected' : '' }}>
                                     Failed GWA</option>
+                                <option value="Failed GWA (Chinese Subject)"
+                                    {{ $grade->GradeStatus == 'Failed GWA (Chinese Subject)' ? 'selected' : '' }}>
+                                    Failed GWA (Chinese Subject)</option>
                                 <option value="Failed Grade"
                                     {{ $grade->GradeStatus == 'Failed Grade' ? 'selected' : '' }}>
                                     Failed Grade
@@ -78,23 +68,38 @@
                 </h5>
 
                 <div class="row my-2">
-                    <div class="col-md-2">GWA</div>
-                    <div class="col-md-10 fw-bold">: <span>{{ $grade->GWA }}</span></div>
+                    <div class="col-md-3">School Year</div>
+                    <div class="col-md-9 fw-bold">: <span>S.Y. {{ $grade->schoolyear }}</span></div>
                 </div>
 
                 <div class="row my-2">
-                    <div class="col-md-2">School Year</div>
-                    <div class="col-md-10 fw-bold">: <span>S.Y. {{ $grade->schoolyear }}</span></div>
+                    <div class="col-md-3">Semester</div>
+                    <div class="col-md-9 fw-bold">: <span>{{ $grade->SemesterQuarter }}</span></div>
                 </div>
 
                 <div class="row my-2">
-                    <div class="col-md-2">Semester</div>
-                    <div class="col-md-10 fw-bold">: <span>{{ $grade->SemesterQuarter }}</span></div>
+                    <div class="col-md-3">
+                        {{ $scholar->education->scSchoolLevel == 'College' ? 'GWA' : 'General Average' }}</div>
+                    <div class="col-md-9 fw-bold">: <span>{{ $grade->GWA }}</span></div>
                 </div>
 
-                <div class="row my-2">
-                    <div class="col-md-2">Proof of Grades</div>
-                    <div class="col-md-10 fw-bold">: </div>
+                @if ($scholar->education->scSchoolLevel != 'College')
+                    <div class="row my-2">
+                        <div class="col-md-3">Conduct</div>
+                        <div class="col-md-9 fw-bold">: <span>{{ $grade->GWAConduct }}</span></div>
+                    </div>
+                    <div class="row my-2">
+                        <div class="col-md-3">General Average (Chinese Subject)</div>
+                        <div class="col-md-9 fw-bold">: <span>{{ $grade->ChineseGWA }}</span></div>
+                    </div>
+                    <div class="row my-2">
+                        <div class="col-md-3">Conduct (Chinese Subject)</div>
+                        <div class="col-md-9 fw-bold">: <span>{{ $grade->ChineseGWAConduct }}</span></div>
+                    </div>
+                @endif
+
+                <div class="row fw-bold text-center my-2">
+                    <div>Report Card</div>
                 </div>
 
                 @php

@@ -5,6 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
+use function Ramsey\Uuid\v1;
+
 return new class extends Migration
 {
     /**
@@ -28,7 +30,9 @@ return new class extends Migration
 
         Schema::create('institutions', function (Blueprint $table) {
             $table->increments('inid');
-            $table->string('schoolname', 255)->unique();
+            $table->string('schoolname', 255);
+            $table->string('schoollevel', 25);
+            $table->string('academiccycle', 25);
             $table->float('highestgwa');
             $table->timestamps();
         });
@@ -44,9 +48,9 @@ return new class extends Migration
             [
                 'cshours' => 8,
                 'cgwa' => 2.25,
-                'shsgwa' => 90,
-                'jhsgwa' => 90,
-                'elemgwa' => 90,
+                'shsgwa' => 82,
+                'jhsgwa' => 82,
+                'elemgwa' => 82,
                 'fincome' => 10000,
                 'mincome' => 10000,
                 'sincome' => 10000,
@@ -59,36 +63,56 @@ return new class extends Migration
         DB::table('institutions')->insert([
             [
                 'schoolname' => "Polytechnic University of the Philippines",
+                'schoollevel' => "College",
+                'academiccycle' => "Semester",
+                'highestgwa' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'schoolname' => "Polytechnic University of the Philippines",
+                'schoollevel' => "Elementary",
+                'academiccycle' => "Quarter",
                 'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "University of the Philippines",
+                'schoollevel' => "College",
+                'academiccycle' => "Semester",
                 'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "Pamantasan ng Lungsod ng Maynila",
+                'schoollevel' => "College",
+                'academiccycle' => "Semester",
                 'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "Technological University of the Philippines",
+                'schoollevel' => "College",
+                'academiccycle' => "Semester",
                 'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "Universidad De Manila",
+                'schoollevel' => "College",
+                'academiccycle' => "Semester",
                 'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'schoolname' => "Philippine Normal University",
+                'schoollevel' => "College",
+                'academiccycle' => "Semester",
                 'highestgwa' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),

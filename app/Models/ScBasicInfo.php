@@ -20,11 +20,15 @@ class ScBasicInfo extends Model
         'scMiddlename',
         'scChinesename',
         'scDateOfBirth',
+        'scAge',
         'scSex',
         'scGuardianName',
         'scRelationToGuardian',
         'scGuardianEmailAddress',
         'scGuardianPhoneNumber',
+        'scOccupation',
+        'scIncome',
+        'scFblink',
         'scIsIndigenous',
         'scIndigenousgroup'
     ];

@@ -31,6 +31,7 @@ use App\Models\communityservice;
 use App\Models\criteria;
 use App\Models\csregistration;
 use App\Models\institutions;
+use App\Models\courses;
 use App\Models\scholarshipinfo;
 use App\Models\staccount;
 use Illuminate\Support\Facades\Storage;
@@ -123,17 +124,22 @@ class ScholarController extends Controller
     // for updating the profile
     public function updateProfile(Request $request)
     {
-        $validatedData = $request->validate([
-            'scEmail' => 'required|email|max:255',
-            'scPhoneNum' => 'required|regex:/^[0-9]{12}$/',
-            'scResidential' => 'required|string|max:255',
-            'scGuardianName' => 'required|string|max:255',
-            'scRelationToGuardian' => 'required|string|max:255',
-            'scGuardianEmailAddress' => 'required|email|max:255',
-            'scGuardianPhoneNumber' => 'required|regex:/^[0-9]{12}$/',
-        ]);
-
         try {
+            $validatedData = $request->validate([
+                'scOccupation' => 'required|string|max:100',
+                'scIncome' => 'required|numeric|min:0',
+                'scFblink' => 'required|string',
+                'scEmail' => 'required|email|max:255',
+                'scPhoneNum' => 'required|regex:/^[0-9]{12}$/',
+                'scResidential' => 'required|string|max:255',
+                'scRegion' => 'required|string|max:50',
+                'scCity' => 'required|string|max:50',
+                'scBarangay' => 'required|string|max:50',
+                'scGuardianName' => 'required|string|max:255',
+                'scRelationToGuardian' => 'required|string|max:255',
+                'scGuardianEmailAddress' => 'required|email|max:255',
+                'scGuardianPhoneNumber' => 'required|regex:/^[0-9]{12}$/',
+            ]);
             // Get authenticated user
             $user = User::with(['basicInfo', 'education', 'addressInfo'])
                 ->where('id', Auth::id())
@@ -142,10 +148,18 @@ class ScholarController extends Controller
             // Update user's email and phone number
             $user->scEmail = $validatedData['scEmail'];
             $user->scPhoneNum = $validatedData['scPhoneNum'];
-            $user->save(); // Save the User model
+            $user->save();
+
+            $user->basicInfo->scOccupation = $validatedData['scOccupation'];
+            $user->basicInfo->scIncome = $validatedData['scIncome'];
+            $user->basicInfo->scFblink = $validatedData['scFblink'];
+            $user->basicInfo->save(); // Save AddressInfo model
 
             // Update address information
             $user->addressInfo->scResidential = $validatedData['scResidential'];
+            $user->addressInfo->scRegion = $validatedData['scRegion'];
+            $user->addressInfo->scCity = $validatedData['scCity'];
+            $user->addressInfo->scBarangay = $validatedData['scBarangay'];
             $user->addressInfo->save(); // Save AddressInfo model
 
             // Update basic info (Guardian details)
@@ -221,11 +235,62 @@ class ScholarController extends Controller
         return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal'));
     }
 
+    public function showrenewalform()
+    {
+        $user = User::with(['basicInfo', 'education', 'addressInfo', 'clothingSize', 'scholarshipinfo'])
+            ->where('id', Auth::id())
+            ->first();
+
+        $academiccycle = institutions::where('schoolname', $user->education->scSchoolName)
+            ->where('schoollevel', $user->education->scSchoolLevel)
+            ->pluck('academiccycle')->first();
+
+        $grade = null;
+
+        if (in_array($user->education->scSchoolLevel, ['College', 'Senior High'])) {
+            $academicCycles = [
+                'Semester' => ['2nd Semester', '1st Semester'],
+                'Trimester' => ['3rd Semester', '2nd Semester', '1st Semester'],
+            ];
+
+            $semesters = $academicCycles[$academiccycle];
+
+            foreach ($semesters as $semester) {
+                $grade = grades::where('caseCode', $user->caseCode)->where('SemesterQuarter', $semester)->first();
+                if ($grade) break; // Stop once a grade is found
+            }
+        } else {
+            $quarters = ['4th Quarter', '3rd Quarter', '2nd Quarter', '1st Quarter'];
+            foreach ($quarters as $quarter) {
+                $grade = grades::where('caseCode', $user->caseCode)->where('SemesterQuarter', $quarter)->first();
+                if ($grade) break; // Stop once a grade is found
+            }
+        }
+
+        // dd($grade);
+
+        $courses = courses::where('level', 'College')->get();
+        $strands = courses::where('level', 'Senior High')->get();
+        $institutions = [
+            'Elementary' => DB::table('institutions')->where('schoollevel', 'Elementary')->get(),
+            'Junior High' => DB::table('institutions')->where('schoollevel', 'Junior High')->get(),
+            'Senior High' => DB::table('institutions')->where('schoollevel', 'Senior High')->get(),
+            'College' => DB::table('institutions')->where('schoollevel', 'College')->get()
+        ];
+
+        return view('scholar.scholarship.screnewal', compact('courses', 'institutions', 'user', 'grade', 'strands'));
+    }
+
     public function showGradeSubmission(Request $request)
     {
         // Retrieve the currently authenticated user's caseCode
         $user = Auth::user();
         $educ = ScEducation::where('caseCode', $user->caseCode)->first();
+        $institution = institutions::where('schoolname', $educ->scSchoolName)
+            ->where('schoollevel', $educ->scSchoolLevel)
+            ->first();
+
+        // dd($institution);
 
         $status = $request->input('status', 'all');
 
@@ -235,10 +300,8 @@ class ScholarController extends Controller
                 return $query->where('GradeStatus', $status);
             })
             ->get();
-
-        return view('scholar/scholarship.gradesub', compact('grades', 'educ', 'status'));
+        return view('scholar/scholarship.gradesub', compact('grades', 'educ', 'status', 'institution'));
     }
-
 
     public function storeGradeSubmission(Request $request)
     {
@@ -254,13 +317,24 @@ class ScholarController extends Controller
             $gwaRules[] = 'max:100';
         }
 
-        $request->validate([
-            'semester' => ['required'],
-            'gwa' => $gwaRules,
-            'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:2048'] // Validate file: jpeg/png/jpg/pdf and max size of 2MB
-        ]);
-
         try {
+            if ($educ->scSchoolLevel == 'College') {
+                $request->validate([
+                    'semester' => 'required',
+                    'gwa' => $gwaRules,
+                    'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
+                ]);
+            } else {
+                $request->validate([
+                    'semester' => 'required',
+                    'genave' => $gwaRules,
+                    'gwaconduct' => 'required|string|min:1',
+                    'chinesegenave' => $gwaRules,
+                    'chineseconduct' => 'required|string|min:1',
+                    'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
+                ]);
+            }
+
             $existingGrade = grades::where('caseCode', $user->caseCode)
                 ->where('SemesterQuarter', $request->semester)
                 ->where('schoolyear', $educ->scAcademicYear)
@@ -284,12 +358,52 @@ class ScholarController extends Controller
             }
 
             $criteria = criteria::first();
-            $gradingsystem = institutions::where('schoolname', $educ->scSchoolName)->first();
+            $requiredgwa = [
+                'College' => $criteria->cgwa,
+                'Senior High' => $criteria->shsgwa,
+                'Junior High' => $criteria->jhsgwa,
+                'Elementary' => $criteria->elemgwa,
+            ];
+            $gradingsystem = institutions::where('schoolname', $educ->scSchoolName)
+                ->where('schoollevel', $educ->scSchoolLevel)->first();
 
+            // dd($gradingsystem);
             if ($gradingsystem->highestgwa == 1) {
-                $gradeStatus = ($request->gwa > $criteria->cgwa && $request->gwa <= 5) ? 'Failed GWA' : 'Passed';
-            } else {
-                $gradeStatus = ($request->gwa < $criteria->cgwa && $request->gwa >= 1) ? 'Failed GWA' : 'Passed';
+                if ($educ->scSchoolLevel == 'College') {
+                    $gradeStatus = ($request->gwa > $requiredgwa['College']) ? 'Failed GWA' : 'Passed';
+                } else {
+                    if ($request->genave > $requiredgwa[$educ->scSchoolLevel]) {
+                        $gradeStatus = 'Failed GWA';
+                    } else if ($request->genave > $requiredgwa[$educ->scSchoolLevel]) {
+                        $gradeStatus = 'Failed GWA (Chinese Subject)';
+                    } else {
+                        $gradeStatus = 'Passed';
+                    }
+                }
+            } else if ($gradingsystem->highestgwa == 5) {
+                if ($educ->scSchoolLevel == 'College') {
+                    $gradeStatus = ($request->gwa < $requiredgwa['College']) ? 'Failed GWA' : 'Passed';
+                } else {
+                    if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                        $gradeStatus = 'Failed GWA';
+                    } else if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                        $gradeStatus = 'Failed GWA (Chinese Subject)';
+                    } else {
+                        $gradeStatus = 'Passed';
+                    }
+                }
+            } else if ($gradingsystem->highestgwa == 100) {
+                if ($educ->scSchoolLevel == 'College') {
+                    $gradeStatus = ($request->gwa < $requiredgwa['College']) ? 'Failed GWA' : 'Passed';
+                } else {
+                    if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                        $gradeStatus = 'Failed GWA';
+                    } else if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                        $gradeStatus = 'Failed GWA (Chinese Subject)';
+                    } else {
+                        $gradeStatus = 'Passed';
+                    }
+                }
             }
 
             DB::beginTransaction();
@@ -298,19 +412,21 @@ class ScholarController extends Controller
                 'caseCode' => $user->caseCode, // Link the grade to the scholar
                 'schoolyear' => $educ->scAcademicYear,
                 'SemesterQuarter' => $request->semester,
-                'GWA' => $request->gwa,
-                'ReportCard' => $filePath, // Store the file path
+                'GWA' => $request->gwa ?? $request->genave,
+                'GWAConduct' => $request->gwaconduct ?? NULL,
+                'ChineseGWA' => $request->chinesegenave ?? NULL,
+                'ChineseGWAConduct' => $request->chineseconduct ?? NULL,
+                'ReportCard' => $filePath,
                 'GradeStatus' => $gradeStatus
             ]);
 
-            $scinfo = scholarshipinfo::where('caseCode', $user->caseCode)->first();
-            $worker = staccount::where('area', $scinfo->area)->first();
-
-            $gradeinfo = grades::where('caseCode', $user->caseCode)
-                ->where('schoolyear', $educ->scAcademicYear)
-                ->where('SemesterQuarter', $request->semester)->first();
-
             if ($gradeStatus == 'Failed GWA') {
+                $scinfo = scholarshipinfo::where('caseCode', $user->caseCode)->first();
+                $worker = staccount::where('area', $scinfo->area)->first();
+
+                $gradeinfo = grades::where('caseCode', $user->caseCode)
+                    ->where('schoolyear', $educ->scAcademicYear)
+                    ->where('SemesterQuarter', $request->semester)->first();
                 lte::create([
                     'caseCode' => $user->caseCode,
                     'violation' => $gradeStatus,
@@ -344,9 +460,10 @@ class ScholarController extends Controller
     {
         // Find the grade using the correct primary key
         $grade = grades::findOrFail($id);
+        $educ = ScEducation::where('caseCode', $grade->caseCode)->first();
 
         // Pass the grade data and academic year to the view
-        return view('scholar.scholarship.gradesinfo', compact('grade'));
+        return view('scholar.scholarship.gradesinfo', compact('grade', 'educ'));
     }
 
     public function showHumanitiesClass(Request $request)
@@ -381,20 +498,6 @@ class ScholarController extends Controller
 
         return view('scholar.scholarship.schumanities', compact('classes', 'totalattendance', 'totaltardiness', 'totalabsences'));
     }
-
-
-    // public function showLTE()
-    // {
-    //     $scholar = Auth::user();
-    //     $noresponseletters = lte::with(['hcattendance', 'csattendance', 'csregistration'])
-    //         ->where('caseCode', $scholar->caseCode)->where('ltestatus', "No Response")->get();
-
-    //     $letters = lte::where('caseCode', $scholar->caseCode)
-    //         ->whereIn('ltestatus', ['To Review', 'Excused', 'Unexcused'])
-    //         ->get();
-
-    //     return view('scholar.scholarship.sclte', compact('noresponseletters', 'letters'));
-    // }
 
     public function showLTE(Request $request)
     {

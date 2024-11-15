@@ -16,9 +16,9 @@ class ScAddressInfo extends Model
     protected $fillable = [
         'caseCode',
         'scResidential',
+        'scRegion',
         'scBarangay',
-        'scCity',
-        'scPermanent'
+        'scCity'
     ];
 
     // Define inverse relationship to account

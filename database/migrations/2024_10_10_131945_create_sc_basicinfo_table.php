@@ -19,11 +19,15 @@ return new class extends Migration
             $table->string('scMiddlename', 50);
             $table->string('scChinesename', 255);
             $table->date('scDateOfBirth');
+            $table->integer('scAge');
             $table->string('scSex', 10);
             $table->string('scGuardianName', 50);
             $table->string('scRelationToGuardian', 50);
             $table->string('scGuardianEmailAddress', 255);
             $table->string('scGuardianPhoneNumber', 12);
+            $table->string('scOccupation', 100);
+            $table->float('scIncome');
+            $table->text('scFblink');
             $table->string('scIsIndigenous', 3);
             $table->string('scIndigenousgroup', 100)->nullable();
             $table->timestamps();

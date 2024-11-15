@@ -80,7 +80,7 @@
                 <hr>
                 <div class="text">
                     <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
-                    <button onclick="window.location.href='screnewal.html'">Renew Scholarship</button>
+                    <button onclick="window.location.href='{{ route('screnewal') }}'">Renew Scholarship</button>
                 </div>
                 <hr>
             </div>
@@ -90,11 +90,20 @@
         <p class="sub-title">Summary of Penalties/Deductions</p>
         <div class="filter" id="filter-penalty">
             <form action="{{ route('overview') }}" method="GET" id="penalty-filter-form">
-                <button type="submit" name="penalty_status" value="all" class="filter-btn {{ request('penalty_status', 'all') == 'all' ? 'active' : '' }}">All</button>
-                <button type="submit" name="penalty_status" value="1st offense" class="filter-btn {{ request('penalty_status') == '1st offense' ? 'active' : '' }}">1st offense</button>
-                <button type="submit" name="penalty_status" value="2nd offense" class="filter-btn {{ request('penalty_status') == '2nd offense' ? 'active' : '' }}">2nd offense</button>
-                <button type="submit" name="penalty_status" value="3rd offense" class="filter-btn {{ request('penalty_status') == '3rd offense' ? 'active' : '' }}">3rd offense</button>
-                <button type="submit" name="penalty_status" value="4th offense" class="filter-btn {{ request('penalty_status') == '4th offense' ? 'active' : '' }}">4th offense</button>
+                <button type="submit" name="penalty_status" value="all"
+                    class="filter-btn {{ request('penalty_status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                <button type="submit" name="penalty_status" value="1st offense"
+                    class="filter-btn {{ request('penalty_status') == '1st offense' ? 'active' : '' }}">1st
+                    offense</button>
+                <button type="submit" name="penalty_status" value="2nd offense"
+                    class="filter-btn {{ request('penalty_status') == '2nd offense' ? 'active' : '' }}">2nd
+                    offense</button>
+                <button type="submit" name="penalty_status" value="3rd offense"
+                    class="filter-btn {{ request('penalty_status') == '3rd offense' ? 'active' : '' }}">3rd
+                    offense</button>
+                <button type="submit" name="penalty_status" value="4th offense"
+                    class="filter-btn {{ request('penalty_status') == '4th offense' ? 'active' : '' }}">4th
+                    offense</button>
             </form>
         </div>
         <div class="ctn-table table-responsive">
@@ -122,10 +131,14 @@
         <p class="sub-title">Scholarship Renewal</p>
         <div class="filter" id="filter-renewal">
             <form action="{{ route('overview') }}" method="GET" id="renewal-filter-form">
-                <button type="submit" name="renewal_status" value="all" class="filter-btn {{ request('renewal_status', 'all') == 'all' ? 'active' : '' }}">All</button>
-                <button type="submit" name="renewal_status" value="Pending" class="filter-btn {{ request('renewal_status') == 'Pending' ? 'active' : '' }}">Pending</button>
-                <button type="submit" name="renewal_status" value="Accepted" class="filter-btn {{ request('renewal_status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
-                <button type="submit" name="renewal_status" value="Rejected" class="filter-btn {{ request('renewal_status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
+                <button type="submit" name="renewal_status" value="all"
+                    class="filter-btn {{ request('renewal_status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                <button type="submit" name="renewal_status" value="Pending"
+                    class="filter-btn {{ request('renewal_status') == 'Pending' ? 'active' : '' }}">Pending</button>
+                <button type="submit" name="renewal_status" value="Accepted"
+                    class="filter-btn {{ request('renewal_status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
+                <button type="submit" name="renewal_status" value="Rejected"
+                    class="filter-btn {{ request('renewal_status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
             </form>
         </div>
         <div class="ctn-table table-responsive">
@@ -215,25 +228,24 @@
             });
         };
     </script>
-    
+
     <script>
         function handleFilterButtons(filterContainerId) {
-        document.querySelectorAll(`#${filterContainerId} .filter-btn`).forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove "active" class from all buttons in this filter set
-                document.querySelectorAll(`#${filterContainerId} .filter-btn`).forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll(`#${filterContainerId} .filter-btn`).forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove "active" class from all buttons in this filter set
+                    document.querySelectorAll(`#${filterContainerId} .filter-btn`).forEach(btn => btn
+                        .classList.remove('active'));
 
-                // Add "active" class to the clicked button
-                this.classList.add('active');
+                    // Add "active" class to the clicked button
+                    this.classList.add('active');
+                });
             });
-        });
-    }
+        }
 
-    // Initialize for each filter container
-    handleFilterButtons('filter-penalty');
-    handleFilterButtons('filter-renewal');
-
-
+        // Initialize for each filter container
+        handleFilterButtons('filter-penalty');
+        handleFilterButtons('filter-renewal');
     </script>
 </body>
 

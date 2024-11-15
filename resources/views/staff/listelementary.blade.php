@@ -36,6 +36,9 @@
                         <th class="text-center align-middle">Scholar's Name</th>
                         <th class="text-center align-middle">Grade Level</th>
                         <th class="text-center align-middle">GWA</th>
+                        <th class="text-center align-middle">Conduct</th>
+                        <th class="text-center align-middle">GWA (Chinese Subject)</th>
+                        <th class="text-center align-middle">Conduct (Chinese Subject)</th>
                         <th class="text-center align-middle">HC Attendance Count</th>
                         <th class="text-center align-middle">Penalty Count</th>
                         <th class="text-center align-middle">Scholarship Status</th>
@@ -48,7 +51,12 @@
                             <td class="text-center align-middle">{{ $data->basicInfo->scLastname }},
                                 {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
                             <td class="text-center align-middle">{{ $data->education->scYearGrade }}</td>
-                            <td class="text-center align-middle">{{ $data->latestgwa ?? 'No Data Available' }}</td>
+                            <td class="text-center align-middle">{{ $data->latestgenave ?? 'No Data Available' }}</td>
+                            <td class="text-center align-middle">{{ $data->latestconduct ?? 'No Data Available' }}</td>
+                            <td class="text-center align-middle">
+                                {{ $data->latestchinesegenave ?? 'No Data Available' }}</td>
+                            <td class="text-center align-middle">
+                                {{ $data->latestchineseconduct ?? 'No Data Available' }}</td>
                             <td class="text-center align-middle">{{ $data->totalhcattendance }}/{{ $hcevents }}
                             </td>
                             <td class="text-center align-middle">{{ $data->penaltycount }}</td>

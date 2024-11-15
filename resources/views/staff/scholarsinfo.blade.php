@@ -235,6 +235,11 @@
                                     {{ $data->education->scSchoolLevel == 'College' ? 'Semester' : 'Quarter' }}
                                 </th>
                                 <th class="text-center align-middle">GWA</th>
+                                @if ($data->education->scSchoolLevel != 'College')
+                                    <th class="text-center align-middle">Conduct</th>
+                                    <th class="text-center align-middle">GWA (Chinese Subject)</th>
+                                    <th class="text-center align-middle">Conduct (Chinese Subject)</th>
+                                @endif
                                 <th class="text-center align-middle">Status</th>
                                 <th class="text-center align-middle">Action</th>
                             </tr>
@@ -251,6 +256,11 @@
                                         <td class="text-center align-middle">{{ $grade->schoolyear }}</td>
                                         <td class="text-center align-middle">{{ $grade->SemesterQuarter }}</td>
                                         <td class="text-center align-middle">{{ $grade->GWA }}</td>
+                                        @if ($data->education->scSchoolLevel != 'College')
+                                            <td class="text-center align-middle">{{ $grade->GWAConduct }}</td>
+                                            <td class="text-center align-middle">{{ $grade->ChineseGWA }}</td>
+                                            <td class="text-center align-middle">{{ $grade->ChineseGWAConduct }}</td>
+                                        @endif
                                         <td class="text-center align-middle">{{ $grade->GradeStatus }}</td>
                                         <td class="text-center align-middle">
                                             <a href="{{ route('scholar-gradesinfo', ['gid' => $grade->gid]) }}"

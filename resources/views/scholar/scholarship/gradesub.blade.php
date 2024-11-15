@@ -29,7 +29,7 @@
             <p class="desc">Submit your GWA and the scanned copy of pdf file of your grades.</p>
         </div>
 
-        <form action="{{ route('gradesub.post') }}" class="grade-form text-center" method="POST"
+        <form action="{{ route('gradesub.post') }}" class="container text-center" method="POST"
             enctype="multipart/form-data">
             @csrf
 
@@ -44,28 +44,73 @@
                 </div>
             @endif
 
-            <!-- Semester Selection -->
-            <select class="sem" aria-label="qtrsem" name="semester" required>
-                @if ($educ->scSchoolLevel == 'College' || $educ->scSchoolLevel == 'Senior High')
-                    <option value="" disabled selected hidden>Semester</option>
-                    <option value="1st Semester">1ST SEMESTER</option>
-                    <option value="2nd Semester">2ND SEMESTER</option>
-                @else
-                    <option value="" disabled selected hidden>Quarter</option>
-                    <option value="1st Semester">1ST QUARTER</option>
-                    <option value="2nd Semester">2ND QUARTER</option>
-                    <option value="2nd Semester">3RD QUARTER</option>
-                    <option value="2nd Semester">4TH QUARTER</option>
+            <div class="row mb-3">
+                <!-- Dropdown for Quarter/Semester -->
+                <div class="{{ $institution->schoollevel == 'College' ? 'col-md-4' : 'col-md-6' }} mb-2">
+                    <select class="form-select" aria-label="qtrsem" name="semester" required>
+                        <option value="" disabled selected hidden>
+                            Select {{ $institution->academiccycle == 'Quarter' ? 'Quarter' : 'Term' }}
+                        </option>
+                        @if ($institution->academiccycle == 'Quarter')
+                            <option value="1st Quarter">1ST QUARTER</option>
+                            <option value="2nd Quarter">2ND QUARTER</option>
+                            <option value="3rd Quarter">3RD QUARTER</option>
+                            <option value="4th Quarter">4TH QUARTER</option>
+                        @else
+                            <option value="1st Semester">1ST SEMESTER</option>
+                            <option value="2nd Semester">2ND SEMESTER</option>
+                            @if ($institution->academiccycle == 'Trimester')
+                                <option value="3rd Semester">3RD SEMESTER</option>
+                            @endif
+                        @endif
+                    </select>
+                </div>
+
+                @if ($institution->schoollevel == 'College')
+                    <!-- Input for GWA -->
+                    <div class="col-md-4 mb-2">
+                        <input type="number" class="form-control" id="gwa" name="gwa" min="1"
+                            max="{{ $institution->highestgwa != 100 ? '5' : '100' }}"
+                            placeholder="General Weighted Average" value="{{ old('gwa') }}"
+                            {{ $institution->schoollevel == 'College' ? 'required' : '' }} step="0.01">
+                    </div>
                 @endif
-            </select>
 
-            <!-- GWA Input -->
-            <input type="number" class="gwa" id="gwa" name="gwa" placeholder="General Weighted Average"
-                value="{{ old('gwa') }}" required step="0.01">
-
-            <!-- Grade Image Input -->
-            <input type="file" class="file" name="gradeImage" accept="application/pdf, image/jpeg, image/png"
-                required>
+                <!-- File Input for Grade Image -->
+                <div class="{{ $institution->schoollevel == 'College' ? 'col-md-4' : 'col-md-6' }}">
+                    <input type="file" class="form-control" name="gradeImage"
+                        accept="application/pdf, image/jpeg, image/png" required>
+                </div>
+            </div>
+            @if ($institution->schoollevel != 'College')
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-2">
+                        <input type="number" class="form-control" id="genave" name="genave" min="1"
+                            max="{{ $institution->highestgwa != 100 ? '5' : '100' }}" placeholder="General Average"
+                            value="{{ old('genave') }}" {{ $institution->schoollevel != 'College' ? 'required' : '' }}
+                            step="0.01">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="gwaconduct" name="gwaconduct" minlength="1"
+                            placeholder="Conduct" value="{{ old('gwaconduct') }}"
+                            {{ $institution->schoollevel != 'College' ? 'required' : '' }}>
+                    </div>
+                </div>
+                <div class="row fw-bold text-center mb-2">
+                    <span>For Chinese Subject</span>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-2">
+                        <input type="number" class="form-control" id="chinesegenave" name="chinesegenave"
+                            min="1" max="{{ $institution->highestgwa != 100 ? '5' : '100' }}"
+                            placeholder="General Average" value="{{ old('chinesegenave') }}" step="0.01">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="chineseconduct" name="chineseconduct"
+                            minlength="1" placeholder="Conduct" value="{{ old('chineseconduct') }}">
+                    </div>
+                </div>
+            @endif
 
             <!-- Submit Button -->
             <button type="submit" class="btn-submit fw-bold">Submit</button>
@@ -73,7 +118,7 @@
 
 
 
-        <div class="status">
+        <div class="status mt-2">
             <p class="table-title">Grades Status</p>
             <div class="filter" id="filter-grades">
                 <form action="{{ route('gradesub') }}" method="GET" id="filter-form">
@@ -95,7 +140,14 @@
                     <tr>
                         <th class="text-center align-middle">School Year</th>
                         <th class="text-center align-middle">Semester</th>
-                        <th class="text-center align-middle">GWA</th>
+                        @if ($educ->scSchoolLevel == 'College')
+                            <th class="text-center align-middle">GWA</th>
+                        @else
+                            <th class="text-center align-middle">GWA</th>
+                            <th class="text-center align-middle">Conduct</th>
+                            <th class="text-center align-middle">GWA (Chinese Subject)</th>
+                            <th class="text-center align-middle">Conduct (Chinese Subject)</th>
+                        @endif
                         <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
 
@@ -107,11 +159,16 @@
                             <td>S.Y. {{ $grade->schoolyear }}</td>
                             <td>{{ $grade->SemesterQuarter }}</td>
                             <td>{{ $grade->GWA }}</td>
+                            @if ($educ->scSchoolLevel != 'College')
+                                <td>{{ $grade->GWAConduct ?? '' }}</td>
+                                <td>{{ $grade->ChineseGWA ?? 'N/A' }}</td>
+                                <td>{{ $grade->ChineseGWAConduct ?? 'N/A' }}</td>
+                            @endif
                             <td>{{ $grade->GradeStatus }}</td>
-                            <td><a href="{{ route('gradesinfo', ['id' => $grade->gid]) }}" id="view">View</a></td>
+                            <td><a href="{{ route('gradesinfo', ['id' => $grade->gid]) }}" id="view">View</a>
+                            </td>
                         </tr>
                     @endforeach
-
                 </tbody>
             </table>
         </div>

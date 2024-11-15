@@ -147,7 +147,7 @@
                             <div class="column">
                                 <label for="phonenum">Cellphone No./Landline</label>
                                 <input type="tel" minlength="11" maxlength="12" name="phonenum"
-                                    value="{{ old('phonenum') }}" required>
+                                    pattern="^(09\d{9}|63\d{10})$" value="{{ old('phonenum') }}" required>
                             </div>
                         </div>
                         <div class="row">
@@ -591,14 +591,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Load saved data from sessionStorage for all input types
             document.querySelectorAll('input, textarea, select').forEach(element => {
-                if (element.type === 'radio' || element.type === 'checkbox') {
-                    // Restore checked state for radio buttons and checkboxes
-                    const savedValue = sessionStorage.getItem(element.name);
-                    if (savedValue) {
-                        element.checked = savedValue === 'true';
-                    }
-                } else if (element.type === 'file') {
+                if (element.type === 'file') {
                     // Skip file inputs (cannot persist due to security reasons)
+                    return;
+                } else if (element.id === 'indigenousInput') {
                     return;
                 } else {
                     // Restore value for text, textarea, number, date, and select inputs
@@ -612,10 +608,7 @@
             // Save data to sessionStorage on input change
             document.querySelectorAll('input, textarea, select').forEach(element => {
                 element.addEventListener('input', () => {
-                    if (element.type === 'radio' || element.type === 'checkbox') {
-                        // Save checked state as true/false for radio buttons and checkboxes
-                        sessionStorage.setItem(element.name, element.checked);
-                    } else if (element.type === 'file') {
+                    if (element.type === 'file') {
                         // Skip file inputs (cannot be saved for security reasons)
                         return;
                     } else {
