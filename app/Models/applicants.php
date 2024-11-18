@@ -54,6 +54,17 @@ class applicants extends Authenticatable implements CanResetPassword
         'remember_token',
     ];
 
+    public function routeNotificationForMail($notification)
+    {
+        return $this->email;  // Use scEmail for notifications instead of emailq
+    }
+
+
+    public function getEmailForPasswordReset()
+    {
+        return $this->email;
+    }
+
     public function familyinfo()
     {
         return $this->hasMany(apfamilyinfo::class, 'casecode', 'casecode');

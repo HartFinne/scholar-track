@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middleware\applicant;
+use App\Notifications\ApplicantAccountCreation;
 use Illuminate\Http\Request;
 use App\Models\staccount;
 use App\Models\User;
@@ -44,6 +45,7 @@ use App\Models\apcasedetails;
 use App\Models\applicationforms;
 use App\Models\Appointments;
 use App\Models\RegularAllowance;
+use App\Notifications\AccountCreationNotification;
 use App\Notifications\LteAnnouncementCreated;
 use App\Notifications\PenaltyNotification;
 use App\Notifications\RegularAllowanceNotification;
@@ -107,6 +109,54 @@ class StaffController extends Controller
             $applicant->comment = $request->comment;
             $applicant->save();
             DB::commit();
+
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            $user = applicants::where('casecode', $casecode)->first();;
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'Application Updated';
+
+            if ($user->notification_preference === 'sms') {
+                // Send the SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->phonenum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $responseBody = $response->getBody()->getContents();
+                    $decodedResponse = json_decode($responseBody, true);
+
+                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                    // Check if phone_number_list is an array and not empty
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                    }
+                } catch (\Exception $e) {
+                    // Catch and handle any exception
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                }
+            } else {
+                // Send an email notification
+                try {
+                    $user->notify(new ApplicantAccountCreation($applicant));
+                } catch (\Exception $e) {
+                    // If email notification failed, add to failed list
+                    $failedEmail[] = $user->email;
+                }
+            }
 
             return redirect()->back()->with('success', "Successfully updated application status.");
         } catch (\Exception $e) {
