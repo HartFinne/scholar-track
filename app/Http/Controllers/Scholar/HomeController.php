@@ -20,7 +20,6 @@ class HomeController extends Controller
 {
     public function showRegistration()
     {
-        dd('This is the showRegistration method.');
         // Retrieve grade/year levels and courses from the database
         $yearLevels = [
             'Elementary' => ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'],
