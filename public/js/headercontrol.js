@@ -67,24 +67,6 @@ function togglesubopt2() {
     }
 }
 
-function togglesubopt3() {
-    var subopt3 = document.getElementById('subopt3');
-    var button = document.getElementById('btncriteria');
-    var icon = document.querySelector('#btncriteria i');
-
-    if (subopt3.style.display === 'none') {
-        subopt3.style.display = 'flex';
-        button.classList.add('active');
-        icon.classList.remove('fa-caret-right');
-        icon.classList.add('fa-caret-down');
-    } else {
-        subopt3.style.display = 'none';
-        button.classList.remove('active');
-        icon.classList.remove('fa-caret-down');
-        icon.classList.add('fa-caret-right');
-    }
-}
-
 document.addEventListener('click', function (event) {
     var btnsidebar = document.getElementById('btnsidebar');
     var sidebar = document.getElementById('ctnsidebar');

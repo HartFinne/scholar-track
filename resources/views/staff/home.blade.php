@@ -22,20 +22,26 @@
 
     <div class="ctnmain">
         <!-- USER NAME CONTAINER -->
-        <div class="group1">
-            <h1>Welcome,</h1>
-            <h1>{{ $worker->name }}</h1>
+        <div class="row d-flex align-items-center text-success fw-bold h2">
+            <div class="col-auto">Welcome,</div>
+            <div class="col-auto">{{ $worker->name }}</div>
         </div>
 
         <!-- SEARCH BAR AND CREATE ANNOUNCEMENT BUTTON CONTAINER -->
-        <div class="group2">
-            <form id="formsearch">
-                <input type="search" id="insearch" placeholder="Search">
-            </form>
-            <button type="button" id="btnCreateAnnouncement" class="btn btn-success" data-bs-toggle="modal"
-                data-bs-target="#announcementModal">
-                Create new announcement
-            </button>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <form id="formsearch">
+                    <input type="search" class="form-control border border-success" placeholder="Search">
+                </form>
+            </div>
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-3">
+                <button type="button" id="btnCreateAnnouncement" class="btn btn-success w-100" data-bs-toggle="modal"
+                    data-bs-target="#announcementModal">
+                    Create new announcement
+                </button>
+            </div>
         </div>
 
         <!-- ANNOUNCEMENTS CONTAINER -->
@@ -140,15 +146,14 @@
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/toggleannouncementform.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
             // Initialize Select2 when the modal is opened
             $('#announcementModal').on('shown.bs.modal', function() {
                 $('#recipients').select2({
                     dropdownParent: $(
-                            '#announcementModal'
-                            ) // Ensures dropdown is appended to the modal and shows correctly
+                        '#announcementModal'
+                    ) // Ensures dropdown is appended to the modal and shows correctly
                 });
             });
 

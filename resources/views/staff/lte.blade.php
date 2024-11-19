@@ -18,7 +18,7 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Letter of Explanation</span>
+        <span class="text-success fw-bold h2">Letter of Explanation</span>
         <div class="ctnfilter">
             <form action="#" class="filterform">
                 <span class="filtertitle">Filter Result</span>

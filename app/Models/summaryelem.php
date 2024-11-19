@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class datasets extends Model
+class summaryelem extends Model
 {
     use HasFactory;
 
-    protected $table = 'datasets';
+    protected $table = 'summaryelem';
 
     protected $primaryKey = 'id';
 
@@ -18,11 +18,11 @@ class datasets extends Model
         'acadcycle',
         'startcontract',
         'endcontract',
-        'gwasem1',
-        'gwasem2',
-        'gwasem3',
-        'cshours',
-        // 'ltecount',
+        'quarter1',
+        'quarter2',
+        'quarter3',
+        'quarter4',
+        'hcabsentcount',
         'penaltycount',
         'remark'
     ];
@@ -41,5 +41,10 @@ class datasets extends Model
     public function education()
     {
         return $this->belongsTo(ScEducation::class, 'caseCode', 'caseCode');
+    }
+
+    public function scholarshipinfo()
+    {
+        return $this->belongsTo(scholarshipinfo::class, 'caseCode', 'caseCode');
     }
 }

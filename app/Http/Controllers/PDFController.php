@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\scholarshipinfo;
 use App\Models\ScEducation;
-use App\Models\communityservice;
-use App\Models\csattendance;
 use App\Models\renewal;
 use App\Models\lte;
 use App\Models\penalty;
@@ -16,10 +14,12 @@ use App\Models\datasets;
 use App\Models\evalresults;
 use App\Models\criteria;
 use App\Models\institutions;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\communityservice;
+use App\Models\csattendance;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PDFController extends Controller
 {
@@ -68,132 +68,7 @@ class PDFController extends Controller
                 ->get(),
         ];
 
-        $pdf = Pdf::loadView('staff.scholarship-report', $data);
+        $pdf = Pdf::loadView('staff.reports.scholarship-report', $data);
         return $pdf->stream("scholarship-report-{$date}.pdf");
-    }
-
-    public function evaluatescholars()
-    {
-        try {
-            DB::table('datasets')->truncate();
-
-            $users = User::with(['scholarshipinfo', 'education', 'basicInfo'])
-                ->whereHas('scholarshipinfo', fn($query) => $query->where('scholarshipstatus', 'Continuing'))
-                ->whereHas('education', fn($query) => $query->where('scSchoolLevel', 'College'))
-                ->get();
-
-            $criteria = criteria::first();
-
-            foreach ($users as $user) {
-                $curriculum = institutions::where('schoolname', $user->education->scSchoolName)
-                    ->where('schoollevel', $user->education->scSchoolLevel)
-                    ->first();
-
-                if (!$curriculum) {
-                    continue; // Skip if curriculum is not found
-                }
-
-                $enddate = $user->scholarshipinfo->enddate;
-                $enddate = Carbon::parse($enddate);
-                $startdate = $enddate->copy()->subYear();
-
-                $schoolYear = $startdate->format('Y') . '-' . $enddate->format('Y');
-
-                $gwas = grades::where('caseCode', $user->caseCode)
-                    ->where('schoolyear', $schoolYear)
-                    ->whereIn('SemesterQuarter', ['1st Semester', '2nd Semester', '3rd Semester'])
-                    ->select('SemesterQuarter', 'GWA')
-                    ->get()
-                    ->pluck('GWA', 'SemesterQuarter');
-
-                $gwasem1 = $gwas['1st Semester'] ?? null;
-                $gwasem2 = $gwas['2nd Semester'] ?? null;
-                $gwasem3 = $curriculum->academiccycle === 'Trimester' ? ($gwas['3rd Semester'] ?? null) : null;
-
-                $cshours = csattendance::where('caseCode', $user->caseCode)
-                    ->whereHas('communityservice', fn($query) => $query->whereBetween('eventdate', [$startdate, $enddate]))
-                    ->sum('hoursspent');
-
-                $penaltycount = penalty::where('caseCode', $user->caseCode)
-                    ->distinct('condition')
-                    ->count('condition');
-
-                $remark = $this->evaluateRemark($gwasem1, $gwasem2, $gwasem3, $curriculum->highestgwa, $criteria->cgwa, $curriculum->acadcycle);
-
-                datasets::create([
-                    'caseCode' => $user->caseCode,
-                    'acadcycle' => $curriculum->academiccycle,
-                    'startcontract' => $startdate,
-                    'endcontract' => $enddate,
-                    'gwasem1' => $gwasem1,
-                    'gwasem2' => $gwasem2,
-                    'gwasem3' => $gwasem3,
-                    'cshours' => $cshours,
-                    'penaltycount' => $penaltycount,
-                    'remark' => $remark,
-                ]);
-            }
-
-            return redirect()->route('showevalresults')->with('success', 'Evaluation completed successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('failure', 'An error has occurred. ' . $e->getMessage());
-        }
-    }
-
-    private function evaluateRemark($gwasem1, $gwasem2, $gwasem3, $highestgwa, $cgwa, $acadcycle)
-    {
-        if (is_null($gwasem1) || is_null($gwasem2) || ($acadcycle === 'Trimester' && is_null($gwasem3))) {
-            return 'Incomplete Data';
-        }
-
-        if ($highestgwa == 5) {
-            if ($gwasem1 < $cgwa) {
-                return 'Failed GWA on 1st Sem';
-            } elseif ($gwasem2 < $cgwa) {
-                return 'Failed GWA on 2nd Sem';
-            } elseif ($acadcycle === 'Trimester' && $gwasem3 < $cgwa) {
-                return 'Failed GWA on 3rd Sem';
-            }
-        } elseif ($highestgwa == 1) {
-            if ($gwasem1 > $cgwa) {
-                return 'Failed GWA on 1st Sem';
-            } elseif ($gwasem2 > $cgwa) {
-                return 'Failed GWA on 2nd Sem';
-            } elseif ($acadcycle === 'Trimester' && $gwasem3 > $cgwa) {
-                return 'Failed GWA on 3rd Sem';
-            }
-        }
-
-        return 'Passed';
-    }
-
-    public function showevalresults()
-    {
-        $results = datasets::with('basicInfo', 'education')->orderBy('endcontract', 'ASC')->get();
-        // foreach ($results as $result) {
-        //     $result['acadcycle'] = institutions::where('schoolname', $result->education->scSchoolName)
-        //         ->where('schoollevel', $result->education->scSchoolLevel)->pluck('academiccycle');
-        // }
-
-        return view('staff.scholarsevaluation', compact('results'));
-    }
-
-    // public function showevalresults()
-    // {
-    //     $results = evalresults::with('basicInfo')->orderBy('acadyear', 'ASC')->get();
-    //     $acadyears = evalresults::selectRaw('acadyear')->distinct()->get();
-
-    //     $jsonString = File::get(storage_path('app/python/performance_metrics.json'));
-    //     $data = json_decode($jsonString, true);
-
-    //     return view('staff.scholarsevaluation', compact('results', 'acadyears', 'data'));
-    // }
-
-    public function showMetrics()
-    {
-        $jsonString = File::get(storage_path('app/python/performance_metrics.json'));
-        $data = json_decode($jsonString, true);
-
-        return view('staff.metrics', compact('data'));
     }
 }

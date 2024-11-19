@@ -33,10 +33,10 @@
         <button id="btnapplicants" class="sbarmainopt"
             onclick="window.location.href='{{ route('applicants') }}';">Applicants</button>
         <button id="evaluate-link" class="sbarmainopt"
-            onclick="window.location.href='{{ route('evaluatescholars') }}';">Scholars Evaluation</button>
-        <button id="btnreport" class="sbarmainopt"
-            onclick="window.location.href='{{ route('generatescholarshipreport') }}';" target="_blank">Generate
-            Report</button>
+            onclick="window.location.href='{{ route('evaluatescholars') }}';">Scholarship Report</button>
+        {{-- <button id="btnreport" class="sbarmainopt"
+            onclick="window.location.href='{{ route('generatescholarshipreport') }}';" target="_blank">Scholarship
+            Report</button> --}}
         <button id="btnsettings" class="sbarmainopt"
             onclick="window.location.href='{{ route('qualification') }}';">Scholarship Settings</button>
 

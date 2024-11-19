@@ -81,7 +81,7 @@
     <h2>Scholarship Summary Report</h2>
     <div class="container">
         <h3>Scholars</h3>
-
+        {{-- scholars per type --}}
         <table class="table">
             <thead>
                 <tr>
@@ -107,7 +107,7 @@
                 @endif
             </tbody>
         </table>
-
+        {{-- scholars per area --}}
         <table class="table">
             <thead>
                 <tr>
@@ -127,7 +127,7 @@
                 @endforelse
             </tbody>
         </table>
-
+        {{-- scholars per school level --}}
         <table class="table">
             <thead>
                 <tr>
@@ -147,7 +147,7 @@
                 @endforelse
             </tbody>
         </table>
-
+        {{-- scholars per school --}}
         <table class="table">
             <thead>
                 <tr>
@@ -167,7 +167,7 @@
                 @endforelse
             </tbody>
         </table>
-
+        {{-- scholars per course --}}
         <table class="table">
             <thead>
                 <tr>
@@ -187,7 +187,7 @@
                 @endforelse
             </tbody>
         </table>
-
+        {{-- scholars per strand --}}
         <table class="table">
             <thead>
                 <tr>
@@ -208,70 +208,66 @@
             </tbody>
         </table>
 
-        <h3>Scholarship Renewal</h3>
-
+        <h3>Applicants</h3>
+        {{-- applicant per school level --}}
         <table class="table">
             <thead>
                 <tr>
-                    <th colspan="2">Renewal Applications</th>
+                    <th colspan="2">Number of Applicants per School Level</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse ($renewals as $renewal)
+            {{-- <tbody>
+                @forelse ($apperlevel as $level)
                     <tr>
-                        <td>{{ $renewal->status }}</td>
-                        <td>{{ $renewal->sccount }}</td>
+                        <td>{{ $level->apSchoolLevel }}</td>
+                        <td>{{ $level->apcount }}</td>
                     </tr>
                 @empty
                     <tr>
                         <td colspan="2">No data available</td>
                     </tr>
                 @endforelse
-            </tbody>
+            </tbody> --}}
         </table>
-
-        <h3>Letter of Explanation</h3>
-
+        {{-- applicant per school --}}
         <table class="table">
             <thead>
                 <tr>
-                    <th colspan="2">Number of Issued LTE</th>
+                    <th colspan="2">Number of Applicants per School</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse ($ltes as $lte)
+            {{-- <tbody>
+                @forelse ($apperlevel as $level)
                     <tr>
-                        <td>{{ $lte->ltestatus }}</td>
-                        <td>{{ $lte->sccount }}</td>
+                        <td>{{ $level->apSchoolLevel }}</td>
+                        <td>{{ $level->apcount }}</td>
                     </tr>
                 @empty
                     <tr>
                         <td colspan="2">No data available</td>
                     </tr>
                 @endforelse
-            </tbody>
+            </tbody> --}}
         </table>
-
-        <h3>Penalty</h3>
-
+        {{-- applicant per region --}}
         <table class="table">
             <thead>
                 <tr>
-                    <th colspan="2">Number of Scholars with Penalty</th>
+                    <th colspan="2">Number of Applicants per Region</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse ($penalties as $penalty)
+            {{-- <tbody>
+                @forelse ($apperlevel as $level)
                     <tr>
-                        <td>{{ $penalty->remark }}</td>
-                        <td>{{ $penalty->sccount }}</td>
+                        <td>{{ $level->apSchoolLevel }}</td>
+                        <td>{{ $level->apcount }}</td>
                     </tr>
                 @empty
                     <tr>
                         <td colspan="2">No data available</td>
                     </tr>
                 @endforelse
-            </tbody>
+            </tbody> --}}
         </table>
     </div>
 </body>

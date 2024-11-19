@@ -65,7 +65,7 @@
 
     <div class="ctnmain">
         <div class="header">
-            <span class="pagetitle">Penalty</span>
+            <span class="text-success fw-bold h2">Penalty</span>
             <button type="button" id="btnaddpenalty" onclick="togglepenaltyform()">Create Penalty</button>
         </div>
         <div class="ctnfilter">

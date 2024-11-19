@@ -22,11 +22,10 @@
 
 
     <div class="ctnmain">
-        <div class="groupA">
-            <span class="welcome">Welcome,</span>
-            <span class="welcome" id="outname">{{ $worker->name }}</span>
-            {{-- <p>Success Message: {{ session('success') }}</p>
-            <p>Failure Message: {{ session('failure') }}</p> --}}
+        <!-- USER NAME CONTAINER -->
+        <div class="row d-flex align-items-center text-success fw-bold h2">
+            <div class="col-auto">Welcome,</div>
+            <div class="col-auto">{{ $worker->name }}</div>
         </div>
         <div class="groupB">
             <span class="groupB1">

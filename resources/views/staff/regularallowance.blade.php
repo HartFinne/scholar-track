@@ -18,7 +18,7 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Regular Allowance Requests</span>
+        <span class="text-success fw-bold h2">Regular Allowance Requests</span>
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total Requests</span>
@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="divider"></div>
-        <span class="pagetitle">List of Requests</span>
+        <span class="text-success fw-bold h2">List of Requests</span>
         <div class="ctnfilter">
             <form action="#" class="filterform">
                 <span class="filtertitle">Filter Result</span>
@@ -138,8 +138,7 @@
                         <td class="text-center align-middle">Approved</td>
                         <td class="text-center align-middle">April 10, 2023</td>
                         <td class="text-center align-middle">
-                            <a href="{{ route('viewregulardetails') }}"
-                                class="btn btn-success btn-sm">View</a>
+                            <a href="{{ route('viewregulardetails') }}" class="btn btn-success btn-sm">View</a>
                         </td>
                     </tr>
                 </tbody>

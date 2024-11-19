@@ -130,12 +130,19 @@
                         </div>
                         <div class="row">
                             <div class="column">
-                                <label for="barangay">Barangay</label>
-                                <input type="text" name="barangay" value="{{ old('barangay') }}" required>
+                                <label for="city">Region</label>
+                                <select name="region" id="region" required>
+                                </select>
                             </div>
                             <div class="column">
                                 <label for="city">City/Municipality</label>
-                                <input type="text" name="city" value="{{ old('city') }}" required>
+                                <select name="city" id="city" required>
+                                </select>
+                            </div>
+                            <div class="column">
+                                <label for="barangay">Barangay</label>
+                                <select name="barangay" id="barangay" required>
+                                </select>
                             </div>
                         </div>
                         <div class="row">
@@ -622,6 +629,97 @@
             document.querySelector('form').addEventListener('submit', () => {
                 sessionStorage.clear();
             });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const regionSelect = document.getElementById('region');
+            const citySelect = document.getElementById('city');
+            const barangaySelect = document.getElementById('barangay');
+
+            // Populate regions on page load
+            loadRegions();
+
+            // Event listener for region change to load cities
+            regionSelect.addEventListener('change', function() {
+                const regionCode = regionSelect.value;
+                loadCities(regionCode);
+            });
+
+            // Event listener for city change to load barangays
+            citySelect.addEventListener('change', function() {
+                const cityCode = citySelect.value;
+                loadBarangays(cityCode);
+            });
+
+            // Function to load regions from the PSGC API
+            function loadRegions() {
+                regionSelect.innerHTML = '<option value="" disabled selected>Select Region</option>';
+                citySelect.innerHTML = '<option value="" disabled selected>Select City/Municipality</option>';
+                barangaySelect.innerHTML =
+                    '<option value="" disabled selected>Select Barangay</option>';
+                fetch('https://psgc.gitlab.io/api/regions/')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Sort regions alphabetically by name
+                        data.sort((a, b) => a.name.localeCompare(b.name));
+
+                        // Populate the region dropdown
+                        data.forEach(region => {
+                            const option = document.createElement('option');
+                            option.value = region.code;
+                            option.textContent = region.name;
+                            regionSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading regions:', error));
+            }
+
+            // Function to load cities based on selected region code from the PSGC API
+            function loadCities(regionCode) {
+                // Clear existing city options
+                citySelect.innerHTML = '<option value="" disabled selected>Select City/Municipality</option>';
+                barangaySelect.innerHTML =
+                    '<option value="" disabled selected>Select Barangay</option>';
+
+                fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Sort cities alphabetically by name
+                        data.sort((a, b) => a.name.localeCompare(b.name));
+
+                        // Populate the city dropdown
+                        data.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.code;
+                            option.textContent = city.name;
+                            citySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading cities:', error));
+            }
+
+            // Function to load barangays based on selected city code from the PSGC API
+            function loadBarangays(cityCode) {
+                // Clear existing barangay options
+                barangaySelect.innerHTML = '<option value="" disabled selected>Select Barangay</option>';
+
+                fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Sort barangays alphabetically by name
+                        data.sort((a, b) => a.name.localeCompare(b.name));
+
+                        // Populate the barangay dropdown
+                        data.forEach(barangay => {
+                            const option = document.createElement('option');
+                            option.value = barangay.code;
+                            option.textContent = barangay.name;
+                            barangaySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error loading barangays:', error));
+            }
         });
     </script>
 </body>

@@ -20,7 +20,7 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Applicants Overview</span>
+        <span class="text-success fw-bold h2">Applicants Overview</span>
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total Applicants</span>
@@ -53,7 +53,7 @@
         <div class="divider"></div>
 
         <div class="ctnfilter">
-            <span class="pagetitle">List of Applicants</span>
+            <span class="text-success fw-bold h2">List of Applicants</span>
             <form action="#" class="filterform">
                 <span class="filtertitle">Filter Result</span>
                 <div class="filtermenu">

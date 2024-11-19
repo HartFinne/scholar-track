@@ -20,7 +20,7 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Community Service Overview</span>
+        <span class="text-success fw-bold h2">Community Service Overview</span>
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total CS Events</span>
@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="divider"></div>
-        <span class="pagetitle">List of Activities</span>
+        <span class="text-success fw-bold h2">List of Activities</span>
 
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">

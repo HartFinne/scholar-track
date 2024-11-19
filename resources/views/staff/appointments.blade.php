@@ -18,7 +18,7 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Appointments</span>
+        <span class="text-success fw-bold h2">Appointments</span>
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show text-center" role="alert" id="success-alert">
                 {{ session('success') }}

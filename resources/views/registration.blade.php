@@ -231,18 +231,18 @@
 
                     <p>Are you a member of any indigenous group?</p>
                     <div class="row-checkbox">
-                        <input type="checkbox" name="isIndigenous" id="indigenousCheck" value="Yes"
+                        <input type="radio" name="isIndigenous" id="indigenousCheck" value="Yes"
                             onclick="toggleInput(true)" style="cursor: pointer"
-                            {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }}>
+                            {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }} required>
                         <label for="indigenousCheck" style="cursor: pointer"> Yes</label>
 
                         <input type="text" name="indigenousGroup" id="indigenousInput"
                             placeholder="If Yes, please specify" value="{{ old('indigenousGroup') }}"
                             {{ old('isIndigenous') == 'Yes' ? '' : 'disabled' }}>
 
-                        <input type="checkbox" name="isIndigenous" id="noCheck" value="No"
+                        <input type="radio" name="isIndigenous" id="noCheck" value="No"
                             onclick="toggleInput(false)" style="cursor: pointer"
-                            {{ old('isIndigenous') == 'No' ? 'checked' : '' }}>
+                            {{ old('isIndigenous') == 'No' ? 'checked' : '' }} required>
                         <label for="noCheck" style="cursor: pointer"> No</label>
 
                         @error('indigenousGroup')

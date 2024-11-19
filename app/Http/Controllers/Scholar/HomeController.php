@@ -90,7 +90,7 @@ class HomeController extends Controller
                     'guardianName' => 'required|string|max:50',
                     'relationToGuardian' => 'required|string|max:50',
                     'guardianEmailAddress' => 'required|email|max:100',
-                    'guardianPhoneNumber' => 'required|regex:/^[0-9]{11}$/',
+                    'guardianPhoneNumber' => 'digits_between:11,12',
                     'password' => [
                         'required',
                         'string',

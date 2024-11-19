@@ -19,7 +19,7 @@
     @include('partials._adminpageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Staff Account Information</span>
+        <span class="text-success fw-bold h2">Staff Account Information</span>
 
         <!-- User Info Table -->
         <table class="table table-bordered" id="tbluserinfo">

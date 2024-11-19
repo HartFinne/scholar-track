@@ -21,7 +21,7 @@
     <x-alert />
 
     <div class="ctnmain">
-        <span class="pagetitle">Humanities Class Attendees</span>
+        <span class="text-success fw-bold h2">Humanities Class Attendees</span>
         <div class="groupA">
             <form action="#" class="searchbar">
                 <input type="search" placeholder="Search" id="insearch" required>

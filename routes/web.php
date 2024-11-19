@@ -13,6 +13,7 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Scholar\RegularAllowanceForm;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\EvalController;
 
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
@@ -136,9 +137,6 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/updateappointmentstatus/{id}', [StaffController::class, 'updateappointmentstatus'])->name('updateappointmentstatus');
     Route::get('/appointment-info/{id}', [StaffController::class, 'viewappointmentinfo'])->name('viewappointmentinfo');
     Route::get('/scholars', [StaffController::class, 'showScholarsoverview'])->name('scholars-overview');
-    Route::get('/scholars-college', [StaffController::class, 'showScholarsCollege'])->name('scholars-college');
-    Route::get('/scholars-elementary', [StaffController::class, 'showScholarsElem'])->name('scholars-elementary');
-    Route::get('/scholars-highschool', [StaffController::class, 'showScholarsHS'])->name('scholars-highschool');
     Route::get('/scholar/{id}', [StaffController::class, 'showScholarProfile'])->name('scholar-viewinfo');
     Route::get('/grade-details/{gid}', [StaffController::class, 'showgradesinfo'])->name('scholar-gradesinfo');
     Route::post('/update-grade-status/{gid}', [StaffController::class, 'updategradestatus'])->name('updategradestatus');
@@ -239,7 +237,9 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
 // report generation
 Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
+});
+
+Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->group(function () {
     Route::get('/evaluate-scholars', 'evaluatescholars')->name('evaluatescholars');
     Route::get('/scholars-evaluation', 'showevalresults')->name('showevalresults');
-    Route::get('/model-performance-metrics', 'showmetrics')->name('showmetrics');
 });

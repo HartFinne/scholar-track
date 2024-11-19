@@ -20,7 +20,7 @@
     @include('partials._adminpageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Manage Scholar Accounts</span>
+        <span class="text-success fw-bold h2">Manage Scholar Accounts</span>
         <div class="groupA">
             <form action="#" class="searchbar">
                 <input type="search" placeholder="Search" id="insearch" required>

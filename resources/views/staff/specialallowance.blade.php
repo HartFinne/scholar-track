@@ -20,7 +20,7 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Special Allowance Requests</span>
+        <span class="text-success fw-bold h2">Special Allowance Requests</span>
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total Requests</span>
@@ -45,7 +45,7 @@
         </div>
         <div class="divider"></div>
         <div class="groupB">
-            <span class="pagetitle">Manage Special Allowance Forms</span>
+            <span class="text-success fw-bold h2">Manage Special Allowance Forms</span>
             <div class="groupB1 my-3" id="ctnmanageform" style="display: flex;">
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
@@ -67,11 +67,11 @@
                     <div class="col-md-3">
                         <label for="transpoReimbursement"><strong>Transportation Reimbursement Form</strong></label>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         <input type="file" name="transporeimbursement" class="form-control" id="transpoReimbursement"
                             required>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <button type="submit" class="btn btn-success w-100">Update File</button>
                     </div>
                 </form>
@@ -81,11 +81,11 @@
                     <div class="col-md-3">
                         <label for="acknowledgementReceipt"><strong>Acknowledgement Receipt</strong></label>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         <input type="file" name="acknowledgementreceipt" class="form-control"
                             id="acknowledgementReceipt" required>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <button type="submit" class="btn btn-success w-100">Update File</button>
                     </div>
                 </form>
@@ -95,10 +95,10 @@
                     <div class="col-md-3">
                         <label for="liquidationForm"><strong>Liquidation Form</strong></label>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         <input type="file" name="liquidationform" class="form-control" id="liquidationForm" required>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <button type="submit" class="btn btn-success w-100">Update File</button>
                     </div>
                 </form>
@@ -108,17 +108,17 @@
                     <div class="col-md-3">
                         <label for="certificationForm"><strong>Project/Book Certification Form</strong></label>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-md-7">
                         <input type="file" name="certificationform" class="form-control" id="certificationForm"
                             required>
                     </div>
-                    <div class="col-sm-1">
+                    <div class="col-md-2">
                         <button type="submit" class="btn btn-success w-100">Update File</button>
                     </div>
                 </form>
             </div>
             <div class="divider"></div>
-            <span class="pagetitle">List of Requests</span>
+            <span class="text-success fw-bold h2">List of Requests</span>
             <div class="groupB1" id="ctnfiltertable active" style="display: flex;">
                 <div class="ctnfilter" id="ctnfilter">
                     <form action="#" class="filterform">

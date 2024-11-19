@@ -405,6 +405,7 @@ class ScholarController extends Controller
                 'Junior High' => $criteria->jhsgwa,
                 'Elementary' => $criteria->elemgwa,
             ];
+
             $gradingsystem = institutions::where('schoolname', $educ->scSchoolName)
                 ->where('schoollevel', $educ->scSchoolLevel)->first();
 

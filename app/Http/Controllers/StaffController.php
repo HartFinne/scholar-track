@@ -251,133 +251,6 @@ class StaffController extends Controller
         }
     }
 
-    public function showScholarsCollege()
-    {
-        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])
-            ->whereHas('education', function ($query) {
-                $query->where('scSchoolLevel', 'College');
-            })
-            ->orderBy('caseCode', 'ASC')
-            ->get();
-
-        // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
-        foreach ($scholars as $scholar) {
-            $acadyearend = $scholar->scholarshipinfo->enddate;  // Ensure `enddate` is retrieved correctly
-            $acadyearstart = date('Y-m-d', strtotime('-1 year', strtotime($acadyearend)));  // Subtract one year from end date
-
-            // Latest GWA based on `caseCode`
-            $scholar->latestgwa = DB::table('grades')
-                ->where('caseCode', $scholar->caseCode)
-                ->orderBy('schoolyear', 'desc')
-                ->value('gwa');
-
-            // Total Community Service Hours within academic year
-            $scholar->totalcshours = csattendance::where('caseCode', $scholar->caseCode)
-                ->whereHas('communityservice', function ($query) use ($acadyearstart, $acadyearend) {
-                    $query->whereBetween('eventdate', [$acadyearstart, $acadyearend]);
-                })
-                ->sum('hoursspent');
-
-            // Total Humanities Class Attendance within academic year
-            $scholar->totalhcattendance = hcattendance::where('caseCode', $scholar->caseCode)
-                ->whereHas('humanitiesclass', function ($query) use ($acadyearstart, $acadyearend) {
-                    $query->whereBetween('hcdate', [$acadyearstart, $acadyearend]);
-                })
-                ->count();
-
-            // Total Penalties
-            $scholar->penaltycount = penalty::where('caseCode', $scholar->caseCode)->count();
-        }
-
-        // Count humanities events within the academic year range
-        $hcevents = humanitiesclass::whereBetween('hcdate', [$acadyearstart, $acadyearend])->count();
-
-        return view('staff.listcollege', compact('scholars', 'hcevents'));
-    }
-
-    public function showScholarsElem()
-    {
-        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])
-            ->whereHas('education', function ($query) {
-                $query->where('scSchoolLevel', 'Elementary');
-            })
-            ->get();
-
-        // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
-        foreach ($scholars as $scholar) {
-            $acadyearend = $scholar->scholarshipinfo->enddate;  // Ensure `enddate` is retrieved correctly
-            $acadyearstart = date('Y-m-d', strtotime('-1 year', strtotime($acadyearend)));  // Subtract one year from end date
-
-            // Latest GWA based on `caseCode`
-            $scholar->latestgenave = DB::table('grades')
-                ->where('caseCode', $scholar->caseCode)
-                ->orderBy('schoolyear', 'desc')
-                ->value('GWA');
-            $scholar->latestconduct = DB::table('grades')
-                ->where('caseCode', $scholar->caseCode)
-                ->orderBy('schoolyear', 'desc')
-                ->value('GWAConduct');
-            $scholar->latestchinesegenave = DB::table('grades')
-                ->where('caseCode', $scholar->caseCode)
-                ->orderBy('schoolyear', 'desc')
-                ->value('ChineseGWA');
-            $scholar->latestchineseconduct = DB::table('grades')
-                ->where('caseCode', $scholar->caseCode)
-                ->orderBy('schoolyear', 'desc')
-                ->value('ChineseGWAConduct');
-
-            // Total Humanities Class Attendance within academic year
-            $scholar->totalhcattendance = hcattendance::where('caseCode', $scholar->caseCode)
-                ->whereHas('humanitiesclass', function ($query) use ($acadyearstart, $acadyearend) {
-                    $query->whereBetween('hcdate', [$acadyearstart, $acadyearend]);
-                })
-                ->count();
-
-            // Total Penalties
-            $scholar->penaltycount = penalty::where('caseCode', $scholar->caseCode)->count();
-        }
-
-        // Count humanities events within the academic year range
-        $hcevents = humanitiesclass::whereBetween('hcdate', [$acadyearstart, $acadyearend])->count();
-
-        return view('staff.listelementary', compact('scholars', 'hcevents'));
-    }
-
-    public function showScholarsHS()
-    {
-        $scholars = User::with(['basicInfo', 'education', 'scholarshipinfo'])
-            ->whereHas('education', function ($query) {
-                $query->whereIn('scSchoolLevel', ['Junior High', 'Senior High']);
-            })
-            ->get();
-
-        // Define academic year range based on a scholar's scholarship info (assuming each scholar may have a different range)
-        foreach ($scholars as $scholar) {
-            $acadyearend = $scholar->scholarshipinfo->enddate;  // Ensure `enddate` is retrieved correctly
-            $acadyearstart = date('Y-m-d', strtotime('-1 year', strtotime($acadyearend)));  // Subtract one year from end date
-
-            // Latest GWA based on `caseCode`
-            $scholar->latestgwa = DB::table('grades')
-                ->where('caseCode', $scholar->caseCode)
-                ->orderBy('schoolyear', 'desc')
-                ->value('gwa');
-
-            // Total Humanities Class Attendance within academic year
-            $scholar->totalhcattendance = hcattendance::where('caseCode', $scholar->caseCode)
-                ->whereHas('humanitiesclass', function ($query) use ($acadyearstart, $acadyearend) {
-                    $query->whereBetween('hcdate', [$acadyearstart, $acadyearend]);
-                })
-                ->count();
-
-            // Total Penalties
-            $scholar->penaltycount = penalty::where('caseCode', $scholar->caseCode)->count();
-        }
-
-        // Count humanities events within the academic year range
-        $hcevents = humanitiesclass::whereBetween('hcdate', [$acadyearstart, $acadyearend])->count();
-        return view('staff.listhighschool', compact('scholars', 'hcevents'));
-    }
-
     public function showScholarProfile($id)
     {
         // personal info
@@ -1585,12 +1458,43 @@ class StaffController extends Controller
             $scholarsperlevel[$level] = ScEducation::where('scSchoolLevel', $level)->count();
         }
 
+        $colleges = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'College');
+            })
+            ->orderBy('caseCode', 'ASC')
+            ->get();
+        $shs = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'Senior High');
+            })
+            ->orderBy('caseCode', 'ASC')
+            ->get();
+
+        $jhs = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'Junior High');
+            })
+            ->orderBy('caseCode', 'ASC')
+            ->get();
+
+        $elem = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'Elementary');
+            })
+            ->orderBy('caseCode', 'ASC')
+            ->get();
+
         return view('staff.scholars', compact(
             'totalscholars',
             'totalnewscholars',
             'areas',
             'scholarsperarea',
-            'scholarsperlevel'
+            'scholarsperlevel',
+            'colleges',
+            'shs',
+            'jhs',
+            'elem'
         ));
     }
 

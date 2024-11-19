@@ -18,7 +18,7 @@
     @include('partials._pageheader')
 
     <div class="ctnmain">
-        <span class="pagetitle">Renewal Overview</span>
+        <span class="text-success fw-bold h2">Renewal Overview</span>
         <div class="groupA">
             <div class="groupA1">
                 <span class="label" id="lbltotalrenewal">Total Renewal Applications</span>
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="divider"></div>
-        <span class="pagetitle">Renewal Application</span>
+        <span class="text-success fw-bold h2">Renewal Application</span>
         <span class="lblinstruction">Select which list to view:</span>
         <div class="groupB">
             <a href="{{ route('renewal-college') }}" class="groupB1">College<i class="fas fa-arrow-right"></i></a>
