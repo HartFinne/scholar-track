@@ -9,10 +9,9 @@
     <link rel="stylesheet" href="{{ asset('css/grades.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -32,17 +31,6 @@
         <form action="{{ route('gradesub.post') }}" class="container text-center" method="POST"
             enctype="multipart/form-data">
             @csrf
-
-            <!-- Display general error messages -->
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <span>{{ $error }}</span><br>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
             <div class="row mb-3">
                 <!-- Dropdown for Quarter/Semester -->
@@ -115,8 +103,6 @@
             <!-- Submit Button -->
             <button type="submit" class="btn-submit fw-bold">Submit</button>
         </form>
-
-
 
         <div class="status mt-2">
             <p class="table-title">Grades Status</p>

@@ -121,7 +121,7 @@ class StaffController extends Controller
             // Track failed SMS and failed email notifications
             $failedSMS = [];
             $failedEmail = [];
-            $message = 'Application Updated';
+            $message = 'Your application status has been updated. Please log in to your account to view the full details.';
 
             if ($user->notification_preference === 'sms') {
                 // Send the SMS using the Movider API
@@ -229,7 +229,6 @@ class StaffController extends Controller
             return redirect()->back()->with('failure', 'Failed to update case details of applicant. ' . $e->getMessage());
         }
     }
-
 
     public function  updateappformstatus($formname, Request $request)
     {
@@ -409,7 +408,7 @@ class StaffController extends Controller
             return redirect()->back()->with('success', 'Successfully updated scholarship status.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to update scholarship status. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update scholarship status. ' . $e->getMessage());
         }
     }
 
@@ -462,10 +461,12 @@ class StaffController extends Controller
                 if ($ltecount <= 2) {
                     $scholarshipinfo->scholarshipstatus = 'On-Hold';
                 } else {
+                    $user = user::where('caseCode', $grade->caseCode)->first();
+                    $user->scStatus = 'Inactive';
+                    $user->save();
                     $scholarshipinfo->scholarshipstatus = 'Terminated';
+                    $scholarshipinfo->save();
                 }
-
-                $scholarshipinfo->save();
             }
 
             // Commit the transaction
@@ -512,8 +513,13 @@ class StaffController extends Controller
             $letter = lte::where('lid', $lid)->first();
             $letter->ltestatus = $request->ltestatus;
             $letter->save();
+            $scinfo = scholarshipinfo::where('caseCode', $letter->caseCode)->first();
 
-            $condition = $letter->violation . ' in ' . $letter->eventtype;
+            if (in_array($letter->violation, ['Late', 'Absent', 'Left Early', 'Cancelled'])) {
+                $condition = $letter->violation . ' in ' . $letter->eventtype;
+            } else {
+                $condition = $letter->violation;
+            }
 
             if ($request->ltestatus == 'Unexcused') {
                 $currentpenalty = penalty::where('caseCode', $letter->caseCode)
@@ -547,12 +553,14 @@ class StaffController extends Controller
                     ($remark == '3rd Offense' && $letter->violation == 'Absent' && $letter->eventtype == 'Humanities Class') ||
                     ($remark == '4th Offense' && in_array($letter->violation, ['Late', 'Left Early']) && $letter->eventtype == 'Humanities Class')
                 ) {
-                    $scinfo = scholarshipinfo::where('caseCode', $letter->caseCode)->first();
                     if ($scinfo) {
                         $scinfo->scholarshipstatus = 'On-Hold';
                         $scinfo->save();
                     }
                 }
+            } else if ($request->ltestatus == 'Excused') {
+                $scinfo->scholarshipstatus = 'Continuing';
+                $scinfo->save();
             }
 
             DB::commit();

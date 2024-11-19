@@ -41,13 +41,14 @@ class PenaltyNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Warning: ' . $this->penalty->caseCode)
-            ->line('You have violated: ' . $this->penalty->condition)
-            ->line('Remark: ' . $this->penalty->remark)
-            ->line('If the remark reaches more than the 5th offense, you will need to submit an LTE to resolve this.')
+            ->subject('Penalty Notification')
+            ->line('We regret to inform you that a penalty has been issued against your account.')
+            ->line('Violation: ' . $this->penalty->condition)
+            ->line('Details: ' . $this->penalty->remark)
             ->line('Date Issued: ' . $this->penalty->dateofpenalty->format('Y-m-d'))
-            ->action('View Penalty', url('/login'))
-            ->line('Thank you for being a part of our platform!');
+            ->action('Review Penalty Details', url('/login'))
+            ->line('If you have any questions or need further clarification, please don’t hesitate to contact us.')
+            ->line('Thank you for your attention to this matter.');
     }
 
     /**

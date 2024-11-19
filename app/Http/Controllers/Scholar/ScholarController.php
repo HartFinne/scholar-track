@@ -341,7 +341,7 @@ class ScholarController extends Controller
                 ->first();
 
             if ($existingGrade) {
-                return redirect()->back()->withErrors(['error' => 'A grade for this semester in the academic year ' . $educ->scAcademicYear . ' has already been submitted.'])->withInput();
+                return redirect()->back()->with('failure', 'A grade for this semester in the academic year ' . $educ->scAcademicYear . ' has already been submitted.')->withInput();
             }
 
             // Handle file upload
@@ -354,7 +354,7 @@ class ScholarController extends Controller
                 // Store the file in the specified directory
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
             } else {
-                return redirect()->back()->withErrors(['gradeImage' => 'File upload failed. Please try again.'])->withInput();
+                return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
 
             $criteria = criteria::first();
@@ -441,6 +441,8 @@ class ScholarController extends Controller
                     'ltestatus' => 'No Response',
                     'workername' => strtoupper($worker->name) . ', RSW',
                 ]);
+                $scinfo->scholarshipstatus = 'On-Hold';
+                $scinfo->save();
             }
 
             DB::commit();
@@ -452,7 +454,7 @@ class ScholarController extends Controller
             Log::error('Grade submission failed: ' . $e->getMessage());
 
             // Redirect back with an error message
-            return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later.' . $e->getMessage()])->withInput();
+            return redirect()->back()->with('failure', 'Something went wrong. Please try again later.' . $e->getMessage())->withInput();
         }
     }
 
@@ -728,37 +730,37 @@ class ScholarController extends Controller
 
         if ($requesttype == 'TRF') {
             if ($transpo == NULL) {
-                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+                return redirect()->route('scspecial')->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
             }
             return view('scholar.allowancerequest.transporeq', compact('transpo'));
         } elseif ($requesttype == 'BAR') {
             if ($cert == NULL || $acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+                return redirect()->route('scspecial')->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
             }
             return view('scholar.allowancerequest.bookreq', compact('cert', 'acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'TAR') {
             if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
             }
             return view('scholar.allowancerequest.thesisreq', compact('acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'PAR') {
             if ($cert == NULL || $acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
             }
             return view('scholar.allowancerequest.projectreq', compact('cert', 'acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'UAR') {
             if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
             }
             return view('scholar.allowancerequest.uniformreq', compact('acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'GAR') {
             if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
             }
             return view('scholar.allowancerequest.gradreq', compact('acknowledgement', 'liquidation'));
         } elseif ($requesttype == 'FTTSAR') {
             if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('error', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
+                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
             }
             return view('scholar.allowancerequest.fieldtripreq', compact('acknowledgement', 'liquidation'));
         }
@@ -858,10 +860,10 @@ class ScholarController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
 
@@ -938,10 +940,10 @@ class ScholarController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
 
@@ -1003,10 +1005,10 @@ class ScholarController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
 
@@ -1079,10 +1081,10 @@ class ScholarController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
 
@@ -1155,10 +1157,10 @@ class ScholarController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
 
@@ -1214,10 +1216,10 @@ class ScholarController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
 
@@ -1287,10 +1289,10 @@ class ScholarController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $errorMessages);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Your request could not be processed. Please review the following errors: ' . $e->getMessage());
         };
     }
 
@@ -1321,7 +1323,7 @@ class ScholarController extends Controller
             $request = allowanceevent::where('id', $id)->first();
             return view('scholar.allowancerequest.fieldtripinfo', compact('request', 'scholar'));
         } else {
-            return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
+            return redirect()->back()->with('failure', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
         }
     }
 

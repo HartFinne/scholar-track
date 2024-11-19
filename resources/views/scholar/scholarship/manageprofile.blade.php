@@ -20,7 +20,6 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
-
     <x-alert />
     <div class="ctn-main container">
         <a href="{{ route('schome') }}" class="goback">&lt Go back</a>

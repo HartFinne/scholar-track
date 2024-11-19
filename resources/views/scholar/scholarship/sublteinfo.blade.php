@@ -21,6 +21,7 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
+    <x-alert />
 
     <!-- MAIN -->
     <div class="ctn-main">
@@ -35,56 +36,69 @@
             </div>
 
             <div class="lte-info">
-                <h5>LTE SUBMITTED</h5>
-                <div class="info">
-                    <div class="label">Date Submitted</div>
-                    <div class="value">:
-                        <span>{{ \Carbon\Carbon::parse($letter->datesubmitted)->format('m/d/Y') }}</span>
+                <h5 class="mb-4">LTE SUBMITTED</h5>
+                {{-- <div class="info"> --}}
+                <!-- Date Submitted -->
+                <div class="row mb-2">
+                    <div class="col-md-3">Date Submitted</div>
+                    <div class="col-md-6 fw-bold">{{ \Carbon\Carbon::parse($letter->datesubmitted)->format('F j, Y') }}
                     </div>
+                </div>
 
+                <!-- Concern -->
+                <div class="row mb-2">
+                    <div class="col-md-3">Concern</div>
+                    <div class="col-md-6 fw-bold">
+                        @if ($letter->eventtype)
+                            {{ $letter->violation }} in {{ $letter->eventtype }}
+                        @else
+                            {{ $letter->violation }}
+                        @endif
+                    </div>
+                </div>
 
+                <!-- Reason -->
+                <div class="row mb-2">
+                    <div class="col-md-3">Reason</div>
+                    <div class="col-md-6 fw-bold">{{ $letter->reason }}</div>
+                </div>
 
-                    <div class="label">Concern</div>
+                <!-- Explanation Letter -->
+                <div class="row my-3">
+                    <div class="col-md-12 text-center">Explanation Letter</div>
+                    <div class="col-md-12">
+                        @if (in_array($fileExtensionExplanation, ['jpeg', 'jpg', 'png']))
+                            <img src="{{ url('storage/' . $letter->explanation) }}" alt="Explanation Letter"
+                                class="img-fluid mt-2">
+                        @elseif($fileExtensionExplanation === 'pdf')
+                            <iframe src="{{ url('storage/' . $letter->explanation) }}#zoom=100" width="100%"
+                                height="600px" class="mt-2 border">
+                                Your browser does not support iframes. Please download the PDF file
+                                <a href="{{ url('storage/' . $letter->explanation) }}">here</a>.
+                            </iframe>
+                        @endif
+                    </div>
+                </div>
 
-                    @if ($concerncsregistration && $concerncsregistration->csrid === $letter->conditionid)
-                        <div class="value">: <span>{{ $concerncsregistration->registatus }} in
-                                {{ $letter->eventtype }}</span>
-                        </div>
-                    @elseif ($concernhcattendance && $concernhcattendance->hcaid === $letter->conditionid)
-                        <div class="value">: <span>{{ $concernhcattendance->hcastatus }} in
-                                {{ $letter->eventtype }}</span>
-                        </div>
-                    @endif
-
-                    <div class="label">Explanation Letter</div>
-                    @if (in_array($fileExtensionExplanation, ['jpeg', 'jpg', 'png']))
-                        <img src="{{ url('storage/' . $letter->explanation) }}" alt="Report Card"
-                            style="max-width: 100%; height: auto;">
-                    @elseif($fileExtensionExplanation === 'pdf')
-                        <!-- Display PDF files -->
-                        <iframe src="{{ url('storage/' . $letter->explanation) }}" width="100%" height="600px">
-                            Your browser does not support iframes. Please download the PDF file
-                            <a href="{{ url('storage/' . $letter->explanation) }}">here</a>.
-                        </iframe>
-                    @endif
-
-                    <div class="label">Reason</div>
-                    <div class="value">: <span>{{ $letter->reason }}</span></div>
-
-                    <div class="label">Proof</div>
-                    @if (in_array($fileExtensionProof, ['jpeg', 'jpg', 'png']))
-                        <img src="{{ url('storage/' . $letter->proof) }}" alt="Report Card"
-                            style="max-width: 100%; height: auto;">
-                    @elseif($fileExtensionProof === 'pdf')
-                        <!-- Display PDF files -->
-                        <iframe src="{{ url('storage/' . $letter->proof) }}" width="100%" height="600px">
-                            Your browser does not support iframes. Please download the PDF file
-                            <a href="{{ url('storage/' . $letter->proof) }}">here</a>.
-                        </iframe>
-                    @endif
+                <!-- Proof -->
+                <div class="row my-3">
+                    <div class="col-md-12 text-center">Proof</div>
+                    <div class="col-md-12">
+                        @if (in_array($fileExtensionProof, ['jpeg', 'jpg', 'png']))
+                            <img src="{{ url('storage/' . $letter->proof) }}" alt="Proof" class="img-fluid mt-2">
+                        @elseif($fileExtensionProof === 'pdf')
+                            <iframe src="{{ url('storage/' . $letter->proof) }}#zoom=100" width="100%" height="600px"
+                                class="mt-2 border">
+                                Your browser does not support iframes. Please download the PDF file
+                                <a href="{{ url('storage/' . $letter->proof) }}">here</a>.
+                            </iframe>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
+
+    </div>
     </div>
 
     <script src="{{ asset('js/scholar.js') }}"></script>

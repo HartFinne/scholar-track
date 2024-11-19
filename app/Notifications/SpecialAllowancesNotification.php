@@ -40,11 +40,12 @@ class SpecialAllowancesNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your Special Allowance Request Update')
-            ->greeting('Hello ' . $notifiable->caseCode . ',')
-            ->line("Your $this->requestname has been updated.")
+            ->subject('Special Allowance Request Update')
+            ->greeting('Greetings! ')
+            ->line("The status of your $this->requestname has been changed.")
             ->line("Status: " . $this->req->status)
             ->line("Release Date: " . ($this->req->releasedate ?? 'Not yet released'))
+            ->line("You may log in to your account for further details.")
             ->action('View Details', url('/login'))
             ->line('Thank you for using our platform!');
     }

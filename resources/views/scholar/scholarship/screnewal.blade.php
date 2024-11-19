@@ -20,7 +20,7 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
-
+    <x-alert />
 
     <!-- MAIN -->
     <div class="ctn-main">

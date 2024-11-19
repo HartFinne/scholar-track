@@ -20,6 +20,7 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
+    <x-alert />
 
 
     <!-- MAIN -->
@@ -67,11 +68,12 @@
             </div>
         </div>
 
-        @if ($renewal->status == 'Closed')
+        @if ($renewal->status == 'Open' && $user->Scholarshipinfo->scholarshipstatus == 'Continuing')
             <div class="sc-renewal">
                 <hr>
                 <div class="text">
-                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h5>
+                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
+                    <button onclick="window.location.href='{{ route('screnewal') }}'">Renew Scholarship</button>
                 </div>
                 <hr>
             </div>
@@ -79,8 +81,7 @@
             <div class="sc-renewal">
                 <hr>
                 <div class="text">
-                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
-                    <button onclick="window.location.href='{{ route('screnewal') }}'">Renew Scholarship</button>
+                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h5>
                 </div>
                 <hr>
             </div>

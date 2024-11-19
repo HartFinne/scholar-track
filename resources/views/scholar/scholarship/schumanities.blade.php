@@ -20,6 +20,7 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
+    <x-alert />
 
 
     <!-- MAIN -->
@@ -48,17 +49,24 @@
                 <p class="attendance-title">Attendance Status</p>
                 <div class="filter" id="filter-hc">
                     <form action="{{ route('schumanities') }}" method="GET" id="filter-form">
-                        <button type="submit" name="attendance_status" value="all" class="filter-btn {{ request('attendance_status', 'all') == 'all' ? 'active' : '' }}">All</button>
-                        <button type="submit" name="attendance_status" value="Present" class="filter-btn {{ request('attendance_status') == 'Present' ? 'active' : '' }}">Present</button>
-                        <button type="submit" name="attendance_status" value="Late" class="filter-btn {{ request('attendance_status') == 'Late' ? 'active' : '' }}">Late</button>
-                        <button type="submit" name="attendance_status" value="Left Early" class="filter-btn {{ request('attendance_status') == 'Left Early' ? 'active' : '' }}">Left Early</button>
-                        <button type="submit" name="attendance_status" value="Absent" class="filter-btn {{ request('attendance_status') == 'Absent' ? 'active' : '' }}">Absent</button>
+                        <button type="submit" name="attendance_status" value="all"
+                            class="filter-btn {{ request('attendance_status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                        <button type="submit" name="attendance_status" value="Present"
+                            class="filter-btn {{ request('attendance_status') == 'Present' ? 'active' : '' }}">Present</button>
+                        <button type="submit" name="attendance_status" value="Late"
+                            class="filter-btn {{ request('attendance_status') == 'Late' ? 'active' : '' }}">Late</button>
+                        <button type="submit" name="attendance_status" value="Left Early"
+                            class="filter-btn {{ request('attendance_status') == 'Left Early' ? 'active' : '' }}">Left
+                            Early</button>
+                        <button type="submit" name="attendance_status" value="Absent"
+                            class="filter-btn {{ request('attendance_status') == 'Absent' ? 'active' : '' }}">Absent</button>
                     </form>
                 </div>
             </div>
             <div class="search-container">
                 <form action="{{ route('schumanities') }}" method="GET">
-                    <input type="search" name="search" class="search-input" placeholder="Search" value="{{ request()->input('search') }}">
+                    <input type="search" name="search" class="search-input" placeholder="Search"
+                        value="{{ request()->input('search') }}">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </form>
             </div>

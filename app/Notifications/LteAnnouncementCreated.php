@@ -39,14 +39,13 @@ class LteAnnouncementCreated extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Warning: ' . $this->lte->caseCode)
-            ->line('You ' . $this->lte->violation . ' in ' . $this->lte->eventtype)
-            ->line('Event: ' . $this->lte->eventtype)
-            ->line('Submit an LTE to resolve this')
-            ->line('Date Issued: ' . $this->lte->dateissued)
-            ->line('Date need to be submitted: ' . $this->lte->deadline)
-            ->action('View LTE', url('/login'))
-            ->line('Thank you for being part of our platform!');
+            ->subject('Notice to Explain')
+            ->greeting('Greetings!')
+            ->line('You have been marked as ' . $this->lte->violation . ' in ' . $this->lte->eventtype . '.')
+            ->line('In connection with this, you are advised to submit your written explanation letter within three (3) days of receipt of this notice.')
+            ->line('Sincerely,')
+            ->line($this->lte->workername)
+            ->line('Social Welfare Officer');
     }
 
     /**

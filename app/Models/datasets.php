@@ -15,18 +15,31 @@ class datasets extends Model
 
     protected $fillable = [
         'caseCode',
+        'acadcycle',
         'startcontract',
         'endcontract',
         'gwasem1',
         'gwasem2',
+        'gwasem3',
         'cshours',
-        'ltecount',
-        'penaltycount'
+        // 'ltecount',
+        'penaltycount',
+        'remark'
     ];
 
     // Define inverse relationship to account
     public function user()
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
+
+    public function basicInfo()
+    {
+        return $this->belongsTo(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
+
+    public function education()
+    {
+        return $this->belongsTo(ScEducation::class, 'caseCode', 'caseCode');
     }
 }

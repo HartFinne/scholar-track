@@ -17,71 +17,73 @@
 
     <div class="ctnmain">
         <div class="row align-items-center">
-            <span class="pagetitle">Scholars Performance Evaluation (College Only)</span>
+            <span class="pagetitle">Scholars Performance Evaluation</span>
         </div>
-        <div class="row px-4">
-            <div class="card mb-3 p-2 bg-light">
-                <div class="row">
-                    <div class="col-md-2 fw-bold">Model Accuracy</div>
-                    <div class="col-md-10">: {{ intval($data['accuracy']) * 100 }}%</div>
-                </div>
-            </div>
+        <div class="row align-items-center text-center">
+            <span class="pagetitle m-0">College</span>
         </div>
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-        @if ($acadyears->isEmpty())
+        @php
+            $cycles = [
+                'Semester' => ['columns' => ['1st Sem GWA', '2nd Sem GWA']],
+                'Trimester' => ['columns' => ['1st Sem GWA', '2nd Sem GWA', '3rd Sem GWA']],
+            ];
+        @endphp
+
+        @foreach ($cycles as $cycle => $data)
             <div class="row">
-                <span class="fw-bold text-center">No Available Data.</span>
+                <span class="pagetitle">Academic Cycle: {{ $cycle }}</span>
             </div>
-        @else
-            @foreach ($acadyears as $acadyear)
-                <div class="row">
-                    <span class="fw-bold">Academic Year: <strong>{{ $acadyear->acadyear }}</strong></span>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-bordered border-success">
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle">#</th>
-                                <th class="text-center align-middle">Case Code</th>
-                                <th class="text-center align-middle">Scholar Name</th>
-                                <th class="text-center align-middle">Evaluation Score</th>
-                                <th class="text-center align-middle">Remark</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php $index = 1; @endphp
-                            @foreach ($results as $result)
-                                @if ($result->acadyear == $acadyear->acadyear)
-                                    <tr>
-                                        <td class="text-center align-middle">{{ $index++ }}</td>
-                                        <td class="text-center align-middle">{{ $result->caseCode }}</td>
-                                        <td class="text-center align-middle">{{ $result->basicInfo->scLastname }},
-                                            {{ $result->basicInfo->scFirstname }}
-                                            {{ $result->basicInfo->scMiddlename }}
-                                        </td>
-                                        <td class="text-center align-middle">{{ $result->evalscore }}%</td>
-                                        <td class="text-center align-middle">
-                                            {{ $result->isPassed == 1 ? 'Qualified' : 'Unqualified' }}
-                                        </td>
-                                    </tr>
-                                @endif
+            <div class="table-responsive">
+                <table class="table table-bordered border-success">
+                    <thead>
+                        <tr>
+                            <th class="text-center align-middle">#</th>
+                            {{-- <th class="text-center align-middle">Case Code</th> --}}
+                            <th class="text-center align-middle">Scholar Name</th>
+                            @foreach ($data['columns'] as $column)
+                                <th class="text-center align-middle">{{ $column }}</th>
                             @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endforeach
-        @endif
+                            <th class="text-center align-middle">Rendered CS Hours</th>
+                            <th class="text-center align-middle">Penalty Count</th>
+                            <th class="text-center align-middle">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php $index = 1; @endphp
+                        @php $cycleResults = $results->filter(fn($result) => $result->acadcycle == $cycle); @endphp
+
+                        @if ($cycleResults->isEmpty())
+                            <tr>
+                                <td class="text-center align-middle" colspan="{{ 5 + count($data['columns']) }}">No data
+                                    available</td>
+                            </tr>
+                        @else
+                            @foreach ($cycleResults as $result)
+                                <tr>
+                                    <td class="text-center align-middle">{{ $index++ }}</td>
+                                    {{-- <td class="text-center align-middle">{{ $result->caseCode }}</td> --}}
+                                    <td class="text-center align-middle">{{ $result->basicInfo->scLastname }},
+                                        {{ $result->basicInfo->scFirstname }}
+                                        {{ $result->basicInfo->scMiddlename }}
+                                    </td>
+                                    @foreach ($data['columns'] as $key => $column)
+                                        <td class="text-center align-middle">
+                                            {{ $result->{'gwasem' . ($key + 1)} ?? 'N/A' }}
+                                        </td>
+                                    @endforeach
+                                    <td class="text-center align-middle">{{ $result->cshours ?? 'N/A' }}</td>
+                                    <td class="text-center align-middle">{{ $result->penaltycount ?? 'N/A' }}</td>
+                                    <td class="text-center align-middle">{{ $result->remark ?? 'N/A' }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        @endforeach
+
+        {{-- @endforeach
+        @endif --}}
     </div>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
 </body>

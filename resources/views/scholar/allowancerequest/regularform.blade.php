@@ -18,17 +18,16 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
+    <x-alert />
 
     <!-- MAIN -->
     <div class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
+        <a href="{{ route('scregular') }}" class="goback">&lt Go back</a>
         <h1 class="text-center title">ALLOWANCE REQUEST FORM</h1>
         <p class="mt-4 mb-5 description"> Please fill out the required fields
             in each section with true and correct information. If a field does not apply to you, write <strong>Not
                 Applicable</strong>.
         </p>
-
-        <x-alert />
 
 
         <div class="form">
@@ -43,14 +42,6 @@
                                 value="{{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }} {{ $data->basicInfo->scLastname }}"
                                 readonly>
                         </div>
-                        <div class="column">
-                            <label for="dateSubmitted">Date Submitted</label>
-                            <input type="date" id="dateSubmitted" name="dateSubmitted"
-                                value="{{ old('dateSubmitted') }}" required>
-                            @error('dateSubmitted')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
                     </div>
                     <div class="row">
                         <div class="column">
@@ -63,7 +54,7 @@
                         <div class="column">
                             <label for="category">School Category</label>
                             <input type="text" id="category" name="category"
-                                value="{{ $data->education->scSchoolLevel }}" disabled>
+                                value="{{ $data->education->scSchoolLevel }}" readonly>
                         </div>
                         <div class="column">
                             <label for="contactNo">Contact No.</label>
@@ -87,7 +78,7 @@
                         <div class="column">
                             <label for="homeAddress">Home Address</label>
                             <input type="text" id="homeAddress" name="homeAddress"
-                                value="{{ $data->addressinfo->scPermanent }}" readonly>
+                                value="{{ $data->addressinfo->scResidential }}" readonly>
                         </div>
                     </div>
                     <div class="row">
@@ -127,8 +118,7 @@
                         </div>
                         <div class="column">
                             <label for="endSem">End of Semester</label>
-                            <input type="date" id="endSem" name="endSem" value="{{ old('endSem') }}"
-                                required>
+                            <input type="date" id="endSem" name="endSem" value="{{ old('endSem') }}" required>
                             @error('endSem')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -266,14 +256,14 @@
                             <div class="row">
                                 <div class="column">
                                     <label for="from">From</label>
-                                    <input type="text" name="from[]" value="{{ old('from.0') }}" required>
+                                    <input type="text" name="from[]" value="{{ old('from.0') }}">
                                     @error('from.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="column">
                                     <label for="to">To</label>
-                                    <input type="text" name="to[]" value="{{ old('to.0') }}" required>
+                                    <input type="text" name="to[]" value="{{ old('to.0') }}">
                                     @error('to.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -283,22 +273,21 @@
                                 <div class="column">
                                     <label for="estimatedTime">Estimated Travel Time</label>
                                     <input type="text" name="estimatedTime[]"
-                                        value="{{ old('estimatedTime.0') }}" required>
+                                        value="{{ old('estimatedTime.0') }}">
                                     @error('estimatedTime.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="column">
                                     <label for="vehicleType">Type of Vehicle</label>
-                                    <input type="text" name="vehicleType[]" value="{{ old('vehicleType.0') }}"
-                                        required>
+                                    <input type="text" name="vehicleType[]" value="{{ old('vehicleType.0') }}">
                                     @error('vehicleType.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 <div class="column">
                                     <label for="fareRate">Student Fare Rate</label>
-                                    <input type="number" name="fareRate[]" value="{{ old('fareRate.0') }}" required
+                                    <input type="number" name="fareRate[]" value="{{ old('fareRate.0') }}"
                                         step="0.01">
                                     @error('fareRate.0')
                                         <div class="text-danger">{{ $message }}</div>
@@ -315,7 +304,7 @@
                         <div class="column">
                             <label for="totalCosts">Total Costs per day</label>
                             <input type="number" name="totalCosts" id="totalCosts" value="{{ old('totalCosts') }}"
-                                required step="0.01">
+                                step="0.01">
                             @error('totalCosts')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -494,7 +483,7 @@
                     <div class="row">
                         <div class="column">
                             <label for="OJTtotalCosts">Total Costs per day</label>
-                            <input type="number" name="OJTtotalCosts" id="OJTtotalCosts" readonly
+                            <input type="number" name="OJTtotalCosts" id="OJTtotalCosts"
                                 value="{{ old('OJTtotalCosts') }}" step="0.01">
                             @error('OJTtotalCosts')
                                 <div class="text-danger">{{ $message }}</div>

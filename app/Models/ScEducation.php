@@ -34,4 +34,9 @@ class ScEducation extends Model
     {
         return $this->hasMany(Appointments::class, 'caseCode', 'caseCode');
     }
+
+    public function datasets()
+    {
+        return $this->hasOne(datasets::class, 'caseCode', 'caseCode');
+    }
 }

@@ -6,12 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Special Allowance</title>
-    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="{{ asset('css/special.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
 </head>
@@ -22,23 +20,9 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
-
+    <x-alert />
     <main class="ctn-main">
         <h1 class="title">Special Allowances:</h1>
-        <div class="row">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                    {!! session('error') !!}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-        </div>
         <!-- ALLOWANCE BUTTONS -->
         <div class="sallowance">
             @if ($scholar->education->scSchoolLevel == 'College')
@@ -57,11 +41,16 @@
             <p class="table-title"> STATUS : </p>
             <div class="filter">
                 <form action="{{ route('scspecial') }}" method="GET" id="filter-form">
-                    <button type="submit" name="status" value="all" class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
-                    <button type="submit" name="status" value="Pending" class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
-                    <button type="submit" name="status" value="Accepted" class="filter-btn {{ request('status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
-                    <button type="submit" name="status" value="Completed" class="filter-btn {{ request('status') == 'Completed' ? 'active' : '' }}">Completed</button>
-                    <button type="submit" name="status" value="Rejected" class="filter-btn {{ request('status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
+                    <button type="submit" name="status" value="all"
+                        class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
+                    <button type="submit" name="status" value="Pending"
+                        class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
+                    <button type="submit" name="status" value="Accepted"
+                        class="filter-btn {{ request('status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
+                    <button type="submit" name="status" value="Completed"
+                        class="filter-btn {{ request('status') == 'Completed' ? 'active' : '' }}">Completed</button>
+                    <button type="submit" name="status" value="Rejected"
+                        class="filter-btn {{ request('status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
                 </form>
             </div>
         </div>

@@ -14,13 +14,16 @@ return new class extends Migration
         Schema::create('datasets', function (Blueprint $table) {
             $table->increments('id');
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->string('acadcycle', 50);
             $table->date('startcontract');
             $table->date('endcontract');
-            $table->float('gwasem1');
-            $table->float('gwasem2');
+            $table->float('gwasem1')->nullable();
+            $table->float('gwasem2')->nullable();
+            $table->float('gwasem3')->nullable();
             $table->integer('cshours');
-            $table->integer('ltecount');
+            // $table->integer('ltecount');
             $table->integer('penaltycount');
+            $table->string('remark', 50);
             $table->timestamps();
 
             // Define foreign key constraint for 'caseCode' column

@@ -20,6 +20,7 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
+    <x-alert />
 
     <x-alert />
 
@@ -31,8 +32,9 @@
         <hr>
         <div class="search-container">
             <form action="{{ route('csactivities') }}" method="GET">
-                <input type="search" name="search" class="search-input" placeholder="Search" value="{{ request()->input('search') }}">
-             
+                <input type="search" name="search" class="search-input" placeholder="Search"
+                    value="{{ request()->input('search') }}">
+
                 <select class="cs-area" aria-label="area">
                     <option value="" disabled selected hidden>Select Area</option>
                     <option value="mindong">Mindong</option>

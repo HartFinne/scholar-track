@@ -21,6 +21,7 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
+    <x-alert />
 
     <!-- MAIN -->
     <div class="ctn-main">
@@ -124,7 +125,7 @@
                 <tbody>
                     @foreach ($letters as $letter)
                         <tr>
-                            <td>{{ $letter->datesubmitted }}</td>
+                            <td>{{ \Carbon\Carbon::parse($letter->datesubmitted)->format('F d, Y') }}</td>
                             <td>{{ $letter->reason }}</td>
                             <td>{{ $letter->ltestatus }}</td>
                             <td><a href="{{ route('subtleinfo', $letter->lid) }}" id="view">View</a>

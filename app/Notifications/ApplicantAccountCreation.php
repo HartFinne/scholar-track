@@ -40,9 +40,9 @@ class ApplicantAccountCreation extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Application Updated')
+            ->subject('Application Status Updated')
             ->greeting('Hello ' . $this->applicant->name . '!')
-            ->line('Your account has been successfully updated by a worker please check your account:')
+            ->line('Your application status has been updated, please check your account for full details:')
             ->action('Login to Your Account', url('/login'))
             ->line('Thank you for being part of our platform!');
     }

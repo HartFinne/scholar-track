@@ -32,8 +32,10 @@
             <form id="formsearch">
                 <input type="search" id="insearch" placeholder="Search">
             </form>
-            <button type="button" id="btncreateannouncement" onclick="showannouncementform()">Create new
-                announcement</button>
+            <button type="button" id="btnCreateAnnouncement" class="btn btn-success" data-bs-toggle="modal"
+                data-bs-target="#announcementModal">
+                Create new announcement
+            </button>
         </div>
 
         <!-- ANNOUNCEMENTS CONTAINER -->
@@ -90,57 +92,72 @@
     </div>
 
     <!-- ANNOUNCEMENT FORM CONTAINER -->
-    <div id="ctnannouncementform">
-        <form action="{{ route('home-sw.post') }}" method="post">
-            @csrf
-            <div class="groupA" id="formheader">
-                <span>New announcement</span>
-                <button type="button" id="btnhideannouncement" onclick="hideannouncementform()">
-                    <i class="fas fa-xmark"></i>
-                </button>
+    <div class="modal fade" id="announcementModal" tabindex="-1" aria-labelledby="announcementModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Using modal-lg to give enough space for the form -->
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="announcementModalLabel">New Announcement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('home-sw.post') }}" method="post">
+                        @csrf
+                        <!-- Multiple selection of recipients with Select2 -->
+                        <div class="row mb-2">
+                            <label class="col-md-3 col-form-label fw-bold">Select Recipients:</label>
+                            <div class="col-md-9">
+                                <select class="form-control" name="recipients[]" id="recipients" multiple="multiple"
+                                    style="width: 100%">
+                                    <option value="all">All Users</option>
+                                    @foreach ($users as $user)
+                                        <option value="{{ $user->caseCode }}">{{ $user->caseCode }} |
+                                            {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
+                                            {{ $user->basicInfo->scMiddlename }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <label class="col-md-3 col-form-label fw-bold" for="title">Subject</label>
+                            <div class="col-md-9">
+                                <input type="text" name="title" id="title" class="form-control"
+                                    placeholder="Enter subject" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Message</label>
+                            <textarea class="form-control" id="inmessage" name="description" placeholder="Type here..." required></textarea>
+                        </div>
+                        <div class="mb-3 text-end">
+                            <button type="submit" class="btn btn-success">Post</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="groupB">
-                <!-- Multiple selection of recipients with Select2 -->
-                <div class="row mb-2 align-items-center">
-                    <label class="fw-bold col-md-3" for="recipients">Select Recipients:</label>
-                    <div class="col-md-9">
-                        <select class="form-control" name="recipients[]" id="recipients" multiple="multiple"
-                            style="width: 100%">
-                            <option value="all">All Users</option>
-                            @foreach ($users as $user)
-                                <option value="{{ $user->caseCode }}">{{ $user->caseCode }} |
-                                    {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
-                                    {{ $user->basicInfo->scMiddlename }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-2 align-items-center">
-                    <label class="fw-bold col-md-3" for="title">Subject</label>
-                    <div class="col-md-9">
-                        <input type="text" name="title" id="title" class="form-control" style="width: 100%"
-                            placeholder="Enter subject" required>
-                    </div>
-                </div>
-                <div class="groupB3">
-                    <label class="lbloption">Message</label>
-                    <textarea id="inmessage" name="description" placeholder="type here..." required></textarea>
-                </div>
-                <div class="groupB3">
-                    <button type="submit" id="btnpost">Post</button>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/toggleannouncementform.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <script>
         $(document).ready(function() {
-            $('#recipients').select2();
+            // Initialize Select2 when the modal is opened
+            $('#announcementModal').on('shown.bs.modal', function() {
+                $('#recipients').select2({
+                    dropdownParent: $(
+                            '#announcementModal'
+                            ) // Ensures dropdown is appended to the modal and shows correctly
+                });
+            });
+
+            // Re-initialize when modal is closed to reset the form and clear selection
+            $('#announcementModal').on('hidden.bs.modal', function() {
+                $('#recipients').select2('destroy').select2({
+                    dropdownParent: $('#announcementModal')
+                });
+            });
         });
     </script>
 </body>

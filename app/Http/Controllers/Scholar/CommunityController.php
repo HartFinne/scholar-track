@@ -275,7 +275,7 @@ class CommunityController extends Controller
                 return redirect()->route('csdashboard')->with('success', 'Your registration has been cancelled. Thank you.');
             }
 
-            return redirect()->route('csdashboard')->with('error', 'Unable to cancel registration.');
+            return redirect()->route('csdashboard')->with('failure', 'Unable to cancel registration.');
         }
     }
 
