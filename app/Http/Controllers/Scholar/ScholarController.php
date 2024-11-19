@@ -37,6 +37,7 @@ use App\Models\staccount;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use thiagoalessio\TesseractOCR\TesseractOCR;
 use Illuminate\Support\Facades\App;
 use Svg\Tag\Rect;
 
@@ -353,9 +354,48 @@ class ScholarController extends Controller
 
                 // Store the file in the specified directory
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
+
+                // Perform OCR on the uploaded image
+                $ocr = new TesseractOCR(storage_path('app/public/' . $filePath));
+                $ocr->executable('C:\Program Files\Tesseract-OCR\tesseract.exe'); // Explicitly set the Tesseract path
+                $extractedText = $ocr->run();
+
+                // Debugging: Log or dump the extracted text to verify the result
+                Log::info('Full OCR Extracted Text: ' . $extractedText);
+
+                // Patterns to extract GPA in multiple formats
+                $patterns = [
+                    '/General Average[^0-9]*([\d.]+)/i',  // Matches "General Average: 70%" or similar
+                    '/Average[^0-9]*([\d.]+)/i',          // Matches "Average: 70%"
+                    '/GPA[^0-9]*([\d.]+)/i',              // Retain existing GPA patterns
+                    '/GWA[^0-9]*([\d.]+)/i',              // Retain GWA patterns
+                    '/Grade Point Average[^0-9]*([\d.]+)/i'
+                ];
+
+                $ocrGpa = null;
+
+                // Attempt to match each pattern
+                foreach ($patterns as $pattern) {
+                    if (preg_match($pattern, $extractedText, $matches)) {
+                        $ocrGpa = floatval($matches[1]);
+                        break; // Stop once a match is found
+                    }
+                }
+
+                // If no GPA found, handle the failure
+                if ($ocrGpa === null) {
+                    return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded image. Please ensure it is legible and try again.')->withInput();
+                }
+
+                // Validate OCR GPA with user input
+                $inputGpa = $request->gwa ?? $request->genave; // Adjust as per your input field names
+                if (abs($ocrGpa - $inputGpa) > 0.01) { // Allow for minor floating-point differences
+                    return redirect()->back()->with('failure', 'The GPA in the image (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . '). Please verify your entry.')->withInput();
+                }
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
+
 
             $criteria = criteria::first();
             $requiredgwa = [
