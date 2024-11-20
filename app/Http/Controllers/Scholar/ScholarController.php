@@ -366,11 +366,11 @@ class ScholarController extends Controller
 
                 // Patterns to extract GPA in multiple formats
                 $patterns = [
-                    '/General Average[^0-9]*([\d.]+)/i',  // Matches "General Average: 70%" or similar
-                    '/Average[^0-9]*([\d.]+)/i',          // Matches "Average: 70%"
-                    '/GPA[^0-9]*([\d.]+)/i',              // Retain existing GPA patterns
-                    '/GWA[^0-9]*([\d.]+)/i',              // Retain GWA patterns
-                    '/Grade Point Average[^0-9]*([\d.]+)/i'
+                    '/General Average[^0-9]*([0-9]{1,2}(\.[0-9]+)?|100(\.0+)?)/i',  // Matches "General Average: 70%" or "General Average: 100"
+                    '/Average[^0-9]*([0-9]{1,2}(\.[0-9]+)?|100(\.0+)?)/i',          // Matches "Average: 70%" or "Average: 100"
+                    '/GPA[^0-9]*([0-9]{1,2}(\.[0-9]+)?|100(\.0+)?)/i',              // Matches "GPA: 4.0" or "GPA: 3.5" (Change range if needed)
+                    '/GWA[^0-9]*([0-9]{1,2}(\.[0-9]+)?|100(\.0+)?)/i',              // Matches "GWA: 85.5" or similar
+                    '/Grade Point Average[^0-9]*([0-9]{1,2}(\.[0-9]+)?|100(\.0+)?)/i' // Matches "Grade Point Average: 88.6"
                 ];
 
                 $ocrGpa = null;
