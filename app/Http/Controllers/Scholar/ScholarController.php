@@ -308,7 +308,7 @@ class ScholarController extends Controller
     {
         $user = Auth::user();
         $educ = ScEducation::where('caseCode', $user->caseCode)->first();
-        $gwaRules = ['required', 'numeric'];
+        $gwaRules = ['numeric'];
 
         if ($educ->scSchoolLevel == 'College') {
             $gwaRules[] = 'min:1';
@@ -328,10 +328,10 @@ class ScholarController extends Controller
             } else {
                 $request->validate([
                     'semester' => 'required',
-                    'genave' => $gwaRules,
+                    'genave' => [$gwaRules, 'required'],
                     'gwaconduct' => 'required|string|min:1',
-                    'chinesegenave' => $gwaRules,
-                    'chineseconduct' => 'required|string|min:1',
+                    'chinesegenave' => [$gwaRules, 'sometimes'],
+                    'chineseconduct' => 'sometimes|string|min:1',
                     'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
                 ]);
             }
