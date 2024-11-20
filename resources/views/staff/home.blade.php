@@ -110,16 +110,17 @@
                     <form action="{{ route('home-sw.post') }}" method="post">
                         @csrf
                         <!-- Multiple selection of recipients with Select2 -->
-                        <div class="row mb-2">
-                            <label class="col-md-3 col-form-label fw-bold">Select Recipients:</label>
+                        <div class="row mb-3">
+                            <label for="recipients" class="col-md-3 col-form-label fw-bold">Select Recipients:</label>
                             <div class="col-md-9">
                                 <select class="form-control" name="recipients[]" id="recipients" multiple="multiple"
-                                    style="width: 100%">
+                                    style="width: 100%;">
                                     <option value="all">All Users</option>
                                     @foreach ($users as $user)
-                                        <option value="{{ $user->caseCode }}">{{ $user->caseCode }} |
-                                            {{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }}
-                                            {{ $user->basicInfo->scMiddlename }}</option>
+                                        <option value="{{ $user->caseCode }}">
+                                            {{ $user->caseCode }} | {{ $user->basicInfo->scLastname }},
+                                            {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -146,22 +147,13 @@
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/toggleannouncementform.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Initialize Select2 when the modal is opened
-            $('#announcementModal').on('shown.bs.modal', function() {
-                $('#recipients').select2({
-                    dropdownParent: $(
-                        '#announcementModal'
-                    ) // Ensures dropdown is appended to the modal and shows correctly
-                });
-            });
-
-            // Re-initialize when modal is closed to reset the form and clear selection
-            $('#announcementModal').on('hidden.bs.modal', function() {
-                $('#recipients').select2('destroy').select2({
-                    dropdownParent: $('#announcementModal')
-                });
+            $('#recipients').select2({
+                dropdownParent: $('#announcementModal'),
+                placeholder: "Select recipients",
+                allowClear: true
             });
         });
     </script>

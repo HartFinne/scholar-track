@@ -98,7 +98,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-11">
-                            <legend class="fw-bold text-success h4">Requirements</legend>
+                            <legend class="fw-bold text-success h4">Scholarship Requirements</legend>
                         </div>
                         <div class="col-md-1">
                             <button type="submit" class="btn btn-success" style="width: 100%">Save</button>
