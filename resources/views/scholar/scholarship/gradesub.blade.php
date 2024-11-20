@@ -59,7 +59,7 @@
                     <div class="col-md-4 mb-2">
                         <input type="number" class="form-control" id="gwa" name="gwa" min="1"
                             max="{{ $institution->highestgwa != 100 ? '5' : '100' }}"
-                            placeholder="General Weighted Average" value="{{ old('gwa') }}"
+                            placeholder="General Weighted Average" value="{{ old('gwa') ?? '' }}"
                             {{ $institution->schoollevel == 'College' ? 'required' : '' }} step="0.01">
                     </div>
                 @endif
