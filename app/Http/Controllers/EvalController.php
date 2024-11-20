@@ -297,7 +297,7 @@ class EvalController extends Controller
     private function evaluateelem()
     {
         $users = User::with(['scholarshipinfo', 'education', 'basicInfo'])
-            ->whereHas('education', fn($query) => $query->where('scSchoolLevel', 'Junior High'))
+            ->whereHas('education', fn($query) => $query->where('scSchoolLevel', 'Elementary'))
             ->get();
 
         $criteria = criteria::first();
