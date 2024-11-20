@@ -126,6 +126,11 @@
                     <option value="Mindong">Mindong</option>
                     <option value="Minxi">Minxi</option>
                     <option value="Minzhong">Minzhong</option>
+                    <option value="Bicol">Bicol</option>
+                    <option value="Davao">Davao</option>
+                    <option value="Iloilo">Iloilo</option>
+                    <option value="Palo">Palo</option>
+                    <option value="Zamboanga">Zamboanga</option>
                     <option value="Not Applicable">Not Applicable</option>
                 </select>
             </div>
