@@ -409,61 +409,64 @@ class EvalController extends Controller
     public function showevalresults()
     {
         $colleges = summarycollege::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summarycollege.caseCode') // Adjust the foreign key as needed
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summarycollege.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
             ->orderByRaw("
-            CASE 
-                WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-                WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-                WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-                ELSE 4 
-            END
-        ")
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
             ->orderBy('endcontract', 'ASC')
-            ->select('summarycollege.*') // Ensure no conflicts with columns from the join
+            ->select('summarycollege.*')
             ->get();
 
         $shs = summaryshs::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryshs.caseCode') // Adjust the foreign key as needed
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryshs.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
             ->orderByRaw("
-            CASE 
-                WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-                WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-                WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-                ELSE 4 
-            END
-        ")
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
             ->orderBy('endcontract', 'ASC')
             ->select('summaryshs.*')
             ->get();
 
         $jhs = summaryjhs::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryjhs.caseCode') // Adjust the foreign key as needed
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryjhs.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
             ->orderByRaw("
-            CASE 
-                WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-                WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-                WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-                ELSE 4 
-            END
-        ")
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
             ->orderBy('endcontract', 'ASC')
             ->select('summaryjhs.*')
             ->get();
 
         $elem = summaryelem::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryelem.caseCode') // Adjust the foreign key as needed
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryelem.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
             ->orderByRaw("
-            CASE 
-                WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-                WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-                WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-                ELSE 4 
-            END
-        ")
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
             ->orderBy('endcontract', 'ASC')
             ->select('summaryelem.*')
             ->get();
-
 
         return view('staff.scholarsevaluation', compact('colleges', 'shs', 'jhs', 'elem'));
     }
