@@ -94,7 +94,7 @@ class EvalController extends Controller
             $remark = $this->evaluateRemark($gwasem1, $gwasem2, $gwasem3, $curriculum->highestgwa, $criteria->cgwa, $curriculum->acadcycle);
 
             if ($remark == 'Good Academic Performance') {
-                if ($cshours < $criteria->cshour) {
+                if ($cshours < $criteria->cshours) {
                     $remark = 'Incomplete CS Hours';
                 } elseif ($hcabsentcount > 0) {
                     $remark = 'Incomplete HC Attendance';

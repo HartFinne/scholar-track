@@ -89,7 +89,7 @@
                                     {{ $data->basicInfo->scMiddlename }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    {{ optional($data->education)->scSchoolLevel }}
+                                    {{ optional($data->education)->scYearGrade }}
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
