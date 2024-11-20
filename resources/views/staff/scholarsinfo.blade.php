@@ -26,7 +26,7 @@
                 <h1 class="title"><strong>Scholar's Information</strong></h1>
             </div>
             <div class="col-md-1">
-                <a href="{{ route('scholars-college') }}" class="btn btn-success">&lt Go back</a>
+                <a href="{{ route('scholars-overview') }}" class="btn btn-success">&lt Go back</a>
             </div>
         </div>
         <div class="container">
