@@ -169,7 +169,7 @@
             @php
                 $cycles = [
                     'Quarter' => [
-                        'columns' => ['1st Quarter GWA', '2nd Quarter GWA', '3rd Quarter GWA', '4th Quarter GWA'],
+                        'columns' => ['1st Quarter', '2nd Quarter', '3rd Quarter', '4th Quarter'],
                     ],
                 ];
             @endphp
@@ -211,7 +211,7 @@
                                         </td>
                                         @foreach ($data['columns'] as $key => $column)
                                             <td class="text-center align-middle">
-                                                {{ $result->{'gwasem' . ($key + 1)} ?? 'No Data' }}
+                                                {{ ($result->{'gwasem' . ($key + 1)} ?? 'No Data') . 'GWA' }}
                                             </td>
                                         @endforeach
                                         <td class="text-center align-middle">{{ $result->hcabsentcount ?? 'No Data' }}
