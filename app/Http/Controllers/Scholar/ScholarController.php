@@ -357,7 +357,7 @@ class ScholarController extends Controller
 
                 // Perform OCR on the uploaded image
                 $ocr = new TesseractOCR(storage_path('app/public/' . $filePath));
-                $tesseractPath = env('TESSERACT_PATH', '/usr/bin/tesseract'); // Default to /usr/bin/tesseract if not set
+                $tesseractPath = env('TESSERACT_PATH', '/usr/local/bin/tesseract'); // Default to /usr/bin/tesseract if not set
                 $ocr->executable($tesseractPath); // Use the path from the .env file
                 $extractedText = $ocr->run();
 
