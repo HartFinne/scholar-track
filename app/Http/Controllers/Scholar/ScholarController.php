@@ -356,10 +356,20 @@ class ScholarController extends Controller
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
 
                 // Perform OCR on the uploaded image
-                $ocr = new TesseractOCR(storage_path('app/public/' . $filePath));
-                $tesseractPath = env('TESSERACT_PATH', '/usr/local/bin/tesseract'); // Default to /usr/bin/tesseract if not set
-                $ocr->executable($tesseractPath); // Use the path from the .env file
-                $extractedText = $ocr->run();
+               $ocr = new TesseractOCR(storage_path('app/public/' . $filePath));
+
+                // Set the executable path for Tesseract
+                $tesseractPath = env('TESSERACT_PATH', '/usr/local/bin/tesseract'); // Default to /usr/local/bin/tesseract
+                $ocr->executable($tesseractPath);
+
+                // Explicitly set the tessdata directory path
+                $tessdataPath = '/usr/local/share/tessdata'; // Adjust this if your tessdata is located elsewhere
+                $ocr->setTempDir($tessdataPath);
+
+                // Run OCR and get the extracted text
+                $extractedText = $ocr->lang('eng')
+                     ->config('tessdata-dir', $tessdataPath) // Pass tessdata directory to Tesseract
+                     ->run();
 
                 // Debugging: Log or dump the extracted text to verify the result
                 Log::info('Full OCR Extracted Text: ' . $extractedText);
