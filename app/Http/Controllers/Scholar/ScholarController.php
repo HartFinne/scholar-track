@@ -362,13 +362,10 @@ class ScholarController extends Controller
                 $tesseractPath = env('TESSERACT_PATH', '/usr/local/bin/tesseract'); // Default to /usr/local/bin/tesseract
                 $ocr->executable($tesseractPath);
 
-                // Explicitly set the tessdata directory path
-                $tessdataPath = '/usr/local/share/tessdata'; // Adjust this if your tessdata is located elsewhere
-                $ocr->setTempDir($tessdataPath);
-
-                // Run OCR and get the extracted text
-                $extractedText = $ocr->lang('eng')
-                     ->config('tessdata-dir', $tessdataPath) // Pass tessdata directory to Tesseract
+                // Add custom arguments to include tessdata directory
+                $tessdataPath = '/usr/local/share/tessdata';
+                $extractedText = $ocr->lang('eng') // Set the language
+                     ->config('tessdata-dir', $tessdataPath) // Pass the tessdata directory path
                      ->run();
 
                 // Debugging: Log or dump the extracted text to verify the result
