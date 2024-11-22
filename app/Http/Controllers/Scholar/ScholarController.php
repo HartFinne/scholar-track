@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Scholar;
 
-
+use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -346,6 +346,7 @@ class ScholarController extends Controller
             }
 
             // Handle file upload
+
             if ($request->hasFile('gradeImage')) {
                 $file = $request->file('gradeImage');
 
@@ -355,18 +356,32 @@ class ScholarController extends Controller
                 // Store the file in the specified directory
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
 
-                // Perform OCR on the uploaded image
-               $ocr = new TesseractOCR(storage_path('app/public/' . $filePath));
+                // Load the image using Intervention Image
+                $image = Image::make(storage_path('app/public/' . $filePath));
+
+                // Preprocess the image: Convert to grayscale, increase contrast, and apply thresholding
+                $image->greyscale()
+                    ->contrast(50)   // Increase contrast (adjust the value as needed)
+                    ->threshold(100); // Apply threshold to make the image sharper
+
+                // Save the processed image temporarily
+                $processedImagePath = storage_path('app/public/processed_' . $fileName);
+                $image->save($processedImagePath);
+
+                // Perform OCR on the processed image
+                $ocr = new TesseractOCR($processedImagePath);
 
                 // Set the executable path for Tesseract
                 $tesseractPath = env('TESSERACT_PATH', '/usr/local/bin/tesseract'); // Default to /usr/local/bin/tesseract
                 $ocr->executable($tesseractPath);
 
-                // Add custom arguments to include tessdata directory
+                // Add custom arguments to include tessdata directory and set OCR Engine Mode (OEM) & Page Segmentation Mode (PSM)
                 $tessdataPath = '/usr/local/share/tessdata';
-                $extractedText = $ocr->lang('eng') // Set the language
-                     ->config('tessdata-dir', $tessdataPath) // Pass the tessdata directory path
-                     ->run();
+                $extractedText = $ocr->lang('eng')  // Set the language
+                    ->config('tessdata-dir', $tessdataPath) // Pass the tessdata directory path
+                    ->config('oem', 3) // OCR Engine Mode: 3 = both standard and LSTM neural network
+                    ->config('psm', 6) // Page Segmentation Mode: 6 = Assume a single uniform block of text
+                    ->run();
 
                 // Debugging: Log or dump the extracted text to verify the result
                 Log::info('Full OCR Extracted Text: ' . $extractedText);
@@ -403,6 +418,7 @@ class ScholarController extends Controller
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
+
 
 
             $criteria = criteria::first();
