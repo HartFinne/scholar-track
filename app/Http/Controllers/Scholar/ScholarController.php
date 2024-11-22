@@ -379,8 +379,6 @@ class ScholarController extends Controller
                 $tessdataPath = '/usr/local/share/tessdata';
                 $extractedText = $ocr->lang('eng')  // Set the language
                     ->config('tessdata-dir', $tessdataPath) // Pass the tessdata directory path
-                    ->config('oem', 3) // OCR Engine Mode: 3 = both standard and LSTM neural network
-                    ->config('psm', 6) // Page Segmentation Mode: 6 = Assume a single uniform block of text
                     ->run();
 
                 // Debugging: Log or dump the extracted text to verify the result
