@@ -4,7 +4,7 @@ import concurrent.futures
 
 def extract_text(image_path):
     # Initialize PaddleOCR with language 'en' (English)
-    ocr = PaddleOCR(use_angle_cls=True, lang='en')
+    ocr = PaddleOCR(use_angle_cls=True, cls_model_dir="path_to_cls_model", lang='en', use_space_char=True, table=False, layout=False)
     result = ocr.ocr(image_path, cls=True)
 
     extracted_text = ''
