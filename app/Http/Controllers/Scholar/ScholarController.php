@@ -363,7 +363,7 @@ class ScholarController extends Controller
                 $processedImagePath = storage_path('app/public/' . $filePath);
 
                 // Run the Python script to perform OCR and extract text
-                $command = escapeshellcmd("python $scriptPath $processedImagePath");
+                $command = escapeshellcmd("/home/forge/myenv/bin/python $scriptPath $processedImagePath");
                 $ocrResult = shell_exec($command); // Run the Python script and get the output
 
                 // Log the OCR result
