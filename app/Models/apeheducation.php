@@ -15,6 +15,7 @@ class apeheducation extends Model
 
     protected $fillable = [
         'casecode',
+        'schoollevel',
         'schoolname',
         'ingrade',
         'strand',

@@ -177,7 +177,7 @@
                                     </td>
                                     <td colspan="2">
                                         <span class="flabel">Cellphone No./Landline</span><br>
-                                        <span class="fvalue" id="phoneNum">{{ $applicant->phonenum }}</span>
+                                        <span class="fvalue" id="phoneNum">+{{ $applicant->phonenum }}</span>
                                     </td>
                                     <td>
                                         <span class="flabel">Birthdate</span><br>
@@ -288,13 +288,13 @@
                                             <div class="mb-1 small">
                                                 General Average:
                                                 <span id="university">
-                                                    <strong>{{ $applicant->educelemhs->chinesegwa ?? '' }}</strong>
+                                                    <strong>{{ $applicant->educelemhs->chinesegwa ?? 'Not Applicable' }}</strong>
                                                 </span>
                                             </div>
                                             <div class="mb-1 small">
                                                 Conduct:
                                                 <span id="university">
-                                                    <strong>{{ $applicant->educelemhs->chinesegwaconduct ?? '' }}</strong>
+                                                    <strong>{{ $applicant->educelemhs->chinesegwaconduct ?? 'Not Applicable' }}</strong>
                                                 </span>
                                             </div>
                                         </div>
@@ -455,7 +455,8 @@
                             Detailed Sketch of Home Address, Certificate
                             of indigence from the Barangay, Pictures of House (Inside and outside), Payslip or
                             Income Tax Return of Both Parents (if working).</span>
-                        <strong>Deadline of Submission is on</strong> <span id="deadline">DEADLINE</span>.
+                        <strong>Deadline of Submission is on</strong> <span id="deadline">
+                            {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</span>.
                     </li>
                     <li>
                         Late applicants will not be entertained.
@@ -472,6 +473,7 @@
                     </li>
                 </ol>
             </div>
+            {{-- CASE DETAILS --}}
             <div class="fillstaff">
                 <div class="heading">
                     <p>To be filled up by TZU CHI FOUNDATION</p>
@@ -570,6 +572,7 @@
                 </div>
             </div>
         </div>
+        {{-- Documents --}}
         <div class="card mx-auto mt-3 mb-5 shadow-sm" style="width: 8.5in;">
             <div class="card-header py-3 bg-success text-white">
                 <span class="h5 fw-bold">Submitted Documents</span>
@@ -579,15 +582,14 @@
                     <div class="col-md-7 file">Latest Report Card</div>
                     <div class="col-md-5 text-center">
                         <a href="{{ asset('storage/' . $applicant->requirements->reportcard) }}">
-                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
                 </div>
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Latest Registration Card</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->regiform) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->regiform) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -595,8 +597,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Autobiography</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->autobio) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->autobio) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -604,8 +605,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Family Picture</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->familypic) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->familypic) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -613,8 +613,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Picture of House (Inside)</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->houseinside) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->houseinside) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -622,8 +621,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Picture of House (Outside)</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->houseoutside) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->houseoutside) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -631,8 +629,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Latest Utility Bill</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->utilitybill) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->utilitybill) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -640,8 +637,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Sketch Map of Home Address</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->sketchmap) }}"
-                            >
+                        <a href="{{ asset('storage/' . $applicant->requirements->sketchmap) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -650,8 +646,7 @@
                     <div class="col-md-7 file">Latest Pay Slip of Parent/s</div>
                     <div class="col-md-5 text-center">
                         @if (!empty($applicant->requirements) && !empty($applicant->requirements->payslip))
-                            <a href="{{ asset('storage/' . $applicant->requirements->payslip) }}"
-                                >
+                            <a href="{{ asset('storage/' . $applicant->requirements->payslip) }}">
                                 <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                             </a>
                         @else
@@ -662,9 +657,8 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Certificate of Indigency</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $applicant->requirements->indigencycert) }}"
-                            >
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span> 
+                        <a href="{{ asset('storage/' . $applicant->requirements->indigencycert) }}">
+                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
                 </div>
@@ -677,6 +671,38 @@
         document.getElementById('confirmWithdraw').addEventListener('click', function() {
             window.location.href = "{{ route('cancelapplication', $applicant->casecode) }}";
         });
+
+        const regionCode = '{{ $applicant->region }}';
+        const cityCode = '{{ $applicant->city }}';
+        const barangayCode = '{{ $applicant->barangay }}';
+
+        // Base API URLs
+        const cityApi = `https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`;
+        const barangayApi = `https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`;
+
+        // Populate city/municipality
+        fetch(cityApi)
+            .then(response => response.json())
+            .then(data => {
+                const city = data.find(item => item.code === cityCode);
+                document.getElementById('city').textContent = city ? city.name : 'Unknown City/Municipality';
+            })
+            .catch(error => {
+                console.error('Error fetching city/municipality:', error);
+                document.getElementById('city').textContent = 'Error loading city/municipality';
+            });
+
+        // Populate barangay
+        fetch(barangayApi)
+            .then(response => response.json())
+            .then(data => {
+                const barangay = data.find(item => item.code === barangayCode);
+                document.getElementById('brgy').textContent = barangay ? barangay.name : 'Unknown Barangay';
+            })
+            .catch(error => {
+                console.error('Error fetching barangay:', error);
+                document.getElementById('brgy').textContent = 'Error loading barangay';
+            });
     </script>
 </body>
 

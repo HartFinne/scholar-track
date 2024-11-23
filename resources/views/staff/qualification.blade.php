@@ -11,6 +11,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         .tblinput {
@@ -36,6 +37,7 @@
 
     <div class="ctnmain">
         <div class="container">
+            {{-- APPLICATION FORMS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
                 <legend class="fw-bold text-success h4">Manage Application Forms</legend>
                 <div class="ctntable table-responsive">
@@ -43,6 +45,8 @@
                         <thead>
                             <tr>
                                 <th class="text-center align-middle">Form</th>
+                                <th class="text-center align-middle">Deadline for Submission of Documents</th>
+                                <th class="text-center align-middle">End Date of Application</th>
                                 <th class="text-center align-middle">Status</th>
                                 <th class="text-center align-middle">Action</th>
                             </tr>
@@ -51,19 +55,27 @@
                             @foreach ($forms as $form)
                                 <tr>
                                     <td class="text-center align-middle">{{ $form->formname }}</td>
+                                    <td class="text-center align-middle">
+                                        {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        {{ $form->deadline ? \Carbon\Carbon::parse($form->enddate)->format('F j, Y') : '--' }}
+                                    </td>
                                     <td class="text-center align-middle">{{ $form->status }}</td>
                                     <td class="text-center align-middle">
-                                        <form action="{{ route('updateappformstatus', $form->formname) }}"
-                                            method="POST">
-                                            @csrf <!-- Ensure CSRF protection is enabled for the form -->
-                                            @if ($form->status == 'Closed')
-                                                <input type="hidden" name="status" value="Open">
-                                                <button type="submit" class="btn btn-success">Open</button>
-                                            @else
-                                                <input type="hidden" name="status" value="Closed">
+                                        @if ($form->status == 'Closed')
+                                            <button type="button" class="btn btn-success open-modal-btn"
+                                                data-bs-toggle="modal" data-bs-target="#openApplicationModal"
+                                                data-formname="{{ $form->formname }}">
+                                                Open
+                                            </button>
+                                        @else
+                                            <form method="post"
+                                                action="{{ route('updateappformstatus', ['formname' => $form->formname, 'status' => 'Closed']) }}">
+                                                @csrf
                                                 <button type="submit" class="btn btn-danger">Close</button>
-                                            @endif
-                                        </form>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -71,9 +83,10 @@
                     </table>
                 </div>
             </fieldset>
-            {{-- <div class="divider"></div> --}}
+
+            {{-- EMAIL IMPORT --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
-                <span class="fw-bold text-success h4">Import Scholar Emails</span>
+                <legend class="fw-bold text-success h4">Import Scholar Emails</legend>
                 <span class="col-12 mb-2">
                     Please upload the Excel file containing scholar emails for registration verification.
                     Ensure the file contains only email addresses, and they must be placed in the first column of the
@@ -92,7 +105,8 @@
                     </small>
                 </form>
             </fieldset>
-            {{-- <div class="divider"></div> --}}
+
+            {{-- SCHOLARSHIP REQUIREMENTS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
                 <form method="POST" action="{{ route('updatecriteria') }}">
                     @csrf
@@ -164,7 +178,53 @@
                     </div>
                 </form>
             </fieldset>
-            {{-- <div class="divider"></div> --}}
+
+            {{-- APPLICATION INSTRUCTIONS --}}
+            <fieldset class="row mb-3 p-3 rounded border border-success">
+                <legend class="fw-bold text-success h4">Manage Application Instructions</legend>
+                <div class="ctntable table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center align-middle">Application Instructions For</th>
+                                <th class="text-center align-middle">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center align-middle">College</td>
+                                <td class="text-center align-middle">
+                                    <button class="btn btn-success open-modal-btn" data-bs-toggle="modal"
+                                        data-bs-target="#collegeInstructionModal">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center align-middle">Senior High</td>
+                                <td class="text-center align-middle">
+                                    <button class="btn btn-success open-modal-btn" data-bs-toggle="modal"
+                                        data-bs-target="#shsInstructionModal">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center align-middle">Junior High</td>
+                                <td class="text-center align-middle">
+                                    <button class="btn btn-success open-modal-btn" data-bs-toggle="modal"
+                                        data-bs-target="#jhsInstructionModal">Edit</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center align-middle">Elementary</td>
+                                <td class="text-center align-middle">
+                                    <button class="btn btn-success open-modal-btn" data-bs-toggle="modal"
+                                        data-bs-target="#elemInstructionModal">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </fieldset>
+
+            {{-- SCHOOLS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
                 <legend class="fw-bold text-success h4">Institutions</legend>
                 <form class="mb-3" method="POST" action="{{ route('addinstitution') }}">
@@ -189,6 +249,8 @@
                         </select>
                         <input type="number" class="form-control" placeholder="Highest GWA" name="highestgwa"
                             required step="0.01" min="1" max="100">
+                        <input type="file" class="form-control" name="logo" required
+                            accept="image/jpg, image/png">
                         <button class="btn btn-success" type="submit" id="btnaddinsti"
                             style="z-index: 1">Add</button>
                     </div>
@@ -271,6 +333,8 @@
                 </table>
 
             </fieldset>
+
+            {{-- COURSES --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
                 <legend class="fw-bold text-success h4">Courses</legend>
                 <form class="mb-3" method="POST" action="{{ route('addcourse', 'College') }}">
@@ -317,6 +381,8 @@
                 </table>
 
             </fieldset>
+
+            {{-- STRANDS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
                 <legend class="fw-bold text-success h4">Strand</legend>
                 <form class="mb-3" method="POST" action="{{ route('addcourse', 'Senior High') }}">
@@ -365,6 +431,7 @@
         </div>
     </div>
 
+    {{-- loading import --}}
     <div class="modal fade" id="loadingImport" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-success">
@@ -380,7 +447,218 @@
         </div>
     </div>
 
+    <!-- open application form -->
+    <div class="modal fade" id="openApplicationModal" tabindex="-1" aria-labelledby="openApplicationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="openApplicationModalLabel">Open Application Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="openapplicationform" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row mb-1">
+                                Set deadline for submission of hard copy of documents:
+                            </div>
+                            <div class="row mb-3">
+                                <input required type="date" id="deadline" name="deadline" class="form-control">
+                            </div>
+                            <div class="row mb-1">
+                                Set end date of application:
+                            </div>
+                            <div class="row mb-3">
+                                <input required type="date" id="enddate" name="enddate" class="form-control">
+                            </div>
+                            <div class="row small">
+                                Note: The form automatically close after the end.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- College Instruction Modal -->
+    <div class="modal fade" id="collegeInstructionModal" tabindex="-1"
+        aria-labelledby="collegeInstructionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="collegeInstructionModalLabel">College Application Instructions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('updateapplicationinstructions', ['level' => 'College']) }}" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="collegeApplicants" class="form-label">Who can apply?</label>
+                            <textarea class="form-control" name="applicants" id="collegeApplicants" rows="4">{{ old('applicants') ?? $instruction['College']->applicants }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="collegeQualifications" class="form-label">What are the qualifications?</label>
+                            <textarea class="form-control" name="qualifications" id="collegeQualifications" rows="4">{{ old('qualifications') ?? $instruction['College']->qualifications }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="collegeDocuments" class="form-label">Documents to prepare:</label>
+                            <textarea class="form-control" name="documents" id="collegeDocuments" rows="4">{{ old('documents') ?? $instruction['College']->requireddocuments }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="collegeProcess" class="form-label">Application Process:</label>
+                            <textarea class="form-control" name="process" id="collegeProcess" rows="4">{{ old('process') ?? $instruction['College']->applicationprocess }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Senior High Instruction Modal -->
+    <!-- Senior High School (SHS) Application Instructions Modal -->
+    <div class="modal fade" id="shsInstructionModal" tabindex="-1" aria-labelledby="shsInstructionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="shsInstructionModalLabel">Senior High Application Instructions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('updateapplicationinstructions', ['level' => 'Senior High']) }}"
+                    method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="shsApplicants" class="form-label">Who can apply?</label>
+                            <textarea class="form-control" name="applicants" id="shsApplicants" rows="4">{{ old('applicants') ?? $instruction['Senior High']->applicants }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shsQualifications" class="form-label">What are the qualifications?</label>
+                            <textarea class="form-control" name="qualifications" id="shsQualifications" rows="4">{{ old('qualifications') ?? $instruction['Senior High']->qualifications }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shsDocuments" class="form-label">Documents to prepare:</label>
+                            <textarea class="form-control" name="documents" id="shsDocuments" rows="4">{{ old('documents') ?? $instruction['Senior High']->requireddocuments }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="shsProcess" class="form-label">Application Process:</label>
+                            <textarea class="form-control" name="process" id="shsProcess" rows="4">{{ old('process') ?? $instruction['Senior High']->applicationprocess }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Junior High School (JHS) Application Instructions Modal -->
+    <div class="modal fade" id="jhsInstructionModal" tabindex="-1" aria-labelledby="jhsInstructionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="jhsInstructionModalLabel">Junior High Application Instructions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('updateapplicationinstructions', ['level' => 'Junior High']) }}"
+                    method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="jhsApplicants" class="form-label">Who can apply?</label>
+                            <textarea class="form-control" name="applicants" id="jhsApplicants" rows="4">{{ old('applicants') ?? $instruction['Junior High']->applicants }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jhsQualifications" class="form-label">What are the qualifications?</label>
+                            <textarea class="form-control" name="qualifications" id="jhsQualifications" rows="4">{{ old('qualifications') ?? $instruction['Junior High']->qualifications }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jhsDocuments" class="form-label">Documents to prepare:</label>
+                            <textarea class="form-control" name="documents" id="jhsDocuments" rows="4">{{ old('documents') ?? $instruction['Junior High']->requireddocuments }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jhsProcess" class="form-label">Application Process:</label>
+                            <textarea class="form-control" name="process" id="jhsProcess" rows="4">{{ old('process') ?? $instruction['Junior High']->applicationprocess }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Elementary Instruction Modal -->
+    <div class="modal fade" id="elemInstructionModal" tabindex="-1" aria-labelledby="elemInstructionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="elemInstructionModalLabel">Elementary Application Instructions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('updateapplicationinstructions', ['level' => 'Elementary']) }}"
+                    method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="elemApplicants" class="form-label">Who can apply?</label>
+                            <textarea class="form-control" name="applicants" id="elemApplicants" rows="4">{{ old('applicants') ?? $instruction['Elementary']->applicants }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="elemQualifications" class="form-label">What are the qualifications?</label>
+                            <textarea class="form-control" name="qualifications" id="elemQualifications" rows="4">{{ old('qualifications') ?? $instruction['Elementary']->qualifications }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="elemDocuments" class="form-label">Documents to prepare:</label>
+                            <textarea class="form-control" name="documents" id="elemDocuments" rows="4">{{ old('documents') ?? $instruction['Elementary']->requireddocuments }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="elemProcess" class="form-label">Application Process:</label>
+                            <textarea class="form-control" name="process" id="elemProcess" rows="4">{{ old('process') ?? $instruction['Elementary']->applicationprocess }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('openApplicationModal');
+            const form = document.getElementById('openapplicationform');
+
+            modal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget; // Button that triggered the modal
+                const formname = button.getAttribute('data-formname'); // Extract form name
+
+                // Set the action dynamically based on the form name
+                form.action =
+                    `{{ route('updateappformstatus', ['formname' => '__FORMNAME__', 'status' => 'Open']) }}`
+                    .replace('__FORMNAME__', formname);
+            });
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const importForm = document.getElementById("importForm");
 
@@ -394,6 +672,158 @@
     </script>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/criteriacontrol.js') }}"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
+    <script>
+        const {
+            ClassicEditor,
+            Essentials,
+            Bold,
+            Italic,
+            Font,
+            Paragraph,
+            List,
+            Link // Import the Link plugin
+        } = CKEDITOR;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize CKEditor for College level fields
+            initializeEditor('#collegeApplicants');
+            initializeEditor('#collegeQualifications');
+            initializeEditor('#collegeDocuments');
+            initializeEditor('#collegeProcess');
+
+            // Initialize CKEditor for Senior High School fields
+            initializeEditor('#shsApplicants');
+            initializeEditor('#shsQualifications');
+            initializeEditor('#shsDocuments');
+            initializeEditor('#shsProcess');
+
+            // Initialize CKEditor for Junior High School fields
+            initializeEditor('#jhsApplicants');
+            initializeEditor('#jhsQualifications');
+            initializeEditor('#jhsDocuments');
+            initializeEditor('#jhsProcess');
+
+            // Initialize CKEditor for Elementary fields
+            initializeEditor('#elemApplicants');
+            initializeEditor('#elemQualifications');
+            initializeEditor('#elemDocuments');
+            initializeEditor('#elemProcess');
+        });
+
+        function initializeEditor(selector) {
+            ClassicEditor
+                .create(document.querySelector(selector), {
+                    plugins: [Essentials, Bold, Italic, Font, Paragraph, List, Link],
+                    toolbar: [
+                        'undo', 'redo', '|', 'bold', 'italic', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'link' // Make sure 'link' is in the toolbar
+                    ],
+                    link: {
+                        addTargetToExternalLinks: true // Optionally add target=_blank for external links
+                    }
+                })
+                .then(editor => {
+                    document.querySelector('form').onsubmit = function() {
+                        document.querySelector(selector).value = editor.getData();
+                    };
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    </script>
+    <script>
+        // Function to save form data to localStorage
+        function saveFormData() {
+            const collegeApplicants = document.getElementById('collegeApplicants').value;
+            const collegeQualifications = document.getElementById('collegeQualifications').value;
+            const collegeDocuments = document.getElementById('collegeDocuments').value;
+            const collegeProcess = document.getElementById('collegeProcess').value;
+
+            const hsApplicants = document.getElementById('hsApplicants').value;
+            const hsQualifications = document.getElementById('hsQualifications').value;
+            const hsDocuments = document.getElementById('hsDocuments').value;
+            const hsProcess = document.getElementById('hsProcess').value;
+
+            const elemApplicants = document.getElementById('elemApplicants').value;
+            const elemQualifications = document.getElementById('elemQualifications').value;
+            const elemDocuments = document.getElementById('elemDocuments').value;
+            const elemProcess = document.getElementById('elemProcess').value;
+
+            // Save each value to localStorage
+            localStorage.setItem('collegeApplicants', collegeApplicants);
+            localStorage.setItem('collegeQualifications', collegeQualifications);
+            localStorage.setItem('collegeDocuments', collegeDocuments);
+            localStorage.setItem('collegeProcess', collegeProcess);
+
+            localStorage.setItem('hsApplicants', hsApplicants);
+            localStorage.setItem('hsQualifications', hsQualifications);
+            localStorage.setItem('hsDocuments', hsDocuments);
+            localStorage.setItem('hsProcess', hsProcess);
+
+            localStorage.setItem('elemApplicants', elemApplicants);
+            localStorage.setItem('elemQualifications', elemQualifications);
+            localStorage.setItem('elemDocuments', elemDocuments);
+            localStorage.setItem('elemProcess', elemProcess);
+        }
+
+        // Function to load form data from localStorage
+        function loadFormData() {
+            if (localStorage.getItem('collegeApplicants')) {
+                document.getElementById('collegeApplicants').value = localStorage.getItem('collegeApplicants');
+            }
+            if (localStorage.getItem('collegeQualifications')) {
+                document.getElementById('collegeQualifications').value = localStorage.getItem('collegeQualifications');
+            }
+            if (localStorage.getItem('collegeDocuments')) {
+                document.getElementById('collegeDocuments').value = localStorage.getItem('collegeDocuments');
+            }
+            if (localStorage.getItem('collegeProcess')) {
+                document.getElementById('collegeProcess').value = localStorage.getItem('collegeProcess');
+            }
+
+            if (localStorage.getItem('hsApplicants')) {
+                document.getElementById('hsApplicants').value = localStorage.getItem('hsApplicants');
+            }
+            if (localStorage.getItem('hsQualifications')) {
+                document.getElementById('hsQualifications').value = localStorage.getItem('hsQualifications');
+            }
+            if (localStorage.getItem('hsDocuments')) {
+                document.getElementById('hsDocuments').value = localStorage.getItem('hsDocuments');
+            }
+            if (localStorage.getItem('hsProcess')) {
+                document.getElementById('hsProcess').value = localStorage.getItem('hsProcess');
+            }
+
+            if (localStorage.getItem('elemApplicants')) {
+                document.getElementById('elemApplicants').value = localStorage.getItem('elemApplicants');
+            }
+            if (localStorage.getItem('elemQualifications')) {
+                document.getElementById('elemQualifications').value = localStorage.getItem('elemQualifications');
+            }
+            if (localStorage.getItem('elemDocuments')) {
+                document.getElementById('elemDocuments').value = localStorage.getItem('elemDocuments');
+            }
+            if (localStorage.getItem('elemProcess')) {
+                document.getElementById('elemProcess').value = localStorage.getItem('elemProcess');
+            }
+        }
+
+        // Event listener to save the form data whenever user types in the fields
+        document.addEventListener('input', function(event) {
+            if (event.target.tagName.toLowerCase() === 'textarea') {
+                saveFormData();
+            }
+        });
+
+        // Load form data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFormData();
+        });
+    </script>
 </body>
 
 </html>

@@ -12,8 +12,10 @@ use App\Models\apotherinfo;
 use App\Models\apfamilyinfo;
 use App\Models\apcasedetails;
 use App\Models\applicationforms;
+use App\Models\ApplicationInstruction;
 use App\Models\aprequirements;
 use App\Models\criteria;
+use Illuminate\Console\Application;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +23,25 @@ use Illuminate\Validation\ValidationException;
 
 class ApplicationController extends Controller
 {
+    public function showapplicationinstruction()
+    {
+        $instruction = [
+            'College' => ApplicationInstruction::where('schoollevel', 'College')->first(),
+            'Senior High' => ApplicationInstruction::where('schoollevel', 'Senior High')->first(),
+            'Junior High' => ApplicationInstruction::where('schoollevel', 'Junior High')->first(),
+            'Elementary' => ApplicationInstruction::where('schoollevel', 'Elementary')->first(),
+        ];
+        $courses = courses::where('level', 'College')->get();
+        $strands = courses::where('level', 'Senior High')->get();
+        $institutions = [
+            'College' => institutions::where('schoollevel', 'College')->get(),
+            'Senior High' => institutions::where('schoollevel', 'Senior High')->get(),
+            'Junior High' => institutions::where('schoollevel', 'Junior High')->get(),
+            'Elementary' => institutions::where('schoollevel', 'Elementary')->get(),
+        ];
+        return view('applicant.appinstructions', compact('instruction', 'courses', 'strands', 'institutions'));
+    }
+
     public function showcollegeapplication()
     {
         $courses = courses::where('level', 'College')->get();
@@ -29,17 +50,21 @@ class ApplicationController extends Controller
 
         return view('applicant.applicationformC', compact('courses', 'institutions', 'form'));
     }
+
     public function showelemhsapplication($level)
     {
-        $courses = courses::where('level', 'College')->get();
-        $institutions = institutions::get();
-        if ($level == 'elementary') {
-            $form = applicationforms::where('formname', 'Elementary')->first();
-        } else {
-            $form = applicationforms::where('formname', 'High School')->first();
-        }
+        $strands = courses::where('level', 'Senior High')->get();
+        $schools = institutions::where('schoollevel', $level)->pluck('schoolname');
 
-        return view('applicant.applicationformC', compact('courses', 'institutions', 'form'));
+        $gradelevels = [
+            'Senior High' => ['Grade 11', 'Grade 12'],
+            'Junior High' => ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'],
+            'Elementary' => ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'],
+        ];
+
+        $form = applicationforms::where('formname', $level)->first();
+
+        return view('applicant.applicationformHE', compact('strands', 'schools', 'form', 'gradelevels', 'level'));
     }
 
     public function saveapplicant(Request $request)
@@ -61,6 +86,7 @@ class ApplicationController extends Controller
                 'age' => 'integer',
                 'birthdate' => 'date',
                 'homeaddress' => 'string|max:255',
+                'region' => 'string|max:50',
                 'barangay' => 'string|max:50',
                 'city' => 'string|max:50',
                 'email' => 'email|max:255',
@@ -68,13 +94,8 @@ class ApplicationController extends Controller
                 'occupation' => 'string|max:100',
                 'income' => 'numeric|min:0',
                 'fblink' => 'url',
-                'isIndigenous' => '',
+                'isIndigenous' => 'required',
                 'indigenousgroup' => 'required_if:isIndigenous,Yes|max:100',
-                'schoolname' => 'string|max:255',
-                'collegedept' => 'string|max:255',
-                'incomingyear' => 'string',
-                'course' => 'string|max:255',
-                'gwa' => 'numeric|min:1|max:5',
                 // Father info
                 'fname' => 'string|max:255',
                 'fage' => 'integer',
@@ -135,16 +156,6 @@ class ApplicationController extends Controller
                 'fblink.url' => 'The Facebook link must be a valid URL.',
                 'indigenousgroup.required_if' => 'The indigenous group field is required when you are a member of an indigenous group.',
                 'indigenousgroup.max' => 'The indigenous group name may not be greater than 100 characters.',
-                'schoolname.string' => 'The school name must be a valid string.',
-                'schoolname.max' => 'The school name may not be greater than 255 characters.',
-                'collegedept.string' => 'The college department must be a valid string.',
-                'collegedept.max' => 'The college department may not be greater than 255 characters.',
-                'incomingyear.string' => 'The incoming year level must be a valid string.',
-                'course.string' => 'The course must be a valid string.',
-                'course.max' => 'The course may not be greater than 255 characters.',
-                'gwa.numeric' => 'The GWA must be a number.',
-                'gwa.min' => 'The GWA must be at least 1.',
-                'gwa.max' => 'The GWA may not be greater than 5.',
                 // Father info
                 'fname.string' => 'The father\'s name must be a valid string.',
                 'fname.max' => 'The father\'s name may not be greater than 255 characters.',
@@ -217,6 +228,83 @@ class ApplicationController extends Controller
                 'indigencycert.max' => 'The indigency certificate must not exceed 2 MB.',
             ]);
 
+            if ($request->schoollevel) {
+                $request->validate([
+                    'schoollevel' => 'required|string|max:25',
+                    'incomingyear' => 'required|string|max:15',
+                    'schoolname' => 'required|string|max:255',
+                    'gwa' => 'required|numeric|min:1|max:100',
+                    'gwaconduct' => 'required|string|max:50',
+                    'chinesegwa' => 'nullable|numeric|min:1|max:100',
+                    'chinesegwaconduct' => 'nullable|string|max:50',
+                ], [
+                    // Required field validation messages
+                    'schoollevel.required' => 'The school level is required.',
+                    'incomingyear.required' => 'The incoming grade level is required.',
+                    'gwa.required' => 'The General Average is required.',
+                    'gwaconduct.required' => 'The conduct is required.',
+
+                    // String validation messages
+                    'schoollevel.string' => 'The school level must be a valid string.',
+                    'incomingyear.string' => 'The incoming grade level must be a valid string.',
+                    'schoolname.string' => 'The school name must be a valid string.',
+                    'gwaconduct.string' => 'The conduct must be a valid string.',
+                    'chinesegwaconduct.string' => 'The conduct for Chinese subject must be a valid string.',
+
+                    // Max length validation messages
+                    'schoollevel.max' => 'The school level must not exceed 25 characters.',
+                    'incomingyear.max' => 'The incoming grade level must not exceed 15 characters.',
+                    'schoolname.max' => 'The school name must not exceed 255 characters.',
+                    'gwaconduct.max' => 'The conduct must not exceed 50 characters.',
+                    'chinesegwaconduct.max' => 'The conduct for Chinese subject must not exceed 50 characters.',
+
+                    // Numeric validation messages
+                    'gwa.numeric' => 'The General Average must be a valid number.',
+                    'gwa.min' => 'The General Average must be at least 1.',
+                    'gwa.max' => 'The General Average may not be greater than 100.',
+
+                    'chinesegwa.numeric' => 'The General Average for Chinese subject must be a valid number.',
+                    'chinesegwa.min' => 'The General Average for Chinese subject must be at least 1.',
+                    'chinesegwa.max' => 'The General Average for Chinese subject may not be greater than 100.',
+                ]);
+
+                if ($request->schoollevel == 'Senior High') {
+                    $request->validate([
+                        'strand' => 'required_if:schoollevel,Senior High|string|max:100',
+                    ], [
+                        'strand.max' => 'The strand must not exceed 100 characters.',
+                        'strand.required' => 'The strand is required for Senior High.',
+                        'strand.string' => 'The strand must be a valid string.',
+                    ]);
+                } else {
+                    $request->validate([
+                        'section' => 'required_if:schoollevel,Junior High,Elementary|string|max:50',
+                    ], [
+                        'section.max' => 'The section must not exceed 50 characters.',
+                        'section.required' => 'The section is required for Junior High and Elementary.',
+                        'section.string' => 'The section must be a valid string.',
+                    ]);
+                }
+            } else {
+                $request->validate([
+                    'schoolname' => 'required|string|max:255',
+                    'collegedept' => 'required|string|max:255',
+                    'incomingyear' => 'required|string|max:15',
+                    'course' => 'required|string|max:255',
+                    'gwa' => 'required|numeric|min:1|max:5',
+                ], [
+                    'schoolname.string' => 'The school name must be a valid string.',
+                    'schoolname.max' => 'The school name may not be greater than 255 characters.',
+                    'collegedept.string' => 'The college department must be a valid string.',
+                    'collegedept.max' => 'The college department may not be greater than 255 characters.',
+                    'incomingyear.string' => 'The incoming year level must be a valid string.',
+                    'course.string' => 'The course must be a valid string.',
+                    'course.max' => 'The course may not be greater than 255 characters.',
+                    'gwa.numeric' => 'The GWA must be a number.',
+                    'gwa.min' => 'The GWA must be at least 1.',
+                    'gwa.max' => 'The GWA may not be greater than 5.',
+                ]);
+            }
 
             // Sibling info
             if ($request->siblingcount > 0) {
@@ -276,8 +364,9 @@ class ApplicationController extends Controller
                 'age' => $request->age,
                 'birthdate' => $request->birthdate,
                 'homeaddress' => $request->homeaddress,
-                'barangay' => $request->barangay,
+                'region' => $request->region,
                 'city' => $request->city,
+                'barangay' => $request->barangay,
                 'email' => $request->email,
                 'phonenum' => $phoneNumber,
                 'occupation' => $request->occupation,
@@ -289,7 +378,20 @@ class ApplicationController extends Controller
                 'prioritylevel' => $prioritylevel,
             ]);
 
-            if (in_array($request->incomingyear, ['First Year', 'Second Year', 'Third Year'])) {
+            if ($request->schoollevel) {
+                apeheducation::create([
+                    'casecode' => $casecode,
+                    'schoollevel' => $request->schoollevel,
+                    'schoolname' => $request->schoolname,
+                    'ingrade' => $request->incomingyear,
+                    'strand' => $request->strand ?? NULL,
+                    'section' => $request->section ?? NULL,
+                    'gwa' => $request->gwa,
+                    'gwaconduct' => $request->gwaconduct,
+                    'chinsegwa' => $request->chinsegwa ?? NULL,
+                    'chinsegwaconduct' => $request->chinsegwaconduct ?? NULL,
+                ]);
+            } else {
                 apceducation::create([
                     'casecode' => $casecode,
                     'univname' => $request->schoolname,
@@ -370,7 +472,7 @@ class ApplicationController extends Controller
             $houseoutside = $request->file('outsidehouse');
             $utilitybill = $request->file('utility');
             $sketchmap = $request->file('sketchmap');
-            $payslip = $request->file('payslip');
+            $payslip = $request->file('payslip') ?? NULL;
             $indigencycert = $request->file('indigencycert');
             // Create a custom file name using casecode
             $filename_idpic = $casecode . '_' . 'idpic' . '.' . $idpic->getClientOriginalExtension();
@@ -382,7 +484,9 @@ class ApplicationController extends Controller
             $filename_houseoutside = $casecode . '_' . 'houseoutside' . '.' . $houseoutside->getClientOriginalExtension();
             $filename_utilitybill = $casecode . '_' . 'utilitybill' . '.' . $utilitybill->getClientOriginalExtension();
             $filename_sketchmap = $casecode . '_' . 'sketchmap' . '.' . $sketchmap->getClientOriginalExtension();
-            $filename_payslip = $casecode . '_' . 'payslip' . '.' . $payslip->getClientOriginalExtension();
+            if ($payslip) {
+                $filename_payslip = $casecode . '_' . 'payslip' . '.' . $payslip->getClientOriginalExtension();
+            }
             $filename_indigencycert = $casecode . '_' . 'indigencycert' . '.' . $indigencycert->getClientOriginalExtension();
             // Store the file in the specified directory
             $path_idpic = $idpic->storeAs('uploads/application_requirements/id_pics', $filename_idpic, 'public');
@@ -394,7 +498,9 @@ class ApplicationController extends Controller
             $path_houseoutside = $houseoutside->storeAs('uploads/application_requirements/house_outside', $filename_houseoutside, 'public');
             $path_utilitybill = $utilitybill->storeAs('uploads/application_requirements/utility_bills', $filename_utilitybill, 'public');
             $path_sketchmap = $sketchmap->storeAs('uploads/application_requirements/sketch_maps', $filename_sketchmap, 'public');
-            $path_payslip = $payslip->storeAs('uploads/application_requirements/payslips', $filename_payslip, 'public');
+            if ($payslip) {
+                $path_payslip = $payslip->storeAs('uploads/application_requirements/payslips', $filename_payslip, 'public');
+            }
             $path_indigencycert = $indigencycert->storeAs('uploads/application_requirements/indigency_certs', $filename_indigencycert, 'public');
 
             aprequirements::create([
@@ -408,7 +514,7 @@ class ApplicationController extends Controller
                 'houseoutside' => $path_houseoutside,
                 'utilitybill' => $path_utilitybill,
                 'sketchmap' => $path_sketchmap,
-                'payslip' => $path_payslip,
+                'payslip' => $path_payslip ?? NULL,
                 'indigencycert' => $path_indigencycert,
             ]);
 

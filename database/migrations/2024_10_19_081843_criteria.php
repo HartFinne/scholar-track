@@ -71,6 +71,22 @@ return new class extends Migration
             ],
             [
                 'schoolname' => "Polytechnic University of the Philippines",
+                'schoollevel' => "Senior High",
+                'academiccycle' => "Quarter",
+                'highestgwa' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'schoolname' => "Polytechnic University of the Philippines",
+                'schoollevel' => "Junior High",
+                'academiccycle' => "Quarter",
+                'highestgwa' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'schoolname' => "Polytechnic University of the Philippines",
                 'schoollevel' => "Elementary",
                 'academiccycle' => "Quarter",
                 'highestgwa' => 1,

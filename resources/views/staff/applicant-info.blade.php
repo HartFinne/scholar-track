@@ -440,7 +440,8 @@
                                 Detailed Sketch of Home Address, Certificate
                                 of indigence from the Barangay, Pictures of House (Inside and outside), Payslip or
                                 Income Tax Return of Both Parents (if working).</span>
-                            <strong>Deadline of Submission is on</strong> <span id="deadline">DEADLINE</span>.
+                            <strong>Deadline of Submission is on</strong> <span id="deadline">
+                                {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</span>.
                         </li>
                         <li>
                             Late applicants will not be entertained.
@@ -470,34 +471,34 @@
                                 <span class="slabel">Nature of Needs</span><br>
                                 <span class="svalue" id="natureofneeds">
                                     <input type="radio" id="financial" name="needs" value="Financial"
-                                        {{ $applicant->casedetails->natureofneeds === 'Financial' ? 'checked' : '' }}>
+                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Financial' ? 'checked' : '' }}>
                                     <label for="financial">Financial</label><br>
 
                                     <input type="radio" id="medical" name="needs" value="Medical"
-                                        {{ $applicant->casedetails->natureofneeds === 'Medical' ? 'checked' : '' }}>
+                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Medical' ? 'checked' : '' }}>
                                     <label for="medical">Medical</label><br>
 
                                     <input type="radio" id="food" name="needs" value="Food"
-                                        {{ $applicant->casedetails->natureofneeds === 'Food' ? 'checked' : '' }}>
+                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Food' ? 'checked' : '' }}>
                                     <label for="food">Food</label><br>
 
                                     <input type="radio" id="material" name="needs" value="Material"
-                                        {{ $applicant->casedetails->natureofneeds === 'Material' ? 'checked' : '' }}>
+                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Material' ? 'checked' : '' }}>
                                     <label for="material">Material</label><br>
 
                                     <input type="radio" id="educ" name="needs" value="Education"
-                                        {{ $applicant->casedetails->natureofneeds === 'Education' ? 'checked' : '' }}>
+                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Education' ? 'checked' : '' }}>
                                     <label for="educ">Education</label><br>
 
                                     <input type="radio" id="others" name="needs" value="Others"
-                                        {{ $applicant->casedetails->natureofneeds === 'Others' ? 'checked' : '' }}>
+                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Others' ? 'checked' : '' }}>
                                     <label for="others">Others</label><br>
                                 </span>
                             </td>
                             <td style="width: 600px;">
                                 <span class="slabel"><strong>Problem Statement</strong></span><br>
                                 <textarea name="problemstatement" id="" rows="5" cols="6" maxlength="255"
-                                    placeholder="Type here..." required>{{ $applicant->casedetails->problemstatement }}</textarea>
+                                    placeholder="Type here..." required>{{ isset($applicant->casedetails) && $applicant->casedetails->problemstatement }}</textarea>
                             </td>
                         </tr>
                     </table>
@@ -508,25 +509,25 @@
                             Received By:
                             <input class="casedeets-input text-center" style="width: 65% !important" type="text"
                                 name="receivedby" required maxlength="255"
-                                value="{{ $applicant->casedetails->receivedby ?? $worker->name }}">
+                                value="{{ isset($applicant->casedetails->receivedby) ? $applicant->casedetails->receivedby : $worker->name }}">
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Date Receive:
                             <input class="casedeets-input text-center" style="width: 50% !important" type="date"
                                 name="datereceived" required min="{{ date('Y-m-d') }}"
-                                value="{{ $applicant->casedetails->datereceived ?? date('Y-m-d') }}">
+                                value="{{ isset($applicant->casedetails->datereceived) ? $applicant->casedetails->datereceived : date('Y-m-d') }}">
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Assigned District:
                             <input class="casedeets-input text-center" style="width: 50% !important" type="text"
                                 name="district" required maxlength="50"
-                                value="{{ $applicant->casedetails->district ?? null }}">
+                                value="{{ isset($applicant->casedetails) && $applicant->casedetails->district ?? null }}">
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Assigned Volunteer:
                             <input class="casedeets-input text-center" style="width: 50% !important" type="text"
                                 name="volunteer" required maxlength="255"
-                                value="{{ $applicant->casedetails->volunteer ?? null }}">
+                                value="{{ isset($applicant->casedetails) && $applicant->casedetails->volunteer ?? null }}">
                         </div>
                     </div>
                     <div class="column col-md-7">
@@ -542,19 +543,19 @@
                                 Case Referred By:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
                                     type="text" name="referredby" required maxlength="255"
-                                    value="{{ $applicant->casedetails->referredby ?? null }}">
+                                    value="{{ isset($applicant->casedetails) && $applicant->casedetails->referredby ?? null }}">
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Referral Contact no.:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
                                     type="tel" name="referphonenum" required maxlength="12" minlength="11"
-                                    value="{{ $applicant->casedetails->referphonenum ?? null }}">
+                                    value="{{ isset($applicant->casedetails) && $applicant->casedetails->referphonenum ?? null }}">
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
                                 Beneficiary:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
                                     type="text" name="relationship" required maxlength="50"
-                                    value="{{ $applicant->casedetails->relationship ?? null }}">
+                                    value="{{ isset($applicant->casedetails) && $applicant->casedetails->relationship ?? null }}">
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Applicant's Signature:
@@ -564,7 +565,7 @@
                                 Date Reported:
                                 <input class="casedeets-input text-center" style="width: 45% !important"
                                     type="date" name="datereported" required min="{{ date('Y-m-d') }}"
-                                    value="{{ $applicant->casedetails->datereported ?? date('Y-m-d') }}">
+                                    value="{{ isset($applicant->casedetails) && $applicant->casedetails->datereported ?? date('Y-m-d') }}">
                             </div>
                         </div>
                     </div>
@@ -667,6 +668,39 @@
         </div>
     </div>
     <script src="{{ asset('js/headercontrol.js') }}"></script>
+    <script>
+        const regionCode = '{{ $applicant->region }}';
+        const cityCode = '{{ $applicant->city }}';
+        const barangayCode = '{{ $applicant->barangay }}';
+
+        // Base API URLs
+        const cityApi = `https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`;
+        const barangayApi = `https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`;
+
+        // Populate city/municipality
+        fetch(cityApi)
+            .then(response => response.json())
+            .then(data => {
+                const city = data.find(item => item.code === cityCode);
+                document.getElementById('city').textContent = city ? city.name : 'Unknown City/Municipality';
+            })
+            .catch(error => {
+                console.error('Error fetching city/municipality:', error);
+                document.getElementById('city').textContent = 'Error loading city/municipality';
+            });
+
+        // Populate barangay
+        fetch(barangayApi)
+            .then(response => response.json())
+            .then(data => {
+                const barangay = data.find(item => item.code === barangayCode);
+                document.getElementById('brgy').textContent = barangay ? barangay.name : 'Unknown Barangay';
+            })
+            .catch(error => {
+                console.error('Error fetching barangay:', error);
+                document.getElementById('brgy').textContent = 'Error loading barangay';
+            });
+    </script>
 </body>
 
 </html>

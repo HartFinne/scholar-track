@@ -21,8 +21,9 @@ return new class extends Migration
             $table->integer('age');
             $table->date('birthdate');
             $table->string('homeaddress', 255);
-            $table->string('barangay', 50);
+            $table->string('region', 50);
             $table->string('city', 50);
+            $table->string('barangay', 50);
             $table->string('email', 255)->unique();
             $table->string('phonenum', 12);
             $table->string('occupation', 100);
@@ -59,10 +60,11 @@ return new class extends Migration
         Schema::create('apeheducation', function (Blueprint $table) {
             $table->increments('apehid');
             $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
+            $table->string('schoollevel', 25);
             $table->string('schoolname', 255);
-            $table->string('ingrade', 255);
-            $table->string('strand', 150)->nullable();
-            $table->string('section', 10);
+            $table->string('ingrade', 15);
+            $table->string('strand', 100)->nullable();
+            $table->string('section', 50)->nullable();
             $table->float('gwa');
             $table->string('gwaconduct', 50);
             $table->float('chinesegwa')->nullable();

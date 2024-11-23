@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\applicants;
 use App\Models\apfamilyinfo;
 use App\Models\apceducation;
+use App\Models\applicationforms;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,8 +22,19 @@ class ApplicantAuthController extends Controller
             ->where('relationship', 'Mother')->first();
         $siblings = apfamilyinfo::where('casecode', $casecode)
             ->where('relationship', 'Sibling')->get();
-        $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
-        return view('applicant.applicant-portal', compact('applicant', 'father', 'mother', 'siblings', 'iscollege'));
+        $iscollege = apceducation::where('casecode', $casecode)->exists();
+
+        if ($iscollege) {
+            $form = applicationforms::where('formname', 'College');
+        } else {
+            if ($applicant->educelemhs->schoollevel == 'Elementary') {
+                $form = applicationforms::where('formname', 'College')->first();
+            } else {
+                $form = applicationforms::where('formname', 'High School')->first();
+            }
+        }
+
+        return view('applicant.applicant-portal', compact('applicant', 'father', 'mother', 'siblings', 'iscollege', 'form'));
     }
 
     public function showlogin()

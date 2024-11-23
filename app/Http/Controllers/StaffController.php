@@ -21,6 +21,7 @@ use App\Models\grades;
 use App\Models\criteria;
 use App\Models\institutions;
 use App\Models\courses;
+use App\Models\ApplicationInstruction;
 use App\Models\applicants;
 use App\Models\apceducation;
 use App\Models\apeheducation;
@@ -50,6 +51,7 @@ use App\Notifications\LteAnnouncementCreated;
 use App\Notifications\PenaltyNotification;
 use App\Notifications\RegularAllowanceNotification;
 use App\Notifications\SpecialAllowancesNotification;
+use Illuminate\Console\Application;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -93,11 +95,44 @@ class StaffController extends Controller
             ->where('relationship', 'Mother')->first();
         $siblings = apfamilyinfo::where('casecode', $casecode)
             ->where('relationship', 'Sibling')->get();
-        $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
+        $iscollege = apceducation::where('casecode', $casecode)->exists();
+
+        if ($iscollege) {
+            $form = applicationforms::where('formname', 'College');
+        } else {
+            if ($applicant->educelemhs->schoollevel == 'Elementary') {
+                $form = applicationforms::where('formname', 'College')->first();
+            } else {
+                $form = applicationforms::where('formname', 'High School')->first();
+            }
+        }
 
         $worker = Auth::guard('staff')->user();
 
-        return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege', 'worker'));
+        return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege', 'worker', 'form'));
+    }
+
+    public function updateapplicationinstructions($level, Request $request)
+    {
+        try {
+            $request->validate([
+                'applicants' => 'required|string',
+                'qualifications' => 'required|string',
+                'documents' => 'required|string',
+                'process' => 'required|string',
+            ]);
+
+            $instruction = ApplicationInstruction::where('schoollevel', $level)->first();
+            $instruction->applicants = $request->applicants;
+            $instruction->qualifications = $request->qualifications;
+            $instruction->requireddocuments = $request->documents;
+            $instruction->applicationprocess = $request->process;
+            $instruction->save();
+
+            return redirect()->back()->with('success', "The Application Instruction for {$level} has been successfully updated.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('failure', "Failed to update Application Instruction for {$level}." . $e->getMessage())->withInput();
+        }
     }
 
     public function updateapplicantstatus($casecode, Request $request)
@@ -230,16 +265,19 @@ class StaffController extends Controller
         }
     }
 
-    public function  updateappformstatus($formname, Request $request)
+    public function  updateappformstatus($formname, $status, Request $request)
     {
         DB::beginTransaction();
         try {
             $form = applicationforms::where('formname', $formname)->first();
-            $form->status = $request->status;
+            $form->deadline = $status == 'Open' ? $request->deadline : NULL;
+            $form->enddate = $status == 'Open' ? $request->enddate : NULL;
+            $form->status = $status;
             $form->save();
 
             DB::commit();
-            if ($request->status == 'Open') {
+
+            if ($status == 'Open') {
                 return redirect()->back()->with('success', "{$formname} application is now open.");
             } else {
                 return redirect()->back()->with('success', "{$formname} application is now closed.");
@@ -583,7 +621,13 @@ class StaffController extends Controller
         $courses = courses::where('level', 'College')->get();
         $strands = courses::where('level', 'Senior High')->get();
         $institutions = institutions::all();
-        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands', 'forms'));
+        $instruction =  [
+            'College' => ApplicationInstruction::where('schoollevel', 'College')->first(),
+            'Senior High' => ApplicationInstruction::where('schoollevel', 'Senior High')->first(),
+            'Junior High' => ApplicationInstruction::where('schoollevel', 'Junior High')->first(),
+            'Elementary' => ApplicationInstruction::where('schoollevel', 'Elementary')->first(),
+        ];
+        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands', 'forms', 'instruction'));
     }
 
     public function updatecriteria(Request $request)

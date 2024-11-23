@@ -15,6 +15,8 @@ return new class extends Migration
         Schema::create('applicationforms', function (Blueprint $table) {
             $table->increments('afid');
             $table->string('formname', 50);
+            $table->date('deadline')->nullable();
+            $table->date('enddate')->nullable();
             $table->string('status', 6);
             $table->timestamps();
         });
@@ -22,24 +24,40 @@ return new class extends Migration
         DB::table('applicationforms')->insert([
             [
                 'formname' => 'College',
+                'deadline' => '2025-01-31',
+                'enddate' => '2024-12-31',
                 'status' => 'Open',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'formname' => 'High School',
+                'formname' => 'Senior High',
+                'deadline' => NULL,
+                'enddate' => NULL,
+                'status' => 'Closed',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'formname' => 'Junior High',
+                'deadline' => NULL,
+                'enddate' => NULL,
                 'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'formname' => 'Elementary',
+                'deadline' => NULL,
+                'enddate' => NULL,
                 'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'formname' => 'Renewal',
+                'deadline' => NULL,
+                'enddate' => NULL,
                 'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),

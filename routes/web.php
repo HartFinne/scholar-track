@@ -30,7 +30,7 @@ Route::get('/exit-change-password/{usertype}/{casecode}', [PasswordController::c
 
 //routing for applicant page
 Route::prefix('applicant')->group(function () {
-    Route::view('/appinstructions', 'applicant.appinstructions')->name('appinstructions');
+    Route::get('/application-instruction', [ApplicationController::class, 'showapplicationinstruction'])->name('appinstructions');
     Route::get('/application-form/college', [ApplicationController::class, 'showcollegeapplication'])->name('form-college');
     Route::post('/saveapplicant', [ApplicationController::class, 'saveapplicant'])->name('saveapplicant');
     Route::get('/application-form/{level}', [ApplicationController::class, 'showelemhsapplication'])->name('form-hselem');
@@ -185,9 +185,10 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/updatespecreq/{requesttype}/{id}', [StaffController::class, 'updatespecreq'])->name('updatespecreq');
     // APPLICATION CRITERIA
     Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
-    Route::post('/update-application-forms/{formname}', [StaffController::class, 'updateappformstatus'])->name('updateappformstatus');
+    Route::post('/update-application-forms/{formname}/{status}', [StaffController::class, 'updateappformstatus'])->name('updateappformstatus');
     Route::get('/scholarship-settings', [StaffController::class, 'showQualification'])->name('qualification');
     Route::post('/updatecriteria', [StaffController::class, 'updatecriteria'])->name('updatecriteria');
+    Route::post('/updateapplicationinstructions/{level}', [StaffController::class, 'updateapplicationinstructions'])->name('updateapplicationinstructions');
     Route::post('/addinstitution', [StaffController::class, 'addinstitution'])->name('addinstitution');
     Route::post('/updateinstitution/{inid}', [StaffController::class, 'updateinstitution'])->name('updateinstitution');
     Route::post('/deleteinstitution/{inid}', [StaffController::class, 'deleteinstitution'])->name('deleteinstitution');

@@ -22,16 +22,10 @@
         @if ($form->status == 'Closed')
             <h1 class="title text-center fw-bold app-close">APPLICATION IS NOT YET OPEN.</h1>
         @else
+            {{-- header instruction --}}
             <div class="">
                 <h1 class="title text-center fw-bold app-open">TZU CHI PHILIPPINES<br>SCHOLARSHIP APPLICATION FORM</h1>
                 <div class="row mt-4">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                        </div>
-                    @endif
                     @if (session('error'))
                         <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
                             {!! session('error') !!}
@@ -61,8 +55,8 @@
                         disqualification.
                     </li>
                     <li>
-                        Please upload the necessary documents below and submit the hard copy <strong> on or before
-                            DUE DATE</strong>.
+                        Please upload the necessary documents below and submit the hard copy <strong>on or before
+                            {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</strong>.
                     </li>
                     <li>
                         Late applicants will not be entertained.
@@ -85,6 +79,8 @@
                 <form autocomplete="on" method="POST" action="{{ route('saveapplicant') }}"
                     enctype="multipart/form-data">
                     @csrf
+
+                    {{-- personal info --}}
                     <fieldset class="custom-fieldset">
                         <legend>Personal Information</legend>
                         <div class="row">
@@ -103,7 +99,7 @@
                         <div class="row">
                             <div class="column">
                                 <label for="sex">Sex</label>
-                                <select name="sex" value="{{ old('sex') }}">
+                                <select name="sex" value="{{ old('sex') }}" required>
                                     <option value="" disabled>Select gender</option>
                                     <option value="Male" {{ old('sex') == 'Male' ? 'selected' : '' }}>Male</option>
                                     <option value="Female" {{ old('sex') == 'Female' ? 'selected' : '' }}>Female
@@ -179,11 +175,11 @@
                                 <div class="row-radio">
                                     <input type="radio" id="indigenousCheck" name="isIndigenous" value="Yes"
                                         onclick="toggleInput()" {{ old('isIndigenous') == 'Yes' ? 'checked' : '' }}
-                                        style="cursor: pointer">
+                                        style="cursor: pointer" required>
                                     <label for="indigenousCheck" style="cursor: pointer">Yes</label>
                                     <input type="radio" id="noCheck" name="isIndigenous" value="No"
                                         onclick="disableInput()" {{ old('isIndigenous') == 'No' ? 'checked' : '' }}
-                                        style="cursor: pointer">
+                                        style="cursor: pointer" required>
                                     <label for="noCheck" style="cursor: pointer">No</label>
                                 </div>
                                 <input type="text" name="indigenousgroup" id="indigenousInput"
@@ -193,12 +189,13 @@
                         </div>
                     </fieldset>
 
+                    {{-- education info --}}
                     <fieldset class="custom-fieldset">
                         <legend>Educational Background</legend>
                         <div class="row">
                             <div class="column">
                                 <label for="schoolname">Name of University</label>
-                                <select name="schoolname" id="schoolname">
+                                <select name="schoolname" id="schoolname" required>
                                     <option value="" hidden>Select school</option>
                                     @foreach ($institutions as $insti)
                                         <option value="{{ $insti->schoolname }}"
@@ -207,6 +204,9 @@
                                         </option>
                                     @endforeach
                                 </select>
+                            </div>
+                            <div class="column" hidden>
+                                <input type="text" name="schoollevel" id="schoollevel" value="College">
                             </div>
                         </div>
                         <div class="row">
@@ -217,7 +217,7 @@
                             </div>
                             <div class="column">
                                 <label for="incomingyear">Incoming Year Level</label>
-                                <select name="incomingyear">
+                                <select name="incomingyear" required>
                                     <option value="" hidden>Select year level</option>
                                     <option value="First Year"
                                         {{ old('incomingyear') == 'First Year' ? 'selected' : '' }}>First Year</option>
@@ -226,13 +226,18 @@
                                     </option>
                                     <option value="Third Year"
                                         {{ old('incomingyear') == 'Third Year' ? 'selected' : '' }}>Third Year</option>
+                                    <option value="Fourth Year"
+                                        {{ old('incomingyear') == 'Fourth Year' ? 'selected' : '' }}>Fourth Year
+                                    </option>
+                                    <option value="Fifth Year"
+                                        {{ old('incomingyear') == 'Fifth Year' ? 'selected' : '' }}>Fifth Year</option>
                                 </select>
                             </div>
                         </div>
                         <div class="row">
                             <div class="column">
                                 <label for="course">Course</label>
-                                <select name="course" id="course">
+                                <select name="course" id="course" required>
                                     <option value="" hidden>Select course</option>
                                     @foreach ($courses as $course)
                                         <option value="{{ $course->coursename }}"
@@ -250,6 +255,7 @@
                         </div>
                     </fieldset>
 
+                    {{-- family info --}}
                     <fieldset class="custom-fieldset">
                         <legend>Family Information</legend>
                         <div class="fatherinfo">
@@ -267,7 +273,7 @@
                                 </div>
                                 <div class="column">
                                     <label for="fsex">Sex</label>
-                                    <select name="fsex" id="fsex">
+                                    <select name="fsex" id="fsex" required>
                                         <option value="F">F</option>
                                         <option value="M" selected>M</option>
                                     </select>
@@ -332,7 +338,7 @@
                                 </div>
                                 <div class="column">
                                     <label for="msex">Sex</label>
-                                    <select name="msex" id="msex">
+                                    <select name="msex" id="msex" required>
                                         <option value="F" selected>F</option>
                                         <option value="M">M</option>
                                     </select>
@@ -451,6 +457,8 @@
                             <button id="addSibling">Add Sibling</button>
                         </div>
                     </fieldset>
+
+                    {{-- other info (qna) --}}
                     <fieldset class="custom-fieldset">
                         <legend>Other Information</legend>
                         <span>Each answer <strong>must not exceed 255</strong> characters.</span>
@@ -481,6 +489,7 @@
                         </div>
                     </fieldset>
 
+                    {{-- required documents --}}
                     <fieldset class="custom-fieldset">
                         <legend>Requirements Submission</legend>
                         <span>Each document <strong>must not exceed 2MB</strong> or the system will not accept your
@@ -585,6 +594,7 @@
                                 this application.</i>
                         </label>
                     </div>
+
                     <div class="submit text-center">
                         <button type="submit" class="btn-submit fw-bold">Submit</button>
                     </div>
@@ -630,8 +640,7 @@
                 sessionStorage.clear();
             });
         });
-    </script>
-    <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             const regionSelect = document.getElementById('region');
             const citySelect = document.getElementById('city');
