@@ -39,6 +39,7 @@ use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 use Illuminate\Support\Facades\App;
+use PaddleOCR\OCR; // Import the PaddleOCR class
 use Svg\Tag\Rect;
 
 class ScholarController extends Controller
@@ -346,7 +347,6 @@ class ScholarController extends Controller
             }
 
             // Handle file upload
-
             if ($request->hasFile('gradeImage')) {
                 $file = $request->file('gradeImage');
 
@@ -356,33 +356,19 @@ class ScholarController extends Controller
                 // Store the file in the specified directory
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
 
-                // Load the image using Intervention Image
-                $image = Image::make(storage_path('app/public/' . $filePath));
+                // Get the correct path to the Python script in storage
+                $scriptPath = storage_path('app/python/ocr_script.py');
 
-                // Preprocess the image: Convert to grayscale, increase contrast, and apply thresholding
-                $image->greyscale()
-                    ->contrast(50)   // Increase contrast (adjust the value as needed)
-                    ->threshold(100); // Apply threshold to make the image sharper
+                // Now, we directly use the uploaded image path without preprocessing (removing Intervention Image)
+                $processedImagePath = storage_path('app/public/' . $filePath);
 
-                // Save the processed image temporarily
-                $processedImagePath = storage_path('app/public/processed_' . $fileName);
-                $image->save($processedImagePath);
+                // Run the Python script to perform OCR and extract text
+                $command = escapeshellcmd("python $scriptPath $processedImagePath");
+                $ocrResult = shell_exec($command); // Run the Python script and get the output
 
-                // Perform OCR on the processed image
-                $ocr = new TesseractOCR($processedImagePath);
-
-                // Set the executable path for Tesseract
-                $tesseractPath = env('TESSERACT_PATH', '/usr/local/bin/tesseract'); // Default to /usr/local/bin/tesseract
-                $ocr->executable($tesseractPath);
-
-                // Add custom arguments to include tessdata directory and set OCR Engine Mode (OEM) & Page Segmentation Mode (PSM)
-                $tessdataPath = '/usr/local/share/tessdata';
-                $extractedText = $ocr->lang('eng')  // Set the language
-                    ->config('tessdata-dir', $tessdataPath) // Pass the tessdata directory path
-                    ->run();
-
-                // Debugging: Log or dump the extracted text to verify the result
-                Log::info('Full OCR Extracted Text: ' . $extractedText);
+                // Log the OCR result
+                Log::info('coomand result: ' . $command);
+                Log::info('OCR Raw Result: ' . $ocrResult);  // Log the full OCR output
 
                 // Patterns to extract GPA in multiple formats
                 $patterns = [
@@ -397,7 +383,7 @@ class ScholarController extends Controller
 
                 // Attempt to match each pattern
                 foreach ($patterns as $pattern) {
-                    if (preg_match($pattern, $extractedText, $matches)) {
+                    if (preg_match($pattern, $ocrResult, $matches)) {
                         $ocrGpa = floatval($matches[1]);
                         break; // Stop once a match is found
                     }
@@ -416,7 +402,6 @@ class ScholarController extends Controller
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
-
 
 
             $criteria = criteria::first();
