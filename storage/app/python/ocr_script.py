@@ -13,24 +13,13 @@ def get_available_memory():
     memory = psutil.virtual_memory()
     return memory.available / (1024 ** 2)  # Return available memory in MB
 
-def resize_image(image_path, max_size=1500):
-    """Resize the image to reduce processing time."""
-    try:
-        # Open the image
-        img = Image.open(image_path)
-        
-        # Resize the image maintaining aspect ratio
-        img.thumbnail((max_size, max_size))
-        
-        # Save the resized image
-        resized_image_path = image_path.replace('.png', '_resized.png')
-        img.save(resized_image_path)
-        
-        logging.info(f"Resized image saved as: {resized_image_path}")
-        return resized_image_path
-    except Exception as e:
-        logging.error(f"Error resizing image {image_path}: {str(e)}")
-        return image_path  # Return the original image if resizing fails
+def resize_image(image_path, max_size=800):
+    img = Image.open(image_path)
+    img.thumbnail((max_size, max_size))
+    resized_image_path = image_path.replace('.png', '_resized.png')
+    img.save(resized_image_path)
+    return resized_image_path
+
 
 def extract_text(image_path):
     """Extract text from an image using PaddleOCR."""
@@ -41,7 +30,7 @@ def extract_text(image_path):
         image_path = resize_image(image_path)
         
         # Initialize PaddleOCR with language 'en' (English)
-        ocr = PaddleOCR(use_angle_cls=True, lang='en')
+        ocr = PaddleOCR(use_angle_cls=True, lang='en', cpu_threads=1)
         result = ocr.ocr(image_path, cls=True)
 
         extracted_text = ''
@@ -100,4 +89,3 @@ if __name__ == '__main__':
     # Print out the extracted text for each image (optional)
     for text in texts:
         print(text)
-
