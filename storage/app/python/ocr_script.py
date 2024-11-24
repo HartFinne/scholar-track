@@ -4,6 +4,7 @@ import logging
 from PIL import Image
 import psutil
 import time
+import gc
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -13,9 +14,10 @@ def get_available_memory():
     memory = psutil.virtual_memory()
     return memory.available / (1024 ** 2)  # Return available memory in MB
 
-def resize_image(image_path, max_size=800):
+def resize_image(image_path, max_size=500):
+    """Resize the image to a smaller size."""
     img = Image.open(image_path)
-    img.thumbnail((max_size, max_size))
+    img.thumbnail((max_size, max_size))  # Reduce image size to 500x500 or smaller
     resized_image_path = image_path.replace('.png', '_resized.png')
     img.save(resized_image_path)
     return resized_image_path
@@ -30,7 +32,8 @@ def extract_text(image_path):
         image_path = resize_image(image_path)
         
         # Initialize PaddleOCR with language 'en' (English)
-        ocr = PaddleOCR(use_angle_cls=True, lang='en', cpu_threads=1)
+        ocr = PaddleOCR(use_angle_cls=True, lang='en', det_algorithm='DB', rec_algorithm='CRNN', rec_batch_num=1,  table=False, formula=False, layout=False, max_text_length=10, cpu_threads=1)
+
         result = ocr.ocr(image_path, cls=True)
 
         extracted_text = ''
@@ -56,24 +59,26 @@ def save_text_to_file(image_path, extracted_text):
         logging.error(f"Error saving text to file {output_file}: {str(e)}")
 
 def process_images(image_paths):
-    """Process images sequentially while monitoring memory usage."""
-    results = []
+    ocr = PaddleOCR(use_angle_cls=True, lang='en', det=False)  # Set det=False
+    
+    texts = []
     for image_path in image_paths:
-        # Check available memory before processing each image
-        available_memory = get_available_memory()
-        logging.info(f"Available memory: {available_memory} MB")
-
-        # If memory is low, wait before continuing
-        while available_memory < 200:  # Adjust this threshold as needed
-            logging.warning("Low memory, waiting for resources...")
-            time.sleep(5)  # Wait for 5 seconds before checking again
-            available_memory = get_available_memory()
-
-        # Process the image and extract text
-        text = extract_text(image_path)
-        results.append(text)
+        result = ocr.ocr(image_path, cls=True)
         
-    return results
+        # Explicitly clear memory after each image is processed
+        del ocr
+        gc.collect()  # Force garbage collection to free up memory
+        
+        # Process the result and extract text
+        extracted_text = ''
+        for line in result[0]:
+            word_info = line[1]
+            word_text = word_info if isinstance(word_info, str) else str(word_info[0])
+            extracted_text += word_text + '\n'
+        
+        texts.append(extracted_text)
+    
+    return texts
 
 if __name__ == '__main__':
     # Get a list of image paths from command line arguments
