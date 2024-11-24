@@ -1,11 +1,17 @@
 import sys
 from paddleocr import PaddleOCR
-import concurrent.futures
 import logging
 from PIL import Image
+import psutil
+import time
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
+
+def get_available_memory():
+    """Get the available memory on the server in MB."""
+    memory = psutil.virtual_memory()
+    return memory.available / (1024 ** 2)  # Return available memory in MB
 
 def resize_image(image_path, max_size=1500):
     """Resize the image to reduce processing time."""
@@ -61,9 +67,23 @@ def save_text_to_file(image_path, extracted_text):
         logging.error(f"Error saving text to file {output_file}: {str(e)}")
 
 def process_images(image_paths):
-    """Process multiple images concurrently."""
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-        results = list(executor.map(extract_text, image_paths))
+    """Process images sequentially while monitoring memory usage."""
+    results = []
+    for image_path in image_paths:
+        # Check available memory before processing each image
+        available_memory = get_available_memory()
+        logging.info(f"Available memory: {available_memory} MB")
+
+        # If memory is low, wait before continuing
+        while available_memory < 200:  # Adjust this threshold as needed
+            logging.warning("Low memory, waiting for resources...")
+            time.sleep(5)  # Wait for 5 seconds before checking again
+            available_memory = get_available_memory()
+
+        # Process the image and extract text
+        text = extract_text(image_path)
+        results.append(text)
+        
     return results
 
 if __name__ == '__main__':
@@ -80,5 +100,4 @@ if __name__ == '__main__':
     # Print out the extracted text for each image (optional)
     for text in texts:
         print(text)
-
 
