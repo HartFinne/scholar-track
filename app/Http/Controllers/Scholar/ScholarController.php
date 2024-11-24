@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Scholar;
 
-
+use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +39,7 @@ use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 use Illuminate\Support\Facades\App;
+use PaddleOCR\OCR; // Import the PaddleOCR class
 use Svg\Tag\Rect;
 
 class ScholarController extends Controller
@@ -355,14 +356,19 @@ class ScholarController extends Controller
                 // Store the file in the specified directory
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
 
-                // Perform OCR on the uploaded image
-                $ocr = new TesseractOCR(storage_path('app/public/' . $filePath));
-                $tesseractPath = env('TESSERACT_PATH', '/usr/bin/tesseract'); // Default to /usr/bin/tesseract if not set
-                $ocr->executable($tesseractPath); // Use the path from the .env file
-                $extractedText = $ocr->run();
+                // Get the correct path to the Python script in storage
+                $scriptPath = storage_path('app/python/ocr_script.py');
 
-                // Debugging: Log or dump the extracted text to verify the result
-                Log::info('Full OCR Extracted Text: ' . $extractedText);
+                // Now, we directly use the uploaded image path without preprocessing (removing Intervention Image)
+                $processedImagePath = storage_path('app/public/' . $filePath);
+
+                // Run the Python script to perform OCR and extract text
+                $command = escapeshellcmd("/home/forge/myenv/bin/python $scriptPath $processedImagePath");
+                $ocrResult = shell_exec($command); // Run the Python script and get the output
+
+                // Log the OCR result
+                Log::info('coomand result: ' . $command);
+                Log::info('OCR Raw Result: ' . $ocrResult);  // Log the full OCR output
 
                 // Patterns to extract GPA in multiple formats
                 $patterns = [
@@ -377,7 +383,7 @@ class ScholarController extends Controller
 
                 // Attempt to match each pattern
                 foreach ($patterns as $pattern) {
-                    if (preg_match($pattern, $extractedText, $matches)) {
+                    if (preg_match($pattern, $ocrResult, $matches)) {
                         $ocrGpa = floatval($matches[1]);
                         break; // Stop once a match is found
                     }
