@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\apceducation;
+use App\Models\apfamilyinfo;
+use App\Models\applicants;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\scholarshipinfo;
@@ -20,6 +23,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Spatie\Browsershot\Browsershot;
+use Illuminate\Http\Response;
 
 class PDFController extends Controller
 {
@@ -70,5 +75,49 @@ class PDFController extends Controller
 
         $pdf = Pdf::loadView('staff.reports.scholarship-report', $data);
         return $pdf->stream("scholarship-report-{$date}.pdf");
+    }
+
+
+    public function generateapplicantform($casecode)
+    {
+        // dd($casecode);
+
+        $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
+            ->where('casecode', $casecode)
+            ->first();
+        $father = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Father')->first();
+        $mother = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Mother')->first();
+        $siblings = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Sibling')->get();
+        $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
+
+        $data = [
+            'title' => 'Application Form',
+            'applicant' => $applicant,
+            'father' => $father,
+            'mother' => $mother,
+            'siblings' => $siblings,
+            'iscollege' => $iscollege
+        ];
+
+        // Render the Blade view to HTML
+        $template = view('pdf-template', ['data' => $data])->render();
+
+
+        // Generate the PDF using Browsershot and save it
+        $pdf = Browsershot::html($template)
+            ->showBackground()
+            ->margins(2, 4, 10, 4)
+            ->format('Letter')
+            ->pdf(); // Save the file
+
+
+        return new Response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $applicant->name . '.pdf"', // Correct string interpolation
+            'Content-Length' => strlen($pdf)
+        ]);
     }
 }

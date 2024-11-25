@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Scholar;
 
+use \Intervention\Image\ImageManager;
+use \Intervention\Image\Drivers\GD\Driver;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -308,6 +311,7 @@ class ScholarController extends Controller
 
     public function storeGradeSubmission(Request $request)
     {
+
         $user = Auth::user();
         $educ = ScEducation::where('caseCode', $user->caseCode)->first();
         $gwaRules = ['numeric'];
@@ -325,7 +329,7 @@ class ScholarController extends Controller
                 $request->validate([
                     'semester' => 'required',
                     'gwa' => $gwaRules,
-                    'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:2048']
+                    'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:10240']
                 ]);
             } else {
                 $request->validate([
@@ -351,59 +355,108 @@ class ScholarController extends Controller
             if ($request->hasFile('gradeImage')) {
                 $file = $request->file('gradeImage');
 
-                // Create a custom file name using caseCode and last name
-                $fileName = $user->caseCode . '_' . $user->basicInfo->scLastname . '_' . time() . '.' . $file->extension();
+                // Create a custom file name
+                $fileName = $user->caseCode . '_' . $user->basicInfo->scLastname . '_' . time() . '.' . $file->getClientOriginalExtension();
 
-                // Store the file in the specified directory
+                // Store the file
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
+                $originalFilePath = storage_path('app/public/' . $filePath);
 
-                // Get the correct path to the Python script in storage
-                $scriptPath = storage_path('app/python/ocr_script.py');
+                try {
+                    // Initialize the ImageManager with GD Driver (or your preferred driver)
+                    $manager = new ImageManager(new Driver());
 
-                // Now, we directly use the uploaded image path without preprocessing (removing Intervention Image)
-                $processedImagePath = storage_path('app/public/' . $filePath);
+                    // Read the uploaded image
+                    $image = $manager->read($originalFilePath);
 
-                // Run the Python script to perform OCR and extract text
-                $command = escapeshellcmd("/home/forge/myenv/bin/python $scriptPath $processedImagePath");
-                $ocrResult = shell_exec($command); // Run the Python script and get the output
+                    $width = $image->width();
+                    $height = $image->height();
+                    $partWidth = (int)($width / 2);
+                    $partHeight = (int)($height / 2);
 
-                // Log the OCR result
-                Log::info('coomand result: ' . $command);
-                Log::info('OCR Raw Result: ' . $ocrResult);  // Log the full OCR output
+                    $parts = [];
 
-                // Patterns to extract GPA in multiple formats
-                $patterns = [
-                    '/General Average[^0-9]*([\d.]+)/i',  // Matches "General Average: 70%" or similar
-                    '/Average[^0-9]*([\d.]+)/i',          // Matches "Average: 70%"
-                    '/GPA[^0-9]*([\d.]+)/i',              // Retain existing GPA patterns
-                    '/GWA[^0-9]*([\d.]+)/i',              // Retain GWA patterns
-                    '/Grade Point Average[^0-9]*([\d.]+)/i'
-                ];
+                    // Crop and save each part, then enlarge each part
+                    for ($row = 0; $row < 2; $row++) {
+                        for ($col = 0; $col < 2; $col++) {
+                            $partPath = storage_path("app/public/uploads/grade_reports/{$fileName}_part_{$row}_{$col}.png");
 
-                $ocrGpa = null;
+                            // Crop the image for each part
+                            $croppedImage = $image->crop(
+                                $partWidth,  // width of the cropped part
+                                $partHeight, // height of the cropped part
+                                $col * $partWidth, // x-coordinate (left)
+                                $row * $partHeight // y-coordinate (top)
+                            );
 
-                // Attempt to match each pattern
-                foreach ($patterns as $pattern) {
-                    if (preg_match($pattern, $ocrResult, $matches)) {
-                        $ocrGpa = floatval($matches[1]);
-                        break; // Stop once a match is found
+                            // Enlarge the cropped image
+                            $enlargedImage = $croppedImage->resize($partWidth * 2, $partHeight * 2); // Double the size
+
+                            // Save the enlarged image
+                            $enlargedImage->save($partPath);
+                            $parts[] = $partPath;
+                        }
                     }
-                }
 
-                // If no GPA found, handle the failure
-                if ($ocrGpa === null) {
-                    return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded image. Please ensure it is legible and try again.')->withInput();
-                }
+                    // Initialize Tesseract OCR and API key (if necessary)
+                    $ocrText = '';
 
-                // Validate OCR GPA with user input
-                $inputGpa = $request->gwa ?? $request->genave; // Adjust as per your input field names
-                if (abs($ocrGpa - $inputGpa) > 0.01) { // Allow for minor floating-point differences
-                    return redirect()->back()->with('failure', 'The GPA in the image (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . '). Please verify your entry.')->withInput();
+                    try {
+                        // Process each cropped and enlarged part with Tesseract OCR
+                        foreach ($parts as $part) {
+                            // Perform OCR using Tesseract
+                            $ocr = new TesseractOCR($part);
+                            $ocrText .= $ocr->run() . ' ';
+                        }
+
+                        // Clean up text
+                        $ocrText = preg_replace('/\s+/', ' ', $ocrText);  // Normalize spaces
+                        $ocrText = preg_replace('/[^a-zA-Z0-9\s\.\:]/', '', $ocrText); // Remove unwanted characters
+
+                        // Debugging: See the OCR text and user input GPA
+
+                        // You can also log the values
+                        Log::info('OCR Text: ' . $ocrText);
+                        Log::info('User Input GPA: ' . ($request->gwa ?? $request->genave));
+
+                        // Define patterns to extract GPA
+                        $patterns = [
+                            '/General Average[^0-9]*([\d.]+)/i',
+                            '/Average[^0-9]*([\d.]+)/i',
+                            '/GPA[^0-9]*([\d.]+)/i',
+                            '/GWA[^0-9]*([\d.]+)/i',
+                            '/Grade Point Average[^0-9]*([\d.]+)/i'
+                        ];
+
+                        $ocrGpa = null;
+
+                        // Try matching the patterns to extract GPA
+                        foreach ($patterns as $pattern) {
+                            if (preg_match($pattern, $ocrText, $matches)) {
+                                $ocrGpa = floatval($matches[1]);
+                                break;
+                            }
+                        }
+
+                        // Handle failure to find GPA
+                        if ($ocrGpa === null) {
+                            return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded image. Please ensure it is legible and try again.')->withInput();
+                        }
+
+                        // Validate OCR GPA against user input
+                        $inputGpa = $request->gwa ?? $request->genave; // Adjust as per your input field names
+                        if (abs($ocrGpa - $inputGpa) > 0.01) { // Allow minor floating-point differences
+                            return redirect()->back()->with('failure', 'The GPA in the image (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . '). Please verify your entry.')->withInput();
+                        }
+                    } catch (\Exception $e) {
+                        return redirect()->back()->with('failure', 'An error occurred: ' . $e->getMessage())->withInput();
+                    }
+                } catch (\Exception $e) {
+                    return redirect()->back()->with('failure', 'Failed to process the image. Error: ' . $e->getMessage())->withInput();
                 }
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
-
 
             $criteria = criteria::first();
             $requiredgwa = [

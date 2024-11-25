@@ -1,0 +1,448 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ctn-main {
+    width: 90%;
+    margin: 30px auto;
+    font-family: "Calibri";
+}
+
+.appinfo {
+    width: 8.5in;
+    padding: 20px;
+    border: 2px solid #2e7c55;
+    border-radius: 12px;
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.appinfo input,
+.appinfo select {
+    background-color: #fff;
+    border: #fff;
+    border-radius: 6px;
+    color: #2e7c55;
+    outline: none;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.appinfo select:focus {
+    box-shadow: 0px 0px 6px 2px rgba(255, 255, 255, 0.8);
+}
+
+#btnupdate {
+    display: flex;
+    width: fit-content;
+    padding: 2px 10px;
+    background-color: #13c51c;
+    color: #fff;
+    font-weight: bold;
+}
+
+#btnupdate:hover {
+    background-color: #0be816;
+    box-shadow: 0px 0px 2px 2px #00ff0d32;
+}
+
+.appform-view {
+    font-size: 16px;
+    width: 95%;
+    margin: 0 0;
+}
+
+.appform-view .sec-title {
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.page1,
+.page2 {
+    background-color: #fff;
+    width: 8.5in;
+    height: auto;
+    padding: 40px;
+    margin: 0 auto 10px;
+}
+
+.header {
+    display: flex;
+
+    text-align: center;
+    justify-content: center;
+}
+
+.header img {
+    width: auto;
+    height: 40px;
+}
+
+.app-title {
+    text-align: center;
+    margin: 1px 0 1px;
+}
+
+.personal-info .psec1 {
+    display: flex;
+    gap: 100px;
+}
+
+.psec1-info {
+    display: flex;
+    gap: 50px;
+}
+
+.personal-info .psec2 {
+    display: flex;
+    gap: 10px;
+}
+
+.psec2 img {
+    width: 1in;
+    height: 1in;
+}
+
+.fvalue,
+.elabel span {
+    font-weight: 600;
+}
+
+.educbg-info {
+    display: flex;
+    gap: 10px;
+}
+
+.educbg-info p {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.group {
+    display: flex;
+    gap: 10px;
+}
+
+.page1 .table,
+.page2 .table {
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tbody {
+    display: table-row-group;
+}
+
+tr {
+    page-break-inside: avoid; /* Prevent rows from splitting across pages */
+    page-break-after: auto;
+}
+
+th,
+td {
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+    word-wrap: break-word; /* Prevent text overflow */
+}
+
+.table td,
+.table th {
+    border: 1px solid black !important;
+}
+
+.table tr td {
+    padding: 2px;
+}
+
+.table td .flabel,
+.fvalue,
+.elabel,
+.evalue {
+    font-size: 14px;
+}
+
+.table thead tr th {
+    font-size: 13px;
+    padding: 5px;
+}
+
+.table thead tr th span {
+    font-size: 11px;
+}
+
+.table tbody tr td {
+    font-size: 13px;
+}
+
+#familyTableBody td {
+    text-align: center;
+}
+
+.other-info p {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 100px;
+    text-decoration: underline;
+}
+
+.other-info span {
+    font-size: 14px;
+    text-align: justify;
+}
+
+.signature {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+#nameDate {
+    padding-top: 30px;
+}
+
+.sign {
+    text-decoration: overline;
+    font-weight: 600;
+}
+
+.page2 h2 {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.sec-title {
+    padding: 10px 0;
+}
+
+.sketchimg {
+    width: 100%;
+    height: 250px;
+    border: 1px solid;
+    padding: 0;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#sketchmap {
+    height: 100%;
+}
+
+.instructions {
+    font-size: 13px;
+    padding-bottom: 10px;
+}
+
+.instructions ol li {
+    margin-left: 10px;
+}
+
+#reqs {
+    font-style: italic;
+    font-weight: 600;
+}
+
+#deadline {
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.fillstaff {
+    border-top: 1px solid;
+}
+
+.fillstaff .heading {
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.table3 {
+    font-size: 13px;
+}
+
+.table3 tr td {
+    padding: 0 10px;
+}
+
+#natureOfneeds input {
+    margin-left: 10px;
+}
+
+.table3 textarea {
+    width: 100%;
+    resize: none;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    padding: 3px;
+    font-family: "Calibri";
+}
+
+.page2 .group {
+    gap: 10px;
+    padding-top: 10px;
+}
+
+.group input {
+    /* border-radius: 10px; */
+    border: none;
+    border-bottom: 1px solid;
+    outline: none;
+    font-size: 14px;
+    padding: 3px;
+    font-family: "Calibri";
+}
+
+.group input[type="text"] {
+    width: 150px;
+}
+
+.groupa .slabel {
+    padding-bottom: 5px;
+}
+
+.page2 .groupa {
+    width: 580px;
+}
+
+.groupa .slabel,
+.groupb1 .slabel {
+    font-size: 14px;
+}
+
+.groupb1 {
+    display: flex;
+    gap: 3px;
+}
+
+.groupb1 .group1,
+.groupb1 .group2 {
+    padding-bottom: 5px;
+}
+
+.note {
+    font-style: italic;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.casedeets {
+    font-size: 13px;
+}
+
+.casedeets-input {
+    border: none;
+    border-bottom: 1px solid #303030;
+    border-radius: 0;
+    outline: none;
+}
+
+.casedeets-input:focus {
+    box-shadow: none;
+    border-color: #0056b3;
+}
+
+.navbar {
+    padding: 20px 5% !important;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 25px;
+}
+
+.navtitle {
+    font-size: 1.5vw;
+    font-weight: bold;
+    line-height: 1;
+    margin-left: 10px;
+}
+
+.ctn-profilemenu {
+    position: fixed;
+    z-index: 2;
+    top: 110px;
+    right: 4%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border: 1px solid #808080;
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+.ctn-profilemenu a {
+    text-decoration: none;
+    font-size: 18px;
+    color: #303030;
+}
+
+.ctn-profilemenu a i {
+    margin-right: 8px;
+}
+
+#btnsignout {
+    font-weight: bold;
+    color: #c51313;
+}
+
+#btnchangepass:hover {
+    color: #13c51c;
+}
+
+#btnsignout:hover {
+    color: #ed0e0e;
+}
+
+.card-body a {
+    padding: 5px 25px;
+    background-color: #2e7c55;
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.3s ease;
+}
+
+.card-body a span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.card-body a span:after {
+    content: "\276f";
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+
+.card-body a:hover span {
+    padding-right: 25px;
+}
+
+.card-body a:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+.card-body a i {
+    margin-right: 10px;
+}
+
+.card-body .file {
+    text-indent: 80px;
+}
