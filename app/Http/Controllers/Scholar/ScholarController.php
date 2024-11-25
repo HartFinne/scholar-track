@@ -362,59 +362,21 @@ class ScholarController extends Controller
                 $originalFilePath = storage_path('app/public/' . $filePath);
 
                 try {
-                    // Initialize the ImageManager with GD Driver (or your preferred driver)
-                    $manager = new ImageManager(new Driver());
+                    // Execute the Python script
+                    $pythonScriptPath = storage_path('app/python/ocr_script.py');
+                    $output = null;
+                    $statusCode = null;
 
-                    // Read the uploaded image
-                    $image = $manager->read($originalFilePath);
+                    // Pass the full image path to the Python script for processing
+                    $command = "/home/forge/venvs/scholartrack_env/bin/python3 $pythonScriptPath $originalFilePath";
+                    exec($command, $output, $statusCode);
 
-                    $width = $image->width();
-                    $height = $image->height();
-                    $partWidth = (int)($width / 2);
-                    $partHeight = (int)($height / 2);
+                    // Check if the Python script ran successfully
+                    if ($statusCode === 0) {
+                        // Capture OCR text from the output
+                        $ocrText = implode("\n", $output);
 
-                    $parts = [];
-
-                    // Crop and save each part, then enlarge each part
-                    for ($row = 0; $row < 2; $row++) {
-                        for ($col = 0; $col < 2; $col++) {
-                            $partPath = storage_path("app/public/uploads/grade_reports/{$fileName}_part_{$row}_{$col}.png");
-
-                            // Crop the image for each part
-                            $croppedImage = $image->crop(
-                                $partWidth,  // width of the cropped part
-                                $partHeight, // height of the cropped part
-                                $col * $partWidth, // x-coordinate (left)
-                                $row * $partHeight // y-coordinate (top)
-                            );
-
-                            // Enlarge the cropped image
-                            $enlargedImage = $croppedImage->resize($partWidth * 2, $partHeight * 2); // Double the size
-
-                            // Save the enlarged image
-                            $enlargedImage->save($partPath);
-                            $parts[] = $partPath;
-                        }
-                    }
-
-                    // Initialize Tesseract OCR and API key (if necessary)
-                    $ocrText = '';
-
-                    try {
-                        // Process each cropped and enlarged part with Tesseract OCR
-                        foreach ($parts as $part) {
-                            // Perform OCR using Tesseract
-                            $ocr = new TesseractOCR($part);
-                            $ocrText .= $ocr->run() . ' ';
-                        }
-
-                        // Clean up text
-                        $ocrText = preg_replace('/\s+/', ' ', $ocrText);  // Normalize spaces
-                        $ocrText = preg_replace('/[^a-zA-Z0-9\s\.\:]/', '', $ocrText); // Remove unwanted characters
-
-                        // Debugging: See the OCR text and user input GPA
-
-                        // You can also log the values
+                        // Debugging: Log the OCR result
                         Log::info('OCR Text: ' . $ocrText);
                         Log::info('User Input GPA: ' . ($request->gwa ?? $request->genave));
 
@@ -447,15 +409,16 @@ class ScholarController extends Controller
                         if (abs($ocrGpa - $inputGpa) > 0.01) { // Allow minor floating-point differences
                             return redirect()->back()->with('failure', 'The GPA in the image (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . '). Please verify your entry.')->withInput();
                         }
-                    } catch (\Exception $e) {
-                        return redirect()->back()->with('failure', 'An error occurred: ' . $e->getMessage())->withInput();
+                    } else {
+                        throw new \Exception("Error running OCR script. Status code: $statusCode.");
                     }
                 } catch (\Exception $e) {
-                    return redirect()->back()->with('failure', 'Failed to process the image. Error: ' . $e->getMessage())->withInput();
+                    return redirect()->back()->with('failure', 'An error occurred: ' . $e->getMessage())->withInput();
                 }
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
+
 
             $criteria = criteria::first();
             $requiredgwa = [
