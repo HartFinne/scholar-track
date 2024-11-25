@@ -308,7 +308,7 @@ class ScholarController extends Controller
 
     public function storeGradeSubmission(Request $request)
     {
-        throw new \Exception("Hello World");
+    
         Log::info('OCR Text: ' . $request);
         $user = Auth::user();
         $educ = ScEducation::where('caseCode', $user->caseCode)->first();
