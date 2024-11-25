@@ -8,28 +8,46 @@ from PIL import Image
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
-def split_image(image_path, num_rows=2, num_cols=2):
-    """Split the image into smaller parts."""
+def split_image(image_path, num_parts=5):
+    """Split the image into 5 parts."""
     img = Image.open(image_path)
     width, height = img.size
-    part_width = width // num_cols
-    part_height = height // num_rows
+
+    # Calculate size for each part (a simple approach)
+    part_width = width // 3  # Divide the width into 3 columns
+    part_height = height // 2  # Divide the height into 2 rows
+
     parts = []
+    # Ensure valid cropping and split into 5 parts
+    # Part 1: Top-left section
+    parts.append(img.crop((0, 0, part_width * 2, part_height)))
+    
+    # Part 2: Top-right section
+    parts.append(img.crop((part_width * 2, 0, width, part_height)))
 
-    # Create and save each part
-    for i in range(num_rows):
-        for j in range(num_cols):
-            left = j * part_width
-            upper = i * part_height
-            right = left + part_width
-            lower = upper + part_height
+    # Part 3: Bottom-left section
+    parts.append(img.crop((0, part_height, part_width * 2, height)))
 
-            part = img.crop((left, upper, right, lower))
-            part_path = image_path.replace('.png', f'_part_{i}_{j}.png')
-            part.save(part_path)
-            parts.append(part_path)
+    # Part 4: Bottom-right section
+    parts.append(img.crop((part_width * 2, part_height, width, height)))
 
-    return parts
+    # Part 5: A combination of the remaining part (adjust accordingly)
+    # This part can be added as needed, depending on how you want to handle the leftovers
+    if width > part_width * 2 and height > part_height * 2:
+        parts.append(img.crop((part_width, part_height, width - part_width, height - part_height)))
+
+    part_paths = []
+    for idx, part in enumerate(parts):
+        part_path = image_path.replace('.png', f'_part_{idx}.png')
+        part.save(part_path)
+        part_paths.append(part_path)
+
+    # Clear image data from memory once parts are split
+    del img
+    gc.collect()
+
+    return part_paths
+
 
 def extract_text(image_path, ocr):
     """Extract text from an image using PaddleOCR."""
@@ -44,6 +62,10 @@ def extract_text(image_path, ocr):
             word_info = line[1]
             word_text = word_info if isinstance(word_info, str) else str(word_info[0])
             extracted_text += word_text + '\n'
+
+        # Clear OCR result to free memory
+        del result
+        gc.collect()
 
         return extracted_text
 
@@ -70,7 +92,7 @@ def process_image(image_path, ocr):
         extracted_text = extract_text(part, ocr)
         full_text += extracted_text
 
-        # Clean up memory after processing each part
+        # Clear extracted text after each part to free memory
         del extracted_text
         gc.collect()
 
@@ -79,8 +101,19 @@ def process_image(image_path, ocr):
     return full_text
 
 if __name__ == '__main__':
-    # Initialize PaddleOCR once
-    ocr = PaddleOCR(use_angle_cls=True, lang='en', det_algorithm='DB', rec_algorithm='CRNN', rec_batch_num=1,  table=False, formula=False, layout=False, max_text_length=10, cpu_threads=1)
+    # Initialize PaddleOCR with minimal resources
+    ocr = PaddleOCR(
+        use_angle_cls=True, 
+        lang='en', 
+        det_algorithm='DB', 
+        rec_algorithm='CRNN', 
+        rec_batch_num=1,  # Avoid using too many batches at once
+        table=False, 
+        formula=False, 
+        layout=False, 
+        max_text_length=10, 
+        cpu_threads=1  # Limit the number of threads to reduce memory usage
+    )
 
     # Get a list of image paths from command line arguments
     image_paths = sys.argv[1:]
