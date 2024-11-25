@@ -1,4 +1,5 @@
 import sys
+import os
 import gc
 import logging
 from paddleocr import PaddleOCR
@@ -48,7 +49,7 @@ def extract_text(image_path, ocr):
 
     except Exception as e:
         logging.error(f"Error processing {image_path}: {str(e)}")
-        return ''
+        return ''  # Return empty text if OCR fails on this part
 
 def save_text_to_file(image_path, extracted_text):
     """Save the extracted text to a file."""
@@ -79,19 +80,20 @@ def process_image(image_path, ocr):
 
 if __name__ == '__main__':
     # Initialize PaddleOCR once
-    ocr = PaddleOCR(use_angle_cls=True, lang='en', rec_batch_num=1)
+    ocr = PaddleOCR(use_angle_cls=True, lang='en', det_algorithm='DB', rec_algorithm='CRNN', rec_batch_num=1,  table=False, formula=False, layout=False, max_text_length=10, cpu_threads=1)
 
     # Get a list of image paths from command line arguments
     image_paths = sys.argv[1:]
 
     for image_path in image_paths:
         # Process each image individually
+        logging.info(f"Starting processing for {image_path}")
         extracted_text = process_image(image_path, ocr)
 
         # Optionally print the extracted text for each image
         print(extracted_text)
 
-        # Force garbage collection to free memory explicitly
+        # Force garbage collection to free memory explicitly after each image
         gc.collect()
 
     # Clean up PaddleOCR instance
