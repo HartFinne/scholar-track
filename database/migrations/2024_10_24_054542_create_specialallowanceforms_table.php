@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('specialallowanceforms', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('filetype');
-            $table->string('pathname');
+            $table->string('filename', 200);
+            $table->string('pathname', 255);
             $table->timestamps();
         });
     }

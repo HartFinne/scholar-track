@@ -269,7 +269,7 @@ class RegularAllowanceForm extends Controller
     {
         return str_replace('public/', '', $file->storeAs(
             'public/' . $directoryPath,
-            "{$name}." . $file->getClientOriginalExtension()
+            "{$name}." . $file->extension()
         ));
     }
 }

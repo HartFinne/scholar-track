@@ -60,13 +60,13 @@
             </div>
 
             <h6 class="text-center pt-2">Downloadable files:</h6>
-            <div class="file-download">
+            {{-- <div class="file-download">
                 <a href="{{ asset('storage/' . $acknowledgement->pathname) }}" class="download-btn"
                     download>Acknowledgement
                     Receipt<i class="fas fa-download"></i></a>
                 <a href="{{ asset('storage/' . $liquidation->pathname) }}" class="download-btn" download>Liquidation
                     Form<i class="fas fa-download"></i></a>
-            </div>
+            </div> --}}
 
             <div class="sub-form text-center">
                 <a href="{{ route('showrequestform', 'UAR') }}" class="form-btn">Go to submission form</a>

@@ -100,15 +100,8 @@ Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function
     Route::get('/regularforminfo/{id}', [RegularAllowanceForm::class, 'showRegularFormInfo'])->name('regularforminfo');
     // Allowance Requests : Special
     Route::get('/special', [ScholarController::class, 'showspecialallowance'])->name('scspecial');
-    Route::get('/special/instruction/{requesttype}', [ScholarController::class, 'showrequestinstruction'])->name('specialreqs');
-    Route::get('/special/form/{formtype}', [ScholarController::class, 'showrequestform'])->name('showrequestform');
-    Route::post('/book/{casecode}', [ScholarController::class, 'reqallowancebook'])->name('reqallowancebook');
-    Route::post('/event/{casecode}', [ScholarController::class, 'reqallowanceevent'])->name('reqallowanceevent');
-    Route::post('/graduation/{casecode}', [ScholarController::class, 'reqallowancegraduation'])->name('reqallowancegraduation');
-    Route::post('/project/{casecode}', [ScholarController::class, 'reqallowanceproject'])->name('reqallowanceproject');
-    Route::post('/thesis/{casecode}', [ScholarController::class, 'reqallowancethesis'])->name('reqallowancethesis');
-    Route::post('/transportation_reimbursement/{casecode}', [ScholarController::class, 'reqallowancetranspo'])->name('reqallowancetranspo');
-    Route::post('/uniform/{casecode}', [ScholarController::class, 'reqallowanceuniform'])->name('reqallowanceuniform');
+    Route::get('/special/form/{requesttype}', [ScholarController::class, 'showrequestinstruction'])->name('specialreqs');
+    Route::post('/reqspecallowance/{requesttype}/{casecode}', [ScholarController::class, 'requestSpecialAllowance'])->name('requestSpecialAllowance');
     Route::get('/special/{requesttype}-details/{id}', [ScholarController::class, 'showrequestinfo'])->name('showrequestinfo');
 });
 
@@ -177,10 +170,13 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/update-requests-regular/{id}', [StaffController::class, 'updateRegularAllowance'])->name('update-requests-regular.post');
     // ALLOWANCE REQUESTS - SPECIAL
     Route::get('/allowance-requests-special', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
-    Route::post('/upload-transpo', [StaffController::class, 'updatetransporeimbursenment'])->name('transporeimbursement');
-    Route::post('/upload-acknowledgement', [StaffController::class, 'updateacknowledgementreceipt'])->name('acknowledgement');
-    Route::post('/upload-liquidation', [StaffController::class, 'updateliquidationform'])->name('liquidation');
-    Route::post('/upload-certification', [StaffController::class, 'updatecertificationform'])->name('certform');
+    Route::get('/allowance-requests-special/manage-forms', [StaffController::class, 'managespecialforms'])->name('manage-special');
+    Route::post('/create-new-special-allowance-form', [StaffController::class, 'createNewSpecialAllowanceForm'])->name('createNewSpecialAllowanceForm');
+    Route::post('/del-special-allowance-form/{id}', [StaffController::class, 'delSpecialAllowanceForm'])->name('delSpecialAllowanceForm');
+    Route::post('/update-special-allowance-form/{id}', [StaffController::class, 'updateSpecialAllowanceForm'])->name('updateSpecialAllowanceForm');
+    Route::post('/add-special-allowance-file', [StaffController::class, 'addDownloadableFiles'])->name('addDownloadableFiles');
+    Route::post('/del-special-allowance-file/{id}', [StaffController::class, 'deleteDownloadableFile'])->name('deleteDownloadableFile');
+    Route::post('/update-special-allowance-file/{id}', [StaffController::class, 'updateDownloadableFile'])->name('updateDownloadableFile');
     Route::get('/allowance-requests-special/{requesttype}/{id}', [StaffController::class, 'showspecrecinfo'])->name('showspecrecinfo');
     Route::post('/updatespecreq/{requesttype}/{id}', [StaffController::class, 'updatespecreq'])->name('updatespecreq');
     // APPLICATION CRITERIA

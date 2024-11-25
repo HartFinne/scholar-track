@@ -27,6 +27,8 @@ use App\Models\apceducation;
 use App\Models\apeheducation;
 use App\Models\apfamilyinfo;
 use App\Models\specialallowanceforms;
+use App\Models\CreateSpecialAllowanceForm;
+use App\Models\SpecialAllowanceFormStructure;
 use App\Models\allowancebook;
 use App\Models\allowanceevent;
 use App\Models\allowancegraduation;
@@ -54,6 +56,8 @@ use App\Notifications\SpecialAllowancesNotification;
 use Illuminate\Console\Application;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\SpecialAllowanceFormExport;
+use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
 {
@@ -315,6 +319,13 @@ class StaffController extends Controller
             $scholar = scholarshipinfo::where('caseCode', $caseCode)->first();
             $scholar->scholarshipstatus = $request->scholarshipstatus;
             $scholar->save();
+
+            if ($request->scholarshipstatus == 'Terminated') {
+                $user = User::where('caseCode', $caseCode)->first();
+                $user->scStatus = 'Inactive';
+                $user->save();
+            }
+
             DB::commit();
             return redirect()->back()->with('success', 'Successfully updated scholarship status.');
         } catch (\Exception $e) {
@@ -613,7 +624,6 @@ class StaffController extends Controller
         }
     }
 
-    // SCHOLARSHIP CRITERIA
     public function showQualification()
     {
         $forms = applicationforms::all();
@@ -959,34 +969,10 @@ class StaffController extends Controller
         return view('staff.regularallowance', compact('requests'));
     }
 
-    // public function viewAllowanceRegularInfo($id)
-    // {
-
-    //     $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
-    //         ->join('users', 'users.caseCode', '=', 'grades.caseCode')
-    //         ->join('sc_basicinfo', 'sc_basicinfo.caseCode', '=', 'users.caseCode') // Join basic info
-    //         ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'users.caseCode') // Join scholarship info
-    //         ->join('sc_education', 'sc_education.caseCode', '=', 'users.caseCode') // Join education info
-    //         ->where('regular_allowance.regularID', $id) // Filter by specific RegularAllowance ID
-    //         ->firstOrFail(); // Retrieve single record or fail if not found
-
-
-    //     // Retrieve the regular allowance request by ID with related information
-    //     $regularAllowance = RegularAllowance::with([
-    //         'classReference.classSchedules',
-    //         'travelItinerary.travelLocations',
-    //         'lodgingInfo',
-    //         'ojtTravelItinerary.ojtLocations'
-    //     ])->findOrFail($id);
-
-    //     return view('staff.regularallowanceinfo', compact('id', 'requests', 'regularAllowance'));
-    // }
-
     public function viewAllowanceRegularInfo()
     {
         return view('staff.regularallowanceinfo');
     }
-
 
     public function updateRegularAllowance(Request $request, $id)
     {
@@ -1071,7 +1057,6 @@ class StaffController extends Controller
 
     public function showAllowanceSpecial()
     {
-        // Define an array of the models to simplify access
         $allowanceModels = [
             allowancebook::class,
             allowanceevent::class,
@@ -1088,7 +1073,6 @@ class StaffController extends Controller
         foreach ($statuses as $status) {
             $count = 0;
             foreach ($allowanceModels as $model) {
-                // Directly count only records with the specific status using where condition
                 $count += $model::where('status', $status)->count();
             }
             $data[$status] = $count;
@@ -1271,217 +1255,321 @@ class StaffController extends Controller
         }
     }
 
-    public function updatetransporeimbursenment(Request $request)
+    public function managespecialforms()
     {
-        DB::beginTransaction();
-        try {
-            $request->validate(
-                [
-                    'transporeimbursement' => ['mimes:doc,docx,pdf', 'max:2048'],
-                ],
-                [
-                    'transporeimbursement.mimes' => 'The transportation reimbursement form must be a valid file (doc, docx, or pdf).',
-                    'transporeimbursement.max' => 'The transportation reimbursement form must not exceed 2 MB.',
-                ]
-            );
-
-            $uploadedfile = $request->file('transporeimbursement');
-
-            $filename = 'Transportation Reimbursement Form.' . $uploadedfile->getClientOriginalExtension();
-
-            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
-
-            $filetype = 'TRF';
-
-            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
-
-            if ($fileexists) {
-                $fileexists->pathname = $path;
-                $fileexists->save();
-            } else {
-                specialallowanceforms::create([
-                    'filetype' => $filetype,
-                    'pathname' => $path,
-                ]);
-            }
-
-            DB::commit();
-            return redirect()->back()->with('success', 'File has been successfully uploaded.');
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            $errors = $e->errors();
-            $errorMessages = '<ul>';
-            foreach ($errors as $fieldErrors) {
-                foreach ($fieldErrors as $errorMessage) {
-                    $errorMessages .= '<li>' . $errorMessage . '</li>';
-                }
-            }
-            $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
-        };
+        $files = specialallowanceforms::all();
+        $forms = CreateSpecialAllowanceForm::get();
+        return view('staff.specialallowance-manage', compact('files', 'forms'));
     }
 
-    public function updateacknowledgementreceipt(Request $request)
+    public function createNewSpecialAllowanceForm(Request $request)
     {
-        DB::beginTransaction();
         try {
+            // Validate the incoming request
             $request->validate(
                 [
-                    'acknowledgementreceipt' => ['mimes:doc,docx,pdf', 'max:2048'],
+                    'formname' => ['required', 'string', 'max:200'],
+                    'formcode' => ['required', 'string', 'max:25'],
+                    'requestor' => ['required', 'array', 'min:1'],
+                    'instruction' => ['required', 'string'],
+                    'downloadablefiles' => ['required', 'array', 'min:1'],
+                    'fieldcount' => ['required', 'integer', 'min:1'],
                 ],
                 [
-                    'acknowledgementreceipt.mimes' => 'The acknowledgement receipt must be a valid file (doc, docx, or pdf).',
-                    'acknowledgementreceipt.max' => 'The acknowledgement receipt must not exceed 2 MB.',
+                    'formname.required' => 'The form name is required.',
+                    'formname.max' => 'The form name must not exceed 200 characters.',
+                    'formcode.required' => 'The form code is required.',
+                    'formcode.max' => 'The form code must not exceed 25 characters.',
+                    'requestor.required' => 'At least one requestor must be selected.',
+                    'requestor.min' => 'At least one requestor must be selected.',
+                    'instruction.required' => 'The instruction field is required.',
+                    'downloadablefiles.required' => 'At least one downloadable file must be selected.',
+                    'downloadablefiles.min' => 'At least one downloadable file must be selected.',
+                    'fieldcount.required' => 'You must add at least one field.',
+                    'fieldcount.min' => 'You must add at least one field.',
                 ]
             );
 
-            $uploadedfile = $request->file('acknowledgementreceipt');
+            DB::beginTransaction();
 
-            $filename = 'Acknowledgement Receipt.' . $uploadedfile->getClientOriginalExtension();
+            $excelPath = $this->createExcelFile($request->formcode, $request->only(array_map(function ($i) {
+                return 'fieldName' . $i;
+            }, range(1, $request->fieldcount))));
 
-            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
+            // Save form data to 'create_special_allowance_forms' table
+            $createForm = CreateSpecialAllowanceForm::create([
+                'formname' => $request->formname,
+                'formcode' => $request->formcode,
+                'requestor' => json_encode($request->requestor),
+                'instruction' => $request->instruction,
+                'downloadablefiles' => json_encode($request->downloadablefiles),
+                'database' => $excelPath,
+            ]);
 
-            $filetype = 'AR';
+            $csafId = $createForm->csafid;
 
-            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
+            for ($i = 1; $i <= $request->fieldcount; $i++) {
+                $fieldName = $request->input('fieldName' . $i);
+                $fieldType = $request->input('fieldType' . $i);
 
-            if ($fileexists) {
-                $fileexists->pathname = $path;
-                $fileexists->save();
-            } else {
-                specialallowanceforms::create([
-                    'filetype' => $filetype,
-                    'pathname' => $path,
-                ]);
+                // Only save if field name and type are provided
+                if ($fieldName && $fieldType) {
+                    SpecialAllowanceFormStructure::create([
+                        'csafid' => $csafId,
+                        'fieldname' => $fieldName,
+                        'fieldtype' => $fieldType,
+                    ]);
+                }
             }
 
             DB::commit();
-            return redirect()->back()->with('success', 'File has been successfully uploaded.');
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            $errors = $e->errors();
-            $errorMessages = '<ul>';
-            foreach ($errors as $fieldErrors) {
-                foreach ($fieldErrors as $errorMessage) {
-                    $errorMessages .= '<li>' . $errorMessage . '</li>';
-                }
-            }
-            $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
+
+            // Return success message
+            return redirect()->back()->with('success', 'Special Allowance Form created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
-        };
+
+            // Return error message
+            return redirect()->back()->with('failure', 'An error occurred while creating the form: ' . $e->getMessage())->withInput();
+        }
     }
 
-    public function updateliquidationform(Request $request)
+    public function updateSpecialAllowanceForm($id, Request $request)
     {
-        DB::beginTransaction();
         try {
+            // Validate the incoming request
             $request->validate(
                 [
-                    'liquidationform' => ['mimes:doc,docx,pdf', 'max:2048'],
-                    'certificationform' => ['mimes:doc,docx,pdf', 'max:2048'],
+                    'newformname' => ['required', 'string', 'max:200'],
+                    'newformcode' => ['required', 'string', 'max:25'],
+                    'newrequestor' => ['required', 'array', 'min:1'],
+                    'newinstruction' => ['required', 'string'],
+                    'newdownloadablefiles' => ['required', 'array', 'min:1'],
+                    'newfieldcount' => ['required', 'integer', 'min:1'],
                 ],
                 [
-                    'liquidationform.mimes' => 'The liquidation form must be a valid file (doc, docx, or pdf).',
-                    'liquidationform.max' => 'The liquidation form must not exceed 2 MB.',
+                    'newformname.required' => 'The form name is required.',
+                    'newformname.max' => 'The form name must not exceed 200 characters.',
+                    'newformcode.required' => 'The form code is required.',
+                    'newformcode.max' => 'The form code must not exceed 25 characters.',
+                    'newrequestor.required' => 'At least one requestor must be selected.',
+                    'newrequestor.min' => 'At least one requestor must be selected.',
+                    'newinstruction.required' => 'The instruction field is required.',
+                    'newdownloadablefiles.required' => 'At least one downloadable file must be selected.',
+                    'newdownloadablefiles.min' => 'At least one downloadable file must be selected.',
+                    'newfieldcount.required' => 'You must add at least one field.',
+                    'newfieldcount.min' => 'You must add at least one field.',
                 ]
             );
 
-            $uploadedfile = $request->file('liquidationform');
+            DB::beginTransaction();
 
-            $filename = 'Liquidation Form.' . $uploadedfile->getClientOriginalExtension();
+            $form = CreateSpecialAllowanceForm::where('csafid', $id)->first();
 
-            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
+            $filePath = $form->database;
+            $newDirectory = 'uploads/allowance_forms/special/database/old';
 
-            $filetype = 'LF';
+            $fileName = basename($filePath);
 
-            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
+            $newPath = $newDirectory . '/' . $fileName;
 
-            if ($fileexists) {
-                $fileexists->pathname = $path;
-                $fileexists->save();
-            } else {
-                specialallowanceforms::create([
-                    'filetype' => $filetype,
-                    'pathname' => $path,
-                ]);
+            // dd($filePath);
+
+            if (Storage::exists($filePath)) {
+                Storage::move($filePath, $newPath);
+            }
+
+            $excelPath = $this->createExcelFile($request->newformcode, $request->only(array_map(function ($i) {
+                return 'newfieldName' . $i;
+            }, range(1, $request->newfieldcount))));
+
+            $form->formname = $request->newformname;
+            $form->formcode = $request->newformcode;
+            $form->requestor = json_encode($request->newrequestor);
+            $form->instruction = $request->newinstruction;
+            $form->downloadablefiles = json_encode($request->newdownloadablefiles);
+            $form->database = $excelPath;
+            $form->save();
+
+            for ($i = 1; $i <= $request->newfieldcount; $i++) {
+                $fieldName = $request->newfieldName . $i;
+                $fieldType = $request->newfieldType . $i;
+
+                // dd($fieldType);
+
+                // Only save if field name and type are provided
+                if ($fieldName && $fieldType) {
+                    $fieldRecord = SpecialAllowanceFormStructure::where('fieldname', $fieldName)
+                        ->where('fieldtype', $fieldType)->first();
+
+                    if ($fieldRecord) {
+                        $fieldRecord->fieldname = $fieldName;
+                        $fieldRecord->fieldtype = $fieldType;
+                        $fieldRecord->save();
+                    } else {
+                        SpecialAllowanceFormStructure::create([
+                            'csafid' => $form->csafId,
+                            'fieldname' => $fieldName,
+                            'fieldtype' => $fieldType,
+                        ]);
+                    }
+                }
             }
 
             DB::commit();
-            return redirect()->back()->with('success', 'File has been successfully uploaded.');
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            $errors = $e->errors();
-            $errorMessages = '<ul>';
-            foreach ($errors as $fieldErrors) {
-                foreach ($fieldErrors as $errorMessage) {
-                    $errorMessages .= '<li>' . $errorMessage . '</li>';
-                }
-            }
-            $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
+
+            // Return success message
+            return redirect()->back()->with('success', 'Special Allowance Form updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
-        };
+
+            // Return error message
+            return redirect()->back()->with('failure', 'An error occurred while updating the form: ' . $e->getMessage())->withInput();
+        }
     }
 
-    public function updatecertificationform(Request $request)
+    private function createExcelFile($formcode, $fieldnames)
     {
-        DB::beginTransaction();
+        // Define the path to save the Excel file
+        $directoryPath = 'uploads/allowance_forms/special/database';
+        $filename = $formcode . '.xlsx';
+        $fullPath = $directoryPath . '/' . $filename;
+
+        // Make sure the directory exists
+        if (!Storage::exists($directoryPath)) {
+            Storage::makeDirectory($directoryPath);
+        }
+
+        // Use Maatwebsite\Excel to create and save the Excel file
+        Excel::store(new SpecialAllowanceFormExport($formcode, $fieldnames), $fullPath, 'public');
+
+        return $fullPath;
+    }
+
+    public function delSpecialAllowanceForm($id)
+    {
+        try {
+            DB::beginTransaction();
+            $form = CreateSpecialAllowanceForm::where('csafid', $id)->first();
+            $filePath = $form->database;
+            if (Storage::exists($filePath)) {
+                Storage::delete($filePath);
+            }
+            $form->delete();
+
+            Db::commit();
+
+            return redirect()->back()->with('success', "Successfully deleted the {$form->formname}.");
+        } catch (\Exception $e) {
+            Db::rollBack();
+
+            return redirect()->back()->with('success', "Failed to delete the form. Error: " . $e->getMessage());
+        }
+    }
+
+    public function addDownloadableFiles(Request $request)
+    {
         try {
             $request->validate(
                 [
-                    'certificationform' => ['mimes:doc,docx,pdf', 'max:2048'],
+                    'filename' => ['string', 'max:200', 'required'],
+                    'file' => ['mimes:pdf', 'max:2048', 'required'],
                 ],
                 [
-                    'certificationform.mimes' => 'The certification form must be a valid file (doc, docx, or pdf).',
-                    'certificationform.max' => 'The certification form must not exceed 2 MB.',
+                    'file.mimes' => 'The file must be a valid file (doc, docx, or pdf).',
+                    'file.max' => 'The file must not exceed 2 MB.',
+                    'file.required' => 'You must upload a file.',
+                    'filename.required' => 'You must provide a file name.',
+                    'filename.string' => 'The file name must be a valid string',
+                    'filename.max' => 'The file name must not exceed 200 characters'
                 ]
             );
 
-            $uploadedfile = $request->file('certificationform');
+            $uploadedfile = $request->file('file');
 
-            $filename = 'Project and Book Certification Form.' . $uploadedfile->getClientOriginalExtension();
+            $filename = $request->filename . '.' . $uploadedfile->extension();
 
             $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
 
-            $filetype = 'PBCF';
-
-            $fileexists = specialallowanceforms::where('filetype', $filetype)->first();
+            $fileexists = specialallowanceforms::where('filename', $request->filename)->first();
 
             if ($fileexists) {
-                $fileexists->pathname = $path;
-                $fileexists->save();
-            } else {
-                specialallowanceforms::create([
-                    'filetype' => $filetype,
-                    'pathname' => $path,
-                ]);
+                return redirect()->back()->with('failure', 'Duplicate file. Please try again.');
             }
 
-            DB::commit();
-            return redirect()->back()->with('success', 'File has been successfully uploaded.');
-        } catch (ValidationException $e) {
-            DB::rollBack();
-            $errors = $e->errors();
-            $errorMessages = '<ul>';
-            foreach ($errors as $fieldErrors) {
-                foreach ($fieldErrors as $errorMessage) {
-                    $errorMessages .= '<li>' . $errorMessage . '</li>';
-                }
-            }
-            $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Unable to update file. ' . $errorMessages);
+            specialallowanceforms::create([
+                'filename' => $request->filename,
+                'pathname' => $path,
+            ]);
+
+            return redirect()->back()->with('success', "Successfully uploaded {$request->filename}.");
         } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Unable to update file. ' . $e->getMessage());
-        };
+            return redirect()->back()->with('failure', 'Duplicate file. Please try again.' . $e->getMessage());
+        }
+    }
+
+    public function updateDownloadableFile($id, Request $request)
+    {
+        try {
+            $request->validate(
+                [
+                    'newfilename' => ['string', 'max:200', 'required'],
+                    'newfile' => ['mimes:pdf', 'max:2048', 'required'],
+                ],
+                [
+                    'newfile.mimes' => 'The file must be a valid file (doc, docx, or pdf).',
+                    'newfile.max' => 'The file must not exceed 2 MB.',
+                    'newfile.required' => 'You must upload a file.',
+                    'newfilename.required' => 'You must provide a file name.',
+                    'newfilename.string' => 'The file name must be a valid string',
+                    'newfilename.max' => 'The file name must not exceed 200 characters'
+                ]
+            );
+
+            $file = specialallowanceforms::find($id);
+
+            $filenameExists = specialallowanceforms::where('filename', $request->newfilename)
+                ->where('id', '!=', $id)->exists();
+
+            if ($filenameExists) {
+                return redirect()->back()->with('failure', "File name already exists. Please provide a different file name.");
+            }
+
+            if (!$file) {
+                return redirect()->back()->with('failure', "File not found.");
+            }
+
+            $uploadedfile = $request->file('newfile');
+
+            $filename = $request->newfilename . '.' . $uploadedfile->extension();
+
+            $path = $uploadedfile->storeAs('uploads/allowance_forms/special', $filename, 'public');
+
+            $file->filename = $request->newfilename;
+            $file->pathname = $path;
+            $file->save();
+
+            return redirect()->back()->with('success', "Successfully updated {$file->filename}.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('failure', "Failed to delete the file. Please try again. Error: " . $e->getMessage());
+        }
+    }
+
+    public function deleteDownloadableFile($id)
+    {
+        try {
+            $file = specialallowanceforms::find($id);
+
+            if (!$file) {
+                return redirect()->back()->with('failure', "File not found.");
+            }
+
+            $file->delete();
+
+            return redirect()->back()->with('success', "Successfully deleted {$file->filename}.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('failure', "Failed to delete the file. Please try again. Error: " . $e->getMessage());
+        }
     }
 
     public function showScholarsoverview()

@@ -25,7 +25,12 @@
         <h1 class="title">Special Allowances:</h1>
         <!-- ALLOWANCE BUTTONS -->
         <div class="sallowance">
-            @if ($scholar->education->scSchoolLevel == 'College')
+            @forelse ($forms as $form)
+                <a href="{{ route('specialreqs', $form->csafid) }}" class="btn-request">{{ $form->formname }}</a>
+            @empty
+                <div class="row">No Forms Found.</div>
+            @endforelse
+            {{-- @if ($scholar->education->scSchoolLevel == 'College')
                 <a href="{{ route('specialreqs', 'TRF') }}" class="btn-request">Transportation Reimbursement Request</a>
                 <a href="{{ route('specialreqs', 'BAR') }}" class="btn-request">Book Allowance Request</a>
                 <a href="{{ route('specialreqs', 'TAR') }}" class="btn-request">Thesis Allowance Request</a>
@@ -34,7 +39,7 @@
             <a href="{{ route('specialreqs', 'UAR') }}" class="btn-request">Uniform Allowance Request</a>
             <a href="{{ route('specialreqs', 'GAR') }}" class="btn-request">Graduation Allowance Request</a>
             <a href="{{ route('specialreqs', 'FTTSAR') }}" class="btn-request">Field Trip, Training, Seminar Allowance
-                Request</a>
+                Request</a> --}}
         </div>
         <!-- REQUESTS -->
         <div class="status">

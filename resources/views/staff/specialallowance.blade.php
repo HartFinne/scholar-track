@@ -18,9 +18,15 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
+    <x-alert />
 
     <div class="ctnmain">
-        <span class="text-success fw-bold h2">Special Allowance Requests</span>
+        <div class="row">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <span class="text-success fw-bold h2">Special Allowance Requests</span>
+                <a href="{{ route('manage-special') }}" class="btn btn-success">Manage Forms</a>
+            </div>
+        </div>
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total Requests</span>
@@ -45,78 +51,6 @@
         </div>
         <div class="divider"></div>
         <div class="groupB">
-            <span class="text-success fw-bold h2">Manage Special Allowance Forms</span>
-            <div class="groupB1 my-3" id="ctnmanageform" style="display: flex;">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                        {!! session('error') !!}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                <p class="text-muted">Note: Uploading a new file will replace the existing file with the updated
-                    version. This action cannot be undone.</p>
-                <form method="POST" action="{{ route('transporeimbursement') }}" enctype="multipart/form-data"
-                    class="row g-3 align-items-center mb-3 justify-content-center">
-                    @csrf
-                    <div class="col-md-3">
-                        <label for="transpoReimbursement"><strong>Transportation Reimbursement Form</strong></label>
-                    </div>
-                    <div class="col-md-7">
-                        <input type="file" name="transporeimbursement" class="form-control" id="transpoReimbursement"
-                            required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-success w-100">Update File</button>
-                    </div>
-                </form>
-                <form method="POST" action="{{ route('acknowledgement') }}" enctype="multipart/form-data"
-                    class="row g-3 align-items-center mb-3 justify-content-center">
-                    @csrf
-                    <div class="col-md-3">
-                        <label for="acknowledgementReceipt"><strong>Acknowledgement Receipt</strong></label>
-                    </div>
-                    <div class="col-md-7">
-                        <input type="file" name="acknowledgementreceipt" class="form-control"
-                            id="acknowledgementReceipt" required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-success w-100">Update File</button>
-                    </div>
-                </form>
-                <form method="POST" action="{{ route('liquidation') }}" enctype="multipart/form-data"
-                    class="row g-3 align-items-center mb-3 justify-content-center">
-                    @csrf
-                    <div class="col-md-3">
-                        <label for="liquidationForm"><strong>Liquidation Form</strong></label>
-                    </div>
-                    <div class="col-md-7">
-                        <input type="file" name="liquidationform" class="form-control" id="liquidationForm" required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-success w-100">Update File</button>
-                    </div>
-                </form>
-                <form method="POST" action="{{ route('certform') }}" enctype="multipart/form-data"
-                    class="row g-3 align-items-center justify-content-center">
-                    @csrf
-                    <div class="col-md-3">
-                        <label for="certificationForm"><strong>Project/Book Certification Form</strong></label>
-                    </div>
-                    <div class="col-md-7">
-                        <input type="file" name="certificationform" class="form-control" id="certificationForm"
-                            required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-success w-100">Update File</button>
-                    </div>
-                </form>
-            </div>
             <div class="divider"></div>
             <span class="text-success fw-bold h2">List of Requests</span>
             <div class="groupB1" id="ctnfiltertable active" style="display: flex;">

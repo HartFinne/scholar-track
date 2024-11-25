@@ -32,6 +32,7 @@ use App\Models\criteria;
 use App\Models\csregistration;
 use App\Models\institutions;
 use App\Models\courses;
+use App\Models\CreateSpecialAllowanceForm;
 use App\Models\scholarshipinfo;
 use App\Models\staccount;
 use Illuminate\Support\Facades\Storage;
@@ -351,7 +352,7 @@ class ScholarController extends Controller
                 $file = $request->file('gradeImage');
 
                 // Create a custom file name using caseCode and last name
-                $fileName = $user->caseCode . '_' . $user->basicInfo->scLastname . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $fileName = $user->caseCode . '_' . $user->basicInfo->scLastname . '_' . time() . '.' . $file->extension();
 
                 // Store the file in the specified directory
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
@@ -632,7 +633,7 @@ class ScholarController extends Controller
         // Store the explanation file in the specified directory
         $explanationPath = $request->file('explanation')->storeAs(
             'public/' . $directoryPath,
-            'explanation_' . time() . '.' . $request->file('explanation')->getClientOriginalExtension()
+            'explanation_' . time() . '.' . $request->file('explanation')->extension()
         );
 
         // Initialize the reason file path variable
@@ -644,7 +645,7 @@ class ScholarController extends Controller
                 if ($request->hasFile('medical-file')) {
                     $reasonFilePath = $request->file('medical-file')->storeAs(
                         'public/' . $directoryPath,
-                        'medical_' . time() . '.' . $request->file('medical-file')->getClientOriginalExtension()
+                        'medical_' . time() . '.' . $request->file('medical-file')->extension()
                     );
                 }
                 break;
@@ -652,7 +653,7 @@ class ScholarController extends Controller
                 if ($request->hasFile('academic-file')) {
                     $reasonFilePath = $request->file('academic-file')->storeAs(
                         'public/' . $directoryPath,
-                        'academic_' . time() . '.' . $request->file('academic-file')->getClientOriginalExtension()
+                        'academic_' . time() . '.' . $request->file('academic-file')->extension()
                     );
                 }
                 break;
@@ -660,7 +661,7 @@ class ScholarController extends Controller
                 if ($request->hasFile('death-file')) {
                     $reasonFilePath = $request->file('death-file')->storeAs(
                         'public/' . $directoryPath,
-                        'death_' . time() . '.' . $request->file('death-file')->getClientOriginalExtension()
+                        'death_' . time() . '.' . $request->file('death-file')->extension()
                     );
                 }
                 break;
@@ -668,7 +669,7 @@ class ScholarController extends Controller
                 if ($request->hasFile('disaster-file')) {
                     $reasonFilePath = $request->file('disaster-file')->storeAs(
                         'public/' . $directoryPath,
-                        'disaster_' . time() . '.' . $request->file('disaster-file')->getClientOriginalExtension()
+                        'disaster_' . time() . '.' . $request->file('disaster-file')->extension()
                     );
                 }
                 break;
@@ -742,6 +743,8 @@ class ScholarController extends Controller
             ->where('id', Auth::id())
             ->first();
 
+        $forms = CreateSpecialAllowanceForm::get();
+
         $reqbook = allowancebook::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
         $reqevent = allowanceevent::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
         $reqthesis = allowancethesis::where('caseCode', $scholar->caseCode)->orderBy('created_at', 'asc')->get();
@@ -766,51 +769,28 @@ class ScholarController extends Controller
             $requests = $mergedrequests->sortBy('created_at')->values();
         }
 
-        return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar', 'status'));
+        return view('scholar.allowancerequest.scspecial', compact('requests', 'scholar', 'status', 'forms'));
     }
 
     public function showrequestinstruction($requesttype)
     {
-        $transpo = specialallowanceforms::where('filetype', 'TRF')->first();
-        $cert = specialallowanceforms::where('filetype', 'PBCF')->first();
-        $acknowledgement = specialallowanceforms::where('filetype', 'AR')->first();
-        $liquidation = specialallowanceforms::where('filetype', 'LF')->first();
+        $user = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->find(Auth::id());
 
-        if ($requesttype == 'TRF') {
-            if ($transpo == NULL) {
-                return redirect()->route('scspecial')->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
-            }
-            return view('scholar.allowancerequest.transporeq', compact('transpo'));
-        } elseif ($requesttype == 'BAR') {
-            if ($cert == NULL || $acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->route('scspecial')->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
-            }
-            return view('scholar.allowancerequest.bookreq', compact('cert', 'acknowledgement', 'liquidation'));
-        } elseif ($requesttype == 'TAR') {
-            if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
-            }
-            return view('scholar.allowancerequest.thesisreq', compact('acknowledgement', 'liquidation'));
-        } elseif ($requesttype == 'PAR') {
-            if ($cert == NULL || $acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
-            }
-            return view('scholar.allowancerequest.projectreq', compact('cert', 'acknowledgement', 'liquidation'));
-        } elseif ($requesttype == 'UAR') {
-            if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
-            }
-            return view('scholar.allowancerequest.uniformreq', compact('acknowledgement', 'liquidation'));
-        } elseif ($requesttype == 'GAR') {
-            if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
-            }
-            return view('scholar.allowancerequest.gradreq', compact('acknowledgement', 'liquidation'));
-        } elseif ($requesttype == 'FTTSAR') {
-            if ($acknowledgement == NULL || $liquidation == NULL) {
-                return redirect()->back()->with('failure', 'We apologize, but this special request is currently unavailable. For urgent assistance, please contact one of our social workers for support.');
-            }
-            return view('scholar.allowancerequest.fieldtripreq', compact('acknowledgement', 'liquidation'));
+        $form = CreateSpecialAllowanceForm::where('csafid', $requesttype)->first();
+
+        $downloadableFiles = json_decode($form->downloadablefiles, true);
+
+        $files = specialallowanceforms::whereIn('id', $downloadableFiles)->get();
+        return view('scholar.allowancerequest.specialallowanceform', compact('form', 'files', 'user'));
+    }
+
+    public function requestSpecialAllowance($requesttype, $casecode, Request $request)
+    {
+        try {
+            //code...
+        } catch (\Exception $e) {
+            //throw $th;
         }
     }
 
@@ -874,10 +854,10 @@ class ScholarController extends Controller
 
             $datetime = now()->format('Ymd_His');
 
-            $filename_certification = $datetime . '_' . $caseCode . '_Book_Certification.' . $certification->getClientOriginalExtension();
-            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
-            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->getClientOriginalExtension();
-            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+            $filename_certification = $datetime . '_' . $caseCode . '_Book_Certification.' . $certification->extension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->extension();
+            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->extension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->extension();
 
             $path_certification = $certification->storeAs('uploads/allowance_requests/special/book_requests', $filename_certification, 'public');
             $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/book_requests', $filename_acknowledgement, 'public');
@@ -954,10 +934,10 @@ class ScholarController extends Controller
 
             $datetime = now()->format('Ymd_His');
 
-            $filename_memo = $datetime . '_' . $caseCode . '_Memo.' . $memo->getClientOriginalExtension();
-            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
-            $filename_waiver = $datetime . '_' . $caseCode . '_Waiver.' . $waiver->getClientOriginalExtension();
-            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+            $filename_memo = $datetime . '_' . $caseCode . '_Memo.' . $memo->extension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->extension();
+            $filename_waiver = $datetime . '_' . $caseCode . '_Waiver.' . $waiver->extension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->extension();
 
             $path_memo = $memo->storeAs('uploads/allowance_requests/special/event_requests', $filename_memo, 'public');
             $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/event_requests', $filename_acknowledgement, 'public');
@@ -1024,9 +1004,9 @@ class ScholarController extends Controller
 
             $datetime = now()->format('Ymd_His');
 
-            $filename_gradlist = $datetime . '_' . $caseCode . '_List_of_Graduates.' . $gradlist->getClientOriginalExtension();
-            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
-            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+            $filename_gradlist = $datetime . '_' . $caseCode . '_List_of_Graduates.' . $gradlist->extension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->extension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->extension();
 
             $path_gradlist = $gradlist->storeAs('uploads/allowance_requests/special/graduation_requests', $filename_gradlist, 'public');
             $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/graduation_requests', $filename_acknowledgement, 'public');
@@ -1096,10 +1076,10 @@ class ScholarController extends Controller
 
             $datetime = now()->format('Ymd_His');
 
-            $filename_certification = $datetime . '_' . $caseCode . '_Project_Certification.' . $certification->getClientOriginalExtension();
-            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
-            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->getClientOriginalExtension();
-            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+            $filename_certification = $datetime . '_' . $caseCode . '_Project_Certification.' . $certification->extension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->extension();
+            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->extension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->extension();
 
             $path_certification = $certification->storeAs('uploads/allowance_requests/special/project_requests', $filename_certification, 'public');
             $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/project_requests', $filename_acknowledgement, 'public');
@@ -1172,10 +1152,10 @@ class ScholarController extends Controller
 
             $datetime = now()->format('Ymd_His');
 
-            $filename_titlepage = $datetime . '_' . $caseCode . '_Title_Page.' . $titlepage->getClientOriginalExtension();
-            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
-            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->getClientOriginalExtension();
-            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+            $filename_titlepage = $datetime . '_' . $caseCode . '_Title_Page.' . $titlepage->extension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->extension();
+            $filename_purchaseproof = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $purchaseproof->extension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->extension();
 
             $path_titlepage = $titlepage->storeAs('uploads/allowance_requests/special/thesis_requests', $filename_titlepage, 'public');
             $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/thesis_requests', $filename_acknowledgement, 'public');
@@ -1239,7 +1219,7 @@ class ScholarController extends Controller
 
             $datetime = now()->format('Ymd_His');
 
-            $filename_transpoform = $datetime . '_' . $caseCode . '_Transportation_Reimbursement_Form.' . $transpoform->getClientOriginalExtension();
+            $filename_transpoform = $datetime . '_' . $caseCode . '_Transportation_Reimbursement_Form.' . $transpoform->extension();
 
             $path_transpoform = $transpoform->storeAs('uploads/allowance_requests/special/transportation_reimbursements', $filename_transpoform, 'public');
 
@@ -1304,10 +1284,10 @@ class ScholarController extends Controller
 
             $datetime = now()->format('Ymd_His');
 
-            $filename_certificate = $datetime . '_' . $caseCode . '_Title_Page.' . $certificate->getClientOriginalExtension();
-            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->getClientOriginalExtension();
-            $filename_uniformpic = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $uniformpic->getClientOriginalExtension();
-            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->getClientOriginalExtension();
+            $filename_certificate = $datetime . '_' . $caseCode . '_Title_Page.' . $certificate->extension();
+            $filename_acknowledgement = $datetime . '_' . $caseCode . '_Acknowledgement_Receipt.' . $acknowledgement->extension();
+            $filename_uniformpic = $datetime . '_' . $caseCode . '_Proof_of_Purchase.' . $uniformpic->extension();
+            $filename_liquidation = $datetime . '_' . $caseCode . '_Liquidation_Form.' . $liquidation->extension();
 
             $path_certificate = $certificate->storeAs('uploads/allowance_requests/special/uniform_requests', $filename_certificate, 'public');
             $path_acknowledgement = $acknowledgement->storeAs('uploads/allowance_requests/special/uniform_requests', $filename_acknowledgement, 'public');

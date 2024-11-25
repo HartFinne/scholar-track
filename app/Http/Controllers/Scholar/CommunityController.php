@@ -423,7 +423,7 @@ class CommunityController extends Controller
             // Store the explanation file in the specified directory
             $attendancePath = $request->file('proofImg')->storeAs(
                 'public/' . $directoryPath,
-                'proof_image' . $request->file('proofImg')->getClientOriginalExtension()
+                'proof_image' . $request->file('proofImg')->extension()
             );
 
             $attendance->attendanceproof = $attendancePath;

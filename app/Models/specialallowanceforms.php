@@ -14,7 +14,7 @@ class specialallowanceforms extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'filetype',
+        'filename',
         'pathname',
     ];
 }

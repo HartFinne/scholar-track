@@ -475,19 +475,19 @@ class ApplicationController extends Controller
             $payslip = $request->file('payslip') ?? NULL;
             $indigencycert = $request->file('indigencycert');
             // Create a custom file name using casecode
-            $filename_idpic = $casecode . '_' . 'idpic' . '.' . $idpic->getClientOriginalExtension();
-            $filename_reportcard = $casecode . '_' . 'reportcard' . '.' . $reportcard->getClientOriginalExtension();
-            $filename_regiform = $casecode . '_' . 'regiform' . '.' . $regiform->getClientOriginalExtension();
-            $filename_autobio = $casecode . '_' . 'autobio' . '.' . $autobio->getClientOriginalExtension();
-            $filename_familypic = $casecode . '_' . 'familypic' . '.' . $familypic->getClientOriginalExtension();
-            $filename_houseinside = $casecode . '_' . 'houseinside' . '.' . $houseinside->getClientOriginalExtension();
-            $filename_houseoutside = $casecode . '_' . 'houseoutside' . '.' . $houseoutside->getClientOriginalExtension();
-            $filename_utilitybill = $casecode . '_' . 'utilitybill' . '.' . $utilitybill->getClientOriginalExtension();
-            $filename_sketchmap = $casecode . '_' . 'sketchmap' . '.' . $sketchmap->getClientOriginalExtension();
+            $filename_idpic = $casecode . '_' . 'idpic' . '.' . $idpic->extension();
+            $filename_reportcard = $casecode . '_' . 'reportcard' . '.' . $reportcard->extension();
+            $filename_regiform = $casecode . '_' . 'regiform' . '.' . $regiform->extension();
+            $filename_autobio = $casecode . '_' . 'autobio' . '.' . $autobio->extension();
+            $filename_familypic = $casecode . '_' . 'familypic' . '.' . $familypic->extension();
+            $filename_houseinside = $casecode . '_' . 'houseinside' . '.' . $houseinside->extension();
+            $filename_houseoutside = $casecode . '_' . 'houseoutside' . '.' . $houseoutside->extension();
+            $filename_utilitybill = $casecode . '_' . 'utilitybill' . '.' . $utilitybill->extension();
+            $filename_sketchmap = $casecode . '_' . 'sketchmap' . '.' . $sketchmap->extension();
             if ($payslip) {
-                $filename_payslip = $casecode . '_' . 'payslip' . '.' . $payslip->getClientOriginalExtension();
+                $filename_payslip = $casecode . '_' . 'payslip' . '.' . $payslip->extension();
             }
-            $filename_indigencycert = $casecode . '_' . 'indigencycert' . '.' . $indigencycert->getClientOriginalExtension();
+            $filename_indigencycert = $casecode . '_' . 'indigencycert' . '.' . $indigencycert->extension();
             // Store the file in the specified directory
             $path_idpic = $idpic->storeAs('uploads/application_requirements/id_pics', $filename_idpic, 'public');
             $path_reportcard = $reportcard->storeAs('uploads/application_requirements/report_cards', $filename_reportcard, 'public');

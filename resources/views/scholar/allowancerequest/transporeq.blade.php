@@ -54,11 +54,11 @@
             </div>
 
             <h6 class="text-center pt-2">Downloadable files:</h6>
-            <div class="file-download">
+            {{-- <div class="file-download">
                 <a href="{{ asset('storage/' . $transpo->pathname) }}" class="download-btn" download>Transportation
                     Reimbursement
                     Form <i class="fas fa-download"></i></a>
-            </div>
+            </div> --}}
 
             <div class="sub-form text-center">
                 <a href="{{ route('showrequestform', 'TRF') }}" class="form-btn">Go to submission form</a>
