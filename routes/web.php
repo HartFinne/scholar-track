@@ -14,6 +14,9 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Scholar\RegularAllowanceForm;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\EvalController;
+use App\Http\Controllers\ImageController;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Response;
 
 Route::view('/', 'mainhome')->name('mainhome');
 Route::view('roleselection', 'roleselection')->name('roleselection');
@@ -41,6 +44,8 @@ Route::prefix('applicant')->group(function () {
     Route::get('/applicant-portal/{casecode}', [ApplicantAuthController::class, 'showportal'])->middleware('applicant')->name('applicantportal');
     Route::get('/cancel-application/{casecode}', [ApplicationController::class, 'cancelapplication'])->name('cancelapplication');
 });
+
+
 
 // routing for scholars page just for viewing the page no logic used here
 Route::prefix('scholar')->middleware('scholar')->group(function () {
@@ -238,9 +243,19 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
 // report generation
 Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
+    Route::get('/applicant-portal/{casecode}', 'generateapplicantform')->name('generateapplicantform');
 });
+
+
 
 Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->group(function () {
     Route::get('/evaluate-scholars', 'evaluatescholars')->name('evaluatescholars');
     Route::get('/scholars-evaluation', 'showevalresults')->name('showevalresults');
+});
+
+
+
+Route::controller(ImageController::class)->group(function () {
+    Route::get('/image', 'fileUpload');
+    Route::post('image', 'storeImage')->name("image.store");
 });
