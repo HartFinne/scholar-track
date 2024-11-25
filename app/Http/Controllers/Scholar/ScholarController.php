@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Scholar;
 
+use \Intervention\Image\ImageManager;
+use \Intervention\Image\Drivers\GD\Driver;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -308,8 +310,7 @@ class ScholarController extends Controller
 
     public function storeGradeSubmission(Request $request)
     {
-    
-        Log::info('OCR Text: ' . $request);
+
         $user = Auth::user();
         $educ = ScEducation::where('caseCode', $user->caseCode)->first();
         $gwaRules = ['numeric'];
@@ -362,7 +363,7 @@ class ScholarController extends Controller
 
                 try {
                     // Initialize the ImageManager with GD Driver (or your preferred driver)
-                    $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\GD\Driver());
+                    $manager = new ImageManager(new Driver());
 
                     // Read the uploaded image
                     $image = $manager->read($originalFilePath);
