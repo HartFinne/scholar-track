@@ -363,9 +363,9 @@ class ScholarController extends Controller
 
                 try {
                     // Preprocess the image using Python script
-                    $pythonScriptPath = escapeshellarg(storage_path('app/python/ocr_script.py'));
-                    $escapedFilePath = escapeshellarg($originalFilePath);
-                    $command = "python $pythonScriptPath $escapedFilePath";
+                    $pythonScriptPath = (storage_path('app/python/ocr_script.py'));
+                    $escapedFilePath = ($originalFilePath);
+                    $command = "/home/forge/venvs/scholartrack_env/bin/python3 $pythonScriptPath $escapedFilePath";
 
                     // Execute the command and capture output
                     $output = [];
