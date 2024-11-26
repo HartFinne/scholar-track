@@ -351,7 +351,7 @@ class ScholarController extends Controller
             }
 
             // Handle file upload
-            if ($request->hasFile('gradeImage')) {
+             if ($request->hasFile('gradeImage')) {
                 $file = $request->file('gradeImage');
 
                 // Create a custom file name
@@ -362,57 +362,68 @@ class ScholarController extends Controller
                 $originalFilePath = storage_path('app/public/' . $filePath);
 
                 try {
-                    // Execute the Python script
-                    $pythonScriptPath = storage_path('app/python/ocr_script.py');
-                    $output = null;
-                    $statusCode = null;
+                    // Preprocess the image using Python script
+                    $pythonScriptPath = escapeshellarg(storage_path('app/python/ocr_script.py'));
+                    $escapedFilePath = escapeshellarg($originalFilePath);
+                    $command = "python $pythonScriptPath $escapedFilePath";
 
-                    // Pass the full image path to the Python script for processing
-                    $command = "/home/forge/venvs/scholartrack_env/bin/python3 $pythonScriptPath $originalFilePath";
-                    exec($command, $output, $statusCode);
+                    // Execute the command and capture output
+                    $output = [];
+                    $returnVar = 0;
+                    exec($command, $output, $returnVar);
 
-                    // Check if the Python script ran successfully
-                    if ($statusCode === 0) {
-                        // Capture OCR text from the output
-                        $ocrText = implode("\n", $output);
+                    if ($returnVar !== 0) {
+                        throw new \Exception("Python script execution failed. Return code: $returnVar. Output: " . implode("\n", $output));
+                    }
 
-                        // Debugging: Log the OCR result
-                        Log::info('OCR Text: ' . $ocrText);
-                        Log::info('User Input GPA: ' . ($request->gwa ?? $request->genave));
+                    // Retrieve the paths to the preprocessed images (expected outputs)
+                    $baseName = pathinfo($fileName, PATHINFO_FILENAME);
+                    $ext = '.' . $file->getClientOriginalExtension();
+                    $leftImagePath = storage_path('app/public/uploads/grade_reports/' . $baseName . '_left_processed' . $ext);
+                    $rightImagePath = storage_path('app/public/uploads/grade_reports/' . $baseName . '_right_processed' . $ext);
 
-                        // Define patterns to extract GPA
-                        $patterns = [
-                            '/General Average[^0-9]*([\d.]+)/i',
-                            '/Average[^0-9]*([\d.]+)/i',
-                            '/GPA[^0-9]*([\d.]+)/i',
-                            '/GWA[^0-9]*([\d.]+)/i',
-                            '/Grade Point Average[^0-9]*([\d.]+)/i'
-                        ];
+                    // Perform OCR on both halves
+                    $ocrTextLeft = OCR::scan($leftImagePath);
+                    $ocrTextRight = OCR::scan($rightImagePath);
 
-                        $ocrGpa = null;
+                    // Combine OCR results
+                    $ocrText = $ocrTextLeft . "\n" . $ocrTextRight;
 
-                        // Try matching the patterns to extract GPA
-                        foreach ($patterns as $pattern) {
-                            if (preg_match($pattern, $ocrText, $matches)) {
-                                $ocrGpa = floatval($matches[1]);
-                                break;
-                            }
+                    // Debugging: Log the OCR results
+                    Log::info('OCR Text: ' . $ocrText);
+                    Log::info('User Input GPA: ' . ($request->gwa ?? $request->genave));
+
+                    // Define patterns to extract GPA
+                    $patterns = [
+                        '/General Average[^0-9]*([\d.]+)/i',
+                        '/Average[^0-9]*([\d.]+)/i',
+                        '/GPA[^0-9]*([\d.]+)/i',
+                        '/GWA[^0-9]*([\d.]+)/i',
+                        '/Grade Point Average[^0-9]*([\d.]+)/i'
+                    ];
+
+                    $ocrGpa = null;
+
+                    // Try matching the patterns to extract GPA
+                    foreach ($patterns as $pattern) {
+                        if (preg_match($pattern, $ocrText, $matches)) {
+                            $ocrGpa = floatval($matches[1]);
+                            break;
                         }
+                    }
 
-                        // Handle failure to find GPA
-                        if ($ocrGpa === null) {
-                            return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded image. Please ensure it is legible and try again.')->withInput();
-                        }
+                    // Handle failure to find GPA
+                    if ($ocrGpa === null) {
+                        return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded image. Please ensure it is legible and try again.')->withInput();
+                    }
 
-                        // Validate OCR GPA against user input
-                        $inputGpa = $request->gwa ?? $request->genave; // Adjust as per your input field names
-                        if (abs($ocrGpa - $inputGpa) > 0.01) { // Allow minor floating-point differences
-                            return redirect()->back()->with('failure', 'The GPA in the image (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . '). Please verify your entry.')->withInput();
-                        }
-                    } else {
-                        throw new \Exception("Error running OCR script. Status code: $statusCode.");
+                    // Validate OCR GPA against user input
+                    $inputGpa = $request->gwa ?? $request->genave; // Adjust as per your input field names
+                    if (abs($ocrGpa - $inputGpa) > 0.01) { // Allow minor floating-point differences
+                        return redirect()->back()->with('failure', 'The GPA in the image (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . '). Please verify your entry.')->withInput();
                     }
                 } catch (\Exception $e) {
+                    // Handle errors
                     return redirect()->back()->with('failure', 'An error occurred: ' . $e->getMessage())->withInput();
                 }
             } else {
