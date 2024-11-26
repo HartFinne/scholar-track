@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Scholar;
 
+use Alimranahmed\LaraOCR\Facades\OCR;
 use \Intervention\Image\ImageManager;
 use \Intervention\Image\Drivers\GD\Driver;
 use Intervention\Image\Laravel\Facades\Image;
