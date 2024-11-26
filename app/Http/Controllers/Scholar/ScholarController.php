@@ -353,62 +353,52 @@ class ScholarController extends Controller
             // Handle file upload
             if ($request->hasFile('gradeImage')) {
                 $file = $request->file('gradeImage');
-
-                // Create a custom file name
                 $fileName = $user->caseCode . '_' . $user->basicInfo->scLastname . '_' . time() . '.' . $file->getClientOriginalExtension();
-
-                // Store the file
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
                 $originalFilePath = storage_path('app/public/' . $filePath);
 
                 try {
-                    // Preprocess the image using Python script
-                    $pythonScriptPath = storage_path('app/python/ocr_script.py');
-                    $escapedFilePath = ($originalFilePath);
-                    $command = "/home/forge/venvs/scholartrack_env/bin/python3 $pythonScriptPath $escapedFilePath";
+                    $apiKey = 'K83084843288957';  // Replace with your actual API key
+                    $ocrSpaceUrl = 'https://api.ocr.space/parse/image';
 
-                    // Execute the command and capture output
-                    $output = [];
-                    $returnVar = 0;
-                    exec($command, $output, $returnVar);
+                    // Make API request to extract text from the image
+                    $response = Http::withHeaders([
+                        'apikey' => $apiKey,  // Send the API key in the header
+                    ])->attach(
+                        'file',
+                        file_get_contents($originalFilePath),
+                        basename($originalFilePath)
+                    )->post($ocrSpaceUrl, [
+                        'filetype' => 'jpg',  // Set the correct file type
+                        'OCREngine' => 2,
+                        'isTable' => 'true',   // Use the advanced OCR engine
+                        // Remove detectOrientation and isTable or set to false if not needed
+                    ]);
 
-                    if ($returnVar !== 0) {
-                        throw new \Exception("Python script execution failed. Return code: $returnVar. Output: " . implode("\n", $output));
+                    // Log the full OCR response for debugging
+                    Log::info('OCR API Response:', $response->json());
+
+                    // Check if the OCR API request was successful
+                    if (!$response->successful()) {
+                        // Log and throw an error if the API request fails
+                        Log::error('OCR API failed with response: ', $response->json());
+                        throw new \Exception('OCR API failed: ' . $response->json('ErrorMessage') ?? 'Unknown error');
                     }
 
-                    // Retrieve the paths to the preprocessed images (expected outputs)
-                    $baseName = pathinfo($fileName, PATHINFO_FILENAME);
-                    $ext = '.' . $file->getClientOriginalExtension();
+                    // Extract the OCR text from the response
+                    $ocrText = $response->json('ParsedResults')[0]['ParsedText'] ?? '';
 
-                    $partPaths = [
-                        'top_left' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_top_left_processed' . $ext),
-                        'top_right' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_top_right_processed' . $ext),
-                        'bottom_left' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_bottom_left_processed' . $ext),
-                        'bottom_right' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_bottom_right_processed' . $ext),
-                    ];
-
-                    // Perform OCR on all four parts
-                    $ocrText = '';
-                    foreach ($partPaths as $part => $path) {
-                        if (!file_exists($path)) {
-                            throw new \Exception("Processed file for $part does not exist: $path");
-                        }
-                        $ocrText .= OCR::scan($path) . "\n";
+                    if (empty($ocrText)) {
+                        throw new \Exception('OCR could not extract text from the image.');
                     }
 
-                    // Delete the four parts after OCR
-                    foreach ($partPaths as $path) {
-                        if (file_exists($path)) {
-                            unlink($path); // Delete the file
-                        }
-                    }
+                    // Save the OCR output to a .txt file for debugging purposes
+                    $txtFilePath = storage_path('app/public/uploads/grade_reports/' . $fileName . '_ocr_output.txt');
+                    file_put_contents($txtFilePath, $ocrText);
 
-                    // Debugging: Log the OCR results
-                    Log::info('OCR Text: ' . $ocrText);
-                    Log::info('User Input GPA: ' . ($request->gwa ?? $request->genave));
-
-                    // Define patterns to extract GPA
+                    // Extract GPA from the OCR text
                     $patterns = [
+                        '/General Average[^0-9]*([\d.]+)/i',
                         '/General Average[^0-9]*([\d.]+)/i',
                         '/Average[^0-9]*([\d.]+)/i',
                         '/GPA[^0-9]*([\d.]+)/i',
@@ -417,8 +407,6 @@ class ScholarController extends Controller
                     ];
 
                     $ocrGpa = null;
-
-                    // Try matching the patterns to extract GPA
                     foreach ($patterns as $pattern) {
                         if (preg_match($pattern, $ocrText, $matches)) {
                             $ocrGpa = floatval($matches[1]);
@@ -426,23 +414,24 @@ class ScholarController extends Controller
                         }
                     }
 
-                    // Handle failure to find GPA
                     if ($ocrGpa === null) {
-                        return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded image. Please ensure it is legible and try again.')->withInput();
+                        return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded document.')->withInput();
                     }
 
-                    // Validate OCR GPA against user input
-                    $inputGpa = $request->gwa ?? $request->genave; // Adjust as per your input field names
-                    if (abs($ocrGpa - $inputGpa) > 0.01) { // Allow minor floating-point differences
-                        return redirect()->back()->with('failure', 'The GPA in the image (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . '). Please verify your entry.')->withInput();
+                    // Compare the extracted GPA with the user input
+                    $inputGpa = $request->gwa ?? $request->genave;
+                    if (abs($ocrGpa - $inputGpa) > 0.01) {
+                        return redirect()->back()->with('failure', 'The GPA in the document (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . ').')->withInput();
                     }
+
+                    return redirect()->back()->with('success', 'OCR processed successfully. Results saved.')->withInput();
                 } catch (\Exception $e) {
-                    // Handle errors
                     return redirect()->back()->with('failure', 'An error occurred: ' . $e->getMessage())->withInput();
                 }
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
+
 
             $criteria = criteria::first();
             $requiredgwa = [
