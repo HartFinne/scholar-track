@@ -351,7 +351,7 @@ class ScholarController extends Controller
             }
 
             // Handle file upload
-             if ($request->hasFile('gradeImage')) {
+            if ($request->hasFile('gradeImage')) {
                 $file = $request->file('gradeImage');
 
                 // Create a custom file name
@@ -363,9 +363,9 @@ class ScholarController extends Controller
 
                 try {
                     // Preprocess the image using Python script
-                    $pythonScriptPath = (storage_path('app/python/ocr_script.py'));
-                    $escapedFilePath = ($originalFilePath);
-                    $command = "/home/forge/venvs/scholartrack_env/bin/python3 $pythonScriptPath $escapedFilePath";
+                    $pythonScriptPath = storage_path('app/python/ocr_script.py');
+                    $escapedFilePath = escapeshellarg($originalFilePath);
+                    $command = "python $pythonScriptPath $escapedFilePath";
 
                     // Execute the command and capture output
                     $output = [];
@@ -379,15 +379,29 @@ class ScholarController extends Controller
                     // Retrieve the paths to the preprocessed images (expected outputs)
                     $baseName = pathinfo($fileName, PATHINFO_FILENAME);
                     $ext = '.' . $file->getClientOriginalExtension();
-                    $leftImagePath = storage_path('app/public/uploads/grade_reports/' . $baseName . '_left_processed' . $ext);
-                    $rightImagePath = storage_path('app/public/uploads/grade_reports/' . $baseName . '_right_processed' . $ext);
 
-                    // Perform OCR on both halves
-                    $ocrTextLeft = OCR::scan($leftImagePath);
-                    $ocrTextRight = OCR::scan($rightImagePath);
+                    $partPaths = [
+                        'top_left' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_top_left_processed' . $ext),
+                        'top_right' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_top_right_processed' . $ext),
+                        'bottom_left' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_bottom_left_processed' . $ext),
+                        'bottom_right' => storage_path('app/public/uploads/grade_reports/' . $baseName . '_bottom_right_processed' . $ext),
+                    ];
 
-                    // Combine OCR results
-                    $ocrText = $ocrTextLeft . "\n" . $ocrTextRight;
+                    // Perform OCR on all four parts
+                    $ocrText = '';
+                    foreach ($partPaths as $part => $path) {
+                        if (!file_exists($path)) {
+                            throw new \Exception("Processed file for $part does not exist: $path");
+                        }
+                        $ocrText .= OCR::scan($path) . "\n";
+                    }
+
+                    // Delete the four parts after OCR
+                    foreach ($partPaths as $path) {
+                        if (file_exists($path)) {
+                            unlink($path); // Delete the file
+                        }
+                    }
 
                     // Debugging: Log the OCR results
                     Log::info('OCR Text: ' . $ocrText);
@@ -399,7 +413,7 @@ class ScholarController extends Controller
                         '/Average[^0-9]*([\d.]+)/i',
                         '/GPA[^0-9]*([\d.]+)/i',
                         '/GWA[^0-9]*([\d.]+)/i',
-                        '/Grade Point Average[^0-9]*([\d.]+)/i'
+                        '/Grade Point Average[^0-9]*([\d.]+)/i',
                     ];
 
                     $ocrGpa = null;
@@ -429,7 +443,6 @@ class ScholarController extends Controller
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
-
 
             $criteria = criteria::first();
             $requiredgwa = [
