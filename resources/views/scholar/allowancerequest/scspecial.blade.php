@@ -30,16 +30,6 @@
             @empty
                 <div class="row">No Forms Found.</div>
             @endforelse
-            {{-- @if ($scholar->education->scSchoolLevel == 'College')
-                <a href="{{ route('specialreqs', 'TRF') }}" class="btn-request">Transportation Reimbursement Request</a>
-                <a href="{{ route('specialreqs', 'BAR') }}" class="btn-request">Book Allowance Request</a>
-                <a href="{{ route('specialreqs', 'TAR') }}" class="btn-request">Thesis Allowance Request</a>
-                <a href="{{ route('specialreqs', 'PAR') }}" class="btn-request">Project Allowance Request</a>
-            @endif
-            <a href="{{ route('specialreqs', 'UAR') }}" class="btn-request">Uniform Allowance Request</a>
-            <a href="{{ route('specialreqs', 'GAR') }}" class="btn-request">Graduation Allowance Request</a>
-            <a href="{{ route('specialreqs', 'FTTSAR') }}" class="btn-request">Field Trip, Training, Seminar Allowance
-                Request</a> --}}
         </div>
         <!-- REQUESTS -->
         <div class="status">
@@ -72,56 +62,32 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($requests as $index => $request)
+                    @forelse ($forms as $form)
+                        @foreach ($data[$form->formname] as $row)
+                            <tr>
+                                <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                <td class="text-center align-middle">{{ $row['requestType'] }}</td>
+                                <td class="text-center align-middle">
+                                    {{ \Carbon\Carbon::parse($row['requestDate'])->format('F j, Y') }}
+                                </td>
+                                <td class="text-center align-middle">{{ $row['requestStatus'] }}</td>
+                                <td class="text-center align-middle">
+                                    {{ $row['releaseDate'] ? \Carbon\Carbon::parse($row['releaseDate'])->format('F j, Y') : 'Not Set Yet' }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('specialRequestInfo', ['type' => $form->formname, 'id' => $row['id']]) }}"
+                                        class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                    {{-- <a href="{{ url('your-action-url') }}" class="btn btn-primary">Action</a> --}}
+                                </td>
+                            </tr>
+                        @endforeach
+                    @empty
                         <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>
-                                @if ($request instanceof App\Models\allowancebook)
-                                    Book Allowance Request
-                                @elseif ($request instanceof App\Models\allowanceevent)
-                                    Event Allowance Request
-                                @elseif ($request instanceof App\Models\allowancegraduation)
-                                    Graduation Allowance Request
-                                @elseif ($request instanceof App\Models\allowanceproject)
-                                    Project Allowance Request
-                                @elseif ($request instanceof App\Models\allowancethesis)
-                                    Thesis Allowance Request
-                                @elseif ($request instanceof App\Models\allowancetranspo)
-                                    Transportation Reimbursement Request
-                                @elseif ($request instanceof App\Models\allowanceuniform)
-                                    Uniform Allowance Request
-                                @endif
-                            </td>
-                            <td>{{ $request->created_at->format('F d, Y') }}</td>
-                            <td>{{ $request->status }}</td>
-                            <td>{{ $request->releasedate ? \Carbon\Carbon::parse($request->releasedate)->format('F d, Y') : '--' }}
-                            </td>
-                            <td>
-                                @if ($request instanceof App\Models\allowancebook)
-                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'BAR', 'id' => $request->id]) }}"
-                                        class="btn btn-success">View</a>
-                                @elseif ($request instanceof App\Models\allowanceevent)
-                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'FTTSAR', 'id' => $request->id]) }}"
-                                        class="btn btn-success">View</a>
-                                @elseif ($request instanceof App\Models\allowancegraduation)
-                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'GAR', 'id' => $request->id]) }}"
-                                        class="btn btn-success">View</a>
-                                @elseif ($request instanceof App\Models\allowanceproject)
-                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'PAR', 'id' => $request->id]) }}"
-                                        class="btn btn-success">View</a>
-                                @elseif ($request instanceof App\Models\allowancethesis)
-                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'TAR', 'id' => $request->id]) }}"
-                                        class="btn btn-success">View</a>
-                                @elseif ($request instanceof App\Models\allowancetranspo)
-                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'TRF', 'id' => $request->id]) }}"
-                                        class="btn btn-success">View</a>
-                                @elseif ($request instanceof App\Models\allowanceuniform)
-                                    <a href="{{ route('showrequestinfo', ['requesttype' => 'UAR', 'id' => $request->id]) }}"
-                                        class="btn btn-success">View</a>
-                                @endif
-                            </td>
+                            <td colspan="6" class="text-center">No data available.</td>
                         </tr>
-                    @endforeach
+                    @endforelse
+                </tbody>
+                <tbody>
                 </tbody>
             </table>
         </div>

@@ -51,7 +51,6 @@
         </div>
         <div class="divider"></div>
         <div class="groupB">
-            <div class="divider"></div>
             <span class="text-success fw-bold h2">List of Requests</span>
             <div class="groupB1" id="ctnfiltertable active" style="display: flex;">
                 <div class="ctnfilter" id="ctnfilter">

@@ -20,28 +20,13 @@ class SpecialAllowanceFormExport implements FromArray, WithHeadings
     public function headings(): array
     {
         // The first column is 'id', then 'caseCode', followed by the fieldnames
-        return array_merge(['id', 'caseCode'], $this->fieldnames);
+        return array_merge(['id', 'caseCode', 'requestType', 'requestDate', 'releaseDate', 'requestStatus'], $this->fieldnames);
     }
 
-    // Populate the Excel file with data (initially just with IDs and caseCodes)
+    // Return an empty array as we only want the headers
     public function array(): array
     {
-        // Generate sample data; just incrementing IDs and adding placeholder caseCodes
-        $rows = [];
-        for ($i = 1; $i <= 100; $i++) { // You can set the number of rows as needed
-            // Empty values for fields
-            $row = array_fill(0, count($this->fieldnames), '');
-
-            // Add the auto-incrementing 'id' to the beginning
-            array_unshift($row, $i);
-
-            // Add a placeholder 'caseCode' after the 'id'
-            array_splice($row, 1, 0, 'CaseCode_' . $i); // Insert 'caseCode' at position 1 (after 'id')
-
-            // Add the row to the results
-            $rows[] = $row;
-        }
-
-        return $rows;
+        // No data rows, only headers should be shown
+        return [];
     }
 }

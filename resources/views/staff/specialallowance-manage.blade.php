@@ -296,7 +296,7 @@
                                                     @endforelse
                                                 </div>
                                             </div>
-                                            <div class="row mb-3">
+                                            {{-- <div class="row mb-3">
                                                 <div
                                                     class="col-12 d-flex justify-content-between align-items-center mb-3">
                                                     <label for="newform" class="fw-bold">Update the form</label>
@@ -305,13 +305,13 @@
                                                 </div>
                                                 <div class="row">
                                                     <input type="number" name="newfieldcount" id="newfieldcount"
-                                                        min="1" hidden>
+                                                        min="1" class="form-control" readonly>
                                                 </div>
                                                 <div class="col-12">
-                                                    <div id="newformFields">
+                                                    <div id="updateFields">
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-light"
                                                     data-bs-dismiss="modal">Cancel</button>
@@ -325,219 +325,135 @@
                         </div>
 
                         {{-- Form Builder for Update Modal --}}
-                        <script>
+                        {{-- <script>
                             let updateFieldCount = 0;
+                            let fields = @json($fields); // Pre-existing fields from the server
 
-                            let fields = @json($fields);
-                            console.log(fields);
-                            // Now you can use the 'fields' array in JavaScript
+                            // Add pre-existing fields to the form
                             fields.forEach(field => {
                                 addExistingFields(field.fieldname, field.fieldtype);
                             });
 
-                            function addExistingFields($fieldname, $fieldtype) {
+                            // Function to add existing fields to the form
+                            function addExistingFields(fieldname, fieldtype) {
                                 updateFieldCount++;
+                                createFieldRow(fieldname, fieldtype, true);
+                            }
 
-                                // Create a new row for the field (div.container for the row layout)
-                                let newFieldRow = document.createElement('div');
-                                newFieldRow.classList.add('row', 'mb-3', 'align-items-center');
-                                newFieldRow.classList.add('form-field');
+                            // Function to add a new field to the form
+                            function addFieldToUpdateForm() {
+                                updateFieldCount++;
+                                createFieldRow('', '', false);
+                            }
+
+                            // Function to create a field row
+                            function createFieldRow(fieldname = '', fieldtype = '', isExisting = false) {
+                                // Create a new row for the field
+                                let fieldRow = document.createElement('div');
+                                fieldRow.classList.add('row', 'mb-3', 'align-items-center');
+                                fieldRow.classList.add('form-field');
 
                                 // Create the column for the field name input
-                                let fieldNameLblDiv = document.createElement('div');
-                                fieldNameLblDiv.classList.add('col-md-2');
-
-                                let fieldNameInpDiv = document.createElement('div');
-                                fieldNameInpDiv.classList.add('col-md-3');
+                                let updatefieldNameLblDiv = document.createElement('div');
+                                updatefieldNameLblDiv.classList.add('col-md-2');
+                                let updatefieldNameInpDiv = document.createElement('div');
+                                updatefieldNameInpDiv.classList.add('col-md-3');
 
                                 // Add a label for the field name
                                 let nameLabel = document.createElement('label');
-                                nameLabel.setAttribute('for', 'newfieldName' + updateFieldCount);
                                 nameLabel.classList.add('fw-bold');
                                 nameLabel.innerText = 'Field Name ';
+                                updatefieldNameLblDiv.appendChild(nameLabel);
 
-                                let nameInput = document.createElement('input');
-                                nameInput.type = 'text';
-                                nameInput.id = 'newfieldName' + updateFieldCount;
-                                nameInput.name = 'newfieldName' + updateFieldCount;
-                                nameInput.classList.add('form-control');
-                                nameInput.maxLength = 255;
-                                nameInput.placeholder = 'Enter field name';
-                                nameInput.value = $fieldname;
-                                nameInput.required = true;
-
-                                fieldNameLblDiv.appendChild(nameLabel);
-                                fieldNameInpDiv.appendChild(nameInput);
+                                // Field name input
+                                let updateNameInput = document.createElement('input');
+                                updateNameInput.type = 'text';
+                                updateNameInput.classList.add('form-control');
+                                updateNameInput.maxLength = 255;
+                                updateNameInput.placeholder = 'Enter field name';
+                                updateNameInput.required = true;
+                                updateNameInput.name = 'newfieldName[]'; // Make it an array
+                                updateNameInput.value = isExisting ? fieldname : ''; // Set value if it's an existing field
+                                updatefieldNameInpDiv.appendChild(updateNameInput);
 
                                 // Create the column for the field type dropdown
-                                let fieldTypeLblDiv = document.createElement('div');
-                                fieldTypeLblDiv.classList.add('col-md-2');
-
-                                let fieldTypeInpDiv = document.createElement('div');
-                                fieldTypeInpDiv.classList.add('col-md-3');
+                                let updatefieldTypeLblDiv = document.createElement('div');
+                                updatefieldTypeLblDiv.classList.add('col-md-2');
+                                let updatefieldTypeInpDiv = document.createElement('div');
+                                updatefieldTypeInpDiv.classList.add('col-md-3');
 
                                 // Add a label for the field type
-                                let typeLabel = document.createElement('label');
-                                typeLabel.setAttribute('for', 'newfieldType' + updateFieldCount);
-                                typeLabel.classList.add('fw-bold');
-                                typeLabel.innerText = 'Field Type ';
+                                let updateTypeLabel = document.createElement('label');
+                                updateTypeLabel.classList.add('fw-bold');
+                                updateTypeLabel.innerText = 'Field Type ';
+                                updatefieldTypeLblDiv.appendChild(updateTypeLabel);
 
-                                // Add a dropdown for selecting field type
-                                let typeSelect = document.createElement('select');
-                                typeSelect.id = 'newfieldType' + updateFieldCount;
-                                typeSelect.name = 'newfieldType' + updateFieldCount;
-                                typeSelect.classList.add('form-select');
-                                typeSelect.required = true;
+                                // Field type dropdown
+                                let updateTypeSelect = document.createElement('select');
+                                updateTypeSelect.classList.add('form-select');
+                                updateTypeSelect.required = true;
+                                updateTypeSelect.name = 'newfieldType[]'; // Make it an array
 
-                                // Add options for field types (all possible <input> types)
-                                const inputTypes = [
+                                const newinputTypes = [
                                     'text', 'number', 'email', 'url', 'tel', 'date', 'time', 'week',
                                     'month', 'checkbox', 'radio', 'file',
                                 ];
 
-                                inputTypes.forEach(type => {
-                                    let option = document.createElement('option');
-                                    if (type == $fieldtype) {
-                                        option.selected = true;
+                                newinputTypes.forEach(type => {
+                                    let newoption = document.createElement('option');
+                                    newoption.value = type;
+                                    newoption.innerText = type.charAt(0).toUpperCase() + type.slice(1);
+                                    if (type === fieldtype) {
+                                        newoption.selected = true;
                                     }
-                                    option.value = type;
-                                    option.innerText = type.charAt(0).toUpperCase() + type.slice(1);
-                                    typeSelect.appendChild(option);
+                                    updateTypeSelect.appendChild(newoption);
                                 });
 
-                                fieldTypeLblDiv.appendChild(typeLabel);
-                                fieldTypeInpDiv.appendChild(typeSelect);
+                                updatefieldTypeInpDiv.appendChild(updateTypeSelect);
 
                                 // Create the column for the remove button
-                                let removeButtonCol = document.createElement('div');
-                                removeButtonCol.classList.add('col-md-2');
+                                let updateRemoveButtonCol = document.createElement('div');
+                                updateRemoveButtonCol.classList.add('col-md-2');
 
-                                let removeButton = document.createElement('button');
-                                removeButton.type = 'button';
-                                removeButton.classList.add('btn', 'btn-danger', 'btn-sm');
-                                removeButton.innerText = 'Remove';
-                                removeButton.onclick = function() {
-                                    removeField(newFieldRow);
+                                // Remove button
+                                let updateRemoveButton = document.createElement('button');
+                                updateRemoveButton.type = 'button';
+                                updateRemoveButton.classList.add('btn', 'btn-danger', 'btn-sm');
+                                updateRemoveButton.innerText = 'Remove';
+                                updateRemoveButton.onclick = function() {
+                                    updateRemoveField(fieldRow);
                                 };
-
-                                removeButtonCol.appendChild(removeButton);
+                                updateRemoveButtonCol.appendChild(updateRemoveButton);
 
                                 // Append columns to the row
-                                newFieldRow.appendChild(fieldNameLblDiv);
-                                newFieldRow.appendChild(fieldNameInpDiv);
-                                newFieldRow.appendChild(fieldTypeLblDiv);
-                                newFieldRow.appendChild(fieldTypeInpDiv);
-                                newFieldRow.appendChild(removeButtonCol);
+                                fieldRow.appendChild(updatefieldNameLblDiv);
+                                fieldRow.appendChild(updatefieldNameInpDiv);
+                                fieldRow.appendChild(updatefieldTypeLblDiv);
+                                fieldRow.appendChild(updatefieldTypeInpDiv);
+                                fieldRow.appendChild(updateRemoveButtonCol);
 
                                 // Append the new row to the form
-                                document.getElementById('newformFields').appendChild(newFieldRow);
+                                document.getElementById('updateFields').appendChild(fieldRow);
                                 document.getElementById('newfieldcount').value = updateFieldCount;
                             }
 
-                            function addFieldToUpdateForm() {
-                                updateFieldCount++;
-
-                                // Create a new row for the field (div.container for the row layout)
-                                let newFieldRow = document.createElement('div');
-                                newFieldRow.classList.add('row', 'mb-3', 'align-items-center');
-                                newFieldRow.classList.add('form-field');
-
-                                // Create the column for the field name input
-                                let fieldNameLblDiv = document.createElement('div');
-                                fieldNameLblDiv.classList.add('col-md-2');
-
-                                let fieldNameInpDiv = document.createElement('div');
-                                fieldNameInpDiv.classList.add('col-md-3');
-
-                                // Add a label for the field name
-                                let nameLabel = document.createElement('label');
-                                nameLabel.setAttribute('for', 'newfieldName' + updateFieldCount);
-                                nameLabel.classList.add('fw-bold');
-                                nameLabel.innerText = 'Field Name ';
-
-                                let nameInput = document.createElement('input');
-                                nameInput.type = 'text';
-                                nameInput.id = 'newfieldName' + updateFieldCount;
-                                nameInput.name = 'newfieldName' + updateFieldCount;
-                                nameInput.classList.add('form-control');
-                                nameInput.maxLength = 255;
-                                nameInput.placeholder = 'Enter field name';
-                                nameInput.required = true;
-
-                                fieldNameLblDiv.appendChild(nameLabel);
-                                fieldNameInpDiv.appendChild(nameInput);
-
-                                // Create the column for the field type dropdown
-                                let fieldTypeLblDiv = document.createElement('div');
-                                fieldTypeLblDiv.classList.add('col-md-2');
-
-                                let fieldTypeInpDiv = document.createElement('div');
-                                fieldTypeInpDiv.classList.add('col-md-3');
-
-                                // Add a label for the field type
-                                let typeLabel = document.createElement('label');
-                                typeLabel.setAttribute('for', 'newfieldType' + updateFieldCount);
-                                typeLabel.classList.add('fw-bold');
-                                typeLabel.innerText = 'Field Type ';
-
-                                // Add a dropdown for selecting field type
-                                let typeSelect = document.createElement('select');
-                                typeSelect.id = 'newfieldType' + updateFieldCount;
-                                typeSelect.name = 'newfieldType' + updateFieldCount;
-                                typeSelect.classList.add('form-select');
-                                typeSelect.required = true;
-
-                                // Add options for field types (all possible <input> types)
-                                const inputTypes = [
-                                    'Select type', 'text', 'number', 'email', 'url', 'tel', 'date', 'time', 'week',
-                                    'month', 'checkbox', 'radio', 'file',
-                                ];
-
-                                inputTypes.forEach(type => {
-                                    let option = document.createElement('option');
-                                    if (type == 'Select type') {
-                                        option.value = '';
-                                    } else {
-                                        option.value = type;
-                                    }
-                                    option.innerText = type.charAt(0).toUpperCase() + type.slice(1); // Capitalize first letter
-                                    typeSelect.appendChild(option);
-                                });
-
-                                fieldTypeLblDiv.appendChild(typeLabel);
-                                fieldTypeInpDiv.appendChild(typeSelect);
-
-                                // Create the column for the remove button
-                                let removeButtonCol = document.createElement('div');
-                                removeButtonCol.classList.add('col-md-2'); // Adjust to 4 columns for the remove button
-
-                                let removeButton = document.createElement('button');
-                                removeButton.type = 'button';
-                                removeButton.classList.add('btn', 'btn-danger', 'btn-sm');
-                                removeButton.innerText = 'Remove';
-                                removeButton.onclick = function() {
-                                    removeField(newFieldRow);
-                                };
-
-                                removeButtonCol.appendChild(removeButton);
-
-                                // Append columns to the row
-                                newFieldRow.appendChild(fieldNameLblDiv);
-                                newFieldRow.appendChild(fieldNameInpDiv);
-                                newFieldRow.appendChild(fieldTypeLblDiv);
-                                newFieldRow.appendChild(fieldTypeInpDiv);
-                                newFieldRow.appendChild(removeButtonCol);
-
-                                // Append the new row to the form
-                                document.getElementById('newformFields').appendChild(newFieldRow);
-                                document.getElementById('newfieldcount').value = updateFieldCount;
-                            }
-
-                            function removeField(fieldRow) {
+                            // Function to remove a field row
+                            function updateRemoveField(fieldRow) {
                                 fieldRow.remove();
-                                document.getElementById('newfieldcount').value = updateFieldCount;
                             }
-                        </script>
+
+                            // Debug the form submission
+                            document.getElementById('updateForm').addEventListener('submit', function(e) {
+                                let fieldCount = document.querySelectorAll('input[name="newfieldName[]"]').length;
+                                console.log('Field count:', fieldCount); // Debugging field count
+
+                                document.querySelectorAll('input[name="newfieldName[]"]').forEach((fieldName, index) => {
+                                    let fieldType = document.querySelectorAll('select[name="newfieldType[]"]')[index];
+                                    console.log('Field Name:', fieldName.value); // Check values here
+                                    console.log('Field Type:', fieldType.value); // Check values here
+                                });
+                            });
+                        </script> --}}
 
                         <!-- Confirm Delete Modal -->
                         <div class="modal fade" id="deleteForm-{{ $form->csafid }}" tabindex="-1"
@@ -892,7 +808,6 @@
             plugins: [
                 'link', // Enables the hyperlink plugin
                 'lists', // Enables list functionality
-                'textcolor', // Enables font color (optional, in case needed for additional customization)
             ],
         });
         tinymce.init({
@@ -903,7 +818,6 @@
             plugins: [
                 'link', // Enables the hyperlink plugin
                 'lists', // Enables list functionality
-                'textcolor', // Enables font color (optional, in case needed for additional customization)
             ],
         });
     </script>
@@ -1032,11 +946,18 @@
             // Collect all input data
             Array.from(form.elements).forEach(element => {
                 if (element.name) {
+                    // Skip checkbox inputs
                     if (element.type === 'checkbox') {
-                        if (!formData[element.name]) formData[element.name] = [];
-                        if (element.checked) formData[element.name].push(element.value);
+                        // Handle checkbox array inputs like requestor[]
+                        if (!formData[element.name]) {
+                            formData[element.name] = [];
+                        }
+                        if (element.checked) {
+                            formData[element.name].push(element.value);
+                        }
                     } else if (element.type === 'textarea' || element.type === 'text' || element.type ===
                         'number') {
+                        // Handle other input types (textarea, text, number)
                         formData[element.name] = element.value;
                     }
                 }
@@ -1057,16 +978,21 @@
         function populateForm(savedData) {
             const form = document.getElementById('createForm');
 
-            // Populate text, number, and textarea fields
+            // Loop through saved data and populate form
             for (const name in savedData) {
-                const element = form.querySelector(`[name=${name}]`);
+                const element = form.elements[name];
+
                 if (element) {
                     if (element.type === 'checkbox') {
+                        // Handle checkbox inputs (array) like requestor[]
                         savedData[name].forEach(value => {
-                            const checkbox = form.querySelector(`[name=${name}][value=${value}]`);
-                            if (checkbox) checkbox.checked = true;
+                            const checkbox = form.querySelector(`#${name}-${value}`); // Use ID to select checkboxes
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
                         });
                     } else {
+                        // Populate text, textarea, and number fields
                         element.value = savedData[name];
                     }
                 }
@@ -1081,18 +1007,21 @@
     {{-- VALIDATE REQUESTOR, DL FILES, AND FORM STRUCTURE --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('createForm');
+            const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+            const validationErrorsModalList = document.getElementById('validationErrorsModal');
             const submitBtn = document.getElementById('submitBtn');
+            const createForm = document.getElementById('createForm');
             const requestorCheckboxes = document.querySelectorAll('input[name="requestor[]"]');
             const downloadableFilesCheckboxes = document.querySelectorAll('input[name="downloadablefiles[]"]');
             const fieldCountInput = document.getElementById('fieldcount');
             const formFieldsContainer = document.getElementById('formFields');
-            const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
-            const validationErrorsModalList = document.getElementById('validationErrorsModal');
-
+            const updateBtn = document.getElementById('updateBtn');
+            const updateForm = document.getElementById('updateForm');
+            const updateRequestorCheckboxes = document.querySelectorAll('input[name="newrequestor[]"]');
+            const updatedownloadableFilesCheckboxes = document.querySelectorAll(
+                'input[name="newdownloadablefiles[]"]');
             // Validation function
-            function validateForm(event) {
-                // Prevent form submission by default
+            function validateCreateForm(event) {
                 event.preventDefault();
 
                 let errorMessages = []; // Initialize error messages array
@@ -1133,11 +1062,52 @@
                 }
 
                 // If all validations pass, submit the form
-                form.submit();
+                createForm.submit();
+            }
+
+            function validateUpdateForm(event) {
+                event.preventDefault();
+
+                let errorMessages = [];
+
+                // Check if at least one Requestor is selected
+                const isRequestorChecked = Array.from(updateRequestorCheckboxes).some(checkbox => checkbox.checked);
+                if (!isRequestorChecked) {
+                    errorMessages.push('Please select at least one Requestor.');
+                }
+
+                // Check if at least one Downloadable File is selected
+                const isUpdateDownloadableFilesChecked = Array.from(updatedownloadableFilesCheckboxes).some(
+                    checkbox => checkbox
+                    .checked);
+                if (!isUpdateDownloadableFilesChecked) {
+                    errorMessages.push('Please select at least one Downloadable File.');
+                }
+
+                // If there are error messages, display them in the Bootstrap modal
+                if (errorMessages.length > 0) {
+                    // Clear previous errors
+                    validationErrorsModalList.innerHTML = '';
+
+                    // Append new error messages to the list
+                    errorMessages.forEach(function(message) {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = message;
+                        validationErrorsModalList.appendChild(listItem);
+                    });
+
+                    // Show the modal
+                    validationModal.show();
+                    return false;
+                }
+
+                // If all validations pass, submit the form
+                updateForm.submit();
             }
 
             // Add event listener to the submit button
-            submitBtn.addEventListener('click', validateForm);
+            submitBtn.addEventListener('click', validateCreateForm);
+            updateBtn.addEventListener('click', validateUpdateForm);
         });
     </script>
 

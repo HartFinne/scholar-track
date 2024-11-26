@@ -106,8 +106,8 @@ Route::prefix('scholar/allowancerequest')->middleware('scholar')->group(function
     // Allowance Requests : Special
     Route::get('/special', [ScholarController::class, 'showspecialallowance'])->name('scspecial');
     Route::get('/special/form/{requesttype}', [ScholarController::class, 'showrequestinstruction'])->name('specialreqs');
-    Route::post('/reqspecallowance/{requesttype}/{casecode}', [ScholarController::class, 'requestSpecialAllowance'])->name('requestSpecialAllowance');
-    Route::get('/special/{requesttype}-details/{id}', [ScholarController::class, 'showrequestinfo'])->name('showrequestinfo');
+    Route::post('/request-special-allowance/{requesttype}', [ScholarController::class, 'requestSpecialAllowance'])->name('requestSpecialAllowance');
+    Route::get('/special/details/{type}/{id}', [ScholarController::class, 'specialRequestInfo'])->name('specialRequestInfo');
 });
 
 Route::view('chartjs', 'chartjs');
@@ -247,11 +247,4 @@ Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->g
 Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->group(function () {
     Route::get('/evaluate-scholars', 'evaluatescholars')->name('evaluatescholars');
     Route::get('/scholars-evaluation', 'showevalresults')->name('showevalresults');
-});
-
-
-
-Route::controller(ImageController::class)->group(function () {
-    Route::get('/image', 'fileUpload');
-    Route::post('image', 'storeImage')->name("image.store");
 });

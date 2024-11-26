@@ -8,24 +8,24 @@
     font-family: 'Poppins', Arial;
 }
 
-.ctn-main{
+.ctn-main {
     width: 90%;
     margin: auto;
 }
 
-.ctn-main .goback{
+.ctn-main .goback {
     text-decoration: none;
     color: #1a5319;
     font-size: 15px;
 }
 
-.ctn-main .title{
+.ctn-main .title {
     font-family: 'League Spartan', sans-serif;
     font-weight: bold;
     margin: 25px 0;
 }
 
-.sallowance{
+.sallowance {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -33,7 +33,7 @@
     align-items: center;
 }
 
-.btn-request{
+.btn-request {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,14 +50,14 @@
     color: #fff;
     cursor: pointer;
     text-decoration: none;
-    transition:0.3s ease;
+    transition: 0.3s ease;
 }
 
 .btn-request:hover {
     background-color: #56a72e;
 }
 
-.status{
+.status {
     margin-top: 30px;
     display: flex;
     gap: 20px;
@@ -80,28 +80,29 @@
     color: #fff;
 }
 
-.table{
+.table {
     font-size: 15px;
     margin-bottom: 50px;
 }
 
-.table-title{
+.table-title {
     font-weight: bold;
     font-size: large;
     padding: 0;
 }
 
-.table-bordered th, .table-bordered td {
+.table-bordered th,
+.table-bordered td {
     text-align: center;
     vertical-align: middle;
 }
 
-.table-bordered th{
+.table-bordered th {
     background-color: #1a5319;
     color: #fff;
 }
 
-.btn-view{
+.btn-view {
     text-decoration: none;
     padding: 5px 15px;
     background-color: #56a72e;
@@ -110,17 +111,17 @@
     transition: 0.3s ease;
 }
 
-.btn-view:hover{
+.btn-view:hover {
     background-color: #1a5319;
 }
 
-.request-view{
+.request-view {
     width: 80%;
     margin: auto;
     border: 1px solid #fff;
 }
 
-.request-stat{
+.request-stat {
     background-color: #ffde59;
     font-weight: bold;
     padding: 10px;
@@ -131,7 +132,7 @@
     margin: 0 30px;
 }
 
-.request-info{
+.request-info {
     border: 1px solid #8eb79c;
     background-color: #eaebea;
     border-radius: 10px;
@@ -139,84 +140,91 @@
     padding: 20px;
 }
 
-.request-info h5{
-    background-color: #1a5319;
-    color: #d6efd8;
-    font-weight: bold;
-    padding: 8px;
-}
-
-.request-info .info{
+.request-info .info {
     display: grid;
     grid-template-columns: 300px 1fr;
-    gap: 10px; 
-    align-items: center; 
+    gap: 10px;
+    align-items: center;
     padding: 10px;
     font-size: 15px;
 }
 
-.label {
-    text-align: left; 
+.header {
+    background-color: #1a5319;
+    color: #d6efd8;
+}
+
+.label,
+.data {
+    font-weight: bold;
+    font-size: 17px;
     margin-bottom: 5px;
 }
 
-.request-info span{
+.data,
+.subheader {
+    color: #1a5319;
+}
+
+.request-info span {
     color: #1e5430;
     font-weight: bold;
     margin-left: 20px;
 }
 
 @media only screen and (max-width: 768px) {
-    .ctn-main{
+    .ctn-main {
         width: 90%;
     }
-    .status{
+
+    .status {
         gap: 0;
     }
+
     .filter-btn {
         font-size: 12px;
         padding: 2px 8px;
     }
-    .table{
+
+    .table {
         font-size: 14px;
     }
-    .btn-request{
+
+    .btn-request {
         padding: 5px 10px;
         height: auto;
         width: 100%;
         font-size: 15px;
     }
-    .request-stat{
+
+    .request-stat {
         padding: 10px;
         width: 100px;
         margin: 0;
     }
-    .request-info{
+
+    .request-info {
         padding: 10px;
         margin: 50px 0;
     }
-    .request-info h5{
+
+    .request-info h5 {
         font-size: 17px;
         padding: 8px;
     }
-    .request-info .info{
+
+    .request-info .info {
         display: block;
         font-size: 14px;
     }
-    .request-info span{
+
+    .request-info span {
         margin-left: 0;
     }
-    .label {
-        margin-bottom: 0;
-    }
-    .value{
-        margin-bottom: 10px;
-    }
 }
+
 @media only screen and (max-width: 1024px) {
-    .request-view{
+    .request-view {
         width: 100%;
     }
 }
-
-

@@ -56,6 +56,8 @@ use App\Notifications\SpecialAllowancesNotification;
 use Illuminate\Console\Application;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Exports\SpecialAllowanceFormExport;
 use Illuminate\Support\Facades\Storage;
 
@@ -1292,9 +1294,22 @@ class StaffController extends Controller
 
             DB::beginTransaction();
 
-            $excelPath = $this->createExcelFile($request->formcode, $request->only(array_map(function ($i) {
+            $requiredFiles = specialallowanceforms::whereIn('id', $request->downloadablefiles)->get();
+
+            // Get the filenames from the $requiredFiles collection
+            $fieldNames = $requiredFiles->pluck('filename')->toArray(); // This will give you an array of filenames
+
+            // Get the field names from the request
+            $fieldNamesFromRequest = $request->only(array_map(function ($i) {
                 return 'fieldName' . $i;
-            }, range(1, $request->fieldcount))));
+            }, range(1, $request->fieldcount)));
+
+            // Merge the filenames from the database with the field names from the request
+            $fieldNames = array_merge($fieldNamesFromRequest, $fieldNames);
+
+            // Create the Excel file
+            $excelPath = $this->createExcelFile($request->formcode, $fieldNames, range(1, $request->fieldcount));
+
 
             // Save form data to 'create_special_allowance_forms' table
             $createForm = CreateSpecialAllowanceForm::create([
@@ -1319,6 +1334,8 @@ class StaffController extends Controller
                         'fieldname' => $fieldName,
                         'fieldtype' => $fieldType,
                     ]);
+                } else {
+                    continue;
                 }
             }
 
@@ -1337,6 +1354,7 @@ class StaffController extends Controller
     public function updateSpecialAllowanceForm($id, Request $request)
     {
         try {
+            // dd($request->all());
             // Validate the incoming request
             $request->validate(
                 [
@@ -1345,7 +1363,8 @@ class StaffController extends Controller
                     'newrequestor' => ['required', 'array', 'min:1'],
                     'newinstruction' => ['required', 'string'],
                     'newdownloadablefiles' => ['required', 'array', 'min:1'],
-                    'newfieldcount' => ['required', 'integer', 'min:1'],
+                    // 'newfieldName' => ['required', 'array', 'min:1'],
+                    // 'newfieldType' => ['required', 'array', 'min:1'],
                 ],
                 [
                     'newformname.required' => 'The form name is required.',
@@ -1357,32 +1376,35 @@ class StaffController extends Controller
                     'newinstruction.required' => 'The instruction field is required.',
                     'newdownloadablefiles.required' => 'At least one downloadable file must be selected.',
                     'newdownloadablefiles.min' => 'At least one downloadable file must be selected.',
-                    'newfieldcount.required' => 'You must add at least one field.',
-                    'newfieldcount.min' => 'You must add at least one field.',
+                    // 'newfieldName.required' => 'You must add at least one field.',
+                    // 'newfieldType.required' => 'Field type is required for each field.',
                 ]
             );
 
             DB::beginTransaction();
 
+            // Fetch the existing form using the provided ID
             $form = CreateSpecialAllowanceForm::where('csafid', $id)->first();
 
-            $filePath = $form->database;
-            $newDirectory = 'uploads/allowance_forms/special/database/old';
-
-            $fileName = basename($filePath);
-
-            $newPath = $newDirectory . '/' . $fileName;
-
-            // dd($filePath);
-
-            if (Storage::exists($filePath)) {
-                Storage::move($filePath, $newPath);
+            if (!$form) {
+                throw new \Exception('Form not found.');
             }
 
-            $excelPath = $this->createExcelFile($request->newformcode, $request->only(array_map(function ($i) {
-                return 'newfieldName' . $i;
-            }, range(1, $request->newfieldcount))));
+            $requiredFiles = specialallowanceforms::whereIn('id', $request->newdownloadablefiles)->get();
 
+            // Get the filenames from the $requiredFiles collection
+            $fieldNames = $requiredFiles->pluck('filename')->toArray(); // This will give you an array of filenames
+
+            // Get the field names from the request
+            $existingFieldNames = SpecialAllowanceFormStructure::where('csafid', $id)->pluck('fieldname')->toArray();
+
+            // Merge the filenames
+            $fieldNames = array_merge(['id', 'caseCode'], $existingFieldNames, $fieldNames);
+
+            // Update the Excel file for the form
+            $excelPath = $this->updateExcelFile($form->formcode, $request->newformcode, $fieldNames);
+
+            // Update form details
             $form->formname = $request->newformname;
             $form->formcode = $request->newformcode;
             $form->requestor = json_encode($request->newrequestor);
@@ -1391,30 +1413,47 @@ class StaffController extends Controller
             $form->database = $excelPath;
             $form->save();
 
-            for ($i = 1; $i <= $request->newfieldcount; $i++) {
-                $fieldName = $request->newfieldName . $i;
-                $fieldType = $request->newfieldType . $i;
+            // // Track the fields sent in the request
+            // $existingFieldsInRequest = [];
 
-                // dd($fieldType);
+            // // Get the dynamic fields from the form request
+            // $fieldNames = $request->input('newfieldName', []);
+            // $fieldTypes = $request->input('newfieldType', []);
 
-                // Only save if field name and type are provided
-                if ($fieldName && $fieldType) {
-                    $fieldRecord = SpecialAllowanceFormStructure::where('fieldname', $fieldName)
-                        ->where('fieldtype', $fieldType)->first();
+            // // Loop through the fields and update or create them
+            // foreach ($fieldNames as $index => $fieldName) {
+            //     $fieldType = $fieldTypes[$index] ?? null;
 
-                    if ($fieldRecord) {
-                        $fieldRecord->fieldname = $fieldName;
-                        $fieldRecord->fieldtype = $fieldType;
-                        $fieldRecord->save();
-                    } else {
-                        SpecialAllowanceFormStructure::create([
-                            'csafid' => $form->csafId,
-                            'fieldname' => $fieldName,
-                            'fieldtype' => $fieldType,
-                        ]);
-                    }
-                }
-            }
+            //     // Only process if both field name and field type are provided
+            //     if ($fieldName && $fieldType) {
+            //         // Track the fields that we are updating or creating
+            //         $existingFieldsInRequest[] = ['fieldname' => $fieldName, 'fieldtype' => $fieldType];
+
+            //         // Check if the field already exists in the database
+            //         $fieldRecord = SpecialAllowanceFormStructure::where('csafid', $form->csafid)
+            //             ->where('fieldname', $fieldName)
+            //             ->first();
+
+            //         if ($fieldRecord) {
+            //             // Update the existing field record
+            //             $fieldRecord->fieldname = $fieldName;
+            //             $fieldRecord->fieldtype = $fieldType;
+            //             $fieldRecord->save();
+            //         } else {
+            //             // Create a new field record if it doesn't exist
+            //             SpecialAllowanceFormStructure::create([
+            //                 'csafid' => $form->csafid,
+            //                 'fieldname' => $fieldName,
+            //                 'fieldtype' => $fieldType,
+            //             ]);
+            //         }
+            //     }
+            // }
+
+            // // Remove fields that are no longer present in the request
+            // SpecialAllowanceFormStructure::where('csafid', $form->csafid)
+            //     ->whereNotIn('fieldname', array_column($existingFieldsInRequest, 'fieldname'))
+            //     ->delete();
 
             DB::commit();
 
@@ -1423,7 +1462,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            // Return error message
+            // Return error message if any exception occurs
             return redirect()->back()->with('failure', 'An error occurred while updating the form: ' . $e->getMessage())->withInput();
         }
     }
@@ -1446,14 +1485,100 @@ class StaffController extends Controller
         return $fullPath;
     }
 
+    private function updateExcelFile($formcode, $newformcode, $fieldnames)
+    {
+        $directoryPath = 'uploads/allowance_forms/special/database'; // Relative path within storage
+        $oldFilename = $formcode . '.xlsx';
+        $newFilename = $newformcode . '.xlsx';
+
+        // Relative paths for storage disk
+        $oldFullPath = $directoryPath . '/' . $oldFilename;
+        $newFullPath = $directoryPath . '/' . $newFilename;
+
+        // Check if the old file exists
+        if (!Storage::disk('public')->exists($oldFullPath)) {
+            throw new \Exception("File not found: " . $oldFullPath);
+        }
+
+        // Load the existing Excel file using PhpSpreadsheet
+        $filePath = Storage::disk('public')->path($oldFullPath); // Correct path format
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+
+        // Get the active sheet to update the headers
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Update the first row with new headers using column letters (e.g., A1, B1, C1)
+        foreach ($fieldnames as $index => $fieldname) {
+            $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($index + 1);
+            $sheet->setCellValue("{$columnLetter}1", $fieldname);
+        }
+
+        // Save the updated Excel file to the new location
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $newFilePath = Storage::disk('public')->path($newFullPath);
+        $writer->save($newFilePath);
+
+        // Rename the old file to the new file name
+        if ($oldFullPath !== $newFullPath) {
+            Storage::disk('public')->move($oldFullPath, $newFullPath);
+        }
+
+        // Return the new file path
+        return $newFullPath;
+    }
+
+    // private function updateExcelFile($formcode, $newformcode)
+    // {
+    //     $directoryPath = 'uploads/allowance_forms/special/database'; // Relative path within storage
+    //     $oldFilename = $formcode . '.xlsx';
+    //     $newFilename = $newformcode . '.xlsx';
+
+    //     // Relative paths for storage disk
+    //     $oldFullPath = $directoryPath . '/' . $oldFilename;
+    //     $newFullPath = $directoryPath . '/' . $newFilename;
+
+    //     // Check if the old file exists
+    //     if (!Storage::disk('public')->exists($oldFullPath)) {
+    //         throw new \Exception("File not found: " . $oldFullPath);
+    //     }
+
+    //     // Load the existing Excel file using PhpSpreadsheet
+    //     $filePath = Storage::disk('public')->path($oldFullPath); // Correct path format
+    //     $spreadsheet = IOFactory::load($filePath);
+
+    //     // Update the headers (assumed to be in the first row)
+    //     $sheet = $spreadsheet->getActiveSheet();
+    //     $updatedHeaders = array_merge(['id', 'caseCode'], $newFieldnames);
+
+    //     // Update the first row with new headers using column letters
+    //     foreach ($updatedHeaders as $index => $header) {
+    //         // Convert the index to a column letter (0 -> A, 1 -> B, etc.)
+    //         $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($index + 1);
+    //         $sheet->setCellValue("{$columnLetter}1", $header);
+    //     }
+
+    //     // Save the updated Excel file to the same location
+    //     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+    //     $newFilePath = Storage::disk('public')->path($newFullPath);
+    //     $writer->save($newFilePath);
+
+    //     // Rename the old file to the new file name
+    //     if ($oldFullPath !== $newFullPath) {
+    //         Storage::disk('public')->move($oldFullPath, $newFullPath);
+    //     }
+
+    //     return $newFullPath;
+    // }
+
+
     public function delSpecialAllowanceForm($id)
     {
         try {
             DB::beginTransaction();
             $form = CreateSpecialAllowanceForm::where('csafid', $id)->first();
             $filePath = $form->database;
-            if (Storage::exists($filePath)) {
-                Storage::delete($filePath);
+            if (Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
             }
             $form->delete();
 
