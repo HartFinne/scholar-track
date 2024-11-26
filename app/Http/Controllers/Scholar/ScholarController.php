@@ -285,10 +285,11 @@ class ScholarController extends Controller
     public function showGradeSubmission(Request $request)
     {
         // Retrieve the currently authenticated user's caseCode
-        $user = Auth::user();
-        $educ = ScEducation::where('caseCode', $user->caseCode)->first();
-        $institution = institutions::where('schoolname', $educ->scSchoolName)
-            ->where('schoollevel', $educ->scSchoolLevel)
+        $user = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->where('id', Auth::id())
+            ->first();
+        $institution = institutions::where('schoolname', $user->education->scSchoolName)
+            ->where('schoollevel', $user->education->scSchoolLevel)
             ->first();
 
         // dd($institution);
@@ -301,7 +302,33 @@ class ScholarController extends Controller
                 return $query->where('GradeStatus', $status);
             })
             ->get();
-        return view('scholar/scholarship.gradesub', compact('grades', 'educ', 'status', 'institution'));
+
+        $term = grades::where('caseCode', $user->caseCode)
+            ->when($status !== 'all', function ($query) use ($status) {
+                return $query->where('GradeStatus', $status);
+            })
+            ->where('schoolyear', $user->education->scAcademicYear)
+            ->orderBy('SemesterQuarter', 'desc')
+            ->pluck('SemesterQuarter')
+            ->first();
+
+        if ($user->education->scSchoolLevel == "College") {
+            if ($term) {
+                if ($term == '1st Semester') {
+                    $term = '2nd Semester';
+                } else if ($term == '2nd Semester' && $institution->academiccycle == 'Trimester') {
+                    $term = '3rd Semester';
+                } else if ($term == '2nd Semester' && $institution->academiccycle == 'Semester') {
+                    $term = '1st Semester';
+                }
+            } else {
+                $term = '1st Semester';
+            }
+        } else {
+            $term = "4th Quarter";
+        }
+
+        return view('scholar/scholarship.gradesub', compact('user', 'grades', 'status', 'institution', 'term'));
     }
 
     public function storeGradeSubmission(Request $request)
@@ -343,6 +370,7 @@ class ScholarController extends Controller
                 ->first();
 
             if ($existingGrade) {
+                // return redirect()->back()->with('failure', 'Grade submission failed. If the problem continues, please contact one of our social welfare officers for assistance.')->withInput();
                 return redirect()->back()->with('failure', 'A grade for this semester in the academic year ' . $educ->scAcademicYear . ' has already been submitted.')->withInput();
             }
 
@@ -420,14 +448,13 @@ class ScholarController extends Controller
                         return redirect()->back()->with('failure', 'The GPA in the document (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . ').')->withInput();
                     }
 
-                    return redirect()->back()->with('success', 'OCR processed successfully. Results saved.')->withInput();
+                    // return redirect()->back()->with('success', 'OCR processed successfully. Results saved.')->withInput();
                 } catch (\Exception $e) {
                     return redirect()->back()->with('failure', 'An error occurred: ' . $e->getMessage())->withInput();
                 }
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
-
 
             $criteria = criteria::first();
             $requiredgwa = [

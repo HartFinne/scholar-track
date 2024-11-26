@@ -8,74 +8,75 @@
     font-family: 'Poppins', Arial;
 }
 
-.ctn-main{
+.ctn-main {
     width: 90%;
     margin: auto;
 }
 
-.ctn-main .goback{
+.ctn-main .goback {
     text-decoration: none;
     color: #1a5319;
     font-size: 15px;
 }
 
-.ctn-main .title{
+.ctn-main .title {
     font-family: 'League Spartan', sans-serif;
     font-weight: bold;
     margin: 25px 0;
 }
 
-.sc-info{
+.sc-info {
     background-color: rgb(191, 191, 191, .3);
     border-radius: 10px;
 }
 
-.sc-info-1{
+.sc-info-1 {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;                   
-    flex-wrap: wrap; 
+    gap: 20px;
+    flex-wrap: wrap;
     padding: 20px;
     background-color: #2e7c55;
     border-radius: 10px;
 }
 
-.sc-info-1 .text{
+.sc-info-1 .text {
     color: #fff;
     font-size: 20px;
     font-weight: bold;
 }
 
-.sc-info-1 .text span{
+.sc-info-1 .text span {
     background-color: #c1ff72;
     color: #000;
     padding: 5px;
     border-radius: 10px;
 }
 
-.sc-info-2{
+.sc-info-2 {
     padding: 20px;
 }
 
-.sc-info-2 .text{
+.sc-info-2 .text {
     color: #1a5319;
     font-size: 15px;
 }
 
-.overview-graph{
+.overview-graph {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     padding: 20px 40px;
     margin-top: 20px;
 }
 
-.overview-graph .card1, .card2{
+.overview-graph .card1,
+.card2 {
     width: 500px;
     background-color: #d6efd8;
     border: 1px solid #1a5319;
@@ -83,16 +84,16 @@
     padding: 30px;
 }
 
-.overview-graph p{
+.overview-graph p {
     font-size: 14px;
     font-weight: 600;
 }
 
-.hide{
+.hide {
     display: none;
 }
 
-.sc-renewal .text{
+.sc-renewal .text {
     text-align: center;
     font-weight: bolder;
     color: #1a5319;
@@ -101,7 +102,7 @@
     border-radius: 10px;
 }
 
-.sc-renewal button{
+.sc-renewal button {
     font-size: 15px;
     padding: 7px 20px;
     border: none;
@@ -111,24 +112,24 @@
     transition: 0.3s ease;
 }
 
-.sc-renewal button:hover{
+.sc-renewal button:hover {
     transform: scale(1.1);
     background-color: #2e7c55;
 }
 
-.sub-title{
+.sub-title {
     color: #1a5319;
     font-weight: bolder;
     font-size: 17px;
     margin: 30px 0 10px;
 }
 
-.status{
+.status {
     display: flex;
     gap: 40px;
 }
 
-.filter-btn{
+.filter-btn {
     border: 2px solid #bfbfbf;
     padding: 5px 10px;
     font-size: 14px;
@@ -139,32 +140,32 @@
     transition: 0.3s ease;
 }
 
-.filter-btn.active{
+.filter-btn.active {
     background-color: #2e7c55;
     color: #fff;
 }
 
-.ctn-table{
+.ctn-table {
     margin-bottom: 50px;
     font-size: 15px;
 }
 
-.table thead tr th{
+.table thead tr th {
     background-color: #1a5319;
     color: #fff;
 }
 
-.table tr td{
+.table tr td {
     text-align: center;
     padding: 10px;
 }
 
-.table-title{
+.table-title {
     font-size: 17px;
     font-weight: bold;
 }
 
-.btn-submit{
+.btn-submit {
     background-color: #8bc34a;
     color: #fff;
     border: none;
@@ -174,11 +175,12 @@
     font-size: 15px;
 }
 
-.btn-submit:hover{
+.btn-submit:hover {
     background-color: #1a5319;
 }
 
-#view, #cancel{
+#view,
+#cancel {
     text-decoration: none;
     background-color: #56a72e;
     color: #fff;
@@ -188,55 +190,75 @@
     transition: 0.3s ease;
 }
 
-#view:hover, #cancel:hover{
+#view:hover,
+#cancel:hover {
     background-color: gray;
 }
 
 @media only screen and (max-width: 768px) {
-    .ctn-main{
+    .ctn-main {
         width: 85%;
     }
-    .sc-info-1, .sc-info-2{
-        gap: 0;                   
+
+    .sc-info-1,
+    .sc-info-2 {
+        gap: 0;
         padding: 15px;
     }
-    .sc-info-1 .text, span{
+
+    .sc-info-1 .text,
+    span {
         font-size: 16px;
     }
-    .sc-info-1 .text span{
+
+    .sc-info-1 .text span {
         padding: 3px;
     }
-    .sc-info-2 .text p, .filter-btn, .ctn-table{
+
+    .sc-info-2 .text p,
+    .filter-btn,
+    .ctn-table {
         font-size: 14px;
     }
-    .ctn-main .overview-graph{
+
+    .ctn-main .overview-graph {
         padding: 0;
     }
-    .ctn-main .overview-graph .card1, .ctn-main .overview-graph .card2{
+
+    .ctn-main .overview-graph .card1,
+    .ctn-main .overview-graph .card2 {
         width: 100%;
         padding: 15px;
         margin: 0;
     }
-    .sub-title{
+
+    .sub-title {
         font-size: 15px;
         margin: 20px 0 10px;
     }
-    .filter-btn{
+
+    .filter-btn {
         padding: 2px 6px;
         font-size: 12px;
         margin-bottom: 10px;
     }
 }
+
 @media only screen and (max-width: 1024px) {
-    .overview-graph .card1, .card2{
+
+    .overview-graph .card1,
+    .card2 {
         margin: auto;
     }
 }
+
 @media only screen and (max-width: 1200px) {
-    .overview-graph{
+    .overview-graph {
         padding: 20px;
     }
-    .overview-graph .card1, .card2{
+
+    .overview-graph .card1,
+    .card2 {
         width: 450px;
     }
 }

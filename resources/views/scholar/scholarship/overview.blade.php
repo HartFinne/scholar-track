@@ -37,7 +37,17 @@
                 </div>
                 <div class="text">
                     <p class="sc-status">Scholarship Status:
-                        <span>{{ $user->Scholarshipinfo->scholarshipstatus }}</span>
+                        @php
+                            $statusClass = [
+                                'On-Hold' => 'bg-warning',
+                                'Continuing' => 'bg-success',
+                            ];
+
+                            // Default to 'bg-danger' if the status is not 'On-Hold' or 'Continuing'
+                            $statusColor = $statusClass[$user->Scholarshipinfo->scholarshipstatus] ?? 'bg-danger';
+                        @endphp
+
+                        <span class="{{ $statusColor }}">{{ $user->Scholarshipinfo->scholarshipstatus }}</span>
                     </p>
                     <p class="sc-type">Scholar Type: <span>{{ $user->Scholarshipinfo->scholartype }}</span></p>
                 </div>
