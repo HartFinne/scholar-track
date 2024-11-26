@@ -42,8 +42,7 @@ use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use thiagoalessio\TesseractOCR\TesseractOCR;
 use Illuminate\Support\Facades\App;
-use PaddleOCR\OCR; // Import the PaddleOCR class
-use Svg\Tag\Rect;
+
 
 class ScholarController extends Controller
 {
