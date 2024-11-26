@@ -53,15 +53,6 @@ use Svg\Tag\Rect;
 
 class ScholarController extends Controller
 {
-
-    // public function showHome()
-    // {
-    //     $user = Auth::user();
-    //     $announcements = Announcement::whereJsonContains('recipients', 'all')
-    //         ->orWhereJsonContains('recipients', $user->caseCode)
-    //         ->get();
-    //     return view('scholar.schome', compact('announcements'));
-    // }
     public function showHome(Request $request)
     {
         $user = Auth::user();
@@ -120,7 +111,6 @@ class ScholarController extends Controller
             return response()->json(['error' => 'User not authenticated'], 401);
         }
     }
-
 
     // for manage profile
     public function showProfile()
@@ -759,7 +749,6 @@ class ScholarController extends Controller
 
         $concerncsregistration = csregistration::where('csrid', $letter->conditionid)->first();
         $concernhcattendance = hcattendance::where('hcaid', $letter->conditionid)->first();
-        // for the if statement pdf, image
         $fileExtensionExplanation = pathinfo($letter->explanation, PATHINFO_EXTENSION);
         $fileExtensionProof = pathinfo($letter->proof, PATHINFO_EXTENSION);
 
@@ -857,6 +846,9 @@ class ScholarController extends Controller
 
             $caseCode = $user->caseCode;
 
+            $now = now();
+            $formattedNow = $now->format('Ymd');
+
             $form = CreateSpecialAllowanceForm::where('csafid', $requesttype)->first();
             $database = $form->database;
 
@@ -892,7 +884,18 @@ class ScholarController extends Controller
                 ]);
 
                 // Save inputs to array
-                $records[] = $request->input($fieldNameFormatted);
+                if ($field->fieldtype == 'file') {
+                    $file = $request->file($fieldNameFormatted);
+                    $directoryPath = "uploads/allowance_requests/special/{$field->fieldname}";
+                    // Make sure the directory exists
+                    if (!Storage::exists($directoryPath)) {
+                        Storage::makeDirectory($directoryPath);
+                    }
+                    $filename = $caseCode . '_' . $formattedNow .  $file->extension();
+                    $records[] = $file->storeAs($directoryPath, $filename, 'public');
+                } else {
+                    $records[] = $request->input($fieldNameFormatted);
+                }
             }
 
             $downloadableFiles = json_decode($form->downloadablefiles, true);
@@ -917,9 +920,6 @@ class ScholarController extends Controller
                 if (!Storage::exists($directoryPath)) {
                     Storage::makeDirectory($directoryPath);
                 }
-
-                $now = now();
-                $formattedNow = $now->format('Ymd');
 
                 $filename = $caseCode . '_' . $formattedNow . '.' . $uploadedfile->extension();
 
@@ -1035,7 +1035,6 @@ class ScholarController extends Controller
         // Return the view with the single record and related data
         return view('scholar.allowancerequest.specialinfo', compact('data', 'scholar', 'form', 'fields', 'files'));
     }
-
 
     public function showappointmentsystem(Request $request)
     {

@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="{{ asset('css/special.css') }}">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
 </head>
@@ -90,9 +92,63 @@
                         </div>
                     </div>
                     @foreach ($fields as $field)
-                        <div class="row">
+                        <div class="row align-items-center">
                             <div class="col-md-4 label">{{ $field->fieldname }}</div>
-                            <div class="col-md-8 data">{{ $data[$field->fieldname] }}</div>
+                            <div class="col-md-8 data">
+                                @if ($field->fieldtype == 'file')
+                                    @php
+                                        $filePath = $data[$field->fieldname];
+                                        $fileExtension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                                        $modalId = 'fileModal-' . $field->fieldname; // Unique modal ID for each file
+                                    @endphp
+
+                                    <!-- Button to trigger the modal -->
+                                    @if ($fileExtension == 'zip')
+                                        The data is in a ZIP file. Please <a href="{{ url('storage/' . $filePath) }}"
+                                            download class="link link-success">download it here</a>.
+                                    @else
+                                        <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            data-bs-target="#{{ $field->id }}">
+                                            View File
+                                        </button>
+                                    @endif
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="{{ $field->id }}" tabindex="-1"
+                                        aria-labelledby="{{ $field->id }}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-success text-white">
+                                                    <h5 class="modal-title" id="{{ $field->id }}Label">
+                                                        {{ $field->fieldname }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    @if ($fileExtension == 'pdf')
+                                                        <iframe src="{{ asset('storage/' . $filePath) }}#zoom=100"
+                                                            width="100%" height="500px">
+                                                            Your browser does not support iframes. Please download the
+                                                            PDF file
+                                                            <a href="{{ url('storage/' . $filePath) }}" download
+                                                                class="link link-success">here</a>.
+                                                        </iframe>
+                                                    @elseif ($fileExtension != 'pdf' || $fileExtension != 'zip')
+                                                        <img src="{{ asset('storage/' . $filePath) }}" width="100%"
+                                                            height="auto" alt="{{ $field->fieldname }}">
+                                                    @endif
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-danger"
+                                                        data-bs-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @else
+                                    {{ $data[$field->fieldname] }}
+                                @endif
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -106,7 +162,8 @@
                             <iframe src="{{ asset('storage/' . $data[$file->filename]) }}#zoom=100" width="100%"
                                 height="700px">
                                 Your browser does not support iframes. Please download the PDF file
-                                <a href="{{ url('storage/' . $data[$file->filename]) }}">here</a>.
+                                <a href="{{ url('storage/' . $data[$file->filename]) }}" class="link link-success"
+                                    download>here</a>.
                             </iframe>
                         </div>
                     @endforeach

@@ -113,6 +113,10 @@
                                 <input type="{{ $field->fieldtype }}" name="{{ $field->fieldname }}"
                                     id="{{ $field->fieldname }}" class="form-control" required>
                             </div>
+                            @if ($field->fieldtype == 'file')
+                                <div class="row small text-muted">Kung maraming picture, I-compile sa iisang zip or pdf
+                                    ang mga pictures.</div>
+                            @endif
                         </div>
                     @empty
                         <div class="row">
@@ -132,12 +136,12 @@
                                     fieldElement.min = 1; // Set minimum value for number fields
                                     fieldElement.step = 0.01; // Set step for number fields
                                 } else if (fieldtype == 'file') {
-                                    fieldElement.accept = ".pdf"; // Allow only PDF files for file inputs
+                                    fieldElement.accept =
+                                        ".pdf, .jpg, .jpeg, .png, .zip"; // Allow only PDF files for file inputs
                                 }
                             });
                         });
                     </script>
-
                     {{-- </div>
             <div class="row justify-content-evenly"> --}}
                     @forelse ($files as $file)

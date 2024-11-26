@@ -1399,7 +1399,7 @@ class StaffController extends Controller
             $existingFieldNames = SpecialAllowanceFormStructure::where('csafid', $id)->pluck('fieldname')->toArray();
 
             // Merge the filenames
-            $fieldNames = array_merge(['id', 'caseCode'], $existingFieldNames, $fieldNames);
+            $fieldNames = array_merge(['id', 'caseCode', 'requestType', 'requestDate', 'releaseDate', 'requestStatus'], $existingFieldNames, $fieldNames);
 
             // Update the Excel file for the form
             $excelPath = $this->updateExcelFile($form->formcode, $request->newformcode, $fieldNames);
