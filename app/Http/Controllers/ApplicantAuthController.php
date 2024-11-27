@@ -51,7 +51,7 @@ class ApplicantAuthController extends Controller
                 $request->session()->regenerate();
                 return redirect()->route('applicantportal', $user->casecode);
             } else {
-                return redirect()->back()->with('error', 'Your account has been deactivated. If this was an error, please contact us at inquiriescholartrack@gmail.com for assistance.');
+                return redirect()->back()->with('error', 'Your account is suspended. If this was an error, please contact us at inquiriescholartrack@gmail.com for assistance.');
             }
         } else {
             return redirect()->back()->with('error', 'Invalid case code or password.');
