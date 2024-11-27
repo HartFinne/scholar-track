@@ -246,17 +246,11 @@ class EvalController extends Controller
 
             $schoolYear = $startdate->format('Y') . '-' . $enddate->format('Y');
 
-            $gwas = grades::where('caseCode', $user->caseCode)
+            $gwa = grades::where('caseCode', $user->caseCode)
                 ->where('schoolyear', $schoolYear)
-                ->whereIn('SemesterQuarter', ['1st Quarter', '2nd Quarter', '3rd Quarter', '4th Quarter'])
                 ->select('SemesterQuarter', 'GWA')
                 ->get()
                 ->pluck('GWA', 'SemesterQuarter');
-
-            $gwaquarter1 = $gwas['1st Quarter'] ?? null;
-            $gwaquarter2 = $gwas['2nd Quarter'] ?? null;
-            $gwaquarter3 = $gwas['3rd Quarter'] ?? null;
-            $gwaquarter4 = $gwas['4th Quarter'] ?? null;
 
             $hcabsentcount = lte::where('caseCode', $user->caseCode)
                 ->where('violation', 'Late')
@@ -268,7 +262,7 @@ class EvalController extends Controller
                 ->distinct('condition')
                 ->count('condition');
 
-            $remark = $this->evaluaterem($gwaquarter1, $gwaquarter2, $gwaquarter3, $gwaquarter4, $curriculum->highestgwa, $criteria->jhsgwa);
+            $remark = $this->evaluaterem($gwa, $curriculum->highestgwa, $criteria->jhsgwa);
 
             if ($remark == 'Good Academic Performance') {
                 if ($hcabsentcount > 0) {
@@ -283,10 +277,7 @@ class EvalController extends Controller
                 'acadcycle' => $curriculum->academiccycle,
                 'startcontract' => $startdate,
                 'endcontract' => $enddate,
-                'quarter1' => $gwaquarter1,
-                'quarter2' => $gwaquarter2,
-                'quarter3' => $gwaquarter3,
-                'quarter4' => $gwaquarter4,
+                'genave' => $gwa,
                 'hcabsentcount' => $hcabsentcount,
                 'penaltycount' => $penaltycount,
                 'remark' => $remark,
@@ -317,17 +308,11 @@ class EvalController extends Controller
 
             $schoolYear = $startdate->format('Y') . '-' . $enddate->format('Y');
 
-            $gwas = grades::where('caseCode', $user->caseCode)
+            $gwa = grades::where('caseCode', $user->caseCode)
                 ->where('schoolyear', $schoolYear)
-                ->whereIn('SemesterQuarter', ['1st Quarter', '2nd Quarter', '3rd Quarter', '4th Quarter'])
                 ->select('SemesterQuarter', 'GWA')
                 ->get()
                 ->pluck('GWA', 'SemesterQuarter');
-
-            $gwaquarter1 = $gwas['1st Quarter'] ?? null;
-            $gwaquarter2 = $gwas['2nd Quarter'] ?? null;
-            $gwaquarter3 = $gwas['3rd Quarter'] ?? null;
-            $gwaquarter4 = $gwas['4th Quarter'] ?? null;
 
             $hcabsentcount = lte::where('caseCode', $user->caseCode)
                 ->where('violation', 'Late')
@@ -339,7 +324,7 @@ class EvalController extends Controller
                 ->distinct('condition')
                 ->count('condition');
 
-            $remark = $this->evaluaterem($gwaquarter1, $gwaquarter2, $gwaquarter3, $gwaquarter4, $curriculum->highestgwa, $criteria->elemgwa);
+            $remark = $this->evaluaterem($gwa, $curriculum->highestgwa, $criteria->elemgwa);
 
             if ($remark == 'Good Academic Performance') {
                 if ($hcabsentcount > 0) {
@@ -354,10 +339,7 @@ class EvalController extends Controller
                 'acadcycle' => $curriculum->academiccycle,
                 'startcontract' => $startdate,
                 'endcontract' => $enddate,
-                'quarter1' => $gwaquarter1,
-                'quarter2' => $gwaquarter2,
-                'quarter3' => $gwaquarter3,
-                'quarter4' => $gwaquarter4,
+                'genave' => $gwa,
                 'hcabsentcount' => $hcabsentcount,
                 'penaltycount' => $penaltycount,
                 'remark' => $remark,
@@ -365,41 +347,23 @@ class EvalController extends Controller
         }
     }
 
-    private function evaluaterem($gwaquarter1, $gwaquarter2, $gwaquarter3, $gwaquarter4, $highestgwa, $genave)
+    private function evaluaterem($gwa, $highestgwa, $genave)
     {
-        if (is_null($gwaquarter1) || is_null($gwaquarter2) || is_null($gwaquarter3) || is_null($gwaquarter4)) {
+        if (is_null($gwa)) {
             return 'Incomplete Grades';
         }
 
         if ($highestgwa == 5) {
-            if ($gwaquarter1 < $genave) {
-                return 'Failed GWA on 1st Quarter';
-            } elseif ($gwaquarter2 < $genave) {
-                return 'Failed GWA on 2nd Quarter';
-            } elseif ($gwaquarter3 < $genave) {
-                return 'Failed GWA on 3rd Quarter';
-            } elseif ($gwaquarter4 < $genave) {
-                return 'Failed GWA on 4th Quarter';
+            if ($gwa < $genave) {
+                return 'Failed General Average';
             }
         } elseif ($highestgwa == 1) {
-            if ($gwaquarter1 > $genave) {
-                return 'Failed GWA on 1st Quarter';
-            } elseif ($gwaquarter2 > $genave) {
-                return 'Failed GWA on 2nd Quarter';
-            } elseif ($gwaquarter3 > $genave) {
-                return 'Failed GWA on 3rd Quarter';
-            } elseif ($gwaquarter4 > $genave) {
-                return 'Failed GWA on 4th Quarter';
+            if ($gwa > $genave) {
+                return 'Failed General Average';
             }
         } elseif ($highestgwa == 100) {
-            if ($gwaquarter1 < $genave) {
-                return 'Failed GWA on 1st Quarter';
-            } elseif ($gwaquarter2 < $genave) {
-                return 'Failed GWA on 2nd Quarter';
-            } elseif ($gwaquarter3 < $genave) {
-                return 'Failed GWA on 3rd Quarter';
-            } elseif ($gwaquarter4 < $genave) {
-                return 'Failed GWA on 4th Quarter';
+            if ($gwa < $genave) {
+                return 'Failed General Average';
             }
         }
 
@@ -408,11 +372,11 @@ class EvalController extends Controller
 
     public function showevalresults()
     {
-        $startdate = Carbon::now();  // Get the current date as the start date
-        $enddate = $startdate->copy()->addYear();  // Add one year to the start date to get the end date
+        $startdate = Carbon::now();
+        $enddate = $startdate->copy()->addYear();
 
         // Generate the academic year
-        $acadyear = $startdate->format('Y') . '-' . $enddate->format('y');
+        $acadyear = $startdate->format('Y') . '-' . $enddate->format('Y');
         $colleges = summarycollege::with('basicInfo', 'education', 'scholarshipinfo')
             ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summarycollege.caseCode')
             ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority

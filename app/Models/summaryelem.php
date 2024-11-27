@@ -18,10 +18,7 @@ class summaryelem extends Model
         'acadcycle',
         'startcontract',
         'endcontract',
-        'quarter1',
-        'quarter2',
-        'quarter3',
-        'quarter4',
+        'gwa',
         'hcabsentcount',
         'penaltycount',
         'remark'

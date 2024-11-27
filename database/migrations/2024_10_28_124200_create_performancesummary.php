@@ -62,10 +62,7 @@ return new class extends Migration
             $table->string('acadcycle', 50);
             $table->date('startcontract');
             $table->date('endcontract');
-            $table->float('quarter1')->nullable();
-            $table->float('quarter2')->nullable();
-            $table->float('quarter3')->nullable();
-            $table->float('quarter4')->nullable();
+            $table->float('gwa')->nullable();
             $table->integer('hcabsentcount');
             $table->integer('penaltycount');
             $table->string('remark', 50);
@@ -85,10 +82,7 @@ return new class extends Migration
             $table->string('acadcycle', 50);
             $table->date('startcontract');
             $table->date('endcontract');
-            $table->float('quarter1')->nullable();
-            $table->float('quarter2')->nullable();
-            $table->float('quarter3')->nullable();
-            $table->float('quarter4')->nullable();
+            $table->float('gwa')->nullable();
             $table->integer('hcabsentcount');
             $table->integer('penaltycount');
             $table->string('remark', 50);
