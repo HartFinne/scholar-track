@@ -408,6 +408,11 @@ class EvalController extends Controller
 
     public function showevalresults()
     {
+        $startdate = Carbon::now();  // Get the current date as the start date
+        $enddate = $startdate->copy()->addYear();  // Add one year to the start date to get the end date
+
+        // Generate the academic year
+        $acadyear = $startdate->format('Y') . '-' . $enddate->format('y');
         $colleges = summarycollege::with('basicInfo', 'education', 'scholarshipinfo')
             ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summarycollege.caseCode')
             ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
@@ -468,6 +473,6 @@ class EvalController extends Controller
             ->select('summaryelem.*')
             ->get();
 
-        return view('staff.scholarsevaluation', compact('colleges', 'shs', 'jhs', 'elem'));
+        return view('staff.scholarsevaluation', compact('colleges', 'shs', 'jhs', 'elem', 'acadyear'));
     }
 }
