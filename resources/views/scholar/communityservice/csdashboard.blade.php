@@ -21,7 +21,6 @@
 
     <!-- Include Navbar -->
     @include('partials._navbar')
-    <x-alert />
 
     <div class="ctn-profilemenu" id="profilemenu" style="display: none;">
         <a href="manageprofile.html"><i class="fa-solid fa-user"></i>Profile</a><br>
