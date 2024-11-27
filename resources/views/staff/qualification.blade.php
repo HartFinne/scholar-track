@@ -249,8 +249,8 @@
                         </select>
                         <input type="number" class="form-control" placeholder="Highest GWA" name="highestgwa"
                             required step="0.01" min="1" max="100">
-                        <input type="file" class="form-control" name="logo" required
-                            accept="image/jpg, image/png">
+                        {{-- <input type="file" class="form-control" name="logo" required
+                            accept="image/jpg, image/png"> --}}
                         <button class="btn btn-success" type="submit" id="btnaddinsti"
                             style="z-index: 1">Add</button>
                     </div>

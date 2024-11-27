@@ -55,7 +55,7 @@ class ApplicationController extends Controller
     {
         $strands = courses::where('level', 'Senior High')->get();
         $schools = institutions::where('schoollevel', $level)->pluck('schoolname');
-
+        // dd(institutions::where('schoollevel', 'Senior High')->pluck('schoolname'));
         $gradelevels = [
             'Senior High' => ['Grade 11', 'Grade 12'],
             'Junior High' => ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'],

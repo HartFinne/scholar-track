@@ -240,7 +240,11 @@
                             <div class="column">
                                 <label for="schoolname">Name of School</label>
                                 <select name="schoolname" id="schoolname" required>
-                                    <option value="" selected>-- Please select school level first --</option>
+                                    <option value="" selected hidden>-- Please select school level first --
+                                    </option>
+                                    @foreach ($schools as $school)
+                                        <option value="{{ $school }}">{{ $school }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -300,23 +304,24 @@
                             }
 
                             // Function to populate school names based on school level
-                            function populateSchoolnames(schoolLevel) {
-                                schoolNameSelect.innerHTML =
-                                    '<option value="" selected hidden>Select school name</option>'; // Reset options
+                            // function populateSchoolnames(schoolLevel) {
+                            //     schoolNameSelect.innerHTML =
+                            //         '<option value="" selected hidden>Select school name</option>';
 
-                                if (schoolnames[schoolLevel]) {
-                                    schoolnames[schoolLevel].forEach(school => {
-                                        const option = document.createElement('option');
-                                        option.value = school;
-                                        option.textContent = school;
-                                        // Check if the school matches the old value for pre-selection
-                                        if ("{{ old('schoolname') }}" === school) {
-                                            option.selected = true;
-                                        }
-                                        schoolNameSelect.appendChild(option);
-                                    });
-                                }
-                            }
+                            //     if (schoolnames[schoolLevel]) {
+                            //         console.log(schoolnames[schoolLevel]);
+                            //         schoolnames[schoolLevel].forEach(school => {
+                            //             const option = document.createElement('option');
+                            //             option.value = school;
+                            //             option.textContent = school;
+                            //             // Check if the school matches the old value for pre-selection
+                            //             if ("{{ old('schoolname') }}" === school) {
+                            //                 option.selected = true;
+                            //             }
+                            //             schoolNameSelect.appendChild(option);
+                            //         });
+                            //     }
+                            // }
 
                             // Function to handle visibility of section and strand fields
                             function toggleFields(schoolLevel) {
@@ -340,19 +345,18 @@
 
                             // Event listener for school level changes
                             schoolLevelSelect.addEventListener('change', function() {
-                                const selectedSchoolLevel = schoolLevelSelect.value;
-                                populateGradeLevels(selectedSchoolLevel);
-                                populateSchoolnames(selectedSchoolLevel);
-                                toggleFields(selectedSchoolLevel);
+                                // const selectedSchoolLevel = schoolLevelSelect.value;
+                                populateGradeLevels(level);
+                                toggleFields(level);
                             });
 
                             // Initial population based on old values (if any)
-                            const initialSchoolLevel = schoolLevelSelect.value;
-                            if (initialSchoolLevel) {
-                                populateGradeLevels(initialSchoolLevel);
-                                populateSchoolnames(initialSchoolLevel);
-                                toggleFields(initialSchoolLevel);
+                            // const initialSchoolLevel = schoolLevelSelect.value;
+                            if (level) {
+                                populateGradeLevels(level);
+                                toggleFields(level);
                             }
+                            // populateSchoolnames(level);
                         });
                     </script>
 
