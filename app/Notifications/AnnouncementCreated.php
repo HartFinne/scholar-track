@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Announcement;
+use Illuminate\Support\Facades\Log;
 
 class AnnouncementCreated extends Notification implements ShouldQueue
 {
@@ -27,6 +28,7 @@ class AnnouncementCreated extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
+        Log::info('Notification delivery channels: ' . $notifiable);
         return ['mail']; // Ensure the notification is sent via mail
     }
 
@@ -40,7 +42,7 @@ class AnnouncementCreated extends Notification implements ShouldQueue
             ->line('A new announcement has been posted.')
             ->line('Title: ' . $this->announcement->title)
             ->line('Description: ' . $this->announcement->description)
-            ->action('View Announcement', url('/login'))
+            ->action('View Announcement', url('/roleselection'))
             ->line('Thank you for being part of our platform!');
     }
 

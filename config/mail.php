@@ -53,10 +53,6 @@ return [
             'verify_peer_name' => false,
         ],
 
-        'from' => [
-            'address' => env('MAIL_FROM_ADDRESS', 'noreply@yourdomain.com'),
-            'name' => env('MAIL_FROM_NAME', 'Your App Name'),
-        ],
 
         'ses' => [
             'transport' => 'ses',

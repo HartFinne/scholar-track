@@ -44,7 +44,7 @@ class RegularAllowanceNotification extends Notification implements ShouldQueue
             ->line("Status: " . $this->req->status)
             ->line("Release Date: " . ($this->req->releasedate ?? 'Not yet released'))
             ->line("You may log in to your account for further details.")
-            ->action('View Details', url('/login'))
+            ->action('View Details', url('/roleselection'))
             ->line('Thank you for using our platform!');
     }
 
