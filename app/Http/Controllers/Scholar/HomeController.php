@@ -55,7 +55,7 @@ class HomeController extends Controller
                 return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
             }
 
-            $alreadyRegistered = user::where('scEmail', $request->email)->first();
+            $alreadyRegistered = user::where('scEmail', $request->email)->exists();
             if ($alreadyRegistered) {
                 return redirect()->route('registration')->with('failure', 'Registration failed. Email address is already registered')->withInput();
             }
