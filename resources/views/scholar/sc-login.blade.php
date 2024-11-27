@@ -12,8 +12,6 @@
 </head>
 
 <body style="background-color: #eaebea;">
-
-    @include('components.alert') <!-- Include the alert modal here -->
     <x-alert />
     <div class="header">
         <div class="ctnlogo">

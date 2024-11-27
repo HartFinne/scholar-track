@@ -21,20 +21,28 @@ class LoginController extends Controller
     // for authenticating scholar in login form
     public function authLogin(Request $request)
     {
-
         $request->validate([
             'caseCode' => ['required'],
             'password' => ['required']
         ]);
 
+        // Attempt to authenticate the user
         if (Auth::attempt(['caseCode' => $request->caseCode, 'password' => $request->password])) {
+            // Check if the user's scStatus is "Active"
+            if (Auth::user()->scStatus !== 'Active') {
+                Auth::logout(); // Log the user out if not active
+                return redirect()->route('scholar-login')->with('failure', 'Your account is suspended. Please contact support for assistance.');
+            }
+
+            // Regenerate session if status is Active
             $request->session()->regenerate();
 
             return redirect()->intended('scholar/schome');
         }
 
+        // If authentication fails
         return back()->withErrors([
-            'caseCode' => 'The provided do not match',
+            'caseCode' => 'The provided credentials do not match our records.',
         ]);
     }
 
