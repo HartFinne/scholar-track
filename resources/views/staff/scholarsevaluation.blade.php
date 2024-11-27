@@ -193,9 +193,7 @@
                                 <tr>
                                     <th class="text-center align-middle">#</th>
                                     <th class="text-center align-middle">Scholar Name</th>
-                                    @foreach ($data['columns'] as $column)
-                                        <th class="text-center align-middle">{{ $column }}</th>
-                                    @endforeach
+                                    <th class="text-center align-middle">General Average</th>
                                     <th class="text-center align-middle">HC Absent Count</th>
                                     <th class="text-center align-middle">Penalty Count</th>
                                     <th class="text-center align-middle">Scholarship Status</th>
@@ -211,11 +209,8 @@
                                             {{ $result->basicInfo->scFirstname }}
                                             {{ $result->basicInfo->scMiddlename }}
                                         </td>
-                                        @foreach ($data['columns'] as $key => $column)
-                                            <td class="text-center align-middle">
-                                                {{ $result->{'quarter' . ($key + 1)} ?? 'No Data' }}
-                                            </td>
-                                        @endforeach
+                                        <td class="text-center align-middle">{{ $result->gwa ?? 'No Data' }}
+                                        </td>
                                         <td class="text-center align-middle">{{ $result->hcabsentcount ?? 'No Data' }}
                                         </td>
                                         <td class="text-center align-middle">{{ $result->penaltycount ?? 'No Data' }}
@@ -259,9 +254,7 @@
                                 <tr>
                                     <th class="text-center align-middle">#</th>
                                     <th class="text-center align-middle">Scholar Name</th>
-                                    @foreach ($data['columns'] as $column)
-                                        <th class="text-center align-middle">{{ $column }}</th>
-                                    @endforeach
+                                    <th class="text-center align-middle">General Average</th>
                                     <th class="text-center align-middle">HC Absent Count</th>
                                     <th class="text-center align-middle">Penalty Count</th>
                                     <th class="text-center align-middle">Scholarship Status</th>
@@ -277,11 +270,7 @@
                                             {{ $result->basicInfo->scFirstname }}
                                             {{ $result->basicInfo->scMiddlename }}
                                         </td>
-                                        @foreach ($data['columns'] as $key => $column)
-                                            <td class="text-center align-middle">
-                                                {{ $result->{'quarter' . ($key + 1)} ?? 'No Data' }}
-                                            </td>
-                                        @endforeach
+                                        <td class="text-center align-middle">{{ $result->gwa ?? 'No Data' }}
                                         <td class="text-center align-middle">{{ $result->hcabsentcount ?? 'No Data' }}
                                         </td>
                                         <td class="text-center align-middle">{{ $result->penaltycount ?? 'No Data' }}

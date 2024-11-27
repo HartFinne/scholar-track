@@ -18,6 +18,7 @@ use App\Models\criteria;
 use App\Models\institutions;
 use App\Models\communityservice;
 use App\Models\csattendance;
+use App\Models\hcattendance;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\File;
@@ -81,10 +82,10 @@ class EvalController extends Controller
                 ->whereHas('communityservice', fn($query) => $query->whereBetween('eventdate', [$startdate, $enddate]))
                 ->sum('hoursspent');
 
-            $hcabsentcount = lte::where('caseCode', $user->caseCode)
-                ->where('violation', 'Late')
-                ->where('eventtype', 'Humanities Class')
-                ->whereBetween('dateissued', [$startdate, $enddate])
+
+            $hcabsentcount = hcattendance::where('caseCode', $user->caseCode)
+                ->where('hcastatus', 'Absent')
+                ->whereBetween('created_at', [$startdate, $enddate])
                 ->count();
 
             $penaltycount = penalty::where('caseCode', $user->caseCode)
@@ -153,12 +154,11 @@ class EvalController extends Controller
             $gwasem2 = $gwas['2nd Semester'] ?? null;
             $gwasem3 = $curriculum->academiccycle === 'Trimester' ? ($gwas['3rd Semester'] ?? null) : null;
 
-            $hcabsentcount = lte::where('caseCode', $user->caseCode)
-                ->where('violation', 'Late')
-                ->where('eventtype', 'Humanities Class')
-                ->whereBetween('dateissued', [$startdate, $enddate])
-                ->count();
 
+            $hcabsentcount = hcattendance::where('caseCode', $user->caseCode)
+                ->where('hcastatus', 'Absent')
+                ->whereBetween('created_at', [$startdate, $enddate])
+                ->count();
             $penaltycount = penalty::where('caseCode', $user->caseCode)
                 ->distinct('condition')
                 ->count('condition');
@@ -246,18 +246,16 @@ class EvalController extends Controller
 
             $schoolYear = $startdate->format('Y') . '-' . $enddate->format('Y');
 
-            $gwa = grades::where('caseCode', $user->caseCode)
+            $gradeInfo = grades::where('caseCode', $user->caseCode)
                 ->where('schoolyear', $schoolYear)
-                ->select('SemesterQuarter', 'GWA')
-                ->get()
-                ->pluck('GWA', 'SemesterQuarter');
+                ->first();
 
-            $hcabsentcount = lte::where('caseCode', $user->caseCode)
-                ->where('violation', 'Late')
-                ->where('eventtype', 'Humanities Class')
-                ->whereBetween('dateissued', [$startdate, $enddate])
+            $gwa = $gradeInfo->GWA ?? NULL;
+
+            $hcabsentcount = hcattendance::where('caseCode', $user->caseCode)
+                ->where('hcastatus', 'Absent')
+                ->whereBetween('created_at', [$startdate, $enddate])
                 ->count();
-
             $penaltycount = penalty::where('caseCode', $user->caseCode)
                 ->distinct('condition')
                 ->count('condition');
@@ -277,7 +275,7 @@ class EvalController extends Controller
                 'acadcycle' => $curriculum->academiccycle,
                 'startcontract' => $startdate,
                 'endcontract' => $enddate,
-                'genave' => $gwa,
+                'gwa' => $gradeInfo->GWA ?? NULL,
                 'hcabsentcount' => $hcabsentcount,
                 'penaltycount' => $penaltycount,
                 'remark' => $remark,
@@ -306,25 +304,26 @@ class EvalController extends Controller
             $enddate = Carbon::parse($enddate);
             $startdate = $enddate->copy()->subYear();
 
+            // dd($startdate . "-" . $enddate);
+
             $schoolYear = $startdate->format('Y') . '-' . $enddate->format('Y');
 
-            $gwa = grades::where('caseCode', $user->caseCode)
+            $gradeInfo = grades::where('caseCode', $user->caseCode)
                 ->where('schoolyear', $schoolYear)
-                ->select('SemesterQuarter', 'GWA')
-                ->get()
-                ->pluck('GWA', 'SemesterQuarter');
+                ->first();
 
-            $hcabsentcount = lte::where('caseCode', $user->caseCode)
-                ->where('violation', 'Late')
-                ->where('eventtype', 'Humanities Class')
-                ->whereBetween('dateissued', [$startdate, $enddate])
+            $gwa = $gradeInfo->GWA ?? NULL;
+
+            $hcabsentcount = hcattendance::where('caseCode', $user->caseCode)
+                ->where('hcastatus', 'Absent')
+                ->whereBetween('created_at', [$startdate, $enddate])
                 ->count();
 
             $penaltycount = penalty::where('caseCode', $user->caseCode)
                 ->distinct('condition')
                 ->count('condition');
 
-            $remark = $this->evaluaterem($gwa, $curriculum->highestgwa, $criteria->elemgwa);
+            $remark = $this->evaluaterem($gwa, $curriculum->highestgwa, $criteria->jhsgwa);
 
             if ($remark == 'Good Academic Performance') {
                 if ($hcabsentcount > 0) {
@@ -339,7 +338,7 @@ class EvalController extends Controller
                 'acadcycle' => $curriculum->academiccycle,
                 'startcontract' => $startdate,
                 'endcontract' => $enddate,
-                'genave' => $gwa,
+                'gwa' => $gradeInfo->GWA ?? NULL,
                 'hcabsentcount' => $hcabsentcount,
                 'penaltycount' => $penaltycount,
                 'remark' => $remark,
