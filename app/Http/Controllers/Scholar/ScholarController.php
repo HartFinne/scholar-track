@@ -545,7 +545,7 @@ class ScholarController extends Controller
                 ]);
                 $scinfo->scholarshipstatus = 'On-Hold';
                 $scinfo->save();
-            } else {
+            } else if ($gradeStatus == 'Failed GWA' && $failedGWAcount >= 3) {
                 $scinfo->scholarshipstatus = 'Terminated';
                 $scinfo->save();
                 $account = User::where('caseCode', $scinfo->caseCode)->first();
