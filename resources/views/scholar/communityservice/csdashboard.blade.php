@@ -94,7 +94,7 @@
                                 {{ $registration->registatus }}
                             </td>
                             <td>{{-- Cancel button form --}}
-                                @if ($registration->registatus == 'GOING')
+                                @if ($registration->registatus == 'Going')
                                     <form action="{{ route('csdashboard.cancel', ['csid' => $registration->csid]) }}"
                                         method="POST" id="cancel-form-{{ $registration->csid }}">
                                         @csrf
