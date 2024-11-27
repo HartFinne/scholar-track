@@ -49,7 +49,7 @@ class AccountCreationNotification extends Notification implements ShouldQueue
             ->line('**Area**: ' . $this->staccount->area)
             ->line('**Password**: ' . $this->password)
             ->line('Please log in and change your password for security.')
-            ->action('Login to Your Account', url('/login'))
+            ->action('Login to Your Account', url('/roleselection'))
             ->line('Thank you for being part of our platform!');
     }
 

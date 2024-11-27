@@ -43,7 +43,7 @@ class ApplicantAccountCreation extends Notification
             ->subject('Application Status Updated')
             ->greeting('Hello ' . $this->applicant->name . '!')
             ->line('Your application status has been updated, please check your account for full details:')
-            ->action('Login to Your Account', url('/login'))
+            ->action('Login to Your Account', url('/roleselection'))
             ->line('Thank you for being part of our platform!');
     }
 

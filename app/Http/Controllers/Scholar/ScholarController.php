@@ -396,7 +396,6 @@ class ScholarController extends Controller
                         'filetype' => 'jpg',  // Set the correct file type
                         'OCREngine' => 2,
                         'isTable' => 'true',   // Use the advanced OCR engine
-                        // Remove detectOrientation and isTable or set to false if not needed
                     ]);
 
                     // Log the full OCR response for debugging
@@ -505,6 +504,12 @@ class ScholarController extends Controller
                     }
                 }
             }
+
+            Log::info('User Data:', ['user' => $user]);
+            Log::info('Basic Info:', ['basicInfo' => $user->basicInfo]);
+            Log::info('Education Data:', ['educ' => $educ]);
+            Log::info('Grading System:', ['gradingsystem' => $gradingsystem]);
+
 
             DB::beginTransaction();
             // Save the grade entry and link it to the educationID
