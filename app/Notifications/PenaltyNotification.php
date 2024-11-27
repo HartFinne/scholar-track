@@ -46,7 +46,7 @@ class PenaltyNotification extends Notification implements ShouldQueue
             ->line('Violation: ' . $this->penalty->condition)
             ->line('Details: ' . $this->penalty->remark)
             ->line('Date Issued: ' . $this->penalty->dateofpenalty->format('Y-m-d'))
-            ->action('Review Penalty Details', url('/login'))
+            ->action('Review Penalty Details', url('/roleselection'))
             ->line('If you have any questions or need further clarification, please don’t hesitate to contact us.')
             ->line('Thank you for your attention to this matter.');
     }
