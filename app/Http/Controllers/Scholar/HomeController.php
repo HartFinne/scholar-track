@@ -46,6 +46,12 @@ class HomeController extends Controller
 
     function registerScholar(Request $request)
     {
+        $alreadyRegistered = User::where('scEmail', $request->emailAddress)->exists();
+        // dd($alreadyRegistered);
+        if ($alreadyRegistered) {
+            return redirect()->route('registration')->with('failure', 'Registration failed. Email address is already registered')->withInput();
+        }
+
         try {
             $ScholarShipStatus = 'Continuing';
             $scStatus = 'Active';
@@ -53,11 +59,6 @@ class HomeController extends Controller
             $isEmailValid = $this->verifyEmail($request->emailAddress);
             if (!$isEmailValid) {
                 return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
-            }
-
-            $alreadyRegistered = User::where('scEmail', $request->email)->exists();
-            if ($alreadyRegistered) {
-                return redirect()->route('registration')->with('failure', 'Registration failed. Email address is already registered')->withInput();
             }
 
             $request->validate(
