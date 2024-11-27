@@ -312,7 +312,7 @@ class ScholarController extends Controller
             ->pluck('SemesterQuarter')
             ->first();
 
-        if ($user->education->scSchoolLevel == "College") {
+        if ($institution->academiccycle != "Quarter") {
             if ($term) {
                 if ($term == '1st Semester') {
                     $term = '2nd Semester';
