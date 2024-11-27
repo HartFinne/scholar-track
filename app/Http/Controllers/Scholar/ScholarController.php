@@ -1167,7 +1167,7 @@ class ScholarController extends Controller
     public function showappointmentinfo($id)
     {
         $appointment = Appointments::find($id);
-        $user = user::with('basicInfo', 'education')->where('caseCode', $appointment->caseCode)->first();
+        $user = User::with('basicInfo', 'education')->where('caseCode', $appointment->caseCode)->first();
 
         return view('scholar.appointmentinfo', compact('appointment', 'user'));
     }
