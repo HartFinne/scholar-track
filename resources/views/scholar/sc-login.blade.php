@@ -37,6 +37,11 @@
                     <strong>{{ $errors->first('caseCode') }}</strong>
                 </div>
             @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             <span class="label">Case Code</span>
             <input class="input" type="text" name="caseCode" id="caseCode" value="{{ old('caseCode') }}" required>
             <span class="label">Password</span>

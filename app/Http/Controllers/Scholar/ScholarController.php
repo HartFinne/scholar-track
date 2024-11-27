@@ -520,8 +520,11 @@ class ScholarController extends Controller
                 'GradeStatus' => $gradeStatus
             ]);
 
-            if ($gradeStatus == 'Failed GWA') {
-                $scinfo = scholarshipinfo::where('caseCode', $user->caseCode)->first();
+            $failedGWAcount = grades::where('caseCode', $user->caseCode)
+                ->where('GradeStatus', 'Failed GWA')->count();
+            $scinfo = scholarshipinfo::where('caseCode', $user->caseCode)->first();
+
+            if ($gradeStatus == 'Failed GWA' && $failedGWAcount < 3) {
                 $worker = staccount::where('area', $scinfo->area)->first();
 
                 $gradeinfo = grades::where('caseCode', $user->caseCode)
@@ -543,6 +546,15 @@ class ScholarController extends Controller
                 ]);
                 $scinfo->scholarshipstatus = 'On-Hold';
                 $scinfo->save();
+            } else {
+                $scinfo->scholarshipstatus = 'Terminated';
+                $scinfo->save();
+
+                Auth::logout();
+
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return redirect()->route('scholar-login')->with('error', "Your scholarship has been terminated due to the accumulation of 3 failed GWAs. Consequently, your account has been deactivated. If you believe this is a mistake, please contact our Social Welfare Officer for further assistance.");
             }
 
             DB::commit();
