@@ -14,7 +14,7 @@
 <body style="background-color: #eaebea;">
 
     @include('components.alert') <!-- Include the alert modal here -->
-
+    <x-alert />
     <div class="header">
         <div class="ctnlogo">
             <img src="{{ asset('images/logo.png') }}" id="headerlogo" alt="logo.png">
@@ -35,11 +35,6 @@
             @if ($errors->has('caseCode'))
                 <div class="alert alert-danger">
                     <strong>{{ $errors->first('caseCode') }}</strong>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
                 </div>
             @endif
             <span class="label">Case Code</span>

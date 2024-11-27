@@ -333,7 +333,6 @@ class ScholarController extends Controller
 
     public function storeGradeSubmission(Request $request)
     {
-
         $user = Auth::user();
         $educ = ScEducation::where('caseCode', $user->caseCode)->first();
         $gwaRules = ['numeric'];
@@ -549,12 +548,16 @@ class ScholarController extends Controller
             } else {
                 $scinfo->scholarshipstatus = 'Terminated';
                 $scinfo->save();
+                $account = User::where('caseCode', $scinfo->caseCode)->first();
+                $account->scStatus = 'Inactive';
+                $account->save();
 
                 Auth::logout();
 
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
-                return redirect()->route('scholar-login')->with('error', "Your scholarship has been terminated due to the accumulation of 3 failed GWAs. Consequently, your account has been deactivated. If you believe this is a mistake, please contact our Social Welfare Officer for further assistance.");
+                DB::commit();
+                return redirect()->route('scholar-login')->with('failure', 'Your scholarship has been terminated due to the accumulation of 3 failed GWAs. Consequently, your account has been deactivated. If you believe this is a mistake, please contact our Social Welfare Officer for further assistance.');
             }
 
             DB::commit();
