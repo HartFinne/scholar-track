@@ -184,7 +184,7 @@
                             <td>{{ $grade->SemesterQuarter }}</td>
                             <td>{{ $grade->GWA }}</td>
                             @if ($user->education->scSchoolLevel != 'College')
-                                <td>{{ $grade->GWAConduct ?? '' }}</td>
+                                <td>{{ $grade->GWAConduct ?? 'N/A' }}</td>
                                 <td>{{ $grade->ChineseGWA ?? 'N/A' }}</td>
                                 <td>{{ $grade->ChineseGWAConduct ?? 'N/A' }}</td>
                             @endif
