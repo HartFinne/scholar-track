@@ -197,9 +197,46 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
-                        </tr>
+                        @forelse ($forms as $form)
+                            @php
+                                // Pre-filter scholars for College level
+                                $collegeScholars = $scholars->filter(function ($scholar) {
+                                    return $scholar->education->scSchoolLevel == 'Senior High';
+                                });
+                            @endphp
+
+                            @foreach ($data[$form->formname] as $row)
+                                @php
+                                    // Find the scholar by caseCode in the filtered collection
+                                    $scholar = $collegeScholars->firstWhere('caseCode', $row['caseCode']);
+                                @endphp
+
+                                @if ($scholar)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                        <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
+                                            {{ $scholar->basicInfo->scFirstname }}
+                                            {{ $scholar->basicInfo->scMiddlename }}</td>
+                                        <td class="text-center align-middle">{{ $row['requestType'] }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ \Carbon\Carbon::parse($row['requestDate'])->format('F j, Y') }}
+                                        </td>
+                                        <td class="text-center align-middle">{{ $row['requestStatus'] }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $row['releaseDate'] ? \Carbon\Carbon::parse($row['releaseDate'])->format('F j, Y') : 'Not Set Yet' }}
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <a href="{{ route('showspecrecinfo', ['type' => $form->formname, 'id' => $row['id'], 'caseCode' => $row['caseCode']]) }}"
+                                                class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        @empty
+                            <tr>
+                                <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -219,9 +256,46 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
-                        </tr>
+                        @forelse ($forms as $form)
+                            @php
+                                // Pre-filter scholars for College level
+                                $collegeScholars = $scholars->filter(function ($scholar) {
+                                    return $scholar->education->scSchoolLevel == 'Junior High';
+                                });
+                            @endphp
+
+                            @foreach ($data[$form->formname] as $row)
+                                @php
+                                    // Find the scholar by caseCode in the filtered collection
+                                    $scholar = $collegeScholars->firstWhere('caseCode', $row['caseCode']);
+                                @endphp
+
+                                @if ($scholar)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                        <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
+                                            {{ $scholar->basicInfo->scFirstname }}
+                                            {{ $scholar->basicInfo->scMiddlename }}</td>
+                                        <td class="text-center align-middle">{{ $row['requestType'] }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ \Carbon\Carbon::parse($row['requestDate'])->format('F j, Y') }}
+                                        </td>
+                                        <td class="text-center align-middle">{{ $row['requestStatus'] }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $row['releaseDate'] ? \Carbon\Carbon::parse($row['releaseDate'])->format('F j, Y') : 'Not Set Yet' }}
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <a href="{{ route('showspecrecinfo', ['type' => $form->formname, 'id' => $row['id'], 'caseCode' => $row['caseCode']]) }}"
+                                                class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        @empty
+                            <tr>
+                                <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -241,9 +315,46 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
-                        </tr>
+                        @forelse ($forms as $form)
+                            @php
+                                // Pre-filter scholars for College level
+                                $collegeScholars = $scholars->filter(function ($scholar) {
+                                    return $scholar->education->scSchoolLevel == 'Elementary';
+                                });
+                            @endphp
+
+                            @foreach ($data[$form->formname] as $row)
+                                @php
+                                    // Find the scholar by caseCode in the filtered collection
+                                    $scholar = $collegeScholars->firstWhere('caseCode', $row['caseCode']);
+                                @endphp
+
+                                @if ($scholar)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                                        <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
+                                            {{ $scholar->basicInfo->scFirstname }}
+                                            {{ $scholar->basicInfo->scMiddlename }}</td>
+                                        <td class="text-center align-middle">{{ $row['requestType'] }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ \Carbon\Carbon::parse($row['requestDate'])->format('F j, Y') }}
+                                        </td>
+                                        <td class="text-center align-middle">{{ $row['requestStatus'] }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $row['releaseDate'] ? \Carbon\Carbon::parse($row['releaseDate'])->format('F j, Y') : 'Not Set Yet' }}
+                                        </td>
+                                        <td class="text-center align-middle">
+                                            <a href="{{ route('showspecrecinfo', ['type' => $form->formname, 'id' => $row['id'], 'caseCode' => $row['caseCode']]) }}"
+                                                class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        @empty
+                            <tr>
+                                <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
