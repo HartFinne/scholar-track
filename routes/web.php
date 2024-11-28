@@ -182,7 +182,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/add-special-allowance-file', [StaffController::class, 'addDownloadableFiles'])->name('addDownloadableFiles');
     Route::post('/del-special-allowance-file/{id}', [StaffController::class, 'deleteDownloadableFile'])->name('deleteDownloadableFile');
     Route::post('/update-special-allowance-file/{id}', [StaffController::class, 'updateDownloadableFile'])->name('updateDownloadableFile');
-    Route::get('/allowance-requests-special/{requesttype}/{id}', [StaffController::class, 'showspecrecinfo'])->name('showspecrecinfo');
+    Route::get('/allowance-requests-special/{type}/{id}-{caseCode}', [StaffController::class, 'showspecrecinfo'])->name('showspecrecinfo');
     Route::post('/updatespecreq/{requesttype}/{id}', [StaffController::class, 'updatespecreq'])->name('updatespecreq');
     // APPLICATION CRITERIA
     Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');

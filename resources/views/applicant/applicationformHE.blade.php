@@ -16,6 +16,7 @@
 
 <body>
     <!-- MAIN -->
+    <x-alert />
     <div class="ctn-main">
         <a href="{{ route('appinstructions') }}" class="btn-back fw-bold" style="text-decoration: none">&lt Go
             back</a>

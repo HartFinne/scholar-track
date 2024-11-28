@@ -23,7 +23,7 @@
     <div class="ctnmain">
         <div class="container d-flex align-items-center">
             <div class="col-md-11">
-                <h1 class="title"><strong>Scholar's Information</strong></h1>
+                <span class="fw-bold text-success h1"><strong>Scholar's Information</strong></span>
             </div>
             <div class="col-md-1">
                 <a href="{{ route('scholars-overview') }}" class="btn btn-success">&lt Go back</a>

@@ -27,20 +27,6 @@
             <div class="col-md-1 mb-2" style="margin-left: auto;">
                 <a href="{{ route('allowancerequests-regular') }}" class="btn btn-success w-100">Go back</a>
             </div>
-            <div class="row" id="confirmmsg">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                        {!! session('error') !!}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-            </div>
             <div class="card p-3 bg-light">
                 <div class="border bg-success text-white p-3">
                     <h4 class="mb-0"><strong>REGULAR ALLOWANCES REQUEST</strong></h4>

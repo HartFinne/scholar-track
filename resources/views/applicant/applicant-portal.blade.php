@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    <x-alert />
     <!-- NAVBAR -->
     <div class="navbar">
         <div class="col-md-11 d-flex align-items-center">
@@ -41,19 +42,6 @@
     <div class="ctnmain">
         <div class="appform-view">
             <div class="appinfo row mx-auto">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
                 <div class="col-md-9">
                     <div class="row my-1">
                         <span class="col-md-4 label">Applicant Name</span>
@@ -76,7 +64,8 @@
                 </div>
                 <div class="col-md-3">
                     <div class="row my-1 mx-1">
-                        <a href="{{ route('generateapplicantform', ['casecode' => $applicant->casecode]) }}" class="btn btn-outline-success text-success bg-light">Download Form</a>
+                        <a href="{{ route('generateapplicantform', ['casecode' => $applicant->casecode]) }}"
+                            class="btn btn-outline-success text-success bg-light">Download Form</a>
                     </div>
                     <div class="row mx-1">
                         <button class="btn btn-danger" id="btnwithdraw" data-bs-toggle="modal"

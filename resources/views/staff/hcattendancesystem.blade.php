@@ -17,6 +17,7 @@
 </head>
 
 <body style="background-color:#eaebea;">
+    <x-alert />
     <!-- PAGE HEADER -->
     <button onclick="toggleexitdialog()" id="btnexit"><i class="fas fa-xmark"></i></button>
     <div class="header">
@@ -32,22 +33,6 @@
     <div class="maincontent">
         <div class="ctnmaintitle">
             <span class="maintitle">HUMANITIES CLASS ATTENDANCE</span>
-        </div>
-
-        <div class="message">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
         </div>
 
         <div class="ctnform">

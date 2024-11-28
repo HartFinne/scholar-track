@@ -18,26 +18,13 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
+    <x-alert />
 
     <div class="ctnmain">
         <div class="groupA">
             <span class="pagetitle">Community Service Details</span>
             <a href="{{ route('communityservice') }}" id="btngoback">Go back</a>
         </div>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
 
         <form class="groupB" method="POST" action="{{ route('updatecsevent', $event->csid) }}"
             enctype="multipart/form-data">

@@ -33,7 +33,7 @@
                 <div class="border-bottom my-3"></div>
                 <form class="row" method="post" action="{{ route('updateltestatus', $letter->lid) }}">
                     @csrf
-                    <div class="col-md-4 text-light fw-bold h4 my-auto">LTE Status</div>
+                    <div class="col-md-4 text-light fw-bold h4 my-auto">Letter of Explanation Status</div>
                     <div class="col-md-6 ">
                         <select class="fw-bold text-success form-select" name="ltestatus">
                             <option value="No Response" {{ $letter->ltestatus == 'No Response' ? 'selected' : '' }}>No

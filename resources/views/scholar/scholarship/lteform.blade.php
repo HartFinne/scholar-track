@@ -30,7 +30,7 @@
             @csrf
             <div class="lte-form">
                 <div class="lteform-title text-center">
-                    <h3 class="form-heading fw-bold">LTE Submission</h3>
+                    <h3 class="form-heading fw-bold">Letter of Explanation Submission</h3>
                     <p class="form-desc"><i>You must submit within 3 days after the receipt of the letter</i></p>
                 </div>
                 <div class="form-body">

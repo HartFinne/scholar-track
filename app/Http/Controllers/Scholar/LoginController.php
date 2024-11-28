@@ -41,9 +41,7 @@ class LoginController extends Controller
         }
 
         // If authentication fails
-        return back()->withErrors([
-            'caseCode' => 'The provided credentials do not match our records.',
-        ]);
+        return back()->with('failure', 'The provided credentials do not match our records.');
     }
 
     // for logging out in the account

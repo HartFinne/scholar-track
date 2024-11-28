@@ -39,27 +39,27 @@
             <div class="scinfo">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="fullName" class="fw-bold text-left">Full Name</label>
+                        <label for="fullName" class="fw-bold">Full Name</label>
                         <input type="text" class="form-control" id="fullName" name="fullName"
                             value="{{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}"
                             readonly>
                     </div>
 
                     <div class="col-md-6">
-                        <label for="yearLevel" class="fw-bold text-left">Year Level</label>
+                        <label for="yearLevel" class="fw-bold">Year Level</label>
                         <input type="text" class="form-control" id="yearLevel" name="yearLevel"
                             value="{{ $user->education->scYearGrade }}" readonly>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="acadYear" class="fw-bold text-left">Academic Year</label>
+                        <label for="acadYear" class="fw-bold">Academic Year</label>
                         <input type="text" class="form-control" id="acadYear" name="acadYear"
                             value="S.Y. {{ $user->education->scAcademicYear }}" readonly>
                     </div>
 
                     <div class="col-md-6">
-                        <label for="school" class="fw-bold text-left">School</label>
+                        <label for="school" class="fw-bold">School</label>
                         <input type="text" class="form-control" id="school" name="school"
                             value="{{ $user->education->scSchoolName }}" readonly>
                     </div>
@@ -67,7 +67,6 @@
 
 
                 <div class="row mb-3">
-                    <!-- Dropdown for Quarter/Semester -->
                     <div class="{{ $institution->schoollevel == 'College' ? 'col-md-5' : 'col-md-6' }} mb-2">
                         <label for="sem" class="fw-bold text-left">{{ $institution->academiccycle }}</label>
                         <input type="text" class="form-control" id="sem" name="semester"
@@ -75,7 +74,6 @@
                     </div>
 
                     @if ($institution->schoollevel == 'College')
-                        <!-- Input for GWA -->
                         <div class="col-md-2 mb-2">
                             <label for="gwa" class="fw-bold text-left">GWA</label>
                             <input type="number" class="form-control" id="gwa" name="gwa" min="1"
@@ -85,37 +83,72 @@
                         </div>
                     @endif
 
-                    <!-- File Input for Grade Image -->
                     <div class="{{ $institution->schoollevel == 'College' ? 'col-md-5' : 'col-md-6' }}">
-                        <label for="grades" class="fw-bold text-left">Grades</label>
+                        <label for="grades" class="fw-bold text-left">Copy of Report Card</label>
                         <input type="file" id="grades" class="form-control" name="gradeImage"
                             accept="application/pdf, image/jpeg, image/png" required>
                     </div>
-                </div>
-                @if ($institution->schoollevel != 'College')
-                    <div class="row mb-3">
-                        <div class="col-md-3 mb-2">
+
+                    @if ($institution->schoollevel != 'College')
+                        <div class="{{ $institution->schoollevel == 'Senior High' ? 'col-md-3' : 'col-md-1' }} mb-2">
                             <label for="genave" class="fw-bold text-left">GWA</label>
                             <input type="number" class="form-control" id="genave" name="genave" min="1"
                                 max="{{ $institution->highestgwa != 100 ? '5' : '100' }}" value="{{ old('genave') }}"
                                 {{ $institution->schoollevel != 'College' ? 'required' : '' }} step="0.01">
                         </div>
+                        @if (in_array($user->education->scSchoolLevel, ['Junior High', 'Elementary']))
+                            <div class="col-md-3 mb-2">
+                                <label for="gwaremark" class="fw-bold text-left">GWA Remark</label>
+                                <input type="text" class="form-control" id="gwaremark" name="gwaremark" readonly>
+                            </div>
+                        @endif
+                        <script>
+                            document.addEventListener('input', function() {
+                                const gwa = parseFloat(document.getElementById('genave').value);
+                                const gwaremarkInput = document.getElementById('gwaremark');
+                                let gwaremark = '';
+
+                                if (gwa < 75) {
+                                    gwaremark = 'Did Not Meet Expectations';
+                                } else if (gwa < 80) {
+                                    gwaremark = 'Fairly Satisfactory';
+                                } else if (gwa < 85) {
+                                    gwaremark = 'Satisfactory';
+                                } else if (gwa < 90) {
+                                    gwaremark = 'Very Satisfactory';
+                                } else {
+                                    gwaremark = 'Outstanding';
+                                }
+
+                                gwaremarkInput.value = gwaremark;
+                            });
+                        </script>
                         <div class="col-md-3">
                             <label for="gwaconduct" class="fw-bold text-left">Conduct</label>
                             <select name="gwaconduct" id="gwaconduct" required class="form-select">
                                 <option value="" selected hidden>Select conduct</option>
-                                <option value="AO" {{ old('gwaconduct') == 'AO' ? 'selected' : '' }}>AO</option>
-                                <option value="SO" {{ old('gwaconduct') == 'SO' ? 'selected' : '' }}>SO</option>
-                                <option value="RO" {{ old('gwaconduct') == 'RO' ? 'selected' : '' }}>RO</option>
-                                <option value="NO" {{ old('gwaconduct') == 'NO' ? 'selected' : '' }}>NO</option>
+                                <option value="AO"
+                                    {{ old('gwaconduct') == 'AO (Always Observed)' ? 'selected' : '' }}>AO
+                                    (Always
+                                    Observed)</option>
+                                <option value="SO"
+                                    {{ old('gwaconduct') == 'SO (Sometimes Observed)' ? 'selected' : '' }}>SO
+                                    (Sometimes Observed)</option>
+                                <option value="RO"
+                                    {{ old('gwaconduct') == 'RO (Rarely Observed)' ? 'selected' : '' }}>RO
+                                    (Rarely
+                                    Observed)</option>
+                                <option value="NO"
+                                    {{ old('gwaconduct') == 'NO (Not Observed)' ? 'selected' : '' }}>NO (Not
+                                    Observed)
+                                </option>
                             </select>
                             {{-- <input type="text" class="form-control" id="gwaconduct" name="gwaconduct"
-                                minlength="1" value="{{ old('gwaconduct') }}"
-                                {{ $institution->schoollevel != 'College' ? 'required' : '' }}> --}}
+                            minlength="1" value="{{ old('gwaconduct') }}"
+                            {{ $institution->schoollevel != 'College' ? 'required' : '' }}> --}}
                         </div>
-                        <div class="col-md-3 mb-2">
-                            <label for="chinesegenave" class="fw-bold text-left">Chinese Subject General
-                                Average</label>
+                        <div class="{{ $institution->schoollevel == 'Senior High' ? 'col-md-3' : 'col-md-2' }} mb-2">
+                            <label for="chinesegenave" class="fw-bold text-left">Chinese Subject GWA</label>
                             <input type="number" class="form-control" id="chinesegenave" name="chinesegenave"
                                 min="1" max="{{ $institution->highestgwa != 100 ? '5' : '100' }}"
                                 value="{{ old('chinesegenave') }}" step="0.01">
@@ -124,20 +157,29 @@
                             <label for="gwaconduct" class="fw-bold text-left">Chinese Subject Conduct</label>
                             <select name="chineseconduct" id="chineseconduct" class="form-select">
                                 <option value="" selected hidden>Select conduct</option>
-                                <option value="AO" {{ old('chineseconduct') == 'AO' ? 'selected' : '' }}>AO
-                                </option>
-                                <option value="SO" {{ old('chineseconduct') == 'SO' ? 'selected' : '' }}>SO
-                                </option>
-                                <option value="RO" {{ old('chineseconduct') == 'RO' ? 'selected' : '' }}>RO
-                                </option>
-                                <option value="NO" {{ old('chineseconduct') == 'NO' ? 'selected' : '' }}>NO
+                                <option value="AO"
+                                    {{ old('chineseconduct') == 'AO (Always Observed)' ? 'selected' : '' }}>AO
+                                    (Always
+                                    Observed)</option>
+                                <option value="SO"
+                                    {{ old('chineseconduct') == 'SO (Sometimes Observed)' ? 'selected' : '' }}>
+                                    SO
+                                    (Sometimes Observed)</option>
+                                <option value="RO"
+                                    {{ old('chineseconduct') == 'RO (Rarely Observed)' ? 'selected' : '' }}>RO
+                                    (Rarely
+                                    Observed)</option>
+                                <option value="NO"
+                                    {{ old('chineseconduct') == 'NO (Not Observed)' ? 'selected' : '' }}>NO
+                                    (Not
+                                    Observed)
                                 </option>
                             </select>
                             {{-- <input type="text" class="form-control" id="chineseconduct" name="chineseconduct"
-                                minlength="1" placeholder="Conduct" value="{{ old('chineseconduct') }}"> --}}
+                            minlength="1" placeholder="Conduct" value="{{ old('chineseconduct') }}"> --}}
                         </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn-submit fw-bold">Submit</button>
@@ -167,6 +209,9 @@
                         <th class="text-center align-middle">School Year</th>
                         <th class="text-center align-middle">Semester</th>
                         <th class="text-center align-middle">GWA</th>
+                        @if (in_array($user->education->scSchoolLevel, ['Junior High', 'Elementary']))
+                            <th class="text-center align-middle">GWA Remark</th>
+                        @endif
                         @if ($user->education->scSchoolLevel != 'College')
                             <th class="text-center align-middle">Conduct</th>
                             <th class="text-center align-middle">GWA (Chinese Subject)</th>
@@ -174,7 +219,6 @@
                         @endif
                         <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -183,6 +227,24 @@
                             <td>S.Y. {{ $grade->schoolyear }}</td>
                             <td>{{ $grade->SemesterQuarter }}</td>
                             <td>{{ $grade->GWA }}</td>
+                            @php
+                                if ($grade->GWA < 75) {
+                                    $gwaremark = 'Did Not Meet Expectations';
+                                } elseif ($grade->GWA < 80) {
+                                    $gwaremark = 'Fairly Satisfactory';
+                                } elseif ($grade->GWA < 85) {
+                                    $gwaremark = 'Satisfactory';
+                                } elseif ($grade->GWA < 90) {
+                                    $gwaremark = 'Very Satisfactory';
+                                } else {
+                                    $gwaremark = 'Outstanding';
+                                }
+                            @endphp
+
+                            @if (in_array($user->education->scSchoolLevel, ['Junior High', 'Elementary']))
+                                <td>{{ $gwaremark }}</td>
+                            @endif
+
                             @if ($user->education->scSchoolLevel != 'College')
                                 <td>{{ $grade->GWAConduct ?? 'N/A' }}</td>
                                 <td>{{ $grade->ChineseGWA ?? 'N/A' }}</td>

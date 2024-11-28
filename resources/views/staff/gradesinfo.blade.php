@@ -42,7 +42,7 @@
                         <div class="col-md-2">Grade Status</div>
                         <div class="col-md-8">
                             <select name="gradestatus" class="form-control" style="cursor: pointer">
-                                <option value="Pending" {{ $grade->GradeStatus == 'Pending' ? 'selected' : '' }}>
+                                <option value="Pending" {{ $grade->GradeStatus == 'Pending' ? 'selected' : '' }} hidden>
                                     Pending
                                 </option>
                                 <option value="Passed" {{ $grade->GradeStatus == 'Passed' ? 'selected' : '' }}>Passed
@@ -53,12 +53,9 @@
                                     {{ $grade->GradeStatus == 'Failed GWA (Chinese Subject)' ? 'selected' : '' }}>
                                     Failed GWA (Chinese Subject)</option>
                                 <option value="Failed Grade"
-                                    {{ $grade->GradeStatus == 'Failed Grade' ? 'selected' : '' }}>
-                                    Failed Grade
+                                    {{ $grade->GradeStatus == 'Failed Grade in Subject/s' ? 'selected' : '' }}>
+                                    Failed Grade in Subject/s
                                 </option>
-                                <option value="Mismatched GWA"
-                                    {{ $grade->GradeStatus == 'Mismatched GWA' ? 'selected' : '' }}>
-                                    Mismatched GWA</option>
                             </select>
                         </div>
                         <div class="col-md-2">

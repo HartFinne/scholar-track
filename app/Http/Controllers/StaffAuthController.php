@@ -30,13 +30,13 @@ class StaffAuthController extends Controller
                     case 'System Admin':
                         return redirect()->route('dashboard');
                     default:
-                        return redirect()->back()->with('error', 'Unknown role. Access denied.');
+                        return redirect()->back()->with('failure', 'Unknown role. Access denied.');
                 }
             } else {
-                return redirect()->back()->with('error', 'Your account has been deactivated. If this was an error, please contact us at inquiriescholartrack@gmail.com for assistance.');
+                return redirect()->back()->with('failure', 'Your account has been deactivated. If this was an error, please contact us at inquiriescholartrack@gmail.com for assistance.');
             }
         } else {
-            return redirect()->back()->with('error', 'Invalid email or password.');
+            return redirect()->back()->with('failure', 'Invalid email or password.');
         }
     }
     public function createAccount(Request $request)
@@ -80,14 +80,14 @@ class StaffAuthController extends Controller
                 return redirect()->route('users-staff')->with('failure', 'Account created, but email notification failed.');
             }
         } catch (\Exception $e) {
-            return redirect()->route('users-staff')->with('error', 'Account creation was unsuccessful. ' . $e->getMessage());
+            return redirect()->route('users-staff')->with('failure', 'Account creation was unsuccessful. ' . $e->getMessage());
         }
     }
 
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('staff')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

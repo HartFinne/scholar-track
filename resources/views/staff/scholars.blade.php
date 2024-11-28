@@ -52,20 +52,17 @@
         <div class="divider"></div>
         <span class="fw-bold text-success h2">List of Scholars</span>
         <div class="row gx-0 align-items-center">
-            {{-- <div class="col-md-2 mx-1">
-                <span class="text-success">Select which list to view:</span>
-            </div> --}}
             <div class="col-md-1">
-                <button class="btn btn-sm btn-success w-100" id="toggleCollege">College</button>
+                <button class="filter btn btn-sm btn-success w-100" id="toggleCollege">College</button>
             </div>
             <div class="col-md-1 mx-1">
-                <button class="btn btn-sm btn-outline-success w-100" id="toggleSHS">Senior High</button>
+                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleSHS">Senior High</button>
             </div>
             <div class="col-md-1">
-                <button class="btn btn-sm btn-outline-success w-100" id="toggleJHS">Junior High</button>
+                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleJHS">Junior High</button>
             </div>
             <div class="col-md-1 mx-1">
-                <button class="btn btn-sm btn-outline-success w-100" id="toggleElem">Elementary</button>
+                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleElem">Elementary</button>
             </div>
         </div>
         <div class="ctn" id="college">
@@ -76,6 +73,7 @@
                             <th class="text-center align-middle">#</th>
                             <th class="text-center align-middle">Name</th>
                             <th class="text-center align-middle">Year Level</th>
+                            <th class="text-center align-middle">Scholarship Status</th>
                             <th class="text-center align-middle">Action</th>
                         </tr>
                     </thead>
@@ -89,11 +87,14 @@
                                     {{ $data->basicInfo->scMiddlename }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    {{ optional($data->education)->scYearGrade }}
+                                    {{ $data->education->scYearGrade }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ $data->scholarshipinfo->scholarshipstatus }}
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-success">View</a>
+                                        class="btn btn-sm btn-success">View</a>
                                 </td>
                             </tr>
                         @empty
@@ -113,6 +114,7 @@
                             <th class="text-center align-middle">#</th>
                             <th class="text-center align-middle">Name</th>
                             <th class="text-center align-middle">Grade Level</th>
+                            <th class="text-center align-middle">Scholarship Status</th>
                             <th class="text-center align-middle">Action</th>
                         </tr>
                     </thead>
@@ -126,11 +128,14 @@
                                     {{ $data->basicInfo->scMiddlename }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    {{ optional($data->education)->scSchoolLevel }}
+                                    {{ $data->education->scYearGrade }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ $data->scholarshipinfo->scholarshipstatus }}
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-success">View</a>
+                                        class="btn btn-sm btn-success">View</a>
                                 </td>
                             </tr>
                         @empty
@@ -150,6 +155,7 @@
                             <th class="text-center align-middle">#</th>
                             <th class="text-center align-middle">Name</th>
                             <th class="text-center align-middle">Grade Level</th>
+                            <th class="text-center align-middle">Scholarship Status</th>
                             <th class="text-center align-middle">Action</th>
                         </tr>
                     </thead>
@@ -163,11 +169,14 @@
                                     {{ $data->basicInfo->scMiddlename }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    {{ optional($data->education)->scSchoolLevel }}
+                                    {{ $data->education->scYearGrade }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ $data->scholarshipinfo->scholarshipstatus }}
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-success">View</a>
+                                        class="btn btn-sm btn-success">View</a>
                                 </td>
                             </tr>
                         @empty
@@ -187,6 +196,7 @@
                             <th class="text-center align-middle">#</th>
                             <th class="text-center align-middle">Name</th>
                             <th class="text-center align-middle">Grade Level</th>
+                            <th class="text-center align-middle">Scholarship Status</th>
                             <th class="text-center align-middle">Action</th>
                         </tr>
                     </thead>
@@ -200,11 +210,14 @@
                                     {{ $data->basicInfo->scMiddlename }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    {{ optional($data->education)->scSchoolLevel }}
+                                    {{ $data->education->scYearGrade }}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {{ $data->scholarshipinfo->scholarshipstatus }}
                                 </td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-success">View</a>
+                                        class="btn btn-sm btn-success">View</a>
                                 </td>
                             </tr>
                         @empty
@@ -218,6 +231,7 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script>
         $(document).ready(function() {
             function toggleSection(buttonId, containerId) {
@@ -228,7 +242,7 @@
                     });
 
                     // Update button classes to reflect active/inactive states
-                    $('.btn').not(buttonId).removeClass('btn-success').addClass('btn-outline-success');
+                    $('.filter').not(buttonId).removeClass('btn-success').addClass('btn-outline-success');
                     $(buttonId).removeClass('btn-outline-success').addClass('btn-success');
                 });
             }
@@ -239,9 +253,7 @@
             toggleSection('#toggleJHS', '#jhs');
             toggleSection('#toggleElem', '#elem');
         });
-    </script>
-    <script src="{{ asset('js/headercontrol.js') }}"></script>
-    <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             // Convert the PHP array to a JavaScript object for scholars per area
             const scholarsperarea = @json($scholarsperarea);

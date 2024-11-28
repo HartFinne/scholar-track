@@ -15,6 +15,7 @@
 </head>
 
 <body style="background-color: #eaebea;">
+    <x-alert />
     <!-- PAGE HEADER -->
     <div class="header">
         <div class="ctnlogo">
@@ -29,12 +30,6 @@
 
     <!-- MAIN CONTENT -->
     <div class="maincontent">
-        @if (session('error'))
-            <div class="alert alert-danger" role="alert" id="ctnerrormsg">
-                {{ session('error') }}
-            </div>
-        @endif
-
         <form class="groupA" method="POST" action="{{ route('log-applicant') }}">
             @csrf
             <span id="formtitle">Applicant Portal</span>

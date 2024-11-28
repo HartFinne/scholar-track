@@ -60,7 +60,7 @@ class ApplicantAuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('applicant')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -16,6 +16,7 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
+    <x-alert />
     <div class="ctnmain">
         <div class="appformview">
             <div class="mx-auto mb-2" style="width: 8.5in">
@@ -24,19 +25,6 @@
                 </div>
             </div>
             <div class="appinfo">
-                @if (session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                        {{ session('success') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
                 <div class="row my-2">
                     <span class="col-md-3 label">Applicant Name</span>
                     <span class="col-md-1 label">: </span>

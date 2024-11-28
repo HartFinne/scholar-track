@@ -25,10 +25,15 @@
         {{-- MANAGE SPECIAL ALLOWANCE FORMS --}}
         <div class="row">
             <div class="d-flex justify-content-between align-items-center w-100">
-                <span class="text-success fw-bold h2">Manage Special Allowance Forms</span>
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createFormModal">
-                    Create New Form
-                </button>
+                <div>
+                    <span class="text-success fw-bold h2">Manage Special Allowance Forms</span>
+                </div>
+                <div>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createFormModal">
+                        Create New Form
+                    </button>
+                    <a href="{{ route('allowancerequests-special') }}" class="btn btn-success">Go back</a>
+                </div>
             </div>
         </div>
         <div class="ctntable">
@@ -80,7 +85,8 @@
                                     <div class="modal-body">
                                         <div class="container bg-light rounded px-4 py-3 mb-4">
                                             <div class="row text-center h4 fw-bold my-3">
-                                                <span class="col-12 text-center h4 fw-bold">{{ $form->formname }}</span>
+                                                <span
+                                                    class="col-12 text-center h4 fw-bold">{{ $form->formname }}</span>
                                             </div>
                                             <div class="row h6 fw-bold">
                                                 Please follow the given instructions carefully.
@@ -171,9 +177,57 @@
                                                     <div class="col-md-5 mb-3">
                                                         <div class="row fw-bold">{{ $field->fieldname }}</div>
                                                         <div class="row">
-                                                            <input type="{{ $field->fieldtype }}" readonly
-                                                                name="{{ $field->fieldname }}" class="form-control">
+                                                            <input type="{{ $field->fieldtype }}"
+                                                                name="{{ $field->fieldname }}"
+                                                                id="{{ $field->fieldname }}" class="form-control"
+                                                                required>
                                                         </div>
+                                                        @if ($field->fieldtype == 'file')
+                                                            <div class="row small text-muted">Kung maraming picture,
+                                                                I-compile sa iisang zip or pdf
+                                                                ang mga pictures.</div>
+                                                        @endif
+                                                    </div>
+                                                @empty
+                                                    <div class="row">
+                                                        <span class="col-12 text-center">No Fields Found.</span>
+                                                    </div>
+                                                @endforelse
+                                                <script>
+                                                    document.addEventListener('DOMContentLoaded', function() {
+                                                        let fields = @json($fields); // Correct way to pass data to JavaScript
+                                                        fields.forEach(field => {
+                                                            const fieldElement = document.getElementById(field.fieldname); // Accessing each field by ID
+                                                            const fieldtype = field.fieldtype;
+
+                                                            if (fieldtype == 'text') {
+                                                                fieldElement.maxLength = 255; // Set maxLength for text fields
+                                                            } else if (fieldtype == 'number') {
+                                                                fieldElement.min = 1; // Set minimum value for number fields
+                                                                fieldElement.step = 0.01; // Set step for number fields
+                                                            } else if (fieldtype == 'file') {
+                                                                fieldElement.accept =
+                                                                    ".pdf, .jpg, .jpeg, .png, .zip"; // Allow only PDF files for file inputs
+                                                            }
+                                                        });
+                                                    });
+                                                </script>
+                                                @php
+                                                    $downloadableFiles = json_decode($form->downloadablefiles, true);
+                                                    $downloadableFiles = DB::table('specialallowanceforms')
+                                                        ->whereIn('id', $downloadableFiles)
+                                                        ->get();
+                                                @endphp
+                                                @forelse ($downloadableFiles as $file)
+                                                    <div class="col-md-5 mb-3">
+                                                        <div class="row fw-bold">{{ $file->filename }}</div>
+                                                        <div class="row">
+                                                            <input type="file" required
+                                                                name="{{ $file->filename }}" class="form-control"
+                                                                accept=".pdf">
+                                                        </div>
+                                                        <div class="row small text-muted italic">Only PDF documents are
+                                                            accepted.</div>
                                                     </div>
                                                 @empty
                                                     <div class="row">
@@ -225,6 +279,11 @@
                                                     <input type="text" maxlength="25" class="form-control"
                                                         name="newformcode" id="newformcode"
                                                         value="{{ old('formcode') ?? $form->formcode }}" required>
+                                                </div>
+                                                <div class="col-12 text-muted">
+                                                    <small>This will be the name used for the Excel file containing the
+                                                        scholars' request
+                                                        data.</small>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
@@ -691,6 +750,10 @@
                             <div class="col-12">
                                 <input type="text" maxlength="25" class="form-control" name="formcode"
                                     id="formcode" value="{{ old('formcode') }}" required>
+                            </div>
+                            <div class="col-12 text-muted">
+                                <small>This will be the name used for the Excel file containing the scholars' request
+                                    data.</small>
                             </div>
                         </div>
                         <div class="row mb-3">

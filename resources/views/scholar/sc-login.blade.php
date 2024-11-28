@@ -24,17 +24,11 @@
         <a href="{{ route('roleselection') }}" id="btnexit"><i class="fas fa-arrow-left"></i></a>
     </div>
 
-
     <div class="maincontent">
         <form class="groupA" action="{{ route('scholar-login.post') }}" method="POST">
             @csrf
             <span id="formtitle">Scholar Portal</span>
             <span id="formsubtitle">Sign in to start your session.</span>
-            @if ($errors->has('caseCode'))
-                <div class="alert alert-danger">
-                    <strong>{{ $errors->first('caseCode') }}</strong>
-                </div>
-            @endif
             <span class="label">Case Code</span>
             <input class="input" type="text" name="caseCode" id="caseCode" value="{{ old('caseCode') }}" required>
             <span class="label">Password</span>

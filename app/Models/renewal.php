@@ -15,6 +15,7 @@ class renewal extends Model
 
     protected $fillable = [
         'caseCode',
+        'datesubmitted',
         'picture',
         'reportcard',
         'utilitybill',

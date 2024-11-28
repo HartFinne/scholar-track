@@ -59,6 +59,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Exports\SpecialAllowanceFormExport;
+use App\Models\SpecialAllowanceSummary;
 use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
@@ -322,12 +323,6 @@ class StaffController extends Controller
             $scholar->scholarshipstatus = $request->scholarshipstatus;
             $scholar->save();
 
-            if ($request->scholarshipstatus == 'Terminated') {
-                $user = User::where('caseCode', $caseCode)->first();
-                $user->scStatus = 'Inactive';
-                $user->save();
-            }
-
             DB::commit();
             return redirect()->back()->with('success', 'Successfully updated scholarship status.');
         } catch (\Exception $e) {
@@ -385,9 +380,6 @@ class StaffController extends Controller
                 if ($ltecount <= 2) {
                     $scholarshipinfo->scholarshipstatus = 'On-Hold';
                 } else {
-                    $user = user::where('caseCode', $grade->caseCode)->first();
-                    $user->scStatus = 'Inactive';
-                    $user->save();
                     $scholarshipinfo->scholarshipstatus = 'Terminated';
                     $scholarshipinfo->save();
                 }
@@ -438,6 +430,7 @@ class StaffController extends Controller
             $letter->ltestatus = $request->ltestatus;
             $letter->save();
             $scinfo = scholarshipinfo::where('caseCode', $letter->caseCode)->first();
+            $scholar = User::where('caseCode', $letter->caseCode)->first();
 
             if (in_array($letter->violation, ['Late', 'Absent', 'Left Early', 'Cancelled'])) {
                 $condition = $letter->violation . ' in ' . $letter->eventtype;
@@ -465,13 +458,17 @@ class StaffController extends Controller
                     $remark = '1st Offense';
                 }
 
-                penalty::create([
-                    'caseCode' => $letter->caseCode,
-                    'condition' => $condition,
-                    'conditionid' => $lid,
-                    'remark' => $remark,
-                    'dateofpenalty' => $date,
-                ]);
+                $failedGradeStatuses = ['Failed GWA', 'Failed GWA (Chinese Subject)', 'Failed Grade in Subject/s'];
+
+                // Check if the violation matches one of the failed statuses
+                if (in_array($condition, $failedGradeStatuses)) {
+                    // Update scholarship status
+                    // dd($scinfo->scholarshipstatus);
+                    $scinfo->update([
+                        'scholarshipstatus' => 'Terminated',
+                        'updated_at' => now() // Ensure the timestamp is updated
+                    ]);
+                }
 
                 if (
                     ($remark == '3rd Offense' && $letter->violation == 'Absent' && $letter->eventtype == 'Humanities Class') ||
@@ -482,6 +479,14 @@ class StaffController extends Controller
                         $scinfo->save();
                     }
                 }
+
+                penalty::create([
+                    'caseCode' => $letter->caseCode,
+                    'condition' => $condition,
+                    'conditionid' => $lid,
+                    'remark' => $remark,
+                    'dateofpenalty' => $date,
+                ]);
             } else if ($request->ltestatus == 'Excused') {
                 $scinfo->scholarshipstatus = 'Continuing';
                 $scinfo->save();
@@ -493,7 +498,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             DB::commit();
 
-            return redirect()->back()->with('failer', 'Failed to update LTE status. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update LTE status. ' . $e->getMessage());
         }
     }
 
@@ -890,7 +895,7 @@ class StaffController extends Controller
             return redirect()->back()->with('success', "Successfully updated {$type}.");
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -928,33 +933,100 @@ class StaffController extends Controller
 
     public function showRenewal()
     {
-        $totalrenew = renewal::all()->count();
-        $pending = renewal::where('status', 'Pending')->count();
-        $approved = renewal::where('status', 'Approved')->count();
-        $rejected = renewal::where('status', 'Rejected')->count();
-        return view('staff.renewal', compact('totalrenew', 'pending', 'approved', 'rejected'));
+        // Get renewal form information
+        $renewal = applicationforms::where('formname', 'Renewal')->first();
+
+        $startdate = $renewal->updated_at->format('Y-m-d');
+        $enddate = $renewal->enddate ? $renewal->enddate->format('Y-m-d') : now()->addYear()->format('Y-m-d');
+
+        // Generate summary data
+        $summary = [
+            'totalrenew' => renewal::whereBetween('datesubmitted', [$startdate, $enddate])->count(),
+            'pending' => renewal::where('status', 'Pending')->whereBetween('datesubmitted', [$startdate, $enddate])->count(),
+            'approved' => renewal::where('status', 'Approved')->whereBetween('datesubmitted', [$startdate, $enddate])->count(),
+            'rejected' => renewal::where('status', 'Rejected')->whereBetween('datesubmitted', [$startdate, $enddate])->count(),
+        ];
+
+        // Fetch data for College
+        $college = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'College');
+            })
+            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
+                $query->whereBetween('datesubmitted', [$startdate, $enddate])
+                    ->orderBy('datesubmitted', 'ASC')
+                    ->orderByRaw("
+        CASE
+            WHEN renewal.status = 'Pending' THEN 1 
+            WHEN renewal.status = 'Approved' THEN 2  
+            WHEN renewal.status = 'Rejected' THEN 3 
+            WHEN renewal.status = 'Withdrawn' THEN 4
+            ELSE 5
+        END");
+            })
+            ->get();
+
+        // Fetch data for Senior High School
+        $shs = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'Senior High');
+            })
+            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
+                $query->whereBetween('datesubmitted', [$startdate, $enddate])
+                    ->orderBy('datesubmitted', 'ASC')
+                    ->orderByRaw("
+        CASE
+            WHEN renewal.status = 'Pending' THEN 1 
+            WHEN renewal.status = 'Approved' THEN 2  
+            WHEN renewal.status = 'Rejected' THEN 3 
+            WHEN renewal.status = 'Withdrawn' THEN 4
+            ELSE 5
+        END");
+            })
+            ->get();
+
+        // Fetch data for Junior High School
+        $jhs = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'Junior High');
+            })
+            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
+                $query->whereBetween('datesubmitted', [$startdate, $enddate])
+                    ->orderBy('datesubmitted', 'ASC')
+                    ->orderByRaw("
+        CASE
+            WHEN renewal.status = 'Pending' THEN 1 
+            WHEN renewal.status = 'Approved' THEN 2  
+            WHEN renewal.status = 'Rejected' THEN 3 
+            WHEN renewal.status = 'Withdrawn' THEN 4
+            ELSE 5
+        END");
+            })
+            ->get();
+
+        // Fetch data for Elementary
+        $elem = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+            ->whereHas('education', function ($query) {
+                $query->where('scSchoolLevel', 'Elementary');
+            })
+            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
+                $query->whereBetween('datesubmitted', [$startdate, $enddate])
+                    ->orderBy('datesubmitted', 'ASC')
+                    ->orderByRaw("
+        CASE
+            WHEN renewal.status = 'Pending' THEN 1 
+            WHEN renewal.status = 'Approved' THEN 2  
+            WHEN renewal.status = 'Rejected' THEN 3 
+            WHEN renewal.status = 'Withdrawn' THEN 4
+            ELSE 5
+        END");
+            })
+            ->get();
+
+        // Pass data to the view
+        return view('staff.renewal', compact('summary', 'college', 'shs', 'jhs', 'elem'));
     }
 
-    public function showRenewalCollege()
-    {
-        $scholars = User::with('education', 'basicInfo');
-        $renewals = renewal::all();
-        return view('staff.renewcollege', compact('renewals', 'scholars'));
-    }
-
-    public function showRenewalElem()
-    {
-        $scholars = User::with('education', 'basicInfo');
-        $renewals = renewal::all();
-        return view('staff.renewelementary', compact('renewals', 'scholars'));
-    }
-
-    public function showRenewalHS()
-    {
-        $scholars = User::with('education', 'basicInfo');
-        $renewals = renewal::all();
-        return view('staff.renewhighschool', compact('renewals', 'scholars'));
-    }
 
     public function showRenewalinfo()
     {
@@ -1053,108 +1125,158 @@ class StaffController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Unable to update request. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Unable to update request. ' . $e->getMessage());
         }
     }
+
+    // public function showAllowanceSpecial()
+    // {
+    //     $allowanceModels = [
+    //         allowancebook::class,
+    //         allowanceevent::class,
+    //         allowancethesis::class,
+    //         allowanceproject::class,
+    //         allowancetranspo::class,
+    //         allowanceuniform::class,
+    //         allowancegraduation::class
+    //     ];
+
+    //     $data = SpecialAllowanceSummary::first();
+
+    //     // Define an array of model classes
+    //     $allowanceModels = [
+    //         allowancebook::class,
+    //         allowanceevent::class,
+    //         allowancethesis::class,
+    //         allowanceproject::class,
+    //         allowancetranspo::class,
+    //         allowanceuniform::class,
+    //         allowancegraduation::class
+    //     ];
+
+    //     // Initialize an empty collection to store all results
+    //     $mergedRequests = collect();
+
+    //     // Loop through each model class, retrieve and merge the results
+    //     foreach ($allowanceModels as $model) {
+    //         // Retrieve records already ordered by created_at and add to the merged collection
+    //         $records = $model::orderBy('created_at', 'asc')->get();
+    //         $mergedRequests = $mergedRequests->concat($records);
+    //     }
+
+    //     // Define a custom order for statuses
+    //     $statusOrder = ['Pending', 'Accepted', 'Completed', 'Rejected'];
+
+    //     // Sort the merged collection by status first, then by created_at
+    //     $requests = $mergedRequests->sort(function ($a, $b) use ($statusOrder) {
+    //         // Compare status by predefined priority
+    //         $statusComparison = array_search($a->status, $statusOrder) <=> array_search($b->status, $statusOrder);
+    //         if ($statusComparison == 0) { // if statuses are the same, sort by created_at
+    //             return $a->created_at <=> $b->created_at;
+    //         }
+    //         return $statusComparison;
+    //     })->values();
+
+    //     // Ensure keys are reset
+    //     $requests = $requests->values();
+
+    //     return view('staff.specialallowance', compact('data', 'requests'));
+    // }
 
     public function showAllowanceSpecial()
     {
-        $allowanceModels = [
-            allowancebook::class,
-            allowanceevent::class,
-            allowancethesis::class,
-            allowanceproject::class,
-            allowancetranspo::class,
-            allowanceuniform::class,
-            allowancegraduation::class
-        ];
+        $summary = SpecialAllowanceSummary::first();
 
-        $statuses = ['pending', 'accepted', 'completed', 'rejected'];
+        $forms = CreateSpecialAllowanceForm::get();
+        $scholars = User::with('basicInfo', 'education', 'scholarshipinfo')->get();
+
         $data = [];
+        foreach ($forms as $form) {
+            $formname = $form->formname;
+            $filePath = $form->database;
 
-        foreach ($statuses as $status) {
-            $count = 0;
-            foreach ($allowanceModels as $model) {
-                $count += $model::where('status', $status)->count();
+            // Check if the file exists in the public disk
+            if (!Storage::disk('public')->exists($filePath)) {
+                // Stop the process and return with failure message if file doesn't exist
+                return view('scholar.allowancerequest.scspecial', compact('scholar', 'forms'))->with('failure', 'File Not Found.');
             }
-            $data[$status] = $count;
-        }
 
-        // Calculate the total count of all statuses
-        $data['total'] = array_sum($data);
+            // Read the Excel file from the public disk
+            $data[$formname] = Excel::toArray([], Storage::disk('public')->path($filePath));
 
-        // Define an array of model classes
-        $allowanceModels = [
-            allowancebook::class,
-            allowanceevent::class,
-            allowancethesis::class,
-            allowanceproject::class,
-            allowancetranspo::class,
-            allowanceuniform::class,
-            allowancegraduation::class
-        ];
+            // Ensure the file is not empty
+            if (!empty($data[$formname][0])) {
+                // The first row contains the column headers
+                $headers = $data[$formname][0][0];
 
-        // Initialize an empty collection to store all results
-        $mergedRequests = collect();
+                // Skip the first row (headers) and map each remaining row
+                $mappedData = array_map(function ($row) use ($headers) {
+                    // Combine each row with headers as keys
+                    return array_combine($headers, $row);
+                }, array_slice($data[$formname][0], 1)); // Skip the first row (headers)
 
-        // Loop through each model class, retrieve and merge the results
-        foreach ($allowanceModels as $model) {
-            // Retrieve records already ordered by created_at and add to the merged collection
-            $records = $model::orderBy('created_at', 'asc')->get();
-            $mergedRequests = $mergedRequests->concat($records);
-        }
-
-        // Define a custom order for statuses
-        $statusOrder = ['Pending', 'Accepted', 'Completed', 'Rejected'];
-
-        // Sort the merged collection by status first, then by created_at
-        $requests = $mergedRequests->sort(function ($a, $b) use ($statusOrder) {
-            // Compare status by predefined priority
-            $statusComparison = array_search($a->status, $statusOrder) <=> array_search($b->status, $statusOrder);
-            if ($statusComparison == 0) { // if statuses are the same, sort by created_at
-                return $a->created_at <=> $b->created_at;
+                // Store the mapped data
+                $data[$formname] = $mappedData;
+            } else {
+                // If the file is empty, set an empty array
+                $data[$formname] = [];
             }
-            return $statusComparison;
-        })->values();
+        }
+        // dd($data);
 
-        // Ensure keys are reset
-        $requests = $requests->values();
-
-        return view('staff.specialallowance', compact('data', 'requests'));
+        return view('staff.specialallowance', compact('data', 'summary', 'scholars', 'forms'));
     }
 
-    public function showspecrecinfo($requesttype, $id)
+    public function showspecrecinfo($requesttype, $id, $caseCode)
     {
-        if ($requesttype == 'TRF') {
-            $request = allowancetranspo::where('id', $id)->first();
-            $reqtype = 'transpoinfo';
-        } elseif ($requesttype == 'BAR') {
-            $request = allowancebook::where('id', $id)->first();
-            $reqtype = 'bookinfo';
-        } elseif ($requesttype == 'TAR') {
-            $request = allowancethesis::where('id', $id)->first();
-            $reqtype = 'thesisinfo';
-        } elseif ($requesttype == 'PAR') {
-            $request = allowanceproject::where('id', $id)->first();
-            $reqtype = 'projectinfo';
-        } elseif ($requesttype == 'UAR') {
-            $request = allowanceuniform::where('id', $id)->first();
-            $reqtype = 'uniforminfo';
-        } elseif ($requesttype == 'GAR') {
-            $request = allowancegraduation::where('id', $id)->first();
-            $reqtype = 'gradinfo';
-        } elseif ($requesttype == 'FTTSAR') {
-            $request = allowanceevent::where('id', $id)->first();
-            $reqtype = 'fieldtripinfo';
-        } else {
-            return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
-        }
-
-        $scholar = User::with(['basicInfo', 'education'])
-            ->where('caseCode', $request->caseCode)
+        // Get the currently authenticated user and their related data
+        $scholar = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+            ->where('caseCode', $caseCode)
             ->first();
 
-        return view("staff.specialreqs.{$reqtype}", compact('request', 'scholar'));
+        // Retrieve the form based on the type
+        $form = CreateSpecialAllowanceForm::where('formname', $requesttype)->first();
+
+        // Get the file path from the form's database column
+        $filePath = $form->database;
+
+        // Check if the file exists in the public disk
+        if (!Storage::disk('public')->exists($filePath)) {
+            return view('scholar.allowancerequest.scspecial', compact('scholar', 'form'))->with('failure', 'File Not Found.');
+        }
+
+        // Read the Excel file from the public disk
+        $data = Excel::toArray([], Storage::disk('public')->path($filePath));
+
+        // The first row contains the column headers
+        $headers = $data[0][0];
+
+        // Find the index of the 'id' column
+        $idIndex = array_search('id', $headers);
+
+        // Filter the data by id and return only the first matching record
+        $filteredData = array_filter($data[0], function ($row) use ($id, $idIndex) {
+            return isset($row[$idIndex]) && $row[$idIndex] == $id;
+        });
+
+        // Optional: Reset array keys after filtering (if you want the keys to start from 0)
+        $filteredData = array_values($filteredData);
+
+        // Get the first record from the filtered data
+        $record = array_shift($filteredData);
+
+        // Map the record to headers (replace numeric keys with headers)
+        $data = array_combine($headers, $record);
+
+        $fields = SpecialAllowanceFormStructure::where('csafid', $form->csafid)->get();
+
+        $filesId = json_decode($form->downloadablefiles);
+
+        $files = specialallowanceforms::whereIn('id', $filesId)->get();
+        // dd($data);
+
+        // Return the view with the single record and related data
+        return view('staff.specreqinfo', compact('data', 'scholar', 'form', 'fields', 'files'));
     }
 
     public function updatespecreq($requesttype, $id, Request $request)
@@ -1183,7 +1305,7 @@ class StaffController extends Controller
                 $requestname = 'Field Trip, Training, Seminar Allowance Request';
                 $req = allowanceevent::where('id', $id)->first();
             } else {
-                return redirect()->back()->with('error', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
+                return redirect()->back()->with('failure', 'The request could not be found. Please try again, and if the issue persists, contact us at inquiriescholartrack@gmail.com for assistance.');
             }
 
             if ($request->releasedate == NULL) {
@@ -1253,7 +1375,7 @@ class StaffController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Unable to update request. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Unable to update request. ' . $e->getMessage());
         }
     }
 
@@ -1291,6 +1413,13 @@ class StaffController extends Controller
                     'fieldcount.min' => 'You must add at least one field.',
                 ]
             );
+
+            $existingFormname = CreateSpecialAllowanceForm::where('formname', $request->formname)->exists();
+            $existingFormcode = CreateSpecialAllowanceForm::where('formname', $request->formname)->exists();
+
+            if ($existingFormname || $existingFormcode) {
+                return redirect()->back()->with('failure', "Form creation failed. The form you are trying to create already exists.");
+            }
 
             DB::beginTransaction();
 
@@ -1527,50 +1656,6 @@ class StaffController extends Controller
         return $newFullPath;
     }
 
-    // private function updateExcelFile($formcode, $newformcode)
-    // {
-    //     $directoryPath = 'uploads/allowance_forms/special/database'; // Relative path within storage
-    //     $oldFilename = $formcode . '.xlsx';
-    //     $newFilename = $newformcode . '.xlsx';
-
-    //     // Relative paths for storage disk
-    //     $oldFullPath = $directoryPath . '/' . $oldFilename;
-    //     $newFullPath = $directoryPath . '/' . $newFilename;
-
-    //     // Check if the old file exists
-    //     if (!Storage::disk('public')->exists($oldFullPath)) {
-    //         throw new \Exception("File not found: " . $oldFullPath);
-    //     }
-
-    //     // Load the existing Excel file using PhpSpreadsheet
-    //     $filePath = Storage::disk('public')->path($oldFullPath); // Correct path format
-    //     $spreadsheet = IOFactory::load($filePath);
-
-    //     // Update the headers (assumed to be in the first row)
-    //     $sheet = $spreadsheet->getActiveSheet();
-    //     $updatedHeaders = array_merge(['id', 'caseCode'], $newFieldnames);
-
-    //     // Update the first row with new headers using column letters
-    //     foreach ($updatedHeaders as $index => $header) {
-    //         // Convert the index to a column letter (0 -> A, 1 -> B, etc.)
-    //         $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($index + 1);
-    //         $sheet->setCellValue("{$columnLetter}1", $header);
-    //     }
-
-    //     // Save the updated Excel file to the same location
-    //     $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-    //     $newFilePath = Storage::disk('public')->path($newFullPath);
-    //     $writer->save($newFilePath);
-
-    //     // Rename the old file to the new file name
-    //     if ($oldFullPath !== $newFullPath) {
-    //         Storage::disk('public')->move($oldFullPath, $newFullPath);
-    //     }
-
-    //     return $newFullPath;
-    // }
-
-
     public function delSpecialAllowanceForm($id)
     {
         try {
@@ -1715,27 +1800,27 @@ class StaffController extends Controller
             $scholarsperlevel[$level] = ScEducation::where('scSchoolLevel', $level)->count();
         }
 
-        $colleges = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+        $colleges = User::with('basicInfo', 'education', 'scholarshipinfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'College');
             })
             ->orderBy('caseCode', 'ASC')
             ->get();
-        $shs = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+        $shs = User::with('basicInfo', 'education', 'scholarshipinfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Senior High');
             })
             ->orderBy('caseCode', 'ASC')
             ->get();
 
-        $jhs = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+        $jhs = User::with('basicInfo', 'education', 'scholarshipinfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Junior High');
             })
             ->orderBy('caseCode', 'ASC')
             ->get();
 
-        $elem = User::with(['basicInfo', 'education', 'scholarshipinfo'])
+        $elem = User::with('basicInfo', 'education', 'scholarshipinfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Elementary');
             })
@@ -1972,9 +2057,9 @@ class StaffController extends Controller
             return redirect()->route('communityservice')->with('success', 'Activity created successfully.');
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
-            return redirect()->route('communityservice')->with('error', 'Activity creation was unsuccessful.');
+            return redirect()->route('communityservice')->with('failure', 'Activity creation was unsuccessful.');
         }
     }
 
@@ -1996,7 +2081,7 @@ class StaffController extends Controller
             $event = communityservice::where('csid', $csid)->first();
 
             if (!$event) {
-                return redirect()->back()->with('error', 'Event not found.');
+                return redirect()->back()->with('failure', 'Event not found.');
             }
 
             $event->update([
@@ -2015,9 +2100,9 @@ class StaffController extends Controller
             return redirect()->back()->with('success', 'Successfully updated activity details.');
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Updating activity details was unsuccessful.');
+            return redirect()->back()->with('failure', 'Updating activity details was unsuccessful.');
         }
     }
 
@@ -2052,9 +2137,9 @@ class StaffController extends Controller
             return redirect()->route('attendancesystem', $event->hcid);
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
-            return redirect()->route('humanitiesclass')->with('error', 'Activity creation was unsuccessful.');
+            return redirect()->route('humanitiesclass')->with('failure', 'Activity creation was unsuccessful.');
         }
     }
 
@@ -2100,7 +2185,7 @@ class StaffController extends Controller
                     DB::rollBack();
 
                     return redirect()->route('attendancesystem', ['hcid' => $hcid])
-                        ->with('error', 'Attendance was unsuccessful: Duplicate Entry.');
+                        ->with('failure', 'Attendance was unsuccessful: Duplicate Entry.');
                 }
 
                 HCAttendance::create([
@@ -2191,15 +2276,15 @@ class StaffController extends Controller
                 return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('success', 'Attendance successfully submitted');
             } catch (\Exception $e) {
                 DB::rollBack();
-                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Failed to submit attendance.', $e->getMessage());
+                return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('failure', 'Failed to submit attendance.', $e->getMessage());
             }
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance failed: Humanities class not found.');
+            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('failure', 'Attendance failed: Humanities class not found.');
         } catch (\Exception $e) {
-            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('error', 'Attendance was unsuccessful.');
+            return redirect()->route('attendancesystem', ['hcid' => $hcid])->with('failure', 'Attendance was unsuccessful.');
         }
     }
 
@@ -2209,13 +2294,13 @@ class StaffController extends Controller
             $worker = Auth::guard('staff')->user();
 
             if (!Hash::check($request->password, $worker->password)) {
-                return redirect()->back()->with('error', 'Incorrect password.');
+                return redirect()->back()->with('failure', 'Incorrect password.');
             }
 
             return redirect()->route('viewattendeeslist', $hcid);
         } catch (\Exception $e) {
             return redirect()->route('attendancesystem', ['hcId' => $hcid])
-                ->with('error', 'Access failed.');
+                ->with('failure', 'Access failed.');
         }
     }
 
@@ -2236,12 +2321,12 @@ class StaffController extends Controller
             $worker = Auth::guard('staff')->user();
 
             if (!Hash::check($request->password, $worker->password)) {
-                return redirect()->back()->with('error', 'Incorrect password.');
+                return redirect()->back()->with('failure', 'Incorrect password.');
             }
             return redirect()->route('humanitiesclass');
         } catch (\Exception $e) {
             return redirect()->route('attendancesystem', ['hcId' => $hcId])
-                ->with('error', 'Access failed');
+                ->with('failure', 'Access failed');
         }
     }
 
@@ -2403,7 +2488,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return $this->viewattendeeslist($attendee->hcid)->with('error', 'Checkout was unsuccessful.');
+            return $this->viewattendeeslist($attendee->hcid)->with('failure', 'Checkout was unsuccessful.');
         }
     }
 
@@ -2473,7 +2558,7 @@ class StaffController extends Controller
             DB::rollBack();
 
             // Redirect with an error message
-            return redirect()->back()->with('error', 'Failed to update appointment status: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update appointment status: ' . $e->getMessage());
         }
     }
 }

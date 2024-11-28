@@ -28,13 +28,7 @@
 
     <!-- MAIN CONTENT -->
     <div class="maincontent">
-        <!-- Display error message if login fails -->
-        @if (session('error'))
-            <div class="alert alert-danger" role="alert" id="ctnerrormsg">
-                {{ session('error') }}
-            </div>
-        @endif
-
+        <x-alert />
         <!-- Update the form action and method -->
         <form class="groupA" method="POST" action="{{ route('log-worker') }}">
             @csrf <!-- Add CSRF token for security -->

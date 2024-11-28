@@ -40,6 +40,7 @@ use App\Models\courses;
 use App\Models\CreateSpecialAllowanceForm;
 use App\Models\scholarshipinfo;
 use App\Models\SpecialAllowanceFormStructure;
+use App\Models\SpecialAllowanceSummary;
 use App\Models\staccount;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -553,9 +554,6 @@ class ScholarController extends Controller
             } else if ($gradeStatus == 'Failed GWA' && $failedGWAcount >= 3) {
                 $scinfo->scholarshipstatus = 'Terminated';
                 $scinfo->save();
-                $account = User::where('caseCode', $scinfo->caseCode)->first();
-                $account->scStatus = 'Inactive';
-                $account->save();
 
                 Auth::logout();
 
@@ -863,6 +861,7 @@ class ScholarController extends Controller
     public function requestSpecialAllowance($requesttype, Request $request)
     {
         try {
+            DB::beginTransaction();
             // dd($request->all());
             $user = User::with(['basicInfo', 'education', 'scholarshipinfo'])
                 ->find(Auth::id());
@@ -953,6 +952,11 @@ class ScholarController extends Controller
 
             $this->storeSpecialRequest($database, $records);
 
+            $specreqsummary = SpecialAllowanceSummary::first();
+            $specreqsummary->totalrequests++;
+            $specreqsummary->pending++;
+            $specreqsummary->save();
+            DB::commit();
             return redirect()->back()->with('success', "Your {$form->formname} has been successfully submitted. You can view the status and additional details of your request by navigating to Allowance Requests > Special Allowance.");
         } catch (\Exception $e) {
             DB::rollBack();

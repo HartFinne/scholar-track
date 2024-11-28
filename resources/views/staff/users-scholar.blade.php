@@ -18,6 +18,7 @@
 <body>
     <!-- PAGE HEADER -->
     @include('partials._adminpageheader')
+    <x-alert />
 
     <div class="ctnmain">
         <span class="text-success fw-bold h2">Manage Scholar Accounts</span>
@@ -29,20 +30,6 @@
                 </button>
             </form>
         </div>
-
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
 
         <div class="ctntable table-responsive">
             <table class="table table-bordered" id="tblpenalty">

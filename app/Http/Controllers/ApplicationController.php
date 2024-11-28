@@ -73,7 +73,7 @@ class ApplicationController extends Controller
         $emailExists = applicants::where('email', $request->email)->exists();
 
         if ($emailExists) {
-            return redirect()->back()->with('error', 'Your application was unsuccessful because the email address is already in use. If you believe this is an error, please contact us at inquiriescholartrack@gmail.com.')->withInput();
+            return redirect()->back()->with('failure', 'Your application was unsuccessful because the email address is already in use. If you believe this is an error, please contact us at inquiriescholartrack@gmail.com.')->withInput();
         }
 
         DB::beginTransaction();
@@ -228,7 +228,7 @@ class ApplicationController extends Controller
                 'indigencycert.max' => 'The indigency certificate must not exceed 2 MB.',
             ]);
 
-            if ($request->schoollevel) {
+            if ($request->schoollevel != 'College') {
                 $request->validate([
                     'schoollevel' => 'required|string|max:25',
                     'incomingyear' => 'required|string|max:15',
@@ -531,10 +531,10 @@ class ApplicationController extends Controller
                 }
             }
             $errorMessages .= '</ul>';
-            return redirect()->back()->with('error', 'Your application has failed due to the following errors: ' . $errorMessages)->withInput();
+            return redirect()->back()->with('failure', 'Your application has failed due to the following errors: ' . $errorMessages)->withInput();
         } catch (\Exception $e) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('failure', 'Sorry, your application could not be processed at this time. Please try again later or contact support if the problem persists. ' . $e->getMessage())->withInput();
         }
     }
 
@@ -666,7 +666,7 @@ class ApplicationController extends Controller
             return redirect()->back()->with('success', "You have successfully withdrawn your application.");
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Failed to cancel application. If the issue persists, please contact one of our social worker for assistance. ');
+            return redirect()->back()->with('failure', 'Failed to cancel application. If the issue persists, please contact one of our social worker for assistance. ');
         }
     }
 }
