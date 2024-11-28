@@ -146,7 +146,7 @@
                                 });
                             @endphp
 
-                            @forelse ($data[$form->formname] as $row)
+                            @foreach ($data[$form->formname] as $row)
                                 @php
                                     // Find the scholar by caseCode in the filtered collection
                                     $scholar = $collegeScholars->firstWhere('caseCode', $row['caseCode']);
@@ -172,11 +172,7 @@
                                         </td>
                                     </tr>
                                 @endif
-                            @empty
-                                <tr>
-                                    <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
-                                </tr>
-                            @endforelse
+                            @endforeach
                         @empty
                             <tr>
                                 <td class="text-center align-middle fw-bold" colspan="7">No Records Found.</td>
