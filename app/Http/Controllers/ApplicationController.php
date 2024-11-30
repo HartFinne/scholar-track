@@ -45,7 +45,7 @@ class ApplicationController extends Controller
     public function showcollegeapplication()
     {
         $courses = courses::where('level', 'College')->get();
-        $institutions = institutions::get();
+        $institutions = institutions::where('schoollevel', 'College')->orderBy('schoolname', 'ASC')->get();
         $form = applicationforms::where('formname', 'College')->first();
 
         return view('applicant.applicationformC', compact('courses', 'institutions', 'form'));
@@ -312,31 +312,49 @@ class ApplicationController extends Controller
                 $messages = [];
 
                 for ($i = 1; $i <= $request->siblingcount; $i++) {
-                    $rules['sname.' . $i] = 'string|max:255';
-                    $rules['sage.' . $i] = 'integer';
-                    $rules['ssex.' . $i] = 'required';
-                    $rules['sbirthdate.' . $i] = 'date';
-                    $rules['sreligion.' . $i] = 'string|max:100';
-                    $rules['sattainment.' . $i] = 'string|max:100';
-                    $rules['soccupation.' . $i] = 'string|max:100';
-                    $rules['scompany.' . $i] = 'string|max:100';
-                    $rules['sincome.' . $i] = 'numeric|min:0';
+                    // Base rules
+                    $rules['sname.' . $i] = 'nullable|string|max:255';
 
-                    $messages['sname.' . $i . '.string'] = 'The name for sibling at index ' . $i . ' must be a valid string.';
-                    $messages['sname.' . $i . '.max'] = 'The name for sibling at index ' . $i . ' may not be greater than 255 characters.';
-                    $messages['sage.' . $i . '.integer'] = 'The age for sibling at index ' . $i . ' must be a number.';
-                    $messages['sbirthdate.' . $i . '.date'] = 'The birthdate for sibling at index ' . $i . ' must be a valid date.';
-                    $messages['sreligion.' . $i . '.string'] = 'The religion for sibling at index ' . $i . ' must be a valid string.';
-                    $messages['sreligion.' . $i . '.max'] = 'The religion for sibling at index ' . $i . ' may not be greater than 100 characters.';
-                    $messages['sattainment.' . $i . '.string'] = 'The educational attainment for sibling at index ' . $i . ' must be a valid string.';
-                    $messages['sattainment.' . $i . '.max'] = 'The educational attainment for sibling at index ' . $i . ' may not be greater than 100 characters.';
-                    $messages['soccupation.' . $i . '.string'] = 'The occupation for sibling at index ' . $i . ' must be a valid string.';
-                    $messages['soccupation.' . $i . '.max'] = 'The occupation for sibling at index ' . $i . ' may not be greater than 100 characters.';
-                    $messages['scompany.' . $i . '.string'] = 'The company name for sibling at index ' . $i . ' must be a valid string.';
-                    $messages['scompany.' . $i . '.max'] = 'The company name for sibling at index ' . $i . ' may not be greater than 100 characters.';
-                    $messages['sincome.' . $i . '.numeric'] = 'The income for sibling at index ' . $i . ' must be a number.';
-                    $messages['sincome.' . $i . '.min'] = 'The income for sibling at index ' . $i . ' must be at least 0.';
+                    // Other fields are required only if sname.# is not null
+                    $rules['sage.' . $i] = 'required_with:sname.' . $i . '|integer';
+                    $rules['sbirthdate.' . $i] = 'required_with:sname.' . $i . '|date';
+                    $rules['sreligion.' . $i] = 'required_with:sname.' . $i . '|string|max:100';
+                    $rules['sattainment.' . $i] = 'required_with:sname.' . $i . '|string|max:100';
+                    $rules['soccupation.' . $i] = 'required_with:sname.' . $i . '|string|max:100';
+                    $rules['scompany.' . $i] = 'required_with:sname.' . $i . '|string|max:100';
+                    $rules['sincome.' . $i] = 'required_with:sname.' . $i . '|numeric|min:0';
+
+                    // Custom messages
+                    $messages['sname.' . $i . '.string'] = 'The name for sibling ' . $i . ' must be a valid string.';
+                    $messages['sname.' . $i . '.max'] = 'The name for sibling ' . $i . ' may not be greater than 255 characters.';
+
+                    $messages['sage.' . $i . '.required_with'] = 'The age for sibling ' . $i . ' is required when the name is provided.';
+                    $messages['sage.' . $i . '.integer'] = 'The age for sibling ' . $i . ' must be a number.';
+
+                    $messages['sbirthdate.' . $i . '.required_with'] = 'The birthdate for sibling ' . $i . ' is required when the name is provided.';
+                    $messages['sbirthdate.' . $i . '.date'] = 'The birthdate for sibling ' . $i . ' must be a valid date.';
+
+                    $messages['sreligion.' . $i . '.required_with'] = 'The religion for sibling ' . $i . ' is required when the name is provided.';
+                    $messages['sreligion.' . $i . '.string'] = 'The religion for sibling ' . $i . ' must be a valid string.';
+                    $messages['sreligion.' . $i . '.max'] = 'The religion for sibling ' . $i . ' may not be greater than 100 characters.';
+
+                    $messages['sattainment.' . $i . '.required_with'] = 'The educational attainment for sibling ' . $i . ' is required when the name is provided.';
+                    $messages['sattainment.' . $i . '.string'] = 'The educational attainment for sibling ' . $i . ' must be a valid string.';
+                    $messages['sattainment.' . $i . '.max'] = 'The educational attainment for sibling ' . $i . ' may not be greater than 100 characters.';
+
+                    $messages['soccupation.' . $i . '.required_with'] = 'The occupation for sibling ' . $i . ' is required when the name is provided.';
+                    $messages['soccupation.' . $i . '.string'] = 'The occupation for sibling ' . $i . ' must be a valid string.';
+                    $messages['soccupation.' . $i . '.max'] = 'The occupation for sibling ' . $i . ' may not be greater than 100 characters.';
+
+                    $messages['scompany.' . $i . '.required_with'] = 'The company name for sibling ' . $i . ' is required when the name is provided.';
+                    $messages['scompany.' . $i . '.string'] = 'The company name for sibling ' . $i . ' must be a valid string.';
+                    $messages['scompany.' . $i . '.max'] = 'The company name for sibling ' . $i . ' may not be greater than 100 characters.';
+
+                    $messages['sincome.' . $i . '.required_with'] = 'The income for sibling ' . $i . ' is required when the name is provided.';
+                    $messages['sincome.' . $i . '.numeric'] = 'The income for sibling ' . $i . ' must be a number.';
+                    $messages['sincome.' . $i . '.min'] = 'The income for sibling ' . $i . ' must be at least 0.';
                 }
+
 
                 $request->validate($rules, $messages);
             }
@@ -344,7 +362,7 @@ class ApplicationController extends Controller
             $casecode = $this->generatecasecode($request->incomingyear);
             $sincome = array_sum($request->sincome);
 
-            $prioritylevel = $this->determineprioritylevel($request->incomingyear, $request->income, $request->fincome, $request->mincome, $sincome, $request->gwa);
+            $prioritylevel = $this->determineprioritylevel($request->schoollevel, $request->income, $request->fincome, $request->mincome, $sincome, $request->gwa);
 
             $parts = explode(' ', strtolower($request->scholarname));
             $password = end($parts) . '.tzuchi';
@@ -378,7 +396,7 @@ class ApplicationController extends Controller
                 'prioritylevel' => $prioritylevel,
             ]);
 
-            if ($request->schoollevel) {
+            if ($request->schoollevel != 'College') {
                 apeheducation::create([
                     'casecode' => $casecode,
                     'schoollevel' => $request->schoollevel,
@@ -594,60 +612,60 @@ class ApplicationController extends Controller
         return "{$currentYear}{$nextYear}-{$formattedSequence}-{$levelCode}";
     }
 
-    public function determineprioritylevel($incomingyear, $income, $fincome, $mincome, $sincome, $gwa)
+    public function determineprioritylevel($schoollevel, $income, $fincome, $mincome, $sincome, $gwa)
     {
         $criteria = criteria::first();
-
+        $prioritylevel = 0;
         if ($fincome <= $criteria->fincome) {
             $fincomelvl = 1;
         } else {
-            $fincomelvl = 2;
+            $fincomelvl = 0;
         }
 
         if ($mincome <= $criteria->mincome) {
             $mincomelvl = 1;
         } else {
-            $mincomelvl = 2;
+            $mincomelvl = 0;
         }
 
         if ($sincome <= $criteria->sincome) {
             $sincomelvl = 1;
         } else {
-            $sincomelvl = 2;
+            $sincomelvl = 0;
         }
 
         if ($income <= $criteria->aincome) {
             $incomelvl = 1;
         } else {
-            $incomelvl = 2;
+            $incomelvl = 0;
         }
 
-        if (in_array($incomingyear, ['First Year', 'Second Year', 'Third Year'])) {
+        if ($schoollevel == 'College') {
             if ($gwa <= $criteria->cgwa) {
                 $cgwalvl = 1;
             } else {
-                $cgwalvl = 2;
+                $cgwalvl = 0;
             }
             $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $cgwalvl;
-        } elseif (in_array($incomingyear, ['Grade 11', 'Grade 12'])) {
+        } elseif ($schoollevel == 'Senior High') {
             if ($gwa <= $criteria->cgwa) {
                 $shsgwalvl = 1;
             } else {
-                $shsgwalvl = 2;
+                $shsgwalvl = 0;
             }
             $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $shsgwalvl;
-        } elseif (in_array($incomingyear, ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'])) {
+        } elseif ($schoollevel == 'Junior High') {
             if ($gwa <= $criteria->cgwa) {
                 $jhsgwalvl = 1;
             } else {
-                $jhsgwalvl = 2;
+                $jhsgwalvl = 0;
             }
             $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $jhsgwalvl;
-        } elseif (in_array($incomingyear, ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'])) {
+        } elseif ($schoollevel == 'Elementary') {
             if ($gwa <= $criteria->cgwa) {
                 $elemgwalvl = 1;
             } else {
-                $elemgwalvl = 2;
+                $elemgwalvl = 0;
             }
             $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $elemgwalvl;
         }

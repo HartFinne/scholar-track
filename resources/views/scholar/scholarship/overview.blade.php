@@ -40,7 +40,7 @@
                         @php
                             $statusClass = [
                                 'On-Hold' => 'bg-warning',
-                                'Continuing' => 'bg-success',
+                                'Continuing' => '',
                             ];
 
                             // Default to 'bg-danger' if the status is not 'On-Hold' or 'Continuing'
@@ -163,12 +163,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>09/11/2024</td>
-                        <td>--</td>
-                        <td>--</td>
-                        <td><a href="{{ route('subrenewal') }}" id="view">View</a></td>
-                    </tr>
+                    @foreach ($renewals as $rnw)
+                        <tr>
+                            <td class="text-center align-middle">
+                                {{ \Carbon\Carbon::parse($rnw->datesubmitted)->format('F j, Y') }}</td>
+                            <td class="text-center align-middle">{{ $rnw->grade->schoolyear }}</td>
+                            <td class="text-center align-middle">{{ $rnw->status }}</td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('showRenewForm', $rnw->rid) }}" class="btn btn-sm btn-success"><i
+                                        class="fas fa-eye"></i></a>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>

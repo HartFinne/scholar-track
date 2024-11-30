@@ -25,7 +25,7 @@ class ApplicantAuthController extends Controller
         $iscollege = apceducation::where('casecode', $casecode)->exists();
 
         if ($iscollege) {
-            $form = applicationforms::where('formname', 'College');
+            $form = applicationforms::where('formname', 'College')->first();
         } else {
             if ($applicant->educelemhs->schoollevel == 'Elementary') {
                 $form = applicationforms::where('formname', 'College')->first();

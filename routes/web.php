@@ -51,7 +51,8 @@ Route::prefix('applicant')->group(function () {
 Route::prefix('scholar')->middleware('scholar')->group(function () {
     Route::view('/sublteinfo', 'scholar.sublteinfo')->name('subtleinfo');
     Route::get('/renewal-application-form', [ScholarController::class, 'showrenewalform'])->name('screnewal');
-    Route::view('/subrenewal', 'scholar.subrenewal')->name('subrenewal');
+    Route::get('/renewal-application/{id}', [ScholarController::class, 'showRenewForm'])->name('showRenewForm');
+    Route::post('/save-renewal-application-form', [ScholarController::class, 'storerenewal'])->name('storerenewal');
     Route::get('/schome', [ScholarController::class, 'showHome'])->name('schome');
     // Appointment system
     Route::get('/appointment-system', [ScholarController::class, 'showappointmentsystem'])->name('appointment');
@@ -239,10 +240,10 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
 // report generation
 Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
-    Route::get('/applicant-portal/{casecode}', 'generateapplicantform')->name('generateapplicantform');
 });
-
-
+Route::prefix('applicant')->controller(PDFController::class)->group(function () {
+    Route::get('/applicant-form/{casecode}', 'generateapplicantform')->name('generateapplicantform');
+});
 
 Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->group(function () {
     Route::get('/evaluate-scholars', 'evaluatescholars')->name('evaluatescholars');

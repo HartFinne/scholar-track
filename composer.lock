@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ebbfb524aa45ed68168f6feafe61629",
+    "content-hash": "79f66bc341606f4b182df9938f8de5f4",
     "packages": [
         {
             "name": "alimranahmed/laraocr",
@@ -4198,16 +4198,16 @@
         },
         {
             "name": "spatie/browsershot",
-            "version": "4.3.0",
+            "version": "5.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/browsershot.git",
-                "reference": "601f2758191d8c46b2ea587eea935a87da4f39e8"
+                "reference": "1e212b596c104138550ed4ef1b9977d8df570c67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/browsershot/zipball/601f2758191d8c46b2ea587eea935a87da4f39e8",
-                "reference": "601f2758191d8c46b2ea587eea935a87da4f39e8",
+                "url": "https://api.github.com/repos/spatie/browsershot/zipball/1e212b596c104138550ed4ef1b9977d8df570c67",
+                "reference": "1e212b596c104138550ed4ef1b9977d8df570c67",
                 "shasum": ""
             },
             "require": {
@@ -4254,7 +4254,7 @@
                 "webpage"
             ],
             "support": {
-                "source": "https://github.com/spatie/browsershot/tree/4.3.0"
+                "source": "https://github.com/spatie/browsershot/tree/5.0.0"
             },
             "funding": [
                 {
@@ -4262,7 +4262,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-08-22T09:14:07+00:00"
+            "time": "2024-11-25T16:03:48+00:00"
         },
         {
             "name": "spatie/temporary-directory",

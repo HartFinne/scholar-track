@@ -65,7 +65,7 @@
                 <div class="col-md-3">
                     <div class="row my-1 mx-1">
                         <a href="{{ route('generateapplicantform', ['casecode' => $applicant->casecode]) }}"
-                            class="btn btn-outline-success text-success bg-light">Download Form</a>
+                            class="btn btn-outline-success text-success bg-light" target="_blank">Download Form</a>
                     </div>
                     <div class="row mx-1">
                         <button class="btn btn-danger" id="btnwithdraw" data-bs-toggle="modal"

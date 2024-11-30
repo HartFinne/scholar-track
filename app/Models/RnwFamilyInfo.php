@@ -5,23 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class allowancebook extends Model
+class RnwFamilyInfo extends Model
 {
     use HasFactory;
 
-    protected $table = 'allowancebook';
+    protected $table = 'rnwfamilyinfo';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'rfiid';
 
     protected $fillable = [
         'caseCode',
-        'booktitle',
-        'author',
-        'price',
-        'certification',
-        'acknowledgement',
-        'purchaseproof',
-        'liquidation'
+        'name',
+        'age',
+        'sex',
+        'birthdate',
+        'religion',
+        'relationship',
+        'educattainment',
+        'occupation',
+        'income',
     ];
 
     // Define inverse relationship to account

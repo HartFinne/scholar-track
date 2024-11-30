@@ -12,6 +12,7 @@ use App\Models\ScEducation;
 use App\Models\renewal;
 use App\Models\lte;
 use App\Models\penalty;
+use App\Models\applicationforms;
 use App\Models\grades;
 use App\Models\datasets;
 use App\Models\evalresults;
@@ -80,8 +81,6 @@ class PDFController extends Controller
 
     public function generateapplicantform($casecode)
     {
-        // dd($casecode);
-
         $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
             ->where('casecode', $casecode)
             ->first();
@@ -120,4 +119,39 @@ class PDFController extends Controller
             'Content-Length' => strlen($pdf)
         ]);
     }
+    // {
+    //     $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
+    //         ->where('casecode', $casecode)
+    //         ->first();
+    //     $father = apfamilyinfo::where('casecode', $casecode)
+    //         ->where('relationship', 'Father')->first();
+    //     $mother = apfamilyinfo::where('casecode', $casecode)
+    //         ->where('relationship', 'Mother')->first();
+    //     $siblings = apfamilyinfo::where('casecode', $casecode)
+    //         ->where('relationship', 'Sibling')->get();
+    //     $iscollege = apceducation::where('casecode', $casecode)->exists();
+
+    //     if ($iscollege) {
+    //         $form = applicationforms::where('formname', 'College')->first();
+    //     } else {
+    //         if ($applicant->educelemhs->schoollevel == 'Elementary') {
+    //             $form = applicationforms::where('formname', 'College')->first();
+    //         } else {
+    //             $form = applicationforms::where('formname', 'High School')->first();
+    //         }
+    //     }
+
+    //     $data = [
+    //         'applicant' => $applicant,
+    //         'father' => $father,
+    //         'mother' => $mother,
+    //         'siblings' => $siblings,
+    //         'iscollege' => $iscollege,
+    //         'form' => $form,
+    //     ];
+
+    //     $pdf = Pdf::loadView('application-form', $data);
+    //     return $pdf->stream("application-form-{$casecode}.pdf");
+    //     // return view('application-form', compact('data'));
+    // }
 }

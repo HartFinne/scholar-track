@@ -43,11 +43,6 @@ class ScBasicInfo extends Model
         return $this->belongsTo(hcattendance::class, 'caseCode', 'caseCode');
     }
 
-    public function evalresults()
-    {
-        return $this->hasMany(evalresults::class, 'caseCode', 'caseCode');
-    }
-
     public function appointments()
     {
         return $this->hasMany(Appointments::class, 'caseCode', 'caseCode');

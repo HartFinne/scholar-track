@@ -10,7 +10,7 @@
                 </div>
                 <div class="modal-body">
                     {{-- {!! session('success') ?? session('failure') !!} --}}
-                    {{ session('success') ?? session('failure') }}
+                    {!! session('success') ?? session('failure') !!}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn {{ session('success') ? 'btn-primary' : 'btn-danger' }}"

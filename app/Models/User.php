@@ -121,7 +121,12 @@ class User extends Authenticatable implements CanResetPassword
 
     public function renewal()
     {
-        return $this->belongsTo(renewal::class, 'caseCode', 'caseCode');
+        return $this->hasMany(renewal::class, 'caseCode', 'caseCode');
+    }
+
+    public function familyinfo()
+    {
+        return $this->hasMany(RnwFamilyInfo::class, 'caseCode', 'caseCode');
     }
 
     public function datasets()

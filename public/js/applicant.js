@@ -81,7 +81,6 @@ document.getElementById('addSibling').addEventListener('click', function (event)
       removeButton.classList.add('removeSibling');
       removeButton.onclick = function () {
          clone.remove();
-         updateSiblingCount(-1); // Decrease the sibling count when removed
       };
       clone.appendChild(removeButton);
    }

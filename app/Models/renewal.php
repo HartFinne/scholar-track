@@ -16,16 +16,39 @@ class renewal extends Model
     protected $fillable = [
         'caseCode',
         'datesubmitted',
-        'picture',
+        'idpic',
         'reportcard',
+        'regicard',
+        'autobio',
+        'familypic',
+        'houseinside',
+        'houseoutside',
         'utilitybill',
-        'sketchaddress',
-        'reflectionpaper'
+        'sketchmap',
+        'payslip',
+        'indigencycert',
+        'status',
+        'prioritylevel'
     ];
 
     // Define inverse relationship to account
     public function user()
     {
-        return $this->hasOne(User::class, 'caseCode', 'caseCode');
+        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
+
+    public function casedetails()
+    {
+        return $this->hasOne(RnwCaseDetails::class, 'rid', 'rid');
+    }
+
+    public function grade()
+    {
+        return $this->hasOne(RnwEducation::class, 'rid', 'rid');
+    }
+
+    public function otherinfo()
+    {
+        return $this->hasOne(RnwOtherInfo::class, 'rid', 'rid');
     }
 }

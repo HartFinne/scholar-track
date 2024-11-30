@@ -495,72 +495,145 @@
                             </div>
                         </div>
                         <div id="siblings-container">
-                            <div class="siblingsinfo" style="display: none;">
-                                <p class="family">SIBLING INFORMATION</p>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="sname[]">Name (Last Name, First Name)</label>
-                                        <input type="text" name="sname[]" value="" maxlength="255">
+                            @if (old('sname'))
+                                @foreach (old('sname') as $index => $siblingName)
+                                    <div class="siblingsinfo">
+                                        <p class="family">SIBLING INFORMATION</p>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="sname[]">Name (Last Name, First Name)</label>
+                                                <input type="text" name="sname[]"
+                                                    value="{{ old('sname.' . $index) }}" maxlength="255">
+                                            </div>
+                                            <div class="column">
+                                                <label for="sage[]">Age</label>
+                                                <input type="number" name="sage[]" min="1"
+                                                    value="{{ old('sage.' . $index) }}">
+                                            </div>
+                                            <div class="column">
+                                                <label for="ssex[]">Sex</label>
+                                                <select name="ssex[]" id="ssex[]">
+                                                    <option value="" selected hidden></option>
+                                                    <option value="F"
+                                                        {{ old('ssex.' . $index) == 'F' ? 'selected' : '' }}>F</option>
+                                                    <option value="M"
+                                                        {{ old('ssex.' . $index) == 'M' ? 'selected' : '' }}>M</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="sbirthdate[]">Birthdate</label>
+                                                <input type="date" name="sbirthdate[]"
+                                                    value="{{ old('sbirthdate.' . $index) }}"
+                                                    max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}">
+                                            </div>
+                                            <div class="column">
+                                                <label for="srelationship">Relationship</label>
+                                                <input type="text" name="srelationship" maxlength="100"
+                                                    value="Sibling" readonly>
+                                            </div>
+                                            <div class="column">
+                                                <label for="sreligion[]">Religion</label>
+                                                <input type="text" name="sreligion[]" maxlength="100"
+                                                    value="{{ old('sreligion.' . $index) }}">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="sattainment[]">Educational Attainment</label>
+                                                <input type="text" name="sattainment[]" maxlength="100"
+                                                    value="{{ old('sattainment.' . $index) }}">
+                                            </div>
+                                            <div class="column">
+                                                <label for="soccupation[]">School/Occupation</label>
+                                                <input type="text" name="soccupation[]" maxlength="100"
+                                                    value="{{ old('soccupation.' . $index) }}">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="column">
+                                                <label for="scompany[]">Company</label>
+                                                <input type="text" name="scompany[]" maxlength="100"
+                                                    value="{{ old('scompany.' . $index) }}">
+                                            </div>
+                                            <div class="column">
+                                                <label for="sincome[]">Income</label>
+                                                <input type="number" name="sincome[]" maxlength="100"
+                                                    value="{{ old('sincome.' . $index) }}" placeholder="0 if none"
+                                                    min="0" step="0.01">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="column">
-                                        <label for="sage[]">Age</label>
-                                        <input type="number" name="sage[]" min="1" value="">
+                                @endforeach
+                            @else
+                                <div class="siblingsinfo" style="display: none;">
+                                    <p class="family">SIBLING INFORMATION</p>
+                                    <div class="row">
+                                        <div class="column">
+                                            <label for="sname[]">Name (Last Name, First Name)</label>
+                                            <input type="text" name="sname[]" value="" maxlength="255">
+                                        </div>
+                                        <div class="column">
+                                            <label for="sage[]">Age</label>
+                                            <input type="number" name="sage[]" min="1" value="">
+                                        </div>
+                                        <div class="column">
+                                            <label for="ssex[]">Sex</label>
+                                            <select name="ssex[]" id="ssex[]">
+                                                <option value="" selected hidden></option>
+                                                <option value="F">F</option>
+                                                <option value="M">M</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="column">
-                                        <label for="ssex[]">Sex</label>
-                                        <select name="ssex[]" id="ssex[]">
-                                            <option value="" selected hidden></option>
-                                            <option value="F">F</option>
-                                            <option value="M">M</option>
-                                        </select>
+                                    <div class="row">
+                                        <div class="column">
+                                            <label for="sbirthdate[]">Birthdate</label>
+                                            <input type="date" name="sbirthdate[]" value=""
+                                                max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}">
+                                        </div>
+                                        <div class="column">
+                                            <label for="srelationship">Relationship</label>
+                                            <input type="text" name="srelationship" maxlength="100"
+                                                value="Sibling" readonly>
+                                        </div>
+                                        <div class="column">
+                                            <label for="sreligion[]">Religion</label>
+                                            <input type="text" name="sreligion[]" maxlength="100" value=""
+                                                maxlength="100">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="column">
+                                            <label for="sattainment[]">Educational Attainment</label>
+                                            <input type="text" name="sattainment[]" maxlength="100"
+                                                value="" maxlength="100">
+                                        </div>
+                                        <div class="column">
+                                            <label for="soccupation[]">School/Occupation</label>
+                                            <input type="text" name="soccupation[]" maxlength="100"
+                                                value="" maxlength="100">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="column">
+                                            <label for="scompany[]">Company</label>
+                                            <input type="text" name="scompany[]" maxlength="100" value=""
+                                                maxlength="100">
+                                        </div>
+                                        <div class="column">
+                                            <label for="sincome[]">Income</label>
+                                            <input type="number" name="sincome[]" maxlength="100" value=""
+                                                placeholder="0 if none" min="0" step="0.01">
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="sbirthdate[]">Birthdate</label>
-                                        <input type="date" name="sbirthdate[]" value=""
-                                            max="{{ \Carbon\Carbon::now()->subDay()->format('Y-m-d') }}">
-                                    </div>
-                                    <div class="column">
-                                        <label for="srelationship">Relationship</label>
-                                        <input type="text" name="srelationship" maxlength="100" value="Sibling"
-                                            readonly>
-                                    </div>
-                                    <div class="column">
-                                        <label for="sreligion[]">Religion</label>
-                                        <input type="text" name="sreligion[]" maxlength="100" value=""
-                                            maxlength="100">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="sattainment[]">Educational Attainment</label>
-                                        <input type="text" name="sattainment[]" maxlength="100" value=""
-                                            maxlength="100">
-                                    </div>
-                                    <div class="column">
-                                        <label for="soccupation[]">School/Occupation</label>
-                                        <input type="text" name="soccupation[]" maxlength="100" value=""
-                                            maxlength="100">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="column">
-                                        <label for="scompany[]">Company</label>
-                                        <input type="text" name="scompany[]" maxlength="100" value=""
-                                            maxlength="100">
-                                    </div>
-                                    <div class="column">
-                                        <label for="sincome[]">Income</label>
-                                        <input type="number" name="sincome[]" maxlength="100" value=""
-                                            placeholder="0 if none" min="0" step="0.01">
-                                    </div>
-                                </div>
-                            </div>
+                            @endif
                         </div>
-                        <input id="siblingCount" name="siblingcount" value="0" hidden>
+                        <input id="siblingCount" name="siblingcount" value="{{ old('siblingcount', 0) }}" hidden>
                         <div class="row mx-auto">
-                            <button id="addSibling">Add Sibling</button>
+                            <button id="addSibling" type="button">Add Sibling</button>
                         </div>
                     </fieldset>
 
