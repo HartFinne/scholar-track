@@ -332,6 +332,75 @@ class ScholarController extends Controller
         return view('scholar/scholarship.gradesub', compact('user', 'grades', 'status', 'institution', 'term'));
     }
 
+    public function extractGPA(Request $request)
+    {
+        $request->validate([
+            'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:10240']
+        ]);
+
+        try {
+            $file = $request->file('gradeImage');
+            $filePath = $file->store('temp', 'local');
+            $fileFullPath = storage_path('app/' . $filePath);
+
+            // Define OCR.Space API key and endpoint
+            $apiKey = 'K83084843288957'; // Replace with your OCR.Space API key
+            $ocrSpaceUrl = 'https://api.ocr.space/parse/image';
+
+            // Use HTTP client to send the file to OCR.Space API
+            $response = Http::withHeaders([
+                'apikey' => $apiKey,
+            ])->attach(
+                'file',
+                file_get_contents($fileFullPath),
+                basename($fileFullPath)
+            )->post($ocrSpaceUrl, [
+                'filetype' => $file->getClientOriginalExtension(),
+                'isTable' => 'true', // Use advanced table parsing
+                'OCREngine' => 2, // Use OCR Engine 2
+            ]);
+
+            // Check if the API request was successful
+            if (!$response->successful()) {
+                throw new \Exception('OCR API request failed: ' . $response->json('ErrorMessage') ?? 'Unknown error');
+            }
+
+            // Extract text from the OCR API response
+            $ocrText = $response->json('ParsedResults')[0]['ParsedText'] ?? '';
+            Log::info('Extracted Text: ' . $ocrText);
+
+            if (empty($ocrText)) {
+                throw new \Exception('OCR could not extract text from the uploaded document.');
+            }
+
+            // Extract GPA using regex patterns
+            $patterns = [
+                '/General Average[^0-9]*([\d.]+)/i',
+                '/Average[^0-9]*([\d.]+)/i',
+                '/GPA[^0-9]*([\d.]+)/i',
+                '/GWA[^0-9]*([\d.]+)/i',
+            ];
+
+            $ocrGpa = null;
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $ocrText, $matches)) {
+                    $ocrGpa = floatval($matches[1]);
+                    break;
+                }
+            }
+
+            if ($ocrGpa === null) {
+                return response()->json(['success' => false, 'message' => 'Could not extract GPA from the document.']);
+            }
+
+            // Return the extracted GPA as JSON
+            return response()->json(['success' => true, 'extractedGpa' => $ocrGpa]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+        }
+    }
+
+
     public function storeGradeSubmission(Request $request)
     {
         $user = Auth::user();
@@ -380,80 +449,10 @@ class ScholarController extends Controller
                 $fileName = $user->caseCode . '_' . $user->basicInfo->scLastname . '_' . time() . '.' . $file->getClientOriginalExtension();
                 $filePath = $file->storeAs('uploads/grade_reports', $fileName, 'public');
                 $originalFilePath = storage_path('app/public/' . $filePath);
-
-                try {
-                    $apiKey = 'K83084843288957';  // Replace with your actual API key
-                    $ocrSpaceUrl = 'https://api.ocr.space/parse/image';
-
-                    // Make API request to extract text from the image
-                    $response = Http::withHeaders([
-                        'apikey' => $apiKey,  // Send the API key in the header
-                    ])->attach(
-                        'file',
-                        file_get_contents($originalFilePath),
-                        basename($originalFilePath)
-                    )->post($ocrSpaceUrl, [
-                        'filetype' => 'jpg',  // Set the correct file type
-                        'OCREngine' => 2,
-                        'isTable' => 'true',   // Use the advanced OCR engine
-                    ]);
-
-                    // Log the full OCR response for debugging
-                    Log::info('OCR API Response:', $response->json());
-
-                    // Check if the OCR API request was successful
-                    if (!$response->successful()) {
-                        // Log and throw an error if the API request fails
-                        Log::error('OCR API failed with response: ', $response->json());
-                        throw new \Exception('OCR API failed: ' . $response->json('ErrorMessage') ?? 'Unknown error');
-                    }
-
-                    // Extract the OCR text from the response
-                    $ocrText = $response->json('ParsedResults')[0]['ParsedText'] ?? '';
-
-                    if (empty($ocrText)) {
-                        throw new \Exception('OCR could not extract text from the image.');
-                    }
-
-                    // Save the OCR output to a .txt file for debugging purposes
-                    $txtFilePath = storage_path('app/public/uploads/grade_reports/' . $fileName . '_ocr_output.txt');
-                    file_put_contents($txtFilePath, $ocrText);
-
-                    // Extract GPA from the OCR text
-                    $patterns = [
-                        '/General Average[^0-9]*([\d.]+)/i',
-                        '/General Average[^0-9]*([\d.]+)/i',
-                        '/Average[^0-9]*([\d.]+)/i',
-                        '/GPA[^0-9]*([\d.]+)/i',
-                        '/GWA[^0-9]*([\d.]+)/i',
-                        '/Grade Point Average[^0-9]*([\d.]+)/i',
-                    ];
-
-                    $ocrGpa = null;
-                    foreach ($patterns as $pattern) {
-                        if (preg_match($pattern, $ocrText, $matches)) {
-                            $ocrGpa = floatval($matches[1]);
-                            break;
-                        }
-                    }
-
-                    if ($ocrGpa === null) {
-                        return redirect()->back()->with('failure', 'Could not extract GPA from the uploaded document.')->withInput();
-                    }
-
-                    // Compare the extracted GPA with the user input
-                    $inputGpa = $request->gwa ?? $request->genave;
-                    if (abs($ocrGpa - $inputGpa) > 0.01) {
-                        return redirect()->back()->with('failure', 'The GPA in the document (' . $ocrGpa . ') does not match the input GPA (' . $inputGpa . ').')->withInput();
-                    }
-
-                    // return redirect()->back()->with('success', 'OCR processed successfully. Results saved.')->withInput();
-                } catch (\Exception $e) {
-                    return redirect()->back()->with('failure', 'An error occurred: ' . $e->getMessage())->withInput();
-                }
             } else {
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
+
 
             $criteria = criteria::first();
             $requiredgwa = [

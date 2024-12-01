@@ -15,6 +15,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -76,16 +77,18 @@
                     @if ($institution->schoollevel == 'College')
                         <div class="col-md-2 mb-2">
                             <label for="gwa" class="fw-bold text-left">GWA</label>
-                            <input type="number" class="form-control" id="gwa" name="gwa" min="1"
-                                max="{{ $institution->highestgwa != 100 ? '5' : '100' }}"
-                                value="{{ old('gwa') ?? '' }}"
-                                {{ $institution->schoollevel == 'College' ? 'required' : '' }} step="0.01">
+                            <input type="number" class="form-control" id="gwa" name="gwa" 
+                                min="1" 
+                                max="{{ $institution->highestgwa != 100 ? '5' : '100' }}" 
+                                value="{{ old('gwa') ?? '' }}" 
+                                {{ $institution->schoollevel == 'College' ? 'required' : '' }} 
+                                step="0.01">
                         </div>
                     @endif
 
                     <div class="{{ $institution->schoollevel == 'College' ? 'col-md-5' : 'col-md-6' }}">
                         <label for="grades" class="fw-bold text-left">Copy of Report Card</label>
-                        <input type="file" id="grades" class="form-control" name="gradeImage"
+                        <input type="file" id="grades" class="form-control" name="gradeImage" 
                             accept="application/pdf, image/jpeg, image/png" required>
                     </div>
 
@@ -290,6 +293,47 @@
             });
         });
     </script>
+
+<script>
+    document.getElementById('grades').addEventListener('change', function (event) {
+        const fileInput = event.target;
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('gradeImage', file);
+
+
+        // Determine the target input field for extracted GPA
+        const targetFieldId = '{{ $institution->schoollevel == 'College' ? 'gwa' : 'genave' }}';
+        const targetField = document.getElementById(targetFieldId);
+        targetField.value = 'Extracting...'; // Show a loading state
+
+        // Use Fetch API to send the file to the server
+        fetch('/extract-gpa', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                targetField.value = data.extractedGpa; // Populate the GPA field
+            } else {
+                targetField.value = ''; // Reset the field on failure
+                alert('Failed to extract GPA. Please ensure the document is clear.');
+            }
+            })
+            .catch(error => {
+            targetField.value = ''; // Reset the field on error
+            console.error('Error during GPA extraction:', error);
+            alert('An error occurred while extracting GPA. Please try again.');
+        });
+    });
+</script>
 </body>
 
+  
 </html>
