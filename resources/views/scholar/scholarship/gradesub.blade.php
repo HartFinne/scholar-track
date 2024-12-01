@@ -77,7 +77,7 @@
                     @if ($institution->schoollevel == 'College')
                         <div class="col-md-2 mb-2">
                             <label for="gwa" class="fw-bold text-left">GWA</label>
-                            <input type="number" class="form-control" id="gwa" name="gwa" 
+                            <input type="number" class="form-control" id="gwa" name="gwa" readonly 
                                 min="1" 
                                 max="{{ $institution->highestgwa != 100 ? '5' : '100' }}" 
                                 value="{{ old('gwa') ?? '' }}" 
@@ -95,7 +95,7 @@
                     @if ($institution->schoollevel != 'College')
                         <div class="{{ $institution->schoollevel == 'Senior High' ? 'col-md-3' : 'col-md-1' }} mb-2">
                             <label for="genave" class="fw-bold text-left">GWA</label>
-                            <input type="number" class="form-control" id="genave" name="genave" min="1"
+                            <input type="number" class="form-control" id="genave" name="genave" min="1" readonly
                                 max="{{ $institution->highestgwa != 100 ? '5' : '100' }}" value="{{ old('genave') }}"
                                 {{ $institution->schoollevel != 'College' ? 'required' : '' }} step="0.01">
                         </div>
