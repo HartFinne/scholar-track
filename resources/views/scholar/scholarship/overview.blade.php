@@ -79,14 +79,24 @@
         </div>
 
         @if ($renewal->status == 'Open' && $user->Scholarshipinfo->scholarshipstatus == 'Continuing')
-            <div class="sc-renewal">
-                <hr>
-                <div class="text">
-                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
-                    <button onclick="window.location.href='{{ route('screnewal') }}'">Renew Scholarship</button>
+            @if ($appliedRenewal)
+                <div class="sc-renewal">
+                    <hr>
+                    <div class="text">
+                        <h5 class="fw-bold">YOU ALREADY APPLIED FOR SCHOLARSHIP RENEWAL.</h5>
+                    </div>
+                    <hr>
                 </div>
-                <hr>
-            </div>
+            @else
+                <div class="sc-renewal">
+                    <hr>
+                    <div class="text">
+                        <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
+                        <button onclick="window.location.href='{{ route('screnewal') }}'">Renew Scholarship</button>
+                    </div>
+                    <hr>
+                </div>
+            @endif
         @else
             <div class="sc-renewal">
                 <hr>

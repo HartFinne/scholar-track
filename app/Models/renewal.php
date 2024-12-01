@@ -51,4 +51,14 @@ class renewal extends Model
     {
         return $this->hasOne(RnwOtherInfo::class, 'rid', 'rid');
     }
+
+    public function education()
+    {
+        return $this->belongsTo(ScEducation::class, 'caseCode', 'caseCode');
+    }
+
+    public function basicInfo()
+    {
+        return $this->belongsTo(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
 }

@@ -29,13 +29,10 @@ use App\Models\apfamilyinfo;
 use App\Models\specialallowanceforms;
 use App\Models\CreateSpecialAllowanceForm;
 use App\Models\SpecialAllowanceFormStructure;
-use App\Models\allowancebook;
-use App\Models\allowanceevent;
-use App\Models\allowancegraduation;
-use App\Models\allowanceproject;
-use App\Models\allowancethesis;
-use App\Models\allowancetranspo;
-use App\Models\allowanceuniform;
+use App\Models\RnwCaseDetails;
+use App\Models\RnwEducation;
+use App\Models\RnwFamilyInfo;
+use App\Models\RnwOtherInfo;
 use App\Models\Email;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -937,7 +934,9 @@ class StaffController extends Controller
         $renewal = applicationforms::where('formname', 'Renewal')->first();
 
         $startdate = $renewal->updated_at->format('Y-m-d');
-        $enddate = $renewal->enddate ? $renewal->enddate->format('Y-m-d') : now()->addYear()->format('Y-m-d');
+        $enddate = $renewal->enddate
+            ? Carbon::parse($renewal->enddate)->format('Y-m-d')
+            : now()->addYear()->format('Y-m-d');
 
         // Generate summary data
         $summary = [
@@ -948,79 +947,75 @@ class StaffController extends Controller
         ];
 
         // Fetch data for College
-        $college = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+        $college = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'College');
             })
-            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
-                $query->whereBetween('datesubmitted', [$startdate, $enddate])
-                    ->orderBy('datesubmitted', 'ASC')
-                    ->orderByRaw("
-        CASE
-            WHEN renewal.status = 'Pending' THEN 1 
-            WHEN renewal.status = 'Approved' THEN 2  
-            WHEN renewal.status = 'Rejected' THEN 3 
-            WHEN renewal.status = 'Withdrawn' THEN 4
-            ELSE 5
-        END");
-            })
+            ->whereBetween('datesubmitted', [$startdate, $enddate])
+            ->orderBy('datesubmitted', 'ASC')
+            ->orderByRaw("
+            CASE
+                WHEN status = 'Pending' THEN 1 
+                WHEN status = 'Approved' THEN 2  
+                WHEN status = 'Rejected' THEN 3 
+                WHEN status = 'Withdrawn' THEN 4
+                ELSE 5
+            END
+        ")
             ->get();
 
         // Fetch data for Senior High School
-        $shs = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+        $shs = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Senior High');
             })
-            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
-                $query->whereBetween('datesubmitted', [$startdate, $enddate])
-                    ->orderBy('datesubmitted', 'ASC')
-                    ->orderByRaw("
+            ->whereBetween('datesubmitted', [$startdate, $enddate])
+            ->orderBy('datesubmitted', 'ASC')
+            ->orderByRaw("
         CASE
-            WHEN renewal.status = 'Pending' THEN 1 
-            WHEN renewal.status = 'Approved' THEN 2  
-            WHEN renewal.status = 'Rejected' THEN 3 
-            WHEN renewal.status = 'Withdrawn' THEN 4
+            WHEN status = 'Pending' THEN 1 
+            WHEN status = 'Approved' THEN 2  
+            WHEN status = 'Rejected' THEN 3 
+            WHEN status = 'Withdrawn' THEN 4
             ELSE 5
-        END");
-            })
+        END
+    ")
             ->get();
 
         // Fetch data for Junior High School
-        $jhs = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+        $jhs = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Junior High');
             })
-            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
-                $query->whereBetween('datesubmitted', [$startdate, $enddate])
-                    ->orderBy('datesubmitted', 'ASC')
-                    ->orderByRaw("
+            ->whereBetween('datesubmitted', [$startdate, $enddate])
+            ->orderBy('datesubmitted', 'ASC')
+            ->orderByRaw("
         CASE
-            WHEN renewal.status = 'Pending' THEN 1 
-            WHEN renewal.status = 'Approved' THEN 2  
-            WHEN renewal.status = 'Rejected' THEN 3 
-            WHEN renewal.status = 'Withdrawn' THEN 4
+            WHEN status = 'Pending' THEN 1 
+            WHEN status = 'Approved' THEN 2  
+            WHEN status = 'Rejected' THEN 3 
+            WHEN status = 'Withdrawn' THEN 4
             ELSE 5
-        END");
-            })
+        END
+    ")
             ->get();
 
         // Fetch data for Elementary
-        $elem = User::with('basicInfo', 'education', 'scholarshipinfo', 'renewal')
+        $elem = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Elementary');
             })
-            ->whereHas('renewal', function ($query) use ($startdate, $enddate) {
-                $query->whereBetween('datesubmitted', [$startdate, $enddate])
-                    ->orderBy('datesubmitted', 'ASC')
-                    ->orderByRaw("
+            ->whereBetween('datesubmitted', [$startdate, $enddate])
+            ->orderBy('datesubmitted', 'ASC')
+            ->orderByRaw("
         CASE
-            WHEN renewal.status = 'Pending' THEN 1 
-            WHEN renewal.status = 'Approved' THEN 2  
-            WHEN renewal.status = 'Rejected' THEN 3 
-            WHEN renewal.status = 'Withdrawn' THEN 4
+            WHEN status = 'Pending' THEN 1 
+            WHEN status = 'Approved' THEN 2  
+            WHEN status = 'Rejected' THEN 3 
+            WHEN status = 'Withdrawn' THEN 4
             ELSE 5
-        END");
-            })
+        END
+    ")
             ->get();
 
         // Pass data to the view
@@ -1028,9 +1023,27 @@ class StaffController extends Controller
     }
 
 
-    public function showRenewalinfo()
+    public function showRenewalinfo($id)
     {
-        return view('staff.renewalinfo');
+        $renewal = renewal::with('grade', 'casedetails', 'otherinfo')->where('rid', $id)->first();
+        $user = User::with(
+            'basicInfo',
+            'addressinfo',
+            'education',
+            'scholarshipinfo'
+        )->where('caseCode', $renewal->caseCode)
+            ->first();
+
+        $iscollege = ScEducation::where('scSchoolLevel', 'College')->where('caseCode', $user->caseCode)->exists();
+
+
+        $father = RnwFamilyInfo::where('caseCode', $user->caseCode)->where('relationship', 'Father')->first();
+        $mother = RnwFamilyInfo::where('caseCode', $user->caseCode)->where('relationship', 'Mother')->first();
+        $siblings = RnwFamilyInfo::where('caseCode', $user->caseCode)->where('relationship', 'Sibling')->get();
+
+        $form = applicationforms::where('formname', 'Renewal')->first();
+
+        return view('staff.renewalinfo', compact('user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege'));
     }
 
     public function showAllowanceRegular()

@@ -192,7 +192,7 @@ class ScholarController extends Controller
             ->where('id', Auth::id())
             ->first();
 
-        $renewals = renewal::with('grade', 'otherinfo', 'casedetails')->where('caseCode', $user->caseCode)->get();
+        $renewals = renewal::with('grade', 'otherinfo', 'casedetails')->where('caseCode', $user->caseCode)->orderBy('datesubmitted', 'DESC')->get();
 
         // Retrieve the penalty filter status
         $penaltyStatus = $request->input('penalty_status', 'all');
@@ -213,6 +213,13 @@ class ScholarController extends Controller
                 return $query->where('status', $renewalStatus);
             })
             ->first();
+
+        $appliedRenewal = Renewal::where('caseCode', $user->caseCode)
+            ->whereBetween('datesubmitted', [
+                $renewal->updated_at->toDateString(),
+                $renewal->enddate
+            ])
+            ->exists();
 
         $academicData = grades::selectRaw("CONCAT(grades.schoolyear, ' - ', grades.SemesterQuarter) AS period, grades.GWA")
             ->where('grades.caseCode', $user->caseCode)
@@ -240,7 +247,7 @@ class ScholarController extends Controller
             'remaining' => $remainingHours,
         ];
 
-        return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal', 'renewals'));
+        return view('scholar.scholarship.overview', compact('user', 'penalty', 'chartData', 'communityServiceChart', 'renewal', 'renewals', 'appliedRenewal'));
     }
 
     public function showrenewalform()

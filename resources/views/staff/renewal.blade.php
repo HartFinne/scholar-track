@@ -81,7 +81,11 @@
                                         {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
                                     <td class="text-center align-middle">{{ $data->education->scYearGrade }}
                                     </td>
-                                    <td class="text-center align-middle">{{ $data->renewal->renewalstatus }}
+                                    <td class="text-center align-middle">{{ $data->status }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a href="{{ route('renewalinfo', $data->rid) }}"
+                                            class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -115,7 +119,11 @@
                                         {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
                                     <td class="text-center align-middle">{{ $data->education->scYearGrade }}
                                     </td>
-                                    <td class="text-center align-middle">{{ $data->renewal->renewalstatus }}
+                                    <td class="text-center align-middle">{{ $data->status }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a href="{{ route('renewalinfo', $data->rid) }}"
+                                            class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -149,7 +157,11 @@
                                         {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
                                     <td class="text-center align-middle">{{ $data->education->scYearGrade }}
                                     </td>
-                                    <td class="text-center align-middle">{{ $data->renewal->renewalstatus }}
+                                    <td class="text-center align-middle">{{ $data->status }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a href="{{ route('renewalinfo', $data->rid) }}"
+                                            class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -183,7 +195,11 @@
                                         {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
                                     <td class="text-center align-middle">{{ $data->education->scYearGrade }}
                                     </td>
-                                    <td class="text-center align-middle">{{ $data->renewal->renewalstatus }}
+                                    <td class="text-center align-middle">{{ $data->status }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a href="{{ route('renewalinfo', $data->rid) }}"
+                                            class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                                     </td>
                                 </tr>
                             @endforeach

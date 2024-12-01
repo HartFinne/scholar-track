@@ -62,4 +62,9 @@ class ScBasicInfo extends Model
     {
         return $this->hasMany(penalty::class, 'caseCode', 'caseCode');
     }
+
+    public function renewal()
+    {
+        return $this->hasMany(renewal::class, 'caseCode', 'caseCode');
+    }
 }

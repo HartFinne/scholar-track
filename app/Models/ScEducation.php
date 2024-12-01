@@ -35,8 +35,8 @@ class ScEducation extends Model
         return $this->hasMany(Appointments::class, 'caseCode', 'caseCode');
     }
 
-    public function datasets()
+    public function renewal()
     {
-        return $this->hasOne(datasets::class, 'caseCode', 'caseCode');
+        return $this->hasMany(renewal::class, 'caseCode', 'caseCode');
     }
 }

@@ -200,10 +200,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/import-emails', [StaffController::class, 'importemails'])->name('importemails');
     // RENEWAL
     Route::get('/renewal', [StaffController::class, 'showRenewal'])->name('scholarshiprenewal');
-    Route::get('/renewal-college', [StaffController::class, 'showRenewalCollege'])->name('renewal-college');
-    Route::get('/renewal-elementary', [StaffController::class, 'showRenewalElem'])->name('renewal-elementary');
-    Route::get('/renewal-highschool', [StaffController::class, 'showRenewalHS'])->name('renewal-highschool');
-    Route::get('/renewal-info', [StaffController::class, 'showRenewalinfo'])->name('renewalinfo');
+    Route::get('/renewal-info/{id}', [StaffController::class, 'showRenewalinfo'])->name('renewalinfo');
     // SYSTEM ADMIN
     Route::get('/dashboard-admin', [StaffController::class, 'showDashboard'])->name('dashboard');
     Route::get('/users-scholar', [StaffController::class, 'showUsersScholar'])->name('users-scholar');
