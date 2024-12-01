@@ -57,6 +57,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Exports\SpecialAllowanceFormExport;
 use App\Models\SpecialAllowanceSummary;
+use App\Notifications\appointment;
 use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
@@ -2457,9 +2458,60 @@ class StaffController extends Controller
                 throw new \Exception('Appointment not found.');
             }
 
+
             // Update the status of the appointment
             $appointment->status = $request->status;
             $appointment->save();
+
+
+
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            $user = User::where('caseCode', $appointment->caseCode)->first();
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'Youre status has been ' . $appointment->status;
+
+            if ($user->notification_preference === 'sms') {
+                // Send the SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->scPhoneNum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $responseBody = $response->getBody()->getContents();
+                    $decodedResponse = json_decode($responseBody, true);
+
+                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                    // Check if phone_number_list is an array and not empty
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                    }
+                } catch (\Exception $e) {
+                    // Catch and handle any exception
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                }
+            } else {
+                // Send an email notification
+                try {
+                    $user->notify(new appointment($appointment));
+                } catch (\Exception $e) {
+                    // If email notification failed, add to failed list
+                    $failedEmail[] = $user->email;
+                }
+            }
 
             // Commit the transaction
             DB::commit();
