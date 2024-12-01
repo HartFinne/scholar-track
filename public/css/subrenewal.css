@@ -10,33 +10,46 @@
 .ctn-main{
     width: 90%;
     margin: auto;
-    font-family: 'Calibri' !important;
+    font-family: 'Poppins';
 }
 
 .ctn-main .goback{
     text-decoration: none;
     color: #1a5319;
     font-size: 15px;
-    font-family: 'Poppins';
 }
 
-.ren-stat{
-    background-color: #ffde59;
+.ctn-main .title{
+    font-family: 'League Spartan', sans-serif;
     font-weight: bold;
-    padding: 10px;
-    width: 150px;
-    text-align: center;
-    float: right;
-    border-radius: 10px;
-    margin: 0 30px;
+    margin: 25px 0;
 }
 
-.ren-view{
-    border: 1px solid #fff;
+.appinfo {
+    width: 8.5in;
+    margin: 0 auto 10px auto;
+    padding: 20px;
+    border: 2px solid #2e7c55;
+    border-radius: 12px;
+    background-color: #2e7c55;
+    color: #fff;
+}
+
+.appinfo input,
+.appinfo select {
+    background-color: #fff;
+    border: #fff;
+    border-radius: 6px;
+    color: #2e7c55;
+    outline: none;
+}
+
+.label {
+    font-weight: bold;
 }
 
 .appform-view{
-    font-family: 'Calibri';
+    font-family: 'Calibri' !important;
     font-size: 16px;
     margin-bottom: 30px;
     width: 90%;
@@ -242,4 +255,48 @@
     font-style: italic;
     font-size: 12px;
     margin-bottom: 20px;
+}
+
+
+.card-body a{
+    padding: 5px 25px;
+    background-color: #2e7c55;
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.3s ease;
+}
+
+.card-body a span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+  }
+  
+.card-body a span:after {
+    content: '\276f';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+  }
+  
+.card-body a:hover span {
+    padding-right: 25px;
+  }
+  
+.card-body a:hover span:after {
+    opacity: 1;
+    right: 0;
+  }
+
+.card-body a i{
+    margin-right: 10px;
+}
+
+.card-body .file{
+    text-indent: 80px;
 }
