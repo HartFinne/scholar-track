@@ -1050,7 +1050,6 @@ class StaffController extends Controller
         return view('staff.renewal', compact('summary', 'college', 'shs', 'jhs', 'elem'));
     }
 
-
     public function showRenewalinfo($id)
     {
         $renewal = renewal::with('grade', 'casedetails', 'otherinfo')->where('rid', $id)->first();
