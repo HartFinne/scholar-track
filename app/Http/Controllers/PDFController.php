@@ -109,6 +109,7 @@ class PDFController extends Controller
         $pdf = Browsershot::html($template)
             ->setNodeBinary('/usr/bin/node')
             ->setNpmBinary('/usr/bin/npm')
+            ->useBinary('/usr/bin/chromium-browser')
             ->showBackground()
             ->margins(2, 4, 10, 4)
             ->format('Letter')
