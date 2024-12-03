@@ -119,7 +119,7 @@ class PDFController extends Controller
         return new Response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $applicant->name . '.pdf"', // Correct string interpolation
-            'Content-Length' => strlen($pdf)
+            'Content-Length' => strlen($pdfContent)
         ]);
     }
     // {
