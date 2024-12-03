@@ -114,7 +114,7 @@ class PDFController extends Controller
             ->showBackground()
             ->margins(2, 4, 10, 4)
             ->format('Letter')
-            ->debug();
+            ->pdf();
 
         return new Response($pdf, 200, [
             'Content-Type' => 'application/pdf',
