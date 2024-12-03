@@ -115,11 +115,12 @@ class PDFController extends Controller
             ->format('Letter')
             ->debug();
 
+       $pdfContent = $pdf->pdf(); // Generate and retrieve the PDF content
 
-        return new Response($pdf, 200, [
+        return new Response($pdfContent, 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $applicant->name . '.pdf"', // Correct string interpolation
-            'Content-Length' => strlen($pdfContent)
+            'Content-Disposition' => 'attachment; filename="' . $applicant->name . '.pdf"',
+            'Content-Length' => strlen($pdfContent), // Get the length of the content
         ]);
     }
     // {
