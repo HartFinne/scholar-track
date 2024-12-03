@@ -136,7 +136,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($penaltys as $penalty)
+                    @foreach ($penaltysGrouped as $penalty)
                         <tr>
                             <td class="text-center align-middle">{{ $loop->iteration }}</td>
                             <td class="text-center align-middle">
@@ -156,6 +156,12 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination Links -->
+        <div class="d-flex justify-content-center mt-3">
+            {{ $penaltys->links('pagination::bootstrap-4') }}
+        </div>
+
     </div>
 
     <div class="ctnpenaltyform" id="ctnpenaltyform">

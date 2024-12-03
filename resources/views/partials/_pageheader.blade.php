@@ -32,8 +32,8 @@
             onclick="window.location.href='{{ route('appointments') }}';">Appointments</button>
         <button id="btnapplicants" class="sbarmainopt"
             onclick="window.location.href='{{ route('applicants') }}';">Applicants</button>
-        <button id="evaluate-link" class="sbarmainopt"
-            onclick="window.location.href='{{ route('evaluatescholars') }}';">Scholarship Report</button>
+        <button id="" class="sbarmainopt"
+            onclick="window.location.href='{{ route('showreports') }}';">Scholarship Report</button>
         {{-- <button id="btnreport" class="sbarmainopt"
             onclick="window.location.href='{{ route('generatescholarshipreport') }}';" target="_blank">Scholarship
             Report</button> --}}
@@ -47,28 +47,6 @@
 <div id="ctnprofilemenu">
     <a id="linkprofile" href="{{ route('account-sw') }}"><i class="fas fa-user"></i>Account</a>
     <a id="linksignout" href="{{ route('logout-sw') }}"><i class="fa-solid fa-right-from-bracket"></i>Sign out</a>
-</div>
-
-<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-success">
-            <div class="modal-body text-center p-4">
-                <div class="text-success mb-3">
-                    <i class="fas fa-check-circle fa-3x"></i>
-                </div>
-                <p style="font-size: 1.25em; color: #28a745; font-weight: 500;">
-                    Processing your request...
-                </p>
-                <p class="text-muted">
-                    The system is analyzing and updating scholars' data. This may take a moment. Thank you for your
-                    patience!
-                </p>
-                <div class="spinner-border text-success mt-3" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>

@@ -25,27 +25,27 @@ class staff
                 return redirect()->route('login-sw')->with('failure', 'Access denied. Please log in to your account first.');
             }
 
-            $session = DB::table('sessions')
-                ->where('id', session()->getId())  // Get session ID from the current request
-                ->first();
+            // $session = DB::table('sessions')
+            //     ->where('id', session()->getId())  // Get session ID from the current request
+            //     ->first();
 
-            // If a session exists, check inactivity
-            if ($session) {
-                // Convert the last_activity timestamp to a Carbon instance
-                $lastActivity = Carbon::parse($session->last_activity);
-                $now = Carbon::now();
+            // // If a session exists, check inactivity
+            // if ($session) {
+            //     // Convert the last_activity timestamp to a Carbon instance
+            //     $lastActivity = Carbon::parse($session->last_activity);
+            //     $now = Carbon::now();
 
-                // If the user has been inactive for more than 15 minutes
-                if ($lastActivity->diffInMinutes($now) > 5) {
-                    // Log out the user due to inactivity
-                    Auth::guard('staff')->logout();
-                    session()->invalidate();
-                    session()->regenerateToken();
+            //     // If the user has been inactive for more than 15 minutes
+            //     if ($lastActivity->diffInMinutes($now) > 5) {
+            //         // Log out the user due to inactivity
+            //         Auth::guard('staff')->logout();
+            //         session()->invalidate();
+            //         session()->regenerateToken();
 
-                    // Redirect the user to the login page with a message
-                    return redirect()->route('login-sw')->with('failure', 'Your session has expired due to inactivity. Please log in again.');
-                }
-            }
+            //         // Redirect the user to the login page with a message
+            //         return redirect()->route('login-sw')->with('failure', 'Your session has expired due to inactivity. Please log in again.');
+            //     }
+            // }
 
             $user = Auth::guard('staff')->user();
 

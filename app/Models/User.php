@@ -62,8 +62,6 @@ class User extends Authenticatable implements CanResetPassword
         ];
     }
 
-
-
     public function scholarshipinfo()
     {
         return $this->hasOne(scholarshipinfo::class, 'caseCode', 'caseCode');

@@ -105,6 +105,10 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $colleges->links('pagination::bootstrap-4') }}
+            </div>
         </div>
         <div class="ctn" id="shs" style="display: none;">
             <div class="ctntable table-responsive">
@@ -145,6 +149,10 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+            <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $shs->links('pagination::bootstrap-4') }}
             </div>
         </div>
         <div class="ctn" id="jhs" style="display: none;">
@@ -187,6 +195,10 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $jhs->links('pagination::bootstrap-4') }}
+            </div>
         </div>
         <div class="ctn" id="elem" style="display: none;">
             <div class="ctntable table-responsive">
@@ -228,6 +240,10 @@
                     </tbody>
                 </table>
             </div>
+            <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $elem->links('pagination::bootstrap-4') }}
+            </div>
         </div>
     </div>
 
@@ -254,6 +270,7 @@
             toggleSection('#toggleElem', '#elem');
         });
 
+
         document.addEventListener('DOMContentLoaded', function() {
             // Convert the PHP array to a JavaScript object for scholars per area
             const scholarsperarea = @json($scholarsperarea);
@@ -265,12 +282,33 @@
             // Add 0 to the end of the data array
             areaData.push(0);
 
+            // Function to generate shades of green dynamically based on the number of bars (data length)
+            function generateShades(count) {
+                let colors = [];
+                const baseColor = {
+                    r: 26,
+                    g: 83,
+                    b: 25
+                }; // Base green color
+
+                for (let i = 0; i < count; i++) {
+                    const shade = Math.min(255, baseColor.g + i *
+                        15); // Increment the green value to get different shades
+                    colors.push(`rgb(${baseColor.r}, ${shade}, ${baseColor.b})`);
+                }
+
+                return colors;
+            }
+
+            // Get dynamic colors based on the length of the areaData
+            const backgroundColors = generateShades(areaData.length);
+
             new Chart("scholarsperarea", {
                 type: "bar",
                 data: {
                     labels: areaLabels,
                     datasets: [{
-                        backgroundColor: ['#1a5319', '#599f58', '#9de19c', '#a5d6a7', '#4caf50'],
+                        backgroundColor: backgroundColors, // Use the dynamic colors
                         data: areaData
                     }]
                 },

@@ -75,7 +75,7 @@
                     <div class="row mb-3">
                         <label class="col-md-3 col-form-label">Comment</label>
                         <div class="col-md-9">
-                            <textarea rows="8" name="comment" class="form-control" placeholder="Type here..." style="resize: none;">{{ $applicant->comment }}
+                            <textarea rows="8" name="comment" class="form-control" placeholder="Type here..." style="resize: none;">{!! $applicant->comment !!}
                             </textarea>
                         </div>
                     </div>

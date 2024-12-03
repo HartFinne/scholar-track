@@ -224,6 +224,9 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/applicant-account-info/{apid}', [StaffController::class, 'showapplicantaccount'])->name('applicant.view');
     Route::post('/applicant/activate/{apid}', [StaffController::class, 'activateapplicant'])->name('applicant.activate');
     Route::post('/applicant/deactivate/{apid}', [StaffController::class, 'deactivateapplicant'])->name('applicant.deactivate');
+    // REPORTS
+    Route::get('/scholarship-reports', [StaffController::class, 'showreports'])->name('showreports');
+    Route::post('/generate-summary-report', [StaffController::class, 'generateSummaryReport'])->name('generateSummaryReport');
 });
 
 // staff login, logout, account creation

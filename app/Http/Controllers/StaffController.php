@@ -57,7 +57,15 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Exports\SpecialAllowanceFormExport;
 use App\Models\SpecialAllowanceSummary;
+use App\Models\summarycollege;
+use App\Models\summaryelem;
+use App\Models\summaryjhs;
+use App\Models\summaryshs;
+use App\Models\Reports;
 use Illuminate\Support\Facades\Storage;
+use PhpParser\Node\Stmt\TryCatch;
+use Symfony\Component\VarDumper\Caster\RedisCaster;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class StaffController extends Controller
 {
@@ -76,7 +84,20 @@ class StaffController extends Controller
     public function showApplicants()
     {
         $totalapplicants = applicants::get()->count();
-        $applicants = applicants::orderBy('prioritylevel', 'DESC')->get();
+        $applicants = [
+            'college' => applicants::whereHas('educcollege', function ($query) {
+                $query->whereNotNull('casecode');
+            })->orderBy('prioritylevel', 'DESC')->paginate(10),
+            'shs' => applicants::whereHas('educelemhs', function ($query) {
+                $query->where('schoollevel', 'Senior High');
+            })->orderBy('prioritylevel', 'DESC')->paginate(10),
+            'jhs' => applicants::whereHas('educelemhs', function ($query) {
+                $query->where('schoollevel', 'Junior High');
+            })->orderBy('prioritylevel', 'DESC')->paginate(10),
+            'elem' => applicants::whereHas('educelemhs', function ($query) {
+                $query->where('schoollevel', 'Elementary');
+            })->orderBy('prioritylevel', 'DESC')->paginate(10),
+        ];
         $pending = applicants::whereNotIn('applicationstatus', ['Accepted', 'Rejected', 'Withdrawn'])->count();
         $accepted = applicants::where('applicationstatus', 'Accepted')->count();
         $rejected = applicants::where('applicationstatus', 'Rejected')->count();
@@ -102,7 +123,7 @@ class StaffController extends Controller
         $iscollege = apceducation::where('casecode', $casecode)->exists();
 
         if ($iscollege) {
-            $form = applicationforms::where('formname', 'College');
+            $form = applicationforms::where('formname', 'College')->first();
         } else {
             if ($applicant->educelemhs->schoollevel == 'Elementary') {
                 $form = applicationforms::where('formname', 'College')->first();
@@ -394,7 +415,7 @@ class StaffController extends Controller
 
     public function showLTE()
     {
-        $lte = lte::with('hcattendance', 'csattendance')->get();
+        $lte = lte::with('hcattendance', 'csattendance')->paginate(10);
         $scholars = User::with(['basicInfo', 'education'])->get();
         return view('staff.lte', compact('lte', 'scholars'));
     }
@@ -501,28 +522,35 @@ class StaffController extends Controller
 
     public function showPenalty()
     {
+        // Paginate the penalties first
         $penaltys = Penalty::with('basicInfo')
-            ->get(['caseCode', 'condition'])
-            ->groupBy('caseCode')
-            ->map(function ($penaltyGroup, $caseCode) {
-                $conditions = $penaltyGroup->pluck('condition')->unique()->join('<br>');
-                $basicInfo = $penaltyGroup->first()->basicInfo;
-                return [
-                    'caseCode' => $caseCode,
-                    'conditions' => $conditions,
-                    'basicInfo' => $basicInfo
-                ];
-            });
-        // dd($penalty);
+            ->orderBy('dateofpenalty', 'desc') // Order by penalty date to get the latest
+            ->paginate(10); // Paginate with 10 records per page
+
+        // After pagination, group the penalties by caseCode
+        $penaltysGrouped = $penaltys->getCollection()->groupBy('caseCode')->map(function ($penaltyGroup, $caseCode) {
+            $conditions = $penaltyGroup->pluck('condition')->unique()->join('<br>');
+            $basicInfo = $penaltyGroup->first()->basicInfo;
+            return [
+                'caseCode' => $caseCode,
+                'conditions' => $conditions,
+                'basicInfo' => $basicInfo
+            ];
+        });
+
+        // Get all scholars
         $scholars = User::with(['basicInfo'])->get();
+
+        // Get the latest penalty for each scholar
         $penalties = [];
         foreach ($scholars as $scholar) {
-            $latestPenalty = penalty::where('caseCode', $scholar->caseCode)
+            $latestPenalty = Penalty::where('caseCode', $scholar->caseCode)
                 ->latest('dateofpenalty')
                 ->first();
             $penalties[$scholar->caseCode] = $latestPenalty;
         }
-        return view('staff.penalty', compact('penalties', 'scholars', 'penaltys'));
+
+        return view('staff.penalty', compact('penalties', 'scholars', 'penaltysGrouped', 'penaltys'));
     }
 
     public function showpenaltyinfo($casecode)
@@ -962,7 +990,7 @@ class StaffController extends Controller
                 ELSE 5
             END
         ")
-            ->get();
+            ->paginate(10);
 
         // Fetch data for Senior High School
         $shs = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
@@ -980,7 +1008,7 @@ class StaffController extends Controller
             ELSE 5
         END
     ")
-            ->get();
+            ->paginate(10);
 
         // Fetch data for Junior High School
         $jhs = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
@@ -998,7 +1026,7 @@ class StaffController extends Controller
             ELSE 5
         END
     ")
-            ->get();
+            ->paginate(10);
 
         // Fetch data for Elementary
         $elem = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
@@ -1016,7 +1044,7 @@ class StaffController extends Controller
             ELSE 5
         END
     ")
-            ->get();
+            ->paginate(10);
 
         // Pass data to the view
         return view('staff.renewal', compact('summary', 'college', 'shs', 'jhs', 'elem'));
@@ -1046,15 +1074,19 @@ class StaffController extends Controller
         return view('staff.renewalinfo', compact('user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege'));
     }
 
-    public function showAllowanceRegular()
+    public function showAllowanceRegular(Request $request)
     {
-        $requests = RegularAllowance::join('grades', 'grades.gid', '=', 'regular_allowance.gid')
-            ->join('users', 'users.caseCode', '=', 'grades.caseCode')
-            ->join('sc_basicinfo', 'sc_basicinfo.caseCode', '=', 'users.caseCode') // Joining with sc_basicInfo using user_id
-            ->get();
+        // Get the status from the query parameters, default to empty string if none is selected
+        $status = $request->get('status', '');
+
+        // Query RegularAllowance model and apply status filter if needed
+        $requests = RegularAllowance::when($status, function ($query) use ($status) {
+            return $query->where('status', $status); // Apply the filter
+        })->paginate(10);
 
         return view('staff.regularallowance', compact('requests'));
     }
+
 
     public function viewAllowanceRegularInfo()
     {
@@ -1141,61 +1173,7 @@ class StaffController extends Controller
             return redirect()->back()->with('failure', 'Unable to update request. ' . $e->getMessage());
         }
     }
-
-    // public function showAllowanceSpecial()
-    // {
-    //     $allowanceModels = [
-    //         allowancebook::class,
-    //         allowanceevent::class,
-    //         allowancethesis::class,
-    //         allowanceproject::class,
-    //         allowancetranspo::class,
-    //         allowanceuniform::class,
-    //         allowancegraduation::class
-    //     ];
-
-    //     $data = SpecialAllowanceSummary::first();
-
-    //     // Define an array of model classes
-    //     $allowanceModels = [
-    //         allowancebook::class,
-    //         allowanceevent::class,
-    //         allowancethesis::class,
-    //         allowanceproject::class,
-    //         allowancetranspo::class,
-    //         allowanceuniform::class,
-    //         allowancegraduation::class
-    //     ];
-
-    //     // Initialize an empty collection to store all results
-    //     $mergedRequests = collect();
-
-    //     // Loop through each model class, retrieve and merge the results
-    //     foreach ($allowanceModels as $model) {
-    //         // Retrieve records already ordered by created_at and add to the merged collection
-    //         $records = $model::orderBy('created_at', 'asc')->get();
-    //         $mergedRequests = $mergedRequests->concat($records);
-    //     }
-
-    //     // Define a custom order for statuses
-    //     $statusOrder = ['Pending', 'Accepted', 'Completed', 'Rejected'];
-
-    //     // Sort the merged collection by status first, then by created_at
-    //     $requests = $mergedRequests->sort(function ($a, $b) use ($statusOrder) {
-    //         // Compare status by predefined priority
-    //         $statusComparison = array_search($a->status, $statusOrder) <=> array_search($b->status, $statusOrder);
-    //         if ($statusComparison == 0) { // if statuses are the same, sort by created_at
-    //             return $a->created_at <=> $b->created_at;
-    //         }
-    //         return $statusComparison;
-    //     })->values();
-
-    //     // Ensure keys are reset
-    //     $requests = $requests->values();
-
-    //     return view('staff.specialallowance', compact('data', 'requests'));
-    // }
-
+    // no pagination
     public function showAllowanceSpecial()
     {
         $summary = SpecialAllowanceSummary::first();
@@ -1239,7 +1217,6 @@ class StaffController extends Controller
 
         return view('staff.specialallowance', compact('data', 'summary', 'scholars', 'forms'));
     }
-
     public function showspecrecinfo($requesttype, $id, $caseCode)
     {
         // Get the currently authenticated user and their related data
@@ -1718,27 +1695,28 @@ class StaffController extends Controller
                 $query->where('scSchoolLevel', 'College');
             })
             ->orderBy('caseCode', 'ASC')
-            ->get();
+            ->paginate(10);
+
         $shs = User::with('basicInfo', 'education', 'scholarshipinfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Senior High');
             })
             ->orderBy('caseCode', 'ASC')
-            ->get();
+            ->paginate(10);
 
         $jhs = User::with('basicInfo', 'education', 'scholarshipinfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Junior High');
             })
             ->orderBy('caseCode', 'ASC')
-            ->get();
+            ->paginate(10);
 
         $elem = User::with('basicInfo', 'education', 'scholarshipinfo')
             ->whereHas('education', function ($query) {
                 $query->where('scSchoolLevel', 'Elementary');
             })
             ->orderBy('caseCode', 'ASC')
-            ->get();
+            ->paginate(10);
 
         return view('staff.scholars', compact(
             'totalscholars',
@@ -1755,21 +1733,21 @@ class StaffController extends Controller
 
     public function showUsersScholar()
     {
-        $scholarAccounts = User::all();
+        $scholarAccounts = User::paginate(10);
 
         return view('staff.users-scholar', compact('scholarAccounts'));
     }
 
     public function showUserApplicants()
     {
-        $applicants = applicants::all();
+        $applicants = applicants::paginate(10);
 
         return view('staff.users-applicant', compact('applicants'));
     }
 
     public function showUserStaff()
     {
-        $staffAccounts = Staccount::all();
+        $staffAccounts = Staccount::paginate(10);
 
         return view('staff.users-staff', compact('staffAccounts'));
     }
@@ -1865,24 +1843,46 @@ class StaffController extends Controller
         communityservice::where('slotnum', 0)
             ->where('eventstatus', '!=', 'Closed')
             ->update(['eventstatus' => 'Closed']);
-        $events = communityservice::all();
+        $events = [
+            'all' => communityservice::paginate(10),
+            'open' => communityservice::where('eventstatus', 'Open')->paginate(10),
+            'closed' => communityservice::where('eventstatus', 'Closed')->paginate(10),
+        ];
         $totalevents = communityservice::count();
         $openevents = communityservice::where('eventstatus', 'Open')->count();
         $closedevents = communityservice::where('eventstatus', 'Closed')->count();
 
-        $requiredHours = 8;
+        $criteria = criteria::first();
+        $csHours = $criteria->cshours;
 
-        $scholarsWithCompletedHours = DB::table('csattendance')
-            ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
-            ->groupBy('caseCode')
-            ->having('total_hours', '>=', $requiredHours)
-            ->count();
+        // Get all scholars with their start and end dates
+        $scholars = scholarshipinfo::selectRaw('caseCode, TIMESTAMPDIFF(YEAR, startdate, enddate) as years')->get();
 
-        $scholarsWithRemainingHours = DB::table('csattendance')
-            ->select('caseCode', DB::raw('SUM(hoursspent) as total_hours'))
-            ->groupBy('caseCode')
-            ->having('total_hours', '<', $requiredHours)
-            ->count();
+        // Get all attendees' caseCodes
+        $attendees = csattendance::pluck('caseCode')->toArray(); // Extract caseCodes into an array
+
+        $scholarsWithCompletedHours = 0;
+        $scholarsWithRemainingHours = 0;
+
+        foreach ($scholars as $scholar) {
+            // Check if the scholar has attendance records
+            if (in_array($scholar->caseCode, $attendees)) {
+                // Calculate required hours based on the number of years
+                $requiredHours = $scholar->years * $csHours;
+
+                // Get the sum of hoursspent for this scholar
+                $renderedHours = csattendance::where('caseCode', $scholar->caseCode)->sum('hoursspent');
+
+                // Check if rendered hours meet the required hours
+                if ($renderedHours >= $requiredHours) {
+                    $scholarsWithCompletedHours++;
+                } else {
+                    $scholarsWithRemainingHours++;
+                }
+            } else {
+                $scholarsWithRemainingHours++;
+            }
+        }
 
         return view('staff.managecs', compact('events', 'totalevents', 'openevents', 'closedevents', 'scholarsWithCompletedHours', 'scholarsWithRemainingHours'));
     }
@@ -2021,7 +2021,7 @@ class StaffController extends Controller
 
     public function showHumanitiesClass()
     {
-        $classes = humanitiesclass::all();
+        $classes = humanitiesclass::paginate(10);
         return view('staff.managehc', compact('classes'));
     }
 
@@ -2433,7 +2433,15 @@ class StaffController extends Controller
 
     public function showappointments()
     {
-        $appointments = Appointments::with('basicInfo', 'education')->get();
+        $appointments = Appointments::with('basicInfo', 'education')
+            ->orderByRaw("CASE
+                            WHEN status = 'Pending' THEN 1
+                            WHEN status = 'Accepted' THEN 2
+                            WHEN status = 'Rejected' THEN 3
+                            WHEN status = 'Completed' THEN 4
+                            WHEN status = 'Cancelled' THEN 5
+                        END")
+            ->paginate(10);
         return view('staff.appointments', compact('appointments'));
     }
 
@@ -2473,5 +2481,634 @@ class StaffController extends Controller
             // Redirect with an error message
             return redirect()->back()->with('failure', 'Failed to update appointment status: ' . $e->getMessage());
         }
+    }
+
+    public function showreports()
+    {
+        $startdate = Carbon::now();
+        $enddate = $startdate->copy()->addYear();
+
+        // Generate the academic year
+        $acadyear = $startdate->format('Y') . '-' . $enddate->format('Y');
+        $colleges = summarycollege::with('basicInfo', 'education', 'scholarshipinfo')
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summarycollege.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+            ->orderByRaw("
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
+            ->orderBy('endcontract', 'ASC')
+            ->select('summarycollege.*')
+            ->get();
+
+        $shs = summaryshs::with('basicInfo', 'education', 'scholarshipinfo')
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryshs.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+            ->orderByRaw("
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
+            ->orderBy('endcontract', 'ASC')
+            ->select('summaryshs.*')
+            ->get();
+
+        $jhs = summaryjhs::with('basicInfo', 'education', 'scholarshipinfo')
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryjhs.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+            ->orderByRaw("
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
+            ->orderBy('endcontract', 'ASC')
+            ->select('summaryjhs.*')
+            ->get();
+
+        $elem = summaryelem::with('basicInfo', 'education', 'scholarshipinfo')
+            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryelem.caseCode')
+            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+            ->orderByRaw("
+        CASE 
+            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+            ELSE 4 
+        END
+    ")
+            ->orderBy('endcontract', 'ASC')
+            ->select('summaryelem.*')
+            ->get();
+        $reports = [
+            'All' => Reports::orderBy('dategenerated', "DESC")->paginate(5),
+            'College' => Reports::where('level', 'College')->orderBy('dategenerated', "DESC")->paginate(5),
+            'Senior High' => Reports::where('level', 'Senior High')->orderBy('dategenerated', "DESC")->paginate(5),
+            'Junior High' => Reports::where('level', 'Junior High')->orderBy('dategenerated', "DESC")->paginate(5),
+            'Elementary' => Reports::where('level', 'Elementary')->orderBy('dategenerated', "DESC")->paginate(5)
+        ];
+        return view('staff.scholarship-report', compact('colleges', 'shs', 'jhs', 'elem', 'acadyear', 'reports'));
+    }
+
+    // public function generateSummaryReport(Request $request)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'schoollevel' => 'required|string',
+    //             'periodtype' => 'required|string',
+    //             'period' => 'required_if:periodtype,Monthly,Quarterly|string',
+    //             'year' => 'required|string'
+    //         ]);
+
+    //         // $reportname = 'Scholarship_Summary_Report_' . $level . '_' . $date . '_' . $year;
+
+    //         $worker = Auth::guard('staff')->user();
+
+    //         $level = $request->schoollevel;
+    //         $type = $request->periodtype;
+    //         $date = $request->period;
+    //         $year = $request->year;
+    //         $monthNames = [
+    //             'January' => 1,
+    //             'February' => 2,
+    //             'March' => 3,
+    //             'April' => 4,
+    //             'May' => 5,
+    //             'June' => 6,
+    //             'July' => 7,
+    //             'August' => 8,
+    //             'September' => 9,
+    //             'October' => 10,
+    //             'November' => 11,
+    //             'December' => 12,
+    //         ];
+
+    //         $quarters = [
+    //             'First Quarter' => [$year . '-01-01', $year . '-03-31'],
+    //             'Second Quarter' => [$year . '-04-01', $year . '-06-30'],
+    //             'Third Quarter' => [$year . '-07-01', $year . '-09-30'],
+    //             'Fourth Quarter' => [$year . '-10-01', $year . '-12-31'],
+    //         ];
+
+
+    //         if ($type == 'Monthly') {
+    //             $month = $monthNames[$date];
+    //             $datescope = $month . ', ' . $year;
+    //         } else if ($type == 'Quarterly') {
+    //             [$startdate, $enddate] = $quarters[$date];
+    //             $datescope = \Carbon\Carbon::parse($startdate)->format('F j, Y') . ' - ' . \Carbon\Carbon::parse($enddate)->format('F j, Y');
+    //         } else if ($type == 'Annually') {
+    //             $datescope = $year;
+    //         }
+
+    //         if ($level == 'All') {
+    //             if ($type === 'Annually') {
+    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)->count();
+    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->groupBy('scholartype', 'scholarshipstatus')
+    //                     ->orderBy('scholartype')
+    //                     ->orderBy('scholarshipstatus')
+    //                     ->get();
+    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->groupBy('area')
+    //                     ->orderBy('area')
+    //                     ->get();
+    //                 $scperlevelschool = ScEducation::selectRaw('scSchoolName, scSchoolLevel, COUNT(*) as sccount')
+    //                     ->whereHas('scholarshipinfo', function ($query) use ($year) {
+    //                         $query->whereYear('startdate', $year);
+    //                     })
+    //                     ->groupBy('scSchoolName', 'scSchoolLevel')
+    //                     ->orderBy('scSchoolName')
+    //                     ->orderBy('scSchoolLevel')
+    //                     ->get();
+    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
+    //                     ->whereYear('datesubmitted', $year)
+    //                     ->groupBy('status')
+    //                     ->orderBy('status')
+    //                     ->get();
+    //                 $college = $this->getUsersBySchoolLevel($year, 'College');
+    //                 $shs = $this->getUsersBySchoolLevel($year, 'Senior High');
+    //                 $jhs = $this->getUsersBySchoolLevel($year, 'Junior High');
+    //                 $elem = $this->getUsersBySchoolLevel($year, 'Elementary');
+    //             } elseif ($type === 'Monthly') {
+    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)->whereMonth('startdate', $month)->count();
+    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->whereMonth('startdate', $month)
+    //                     ->groupBy('scholartype', 'scholarshipstatus')
+    //                     ->orderBy('scholartype')
+    //                     ->orderBy('scholarshipstatus')
+    //                     ->get();
+    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->whereMonth('startdate', $month)
+    //                     ->groupBy('area')
+    //                     ->orderBy('area')
+    //                     ->get();
+    //                 $scperlevelschool = ScEducation::selectRaw('scSchoolName, scSchoolLevel, COUNT(*) as sccount')
+    //                     ->whereHas('scholarshipinfo', function ($query) use ($year, $month) {
+    //                         $query->whereYear('startdate', $year)
+    //                             ->whereMonth('startdate', $month);
+    //                     })
+    //                     ->groupBy('scSchoolName', 'scSchoolLevel')
+    //                     ->orderBy('scSchoolName')
+    //                     ->orderBy('scSchoolLevel')
+    //                     ->get();
+    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
+    //                     ->whereYear('datesubmitted', $year)
+    //                     ->whereMonth('datesubmitted', $month)
+    //                     ->groupBy('status')
+    //                     ->orderBy('status')
+    //                     ->get();
+    //             } elseif ($type === 'Quarterly') {
+    //                 $totalscholars = scholarshipinfo::whereBetween('startdate', [$startdate, $enddate])->count();
+    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
+    //                     ->whereBetween('startdate', [$startdate, $enddate])
+    //                     ->groupBy('scholartype', 'scholarshipstatus')
+    //                     ->orderBy('scholartype')
+    //                     ->orderBy('scholarshipstatus')
+    //                     ->get();
+    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
+    //                     ->whereBetween('startdate', [$startdate, $enddate])
+    //                     ->groupBy('area')
+    //                     ->orderBy('area')
+    //                     ->get();
+    //                 $scperlevelschool = ScEducation::selectRaw('scSchoolName, scSchoolLevel, COUNT(*) as sccount')
+    //                     ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
+    //                         $query->whereBetween('startdate', [$startdate, $enddate]);
+    //                     })
+    //                     ->groupBy('scSchoolName', 'scSchoolLevel')
+    //                     ->orderBy('scSchoolName')
+    //                     ->orderBy('scSchoolLevel')
+    //                     ->get();
+    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
+    //                     ->whereBetween('datesubmitted', [$startdate, $enddate])
+    //                     ->groupBy('status')
+    //                     ->orderBy('status')
+    //                     ->get();
+    //             }
+    //         } else {
+    //             if ($type === 'Annually') {
+    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->count();
+    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('scholartype', 'scholarshipstatus')
+    //                     ->orderBy('scholartype')
+    //                     ->orderBy('scholarshipstatus')
+    //                     ->get();
+    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('area')
+    //                     ->orderBy('area')
+    //                     ->get();
+    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
+    //                     ->whereYear('datesubmitted', $year)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('status')
+    //                     ->orderBy('status')
+    //                     ->get();
+    //                 $scperschool = ScEducation::selectRaw('scSchoolName, COUNT(*) as sccount')
+    //                     ->where('scSchoolLevel', $level)
+    //                     ->whereHas('scholarshipinfo', function ($query) use ($year) {
+    //                         $query->whereYear('startdate', $year);
+    //                     })
+    //                     ->groupBy('scSchoolName')
+    //                     ->get();
+    //                 if ($level == 'Senior High' || $level == 'College') {
+    //                     $scpercoursestrand = ScEducation::selectRaw('scCourseStrandSec, COUNT(*) as sccount')
+    //                         ->where('scSchoolLevel', $level)
+    //                         ->whereHas('scholarshipinfo', function ($query) use ($year) {
+    //                             $query->whereYear('startdate', $year);
+    //                         })
+    //                         ->groupBy('scCourseStrandSec')
+    //                         ->get();
+    //                 }
+    //             } elseif ($type === 'Monthly') {
+    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)->whereMonth('startdate', $month)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })->count();
+    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->whereMonth('startdate', $month)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('scholartype', 'scholarshipstatus')
+    //                     ->orderBy('scholartype')
+    //                     ->orderBy('scholarshipstatus')
+    //                     ->get();
+    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
+    //                     ->whereYear('startdate', $year)
+    //                     ->whereMonth('startdate', $month)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('area')
+    //                     ->orderBy('area')
+    //                     ->get();
+    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
+    //                     ->whereYear('datesubmitted', $year)
+    //                     ->whereMonth('datesubmitted', $month)
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('status')
+    //                     ->orderBy('status')
+    //                     ->get();
+    //                 $scperschool = ScEducation::selectRaw('scSchoolName, COUNT(*) as sccount')
+    //                     ->where('scSchoolLevel', $level)
+    //                     ->whereHas('scholarshipinfo', function ($query) use ($month, $year) {
+    //                         $query->whereYear('startdate', $year)->whereMonth('startdate', $month);
+    //                     })
+    //                     ->groupBy('scSchoolName')
+    //                     ->get();
+    //                 if ($level == 'Senior High' || $level == 'College') {
+    //                     $scpercoursestrand = ScEducation::selectRaw('scCourseStrandSec, COUNT(*) as sccount')
+    //                         ->where('scSchoolLevel', $level)
+    //                         ->whereHas('scholarshipinfo', function ($query) use ($month, $year) {
+    //                             $query->whereYear('startdate', $year)->whereMonth('startdate', $month);
+    //                         })
+    //                         ->groupBy('scCourseStrandSec')
+    //                         ->get();
+    //                 }
+    //             } elseif ($type === 'Quarterly') {
+    //                 $totalscholars = scholarshipinfo::whereBetween('startdate', [$startdate, $enddate])->count();
+    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
+    //                     ->whereBetween('startdate', [$startdate, $enddate])
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('scholartype', 'scholarshipstatus')
+    //                     ->orderBy('scholartype')
+    //                     ->orderBy('scholarshipstatus')
+    //                     ->get();
+    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
+    //                     ->whereBetween('startdate', [$startdate, $enddate])
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('area')
+    //                     ->orderBy('area')
+    //                     ->get();
+    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
+    //                     ->whereBetween('datesubmitted', [$startdate, $enddate])
+    //                     ->whereHas('education', function ($query) use ($level) {
+    //                         $query->where('scSchoolLevel', $level);
+    //                     })
+    //                     ->groupBy('status')
+    //                     ->orderBy('status')
+    //                     ->get();
+    //                 $scperschool = ScEducation::selectRaw('scSchoolName, COUNT(*) as sccount')
+    //                     ->where('scSchoolLevel', $level)
+    //                     ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
+    //                         $query->whereBetween('startdate', [$startdate, $enddate]);
+    //                     })
+    //                     ->groupBy('scSchoolName')
+    //                     ->get();
+    //                 if ($level == 'Senior High' || $level == 'College') {
+    //                     $scpercoursestrand = ScEducation::selectRaw('scCourseStrandSec, COUNT(*) as sccount')
+    //                         ->where('scSchoolLevel', $level)
+    //                         ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
+    //                             $query->whereBetween('startdate', [$startdate, $enddate]);
+    //                         })
+    //                         ->groupBy('scCourseStrandSec')
+    //                         ->get();
+    //                 }
+    //             }
+    //         }
+
+    //         $data = [
+    //             'totalscholars' => $totalscholars,
+    //             'scpertypestatus' => $scpertypestatus,
+    //             'scperarea' => $scperarea,
+    //             'scperlevelschool' => $scperlevelschool ?? NULL,
+    //             'scperschool' => $scperschool ?? NULL,
+    //             'scpercoursestrand' => $scpercoursestrand ?? NULL,
+    //             'renewalsperstatus' => $renewalsperstatus,
+    //             'level' => $level,
+    //             'scope' => $datescope,
+    //             'college' => $college,
+    //             'shs' => $shs,
+    //             'jhs' => $jhs,
+    //             'elem' => $elem,
+    //         ];
+
+    //         // return Redirect()->back()->with('success', 'Successfully generated Report Name');
+    //         $pdf = Pdf::loadView('staff.reports.summaryreport-pdf', $data);
+    //         return $pdf->stream("scholarship-report-{$date}.pdf");
+    //     } catch (\Exception $e) {
+    //         return Redirect()->back()->with('failure', 'An error has occurred. ' . $e->getMessage());
+    //     }
+    // }
+
+    public function generateSummaryReport(Request $request)
+    {
+        try {
+            $request->validate([
+                'schoollevel' => 'required|string',
+                'periodtype' => 'required|string',
+                'period' => 'required_if:periodtype,Monthly,Quarterly|string',
+                'year' => 'required|string'
+            ]);
+
+            $worker = Auth::guard('staff')->user();
+
+            $level = $request->schoollevel;
+            $type = $request->periodtype;
+            $date = $request->period;
+            $year = $request->year;
+            $monthNames = [
+                'January' => 1,
+                'February' => 2,
+                'March' => 3,
+                'April' => 4,
+                'May' => 5,
+                'June' => 6,
+                'July' => 7,
+                'August' => 8,
+                'September' => 9,
+                'October' => 10,
+                'November' => 11,
+                'December' => 12,
+            ];
+            $quarters = [
+                'First Quarter' => [$year . '-01-01', $year . '-03-31'],
+                'Second Quarter' => [$year . '-04-01', $year . '-06-30'],
+                'Third Quarter' => [$year . '-07-01', $year . '-09-30'],
+                'Fourth Quarter' => [$year . '-10-01', $year . '-12-31'],
+            ];
+            $college = '';
+            $shs = '';
+            $jhs = '';
+            $elem = '';
+            $scholars = '';
+            $scperlevelschool = '';
+
+            // Define the date range based on type
+            if ($type == 'Monthly') {
+                $month = $monthNames[$date];
+                $datescope = "$date, $year";
+                $startDate = Carbon::createFromDate($year, $month, 1);  // create a Carbon instance for the start of the month
+                $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth();  // get the end of the month using endOfMonth()
+
+                // You can now use the startDate and endDate for your query
+                $startdate = $startDate->toDateString();
+                $enddate = $endDate->toDateString();
+            } elseif ($type == 'Quarterly') {
+                [$startdate, $enddate] = $quarters[$date];
+                $datescope = Carbon::parse($startdate)->format('F j, Y') . ' - ' . Carbon::parse($enddate)->format('F j, Y');
+            } elseif ($type == 'Annually') {
+                $datescope = $year;
+                $startdate = "$year-01-01";
+                $enddate = "$year-12-31";
+            }
+
+            // Build common queries
+            $commonQuery = scholarshipinfo::query();
+            $commonQuery->whereBetween('startdate', [$startdate, $enddate]);
+
+            if ($level !== 'All') {
+                $commonQuery->whereHas('education', function ($query) use ($level) {
+                    $query->where('scSchoolLevel', $level);
+                });
+            }
+
+            $totalscholars = $commonQuery->count();
+            $scpertypestatus = $commonQuery->selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
+                ->groupBy('scholartype', 'scholarshipstatus')
+                ->orderBy('scholartype')
+                ->orderBy('scholarshipstatus')
+                ->get();
+
+            $scperarea = $commonQuery->selectRaw('area, COUNT(*) as sccount')
+                ->groupBy('area')
+                ->orderBy('area')
+                ->get();
+
+            if ($level == 'All') {
+                $scperlevelschool = ScEducation::selectRaw('scSchoolName, scSchoolLevel, COUNT(*) as sccount')
+                    ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
+                        $query->whereBetween('startdate', [$startdate, $enddate]);
+                    })
+                    ->groupBy('scSchoolName', 'scSchoolLevel')
+                    ->orderBy('scSchoolName')
+                    ->orderBy('scSchoolLevel')
+                    ->get();
+                $college = $this->getUsersBySchoolLevel($year, 'College', $type, $date);
+                $shs = $this->getUsersBySchoolLevel($year, 'Senior High', $type, $date);
+                $jhs = $this->getUsersBySchoolLevel($year, 'Junior High', $type, $date);
+                $elem = $this->getUsersBySchoolLevel($year, 'Elementary', $type, $date);
+            }
+
+            // $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
+            //     ->whereBetween('datesubmitted', [$startdate, $enddate])
+            //     ->groupBy('status')
+            //     ->orderBy('status')
+            //     ->get();
+
+            // Additional data for specific levels (e.g., Senior High, College)
+            if ($level !== 'All' && in_array($level, ['Senior High', 'College'])) {
+                $scpercoursestrand = ScEducation::selectRaw('scCourseStrandSec, COUNT(*) as sccount')
+                    ->where('scSchoolLevel', $level)
+                    ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
+                        $query->whereBetween('startdate', [$startdate, $enddate]);
+                    })
+                    ->groupBy('scCourseStrandSec')
+                    ->get();
+            }
+
+            if ($level !== 'All') {
+                $scperschool = ScEducation::selectRaw('scSchoolName, COUNT(*) as sccount')
+                    ->where('scSchoolLevel', $level)
+                    ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
+                        $query->whereBetween('startdate', [$startdate, $enddate]);
+                    })
+                    ->groupBy('scSchoolName')
+                    ->get();
+
+                $scholars = $this->getUsersBySchoolLevel($year, $level, $type, $date);
+            }
+
+            $data = [
+                'totalscholars' => $totalscholars,
+                'scpertypestatus' => $scpertypestatus,
+                'scperarea' => $scperarea,
+                'scperlevelschool' => $scperlevelschool ?? NULL,
+                'scperschool' => $scperschool ?? NULL,
+                'scpercoursestrand' => $scpercoursestrand ?? NULL,
+                // 'renewalsperstatus' => $renewalsperstatus,
+                'level' => $level,
+                'scope' => $datescope,
+                'college' => $college,
+                'shs' => $shs,
+                'jhs' => $jhs,
+                'elem' => $elem,
+                'scholars' => $scholars,
+            ];
+
+            if ($type == 'Annually') {
+                $reportname = "Scholarship-Summary-Report-{$year}";
+            } else {
+                $reportname = "Scholarship-Summary-Report-{$year}-{$date}";
+            }
+
+            // Generate the PDF from the view
+            $pdf = Pdf::loadView('staff.reports.summaryreport-pdf', $data);
+
+            // Store the PDF file in the 'public/reports' directory
+            $filepath = 'reports/' . "{$reportname}.pdf";
+            Storage::disk('public')->put($filepath, $pdf->output()); // save the PDF file
+            DB::beginTransaction();
+            // Log the report creation in the database
+            Reports::create([
+                'reportname' => $reportname,
+                'level' => $level,
+                'datescope' => $datescope,
+                'dategenerated' => now()->toDateString(),
+                'generatedby' => $worker->name,
+                'filepath' => $filepath,
+            ]);
+            DB::commit();
+            return Redirect()->back()->with('success', "{$reportname} has been generated successfully.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Redirect()->back()->with('failure', 'An error has occurred. ' . $e->getMessage());
+        }
+    }
+
+    private function getUsersBySchoolLevel($year, $schoolLevel, $periodtype, $period)
+    {
+        // Month names mapping
+        $monthNames = [
+            'January' => 1,
+            'February' => 2,
+            'March' => 3,
+            'April' => 4,
+            'May' => 5,
+            'June' => 6,
+            'July' => 7,
+            'August' => 8,
+            'September' => 9,
+            'October' => 10,
+            'November' => 11,
+            'December' => 12,
+        ];
+
+        // Quarters mapping
+        $quarters = [
+            'First Quarter' => [$year . '-01-01', $year . '-03-31'],
+            'Second Quarter' => [$year . '-04-01', $year . '-06-30'],
+            'Third Quarter' => [$year . '-07-01', $year . '-09-30'],
+            'Fourth Quarter' => [$year . '-10-01', $year . '-12-31'],
+        ];
+
+        // Define start and end date based on period type
+        if ($periodtype == 'Monthly') {
+            $month = $monthNames[$period];  // Get the month number from the name
+            $startDate = Carbon::createFromDate($year, $month, 1);  // Start of the month
+            $endDate = $startDate->copy()->endOfMonth();  // End of the month
+            $startdate = $startDate->toDateString();
+            $enddate = $endDate->toDateString();
+        } elseif ($periodtype == 'Quarterly') {
+            [$startdate, $enddate] = $quarters[$period];  // Get start and end dates of the quarter
+        } elseif ($periodtype == 'Annually') {
+            $startdate = "$year-01-01";
+            $enddate = "$year-12-31";
+        }
+
+        // Query to get users based on school level and date range
+        return User::with('education', 'scholarshipinfo', 'basicInfo')
+            ->whereHas('scholarshipinfo', function ($query) use ($year, $startdate, $enddate) {
+                $query->whereYear('startdate', $year)
+                    ->whereBetween('startdate', [$startdate, $enddate]);
+            })
+            ->whereHas('education', function ($query) use ($schoolLevel) {
+                $query->where('scSchoolLevel', $schoolLevel);
+            })
+            ->join('scholarshipinfo', 'users.caseCode', '=', 'scholarshipinfo.caseCode')
+            ->join('sc_education', 'users.caseCode', '=', 'sc_education.caseCode')
+            ->orderByRaw("
+            CASE
+                WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+                WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+                WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+                ELSE 4
+            END,
+            CASE
+                WHEN sc_education.scYearGrade IN ('Grade 1', 'Grade 7', 'Grade 11', 'First Year') THEN 1
+                WHEN sc_education.scYearGrade IN ('Grade 2', 'Grade 8', 'Grade 12', 'Second Year') THEN 2
+                WHEN sc_education.scYearGrade IN ('Grade 3', 'Grade 9', 'Third Year') THEN 3
+                WHEN sc_education.scYearGrade IN ('Grade 4', 'Grade 10', 'Fourth Year') THEN 4
+                WHEN sc_education.scYearGrade IN ('Grade 5', 'Fifth Year') THEN 5
+                WHEN sc_education.scYearGrade = 'Grade 6' THEN 6
+                ELSE 7
+            END
+        ")
+            ->select('users.*')
+            ->get();
     }
 }

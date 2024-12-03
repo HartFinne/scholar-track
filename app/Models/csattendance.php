@@ -45,4 +45,9 @@ class csattendance extends Model
     {
         return $this->belongsTo(communityservice::class, 'csid', 'csid');
     }
+
+    public function scholarshipinfo()
+    {
+        return $this->belongsTo(scholarshipinfo::class, 'caseCode', 'caseCode');
+    }
 }

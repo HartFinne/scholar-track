@@ -72,6 +72,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="d-flex justify-content-center mt-3">
+            {{ $scholarAccounts->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>

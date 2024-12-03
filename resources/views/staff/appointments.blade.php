@@ -47,12 +47,16 @@
                             <td class="text-center align-middle">{{ $appointment->status }}</td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('viewappointmentinfo', $appointment->id) }}"
-                                    class="btn btn-success">View</a>
+                                    class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <!-- Pagination Links -->
+        <div class="d-flex justify-content-center mt-3">
+            {{ $appointments->links('pagination::bootstrap-4') }}
         </div>
     </div>
 

@@ -43,68 +43,34 @@
         </div>
         <div class="divider"></div>
         <span class="text-success fw-bold h2">List of Requests</span>
-        <div class="ctnfilter">
-            <form action="#" class="filterform">
-                <span class="filtertitle">Filter Result</span>
-                <div class="filtermenu">
-                    <span class="filterlabel">School Level</span>
-                    <div class="filteroptions">
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inlevelall" checked>
-                            All
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="incollege">
-                            College
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="insenior">
-                            Senior High
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="injunior">
-                            Junior High
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inelem">
-                            Elementary
-                        </label>
-                    </div>
-                </div>
-                <div class="filtermenu">
-                    <span class="filterlabel">Status</span>
-                    <div class="filteroptions">
-                        <label class="lbloptions">
-                            <input type="radio" id="instatusall" name="status" checked>
-                            All
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inpending" name="status">
-                            Pending
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="incompleted" name="status">
-                            Completed
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inaccepted" name="status">
-                            Accepted
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inrejected" name="status">
-                            Rejected
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" id="btnapply">Apply</button>
-            </form>
-        </div>
+        <form action="{{ route('allowancerequests-regular') }}" method="GET" id="filter-form">
+            <button type="submit" name="status" value=""
+                class="btn btn-sm {{ request()->input('status') === '' || !request()->has('status') ? 'btn-success' : 'btn-outline-success' }}">
+                All
+            </button>
+            <button type="submit" name="status" value="Pending"
+                class="btn btn-sm {{ request()->input('status') === 'Pending' ? 'btn-success' : 'btn-outline-success' }}">
+                Pending
+            </button>
+            <button type="submit" name="status" value="Completed"
+                class="btn btn-sm {{ request()->input('status') === 'Completed' ? 'btn-success' : 'btn-outline-success' }}">
+                Completed
+            </button>
+            <button type="submit" name="status" value="Accepted"
+                class="btn btn-sm {{ request()->input('status') === 'Accepted' ? 'btn-success' : 'btn-outline-success' }}">
+                Accepted
+            </button>
+            <button type="submit" name="status" value="Rejected"
+                class="btn btn-sm {{ request()->input('status') === 'Rejected' ? 'btn-success' : 'btn-outline-success' }}">
+                Rejected
+            </button>
+        </form>
+
         <div class="ctntable table-responsive">
             <table class="table table-bordered" id="tblscholarslist">
                 <thead>
                     <tr>
                         <th class="text-center align-middle">Name</th>
-                        <th class="text-center align-middle">Request Type</th>
                         <th class="text-center align-middle">Request Date</th>
                         <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Release Date</th>
@@ -112,39 +78,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($requests as $request)
+                    @forelse ($requests as $request)
                         <tr>
                             <td class="text-center align-middle">{{ $request->scLastname ?? 'N/A' }},
                                 {{ $request->scFirstname ?? 'N/A' }}</td>
-                            <td class="text-center align-middle">Regular</td>
                             <td class="text-center align-middle">
                                 {{ $request->created_at ? \Carbon\Carbon::parse($request->created_at)->format('F j, Y') : 'N/A' }}
                             </td>
-
                             <td class="text-center align-middle">{{ $request->status ?? 'Pending' }}</td>
                             <td class="text-center align-middle">
                                 {{ $request->date_of_release ?? 'N/A - Update to include release date' }}
                             </td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('allowancerequests-regular-info', ['id' => $request->id]) }}"
-                                    class="btn btn-secondary btn-sm">View</a>
+                                    class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
-                    @endforeach
-                    <tr>
-                        <td class="text-center align-middle">Doe, John</td>
-                        <td class="text-center align-middle">Regular</td>
-                        <td class="text-center align-middle">March 15, 2023</td>
-                        <td class="text-center align-middle">Approved</td>
-                        <td class="text-center align-middle">April 10, 2023</td>
-                        <td class="text-center align-middle">
-                            <a href="{{ route('viewregulardetails') }}" class="btn btn-success btn-sm">View</a>
-                        </td>
-                    </tr>
+                    @empty
+                        <tr>
+                            <td class="text-center align-middle" colspan="6">No Records Found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
+        <!-- Pagination Links -->
+        <div class="d-flex justify-content-center mt-3">
+            {{ $requests->appends(request()->query())->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>

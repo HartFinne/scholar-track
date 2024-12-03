@@ -38,7 +38,7 @@ class EvalController extends Controller
             $this->evaluateshs();
             $this->evaluatejhs();
             $this->evaluateelem();
-            return redirect()->route('showevalresults')->with('success', 'Evaluation completed successfully.');
+            return redirect()->back()->with('success', 'Successfully generate scholars\' performance summary report.');
         } catch (\Exception $e) {
             return redirect()->back()->with('failure', 'An error has occurred. ' . $e->getMessage());
         }
@@ -369,73 +369,73 @@ class EvalController extends Controller
         return 'Good Academic Performance';
     }
 
-    public function showevalresults()
-    {
-        $startdate = Carbon::now();
-        $enddate = $startdate->copy()->addYear();
+    // public function showevalresults()
+    // {
+    //     $startdate = Carbon::now();
+    //     $enddate = $startdate->copy()->addYear();
 
-        // Generate the academic year
-        $acadyear = $startdate->format('Y') . '-' . $enddate->format('Y');
-        $colleges = summarycollege::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summarycollege.caseCode')
-            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
-            ->orderByRaw("
-        CASE 
-            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-            ELSE 4 
-        END
-    ")
-            ->orderBy('endcontract', 'ASC')
-            ->select('summarycollege.*')
-            ->get();
+    //     // Generate the academic year
+    //     $acadyear = $startdate->format('Y') . '-' . $enddate->format('Y');
+    //     $colleges = summarycollege::with('basicInfo', 'education', 'scholarshipinfo')
+    //         ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summarycollege.caseCode')
+    //         ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+    //         ->orderByRaw("
+    //         CASE 
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+    //             WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+    //             ELSE 4 
+    //         END
+    //     ")
+    //         ->orderBy('endcontract', 'ASC')
+    //         ->select('summarycollege.*')
+    //         ->get();
 
-        $shs = summaryshs::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryshs.caseCode')
-            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
-            ->orderByRaw("
-        CASE 
-            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-            ELSE 4 
-        END
-    ")
-            ->orderBy('endcontract', 'ASC')
-            ->select('summaryshs.*')
-            ->get();
+    //     $shs = summaryshs::with('basicInfo', 'education', 'scholarshipinfo')
+    //         ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryshs.caseCode')
+    //         ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+    //         ->orderByRaw("
+    //         CASE 
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+    //             WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+    //             ELSE 4 
+    //         END
+    //     ")
+    //         ->orderBy('endcontract', 'ASC')
+    //         ->select('summaryshs.*')
+    //         ->get();
 
-        $jhs = summaryjhs::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryjhs.caseCode')
-            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
-            ->orderByRaw("
-        CASE 
-            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-            ELSE 4 
-        END
-    ")
-            ->orderBy('endcontract', 'ASC')
-            ->select('summaryjhs.*')
-            ->get();
+    //     $jhs = summaryjhs::with('basicInfo', 'education', 'scholarshipinfo')
+    //         ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryjhs.caseCode')
+    //         ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+    //         ->orderByRaw("
+    //         CASE 
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+    //             WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+    //             ELSE 4 
+    //         END
+    //     ")
+    //         ->orderBy('endcontract', 'ASC')
+    //         ->select('summaryjhs.*')
+    //         ->get();
 
-        $elem = summaryelem::with('basicInfo', 'education', 'scholarshipinfo')
-            ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryelem.caseCode')
-            ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
-            ->orderByRaw("
-        CASE 
-            WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
-            WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
-            WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
-            ELSE 4 
-        END
-    ")
-            ->orderBy('endcontract', 'ASC')
-            ->select('summaryelem.*')
-            ->get();
+    //     $elem = summaryelem::with('basicInfo', 'education', 'scholarshipinfo')
+    //         ->join('scholarshipinfo', 'scholarshipinfo.caseCode', '=', 'summaryelem.caseCode')
+    //         ->orderByRaw("remark = 'Satisfactory Performance' DESC") // New sorting priority
+    //         ->orderByRaw("
+    //         CASE 
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Continuing' THEN 1
+    //             WHEN scholarshipinfo.scholarshipstatus = 'On-Hold' THEN 2
+    //             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
+    //             ELSE 4 
+    //         END
+    //     ")
+    //         ->orderBy('endcontract', 'ASC')
+    //         ->select('summaryelem.*')
+    //         ->get();
 
-        return view('staff.scholarsevaluation', compact('colleges', 'shs', 'jhs', 'elem', 'acadyear'));
-    }
+    //     return view('staff.scholarsevaluation', compact('colleges', 'shs', 'jhs', 'elem', 'acadyear'));
+    // }
 }

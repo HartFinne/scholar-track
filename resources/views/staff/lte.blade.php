@@ -90,37 +90,46 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($lte as $index => $letter)
+                    @forelse ($lte as $index => $letter)
                         <tr>
-                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                            <td class="text-center align-middle">{{ $lte->firstItem() + $index }}</td>
                             <td class="text-center align-middle">
-                                {{ \Carbon\Carbon::parse($letter->dateissued)->format('F d, Y') }}</td>
-                            @foreach ($scholars as $scholar)
-                                @if ($letter->caseCode == $scholar->caseCode)
-                                    <td class="text-center align-middle">{{ $scholar->basicInfo->scLastname }},
-                                        {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}
-                                    </td>
-                                @endif
-                            @endforeach
+                                {{ \Carbon\Carbon::parse($letter->dateissued)->format('F d, Y') }}
+                            </td>
+                            @php
+                                $scholar = $scholars->firstWhere('caseCode', $letter->caseCode);
+                            @endphp
+                            <td class="text-center align-middle">
+                                {{ $scholar->basicInfo->scLastname ?? '--' }},
+                                {{ $scholar->basicInfo->scFirstname ?? '' }}
+                                {{ $scholar->basicInfo->scMiddlename ?? '' }}
+                            </td>
                             <td class="text-center align-middle">
                                 {{ $letter->datesubmitted ? \Carbon\Carbon::parse($letter->datesubmitted)->format('F d, Y') : '--' }}
                             </td>
-                            @if ($letter->eventtype == null)
-                                <td class="text-center align-middle">{{ $letter->violation }}</td>
-                            @else
-                                <td class="text-center align-middle">{{ $letter->violation }} in
-                                    {{ $letter->eventtype }}</td>
-                            @endif
+                            <td class="text-center align-middle">
+                                {{ $letter->violation }}{{ $letter->eventtype ? ' in ' . $letter->eventtype : '' }}
+                            </td>
                             <td class="text-center align-middle">{{ $letter->reason ?? '--' }}</td>
                             <td class="text-center align-middle">{{ $letter->ltestatus }}</td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('showlteinfo', $letter->lid) }}" class="btn btn-primary">View</a>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td class="text-center align-middle" colspan="8">No Records Found</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
+
+            <!-- Pagination Controls -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $lte->links('pagination::bootstrap-4') }}
+            </div>
         </div>
+
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>

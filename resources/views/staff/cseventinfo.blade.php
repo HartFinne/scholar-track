@@ -70,8 +70,6 @@
                 <select class="data" name="eventstatus">
                     <option value="Open" {{ $event->eventstatus == 'Open' ? 'selected' : '' }}>Open</option>
                     <option value="Closed" {{ $event->eventstatus == 'Closed' ? 'selected' : '' }}>Closed</option>
-                    <option value="Completed" {{ $event->eventstatus == 'Completed' ? 'selected' : '' }}>Completed
-                    </option>
                 </select>
             </div>
             <button type='submit' id="btnsave">Save</button>

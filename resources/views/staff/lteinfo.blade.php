@@ -114,7 +114,8 @@
                             <iframe src="{{ url('storage/' . $letter->explanation) }}"
                                 style="width: 100%; height: 600px;">
                                 Your browser does not support iframes. Please download the PDF file
-                                <a href="{{ url('storage/' . $letter->explanation) }}" target="_blank">click here</a>.
+                                <a href="{{ url('storage/' . $letter->explanation) }}" target="_blank" download>click
+                                    here</a>.
                             </iframe>
                         @endif
 
@@ -130,7 +131,7 @@
                             <!-- Display PDF files -->
                             <iframe src="{{ url('storage/' . $letter->proof) }}" width="100%" height="600px">
                                 Your browser does not support iframes. Please download the PDF file
-                                <a href="{{ url('storage/' . $letter->proof) }}">here</a>.
+                                <a href="{{ url('storage/' . $letter->proof) }}" target="_blank" download>here</a>.
                             </iframe>
                         @endif
                     </div>

@@ -93,6 +93,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class="d-flex justify-content-center mt-3">
+                {{ $college->links('pagination::bootstrap-4') }}
+            </div>
         </div>
         <div class="ctn" id="shs" style="display: none;">
             <div class="ctntable table-responsive">
@@ -130,6 +133,9 @@
                         @endif
                     </tbody>
                 </table>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                {{ $shs->links('pagination::bootstrap-4') }}
             </div>
         </div>
         <div class="ctn" id="jhs" style="display: none;">
@@ -169,6 +175,9 @@
                     </tbody>
                 </table>
             </div>
+            <div class="d-flex justify-content-center mt-3">
+                {{ $jhs->links('pagination::bootstrap-4') }}
+            </div>
         </div>
         <div class="ctn" id="elem" style="display: none;">
             <div class="ctntable table-responsive">
@@ -206,6 +215,9 @@
                         @endif
                     </tbody>
                 </table>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                {{ $elem->links('pagination::bootstrap-4') }}
             </div>
         </div>
     </div>

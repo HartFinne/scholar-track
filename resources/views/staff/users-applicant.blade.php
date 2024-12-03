@@ -71,6 +71,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="d-flex justify-content-center mt-3">
+            {{ $applicants->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>

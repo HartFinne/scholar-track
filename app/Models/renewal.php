@@ -61,4 +61,9 @@ class renewal extends Model
     {
         return $this->belongsTo(ScBasicInfo::class, 'caseCode', 'caseCode');
     }
+
+    public function scholarshipinfo()
+    {
+        return $this->belongsTo(scholarshipinfo::class, 'caseCode', 'caseCode');
+    }
 }

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->increments('id');
             $table->string('reportname', 200);
+            $table->string('level', 25);
+            $table->string('datescope', 50);
             $table->date('dategenerated');
             $table->string('generatedby', 255);
             $table->string('filepath', 255);

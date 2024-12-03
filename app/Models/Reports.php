@@ -15,7 +15,9 @@ class Reports extends Model
 
     protected $fillable = [
         'reportname',
-        'datagenerated',
+        'level',
+        'datescope',
+        'dategenerated',
         'generatedby',
         'filepath'
     ];

@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/table.css') }}">
     <link rel="stylesheet" href="{{ asset('css/applicants.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 </head>
@@ -49,10 +50,8 @@
                 <canvas id="applicantsgraph" height="300px"></canvas>
             </div>
         </div>
-
         <div class="divider"></div>
-
-        <div class="ctnfilter">
+        {{-- <div class="ctnfilter">
             <span class="text-success fw-bold h2">List of Applicants</span>
             <form action="#" class="filterform">
                 <span class="filtertitle">Filter Result</span>
@@ -112,33 +111,180 @@
                 </div>
                 <button type="submit" id="btnapply">Apply</button>
             </form>
+        </div> --}}
+        <span class="text-success fw-bold h2">List of Applicants</span>
+        <div class="row gx-1">
+            <div class="" style="width: max-content">
+                <button class="filter btn btn-sm btn-success w-100" id="toggleCollege">College</button>
+            </div>
+            <div class="" style="width: max-content">
+                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleSHS">Senior High</button>
+            </div>
+            <div class="" style="width: max-content">
+                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleJHS">Junior High</button>
+            </div>
+            <div class="" style="width: max-content">
+                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleElem">Elementary</button>
+            </div>
         </div>
-        <div class="ctntable table-responsive">
-            <table class="table table-bordered" id="tblapplicantslist">
-                <thead>
-                    <tr>
-                        <th class="text-center align-middle">#</th>
-                        <th class="text-center align-middle">Date Submitted</th>
-                        <th class="text-center align-middle">Scholar's Name</th>
-                        <th class="text-center align-middle">Status</th>
-                        <th class="text-center align-middle">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($applicants as $index => $applicant)
+        <div class="ctn" id="college">
+            <div class="ctntable table-responsive">
+                <table class="table table-bordered" id="tblapplicantslist">
+                    <thead>
                         <tr>
-                            <td class="text-center align-middle">{{ $index + 1 }}</td>
-                            <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}</td>
-                            <td class="text-center align-middle">{{ $applicant->name }}</td>
-                            <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
-                            <td class="text-center align-middle">
-                                <a href="{{ route('applicantinfo', $applicant->casecode) }}"
-                                    class="btn btn-success">View</a>
-                            </td>
+                            <th class="text-center align-middle">#</th>
+                            <th class="text-center align-middle">Date Submitted</th>
+                            <th class="text-center align-middle">Scholar's Name</th>
+                            <th class="text-center align-middle">Incoming Year Level</th>
+                            <th class="text-center align-middle">Status</th>
+                            <th class="text-center align-middle">Action</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @forelse ($applicants['college'] as $index => $applicant)
+                            <tr>
+                                <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}</td>
+                                <td class="text-center align-middle">{{ $applicant->name }}</td>
+                                <td class="text-center align-middle">{{ $applicant->educcollege->inyear }}</td>
+                                <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('applicantinfo', $applicant->casecode) }}"
+                                        class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="text-center align-middle" colspan="6">No Records Found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $applicants['college']->links('pagination::bootstrap-4') }}
+            </div>
+        </div>
+        <div class="ctn" id="shs" style="display: none">
+            <div class="ctntable table-responsive">
+                <table class="table table-bordered" id="tblapplicantslist">
+                    <thead>
+                        <tr>
+                            <th class="text-center align-middle">#</th>
+                            <th class="text-center align-middle">Date Submitted</th>
+                            <th class="text-center align-middle">Scholar's Name</th>
+                            <th class="text-center align-middle">Incoming Grade Level</th>
+                            <th class="text-center align-middle">Status</th>
+                            <th class="text-center align-middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($applicants['shs'] as $index => $applicant)
+                            <tr>
+                                <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}
+                                </td>
+                                <td class="text-center align-middle">{{ $applicant->name }}</td>
+                                <td class="text-center align-middle">{{ $applicant->educcollege->ingrade }}</td>
+                                <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('applicantinfo', $applicant->casecode) }}"
+                                        class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="text-center align-middle" colspan="6">No Records Found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $applicants['shs']->links('pagination::bootstrap-4') }}
+            </div>
+        </div>
+        <div class="ctn" id="jhs" style="display: none">
+            <div class="ctntable table-responsive">
+                <table class="table table-bordered" id="tblapplicantslist">
+                    <thead>
+                        <tr>
+                            <th class="text-center align-middle">#</th>
+                            <th class="text-center align-middle">Date Submitted</th>
+                            <th class="text-center align-middle">Scholar's Name</th>
+                            <th class="text-center align-middle">Incoming Grade Level</th>
+                            <th class="text-center align-middle">Status</th>
+                            <th class="text-center align-middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($applicants['jhs'] as $index => $applicant)
+                            <tr>
+                                <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}
+                                </td>
+                                <td class="text-center align-middle">{{ $applicant->name }}</td>
+                                <td class="text-center align-middle">{{ $applicant->educcollege->ingrade }}</td>
+                                <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('applicantinfo', $applicant->casecode) }}"
+                                        class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="text-center align-middle" colspan="6">No Records Found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $applicants['jhs']->links('pagination::bootstrap-4') }}
+            </div>
+        </div>
+        <div class="ctn" id="elem" style="display: none">
+            <div class="ctntable table-responsive">
+                <table class="table table-bordered" id="tblapplicantslist">
+                    <thead>
+                        <tr>
+                            <th class="text-center align-middle">#</th>
+                            <th class="text-center align-middle">Date Submitted</th>
+                            <th class="text-center align-middle">Scholar's Name</th>
+                            <th class="text-center align-middle">Incoming Grade Level</th>
+                            <th class="text-center align-middle">Status</th>
+                            <th class="text-center align-middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($applicants['elem'] as $index => $applicant)
+                            <tr>
+                                <td class="text-center align-middle">{{ $index + 1 }}</td>
+                                <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}
+                                </td>
+                                <td class="text-center align-middle">{{ $applicant->name }}</td>
+                                <td class="text-center align-middle">{{ $applicant->educcollege->ingrade }}</td>
+                                <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
+                                <td class="text-center align-middle">
+                                    <a href="{{ route('applicantinfo', $applicant->casecode) }}"
+                                        class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td class="text-center align-middle" colspan="6">No Records Found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Pagination Links -->
+        <div class="d-flex justify-content-center mt-3">
+            {{ $applicants['elem']->links('pagination::bootstrap-4') }}
         </div>
     </div>
 
@@ -162,6 +308,27 @@
                     }
                 }
             });
+        });
+
+        $(document).ready(function() {
+            function toggleSection(buttonId, containerId) {
+                $(buttonId).click(function() {
+                    // Fade out all containers, then fade in the selected one
+                    $('.ctn').not(containerId).fadeOut('fast', function() {
+                        $(containerId).fadeIn('slow');
+                    });
+
+                    // Update button classes to reflect active/inactive states
+                    $('.filter').not(buttonId).removeClass('btn-success').addClass('btn-outline-success');
+                    $(buttonId).removeClass('btn-outline-success').addClass('btn-success');
+                });
+            }
+
+            // Attach events to buttons
+            toggleSection('#toggleCollege', '#college');
+            toggleSection('#toggleSHS', '#shs');
+            toggleSection('#toggleJHS', '#jhs');
+            toggleSection('#toggleElem', '#elem');
         });
     </script>
 </body>

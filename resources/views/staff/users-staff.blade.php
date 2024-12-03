@@ -73,6 +73,9 @@
                 </tbody>
             </table>
         </div>
+        <div class="d-flex justify-content-center mt-3">
+            {{ $staffAccounts->links('pagination::bootstrap-4') }}
+        </div>
     </div>
 
     <!-- Account Creation Form -->

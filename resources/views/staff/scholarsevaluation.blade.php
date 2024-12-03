@@ -20,6 +20,9 @@
         <div class="row align-items-center">
             <span class="fw-bold text-success h2">Scholars Performance Summary</span>
         </div>
+        <div class="row">
+            <span class="fw-bold text-success h3 text-center">Academic Year: {{ $acadyear }}</span>
+        </div>
         <div class="row gx-1">
             <div class="" style="width: max-content">
                 <button class="btn btn-sm btn-success w-100" id="toggleCollege">College</button>
@@ -33,9 +36,6 @@
             <div class="" style="width: max-content">
                 <button class="btn btn-sm btn-outline-success w-100" id="toggleElem">Elementary</button>
             </div>
-        </div>
-        <div class="row">
-            <span class="fw-bold text-success h3 text-center">Academic Year: {{ $acadyear }}</span>
         </div>
         <div class="ctn" id="college">
             @php

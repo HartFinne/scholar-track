@@ -26,4 +26,24 @@ class ScAddressInfo extends Model
     {
         return $this->belongsTo(User::class, 'caseCode', 'caseCode');
     }
+
+    public function education()
+    {
+        return $this->hasOne(ScEducation::class, 'caseCode', 'caseCode');
+    }
+
+    public function clothsize()
+    {
+        return $this->hasOne(ScClothingSize::class, 'caseCode', 'caseCode');
+    }
+
+    public function basicinfo()
+    {
+        return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
+    }
+
+    public function scholarshipinfo()
+    {
+        return $this->hasOne(scholarshipinfo::class, 'caseCode', 'caseCode');
+    }
 }
