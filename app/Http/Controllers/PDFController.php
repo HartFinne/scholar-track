@@ -107,7 +107,7 @@ class PDFController extends Controller
 
         // Generate the PDF using Browsershot and save it
         $pdf = Browsershot::html($template)
-            ->setNodeBinary('/usr/local/bin/node')
+            ->setNodeBinary('/usr/bin/node')
             ->setNpmBinary('/usr/local/bin/npm')
             ->useBinary('/usr/bin/chromium-browser')
             ->showBackground()
