@@ -113,7 +113,7 @@ class PDFController extends Controller
             ->showBackground()
             ->margins(2, 4, 10, 4)
             ->format('Letter')
-            ->pdf(); // Save the file
+            ->debug();
 
 
         return new Response($pdf, 200, [
