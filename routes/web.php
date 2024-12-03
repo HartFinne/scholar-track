@@ -249,3 +249,5 @@ Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->
     Route::get('/evaluate-scholars', 'evaluatescholars')->name('evaluatescholars');
     Route::get('/scholars-evaluation', 'showevalresults')->name('showevalresults');
 });
+
+Route::post('/extract-gpa', [ScholarController::class, 'extractGPA'])->name('ocr.extract');

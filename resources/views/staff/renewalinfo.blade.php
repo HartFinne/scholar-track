@@ -19,22 +19,21 @@
     <x-alert />
 
     <div class="ctnmain">
-        <div class="appform-view">
-            <div class="mx-auto mb-2" style="width: 8.5in">
-                <div class="col-md-2">
-                    <a href="{{ route('scholarshiprenewal') }}" class="btn btn-success w-100">Go back</a>
-                </div>
+        <div class="mx-auto mb-2" style="width: 8.5in">
+            <div class="col-md-2">
+                <a href="{{ route('scholarshiprenewal') }}" class="btn btn-success w-100">Go back</a>
             </div>
+        </div>
             <div class="appinfo">
                 <div class="row my-2">
                     <span class="col-md-3 label">Applicant Name</span>
                     <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="John Doe" readonly>
+                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}" readonly>
                 </div>
                 <div class="row my-2">
                     <span class="col-md-3 label">Applicant Case Code</span>
                     <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="2223-00001-MD" readonly>
+                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $user->caseCode }}" readonly>
                 </div>
                 <form class="row my-2" method="POST" action="update_status.html">
                     <span class="col-md-3 label">Application Status</span>
@@ -48,6 +47,8 @@
                     <button class="rounded border border-success mx-3" id="btnupdate">Save</button>
                 </form>
             </div>
+
+        <div class="appform-view">
             <div class="page1">
                 <div class="header">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
@@ -518,7 +519,8 @@
                 </div>
             </div>
         </div>
-        {{-- Documents --}}
+    </div>
+    {{-- Documents --}}
         <div class="card mx-auto mt-3 mb-5 shadow-sm" style="width: 8.5in;">
             <div class="card-header py-3 bg-success text-white">
                 <span class="h5 fw-bold">Submitted Documents</span>
@@ -610,7 +612,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
         document.getElementById('confirmWithdraw').addEventListener('click', function() {

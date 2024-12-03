@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
     <link rel="stylesheet" href="{{ asset('css/subrenewal.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/appformview.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('css/appformview.css') }}"> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -23,44 +23,45 @@
 
     <!-- MAIN -->
 
-    <div class="ctnmain">
-        <div class="appform-view">
-            <a href="{{ route('overview') }}" class="goback">&lt Go back</a>
-            <div class="appinfo row mx-auto">
-                <div class="col-md-9">
-                    <div class="row my-1">
-                        <span class="col-md-4 label">Applicant Name</span>
-                        <span class="col-md-1 label">: </span>
-                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;"
-                            value="{{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}"
-                            readonly>
-                    </div>
-                    <div class="row my-1">
-                        <span class="col-md-4 label">Applicant Case Code</span>
+    <div class="ctn-main">
+        <a href="{{ route('overview') }}" class="goback">&lt Go back</a>
+        <h1 class="title text-center">Scholarship Renewal</h1>
+
+        <div class="appinfo row mx-auto">
+            <div class="col-md-9">
+                <div class="row my-1">
+                    <span class="col-md-4 label" style="font-size: 15px;">Applicant Name</span>
+                    <span class="col-md-1 label">: </span>
+                    <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;"
+                        value="{{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}"
+                        readonly>
+                </div>
+                <div class="row my-1">
+                        <span class="col-md-4 label" style="font-size: 15px;">Applicant Case Code</span>
                         <span class="col-md-1 label">: </span>
                         <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $user->caseCode }}"
                             readonly>
-                    </div>
-                    <div class="row my-1">
-                        <span class="col-md-4 label">Application Status</span>
-                        <span class="col-md-1 label">: </span>
-                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $renewal->status }}"
-                            readonly>
-                    </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="row my-1 mx-1">
-                        <a href="{{ route('generateapplicantform', ['casecode' => $user->caseCode]) }}"
-                            class="btn btn-outline-success text-success bg-light" target="_blank">Download Form</a>
-                    </div>
-                    <div class="row mx-1">
-                        <button class="btn btn-danger" id="btnwithdraw" data-bs-toggle="modal"
-                            data-bs-target="#withdrawModal">
-                            Withdraw
-                        </button>
-                    </div>
+                <div class="row my-1">
+                    <span class="col-md-4 label" style="font-size: 15px;">Application Status</span>
+                    <span class="col-md-1 label">: </span>
+                    <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $renewal->status }}"
+                         readonly>
                 </div>
             </div>
+            <div class="col-md-3">
+                <div class="row my-1 mx-1">
+                    <a href="{{ route('generateapplicantform', ['casecode' => $user->caseCode]) }}"
+                        class="btn btn-outline-success text-success bg-light" target="_blank">Download Form</a>
+                </div>
+                <div class="row mx-1">
+                    <button class="btn btn-danger" id="btnwithdraw" data-bs-toggle="modal"
+                        data-bs-target="#withdrawModal">
+                        Withdraw
+                    </button>
+                </div>
+            </div>
+        </div>
             <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -80,13 +81,15 @@
                     </div>
                 </div>
             </div>
+
+        <div class="appform-view">
             <div class="page1">
                 <div class="header">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
                     <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
                     </p>
                 </div>
-                <div class="app-title">
+                <div class="app-title text-center">
                     <p>Educational Assistance Program</p>
                     <p><strong>APPLICATION FORM</strong></p>
                     <p id="schoolYear">S.Y. {{ date('Y') }}-{{ date('Y') + 1 }}</p>
@@ -550,7 +553,8 @@
                 </div>
             </div>
         </div>
-        {{-- Documents --}}
+    </div>
+    {{-- Documents --}}
         <div class="card mx-auto mt-3 mb-5 shadow-sm" style="width: 8.5in;">
             <div class="card-header py-3 bg-success text-white">
                 <span class="h5 fw-bold">Submitted Documents</span>
@@ -642,7 +646,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <script>
         document.getElementById('confirmWithdraw').addEventListener('click', function() {
