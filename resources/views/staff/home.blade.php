@@ -66,35 +66,38 @@
                         <p style="white-space: pre-wrap;">{{ $announcement->description }}</p>
                     </div>
                 </div>
-            @endforeach
-        </div>
-    </div>
 
-    <!-- UPDATE ANNOUNCEMENT MODAL -->
-    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="updateModalLabel">Update Announcement</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('updateannouncement', $announcement->announcementID) }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="title" name="title"
-                                value="{{ $announcement->title }}" required>
+                <!-- UPDATE ANNOUNCEMENT MODAL -->
+                <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success text-white">
+                                <h5 class="modal-title" id="updateModalLabel">Update Announcement</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{{ route('updateannouncement', $announcement->announcementID) }}"
+                                    method="POST">
+                                    @csrf
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="title" name="title"
+                                            value="{{ $announcement->title }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="10" required
+                                            style="resize: none; height: max-content;">{{ $announcement->description }}</textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </form>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="10" required
-                                style="resize: none; height: max-content;">{{ $announcement->description }}</textarea>
-                        </div>
-                        <button type="submit" class="btn btn-success">Save</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
     </div>
 
