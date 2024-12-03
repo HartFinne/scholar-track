@@ -32,7 +32,7 @@
                 <span class="data" id="outpending">{{ $summary['pending'] }}</span>
             </div>
             <div class="groupA1">
-                <span class="label" id="lbltotalrenewal">Approved Applications</span>
+                <span class="label" id="lbltotalrenewal">Accepted Applications</span>
                 <span class="data" id="outapproved">{{ $summary['approved'] }}</span>
             </div>
             <div class="groupA1">

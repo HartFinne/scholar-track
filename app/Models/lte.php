@@ -53,4 +53,9 @@ class lte extends Model
     {
         return $this->belongsTo(penalty::class, 'condition', 'lid');
     }
+
+    public function education()
+    {
+        return $this->belongsTo(ScEducation::class, 'caseCode', 'caseCode');
+    }
 }

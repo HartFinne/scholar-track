@@ -33,10 +33,9 @@
                 <thead class="table-success">
                     <tr>
                         <th class="text-center align-middle">#</th>
+                        <th class="text-center align-middle">Academic Year</th>
                         <th class="text-center align-middle">Semester</th>
                         <th class="text-center align-middle">Date of Request</th>
-                        <th class="text-center align-middle">Status</th>
-                        <th class="text-center align-middle">Date of Release</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
@@ -44,10 +43,9 @@
                     @foreach ($requests as $request)
                         <tr>
                             <td>{{ $request->regularID }}</td>
+                            <td>{{ $request->grades ? $request->grades->schoolyear : 'N/A' }}</td>
                             <td>{{ $request->grades ? $request->grades->SemesterQuarter : 'N/A' }}</td>
-                            <td>{{ $request->created_at->format('m/d/Y') }}</td>
-                            <td>{{ $request->status }}</td>
-                            <td>{{ $request->release_date ? $request->release_date->format('m/d/Y') : 'N/A' }}</td>
+                            <td>{{ Carbon\Carbon::parse($request->created_at)->format('F j, Y') }}</td>
                             <td><a href="{{ route('regularforminfo', ['id' => $request->regularID]) }}"
                                     class="btn-view">View</a></td>
                         </tr>

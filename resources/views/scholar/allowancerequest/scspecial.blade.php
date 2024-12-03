@@ -35,18 +35,13 @@
         <div class="status">
             <p class="table-title"> STATUS : </p>
             <div class="filter">
-                <form action="{{ route('scspecial') }}" method="GET" id="filter-form">
-                    <button type="submit" name="status" value="all"
-                        class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
-                    <button type="submit" name="status" value="Pending"
-                        class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
-                    <button type="submit" name="status" value="Accepted"
-                        class="filter-btn {{ request('status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
-                    <button type="submit" name="status" value="Completed"
-                        class="filter-btn {{ request('status') == 'Completed' ? 'active' : '' }}">Completed</button>
-                    <button type="submit" name="status" value="Rejected"
-                        class="filter-btn {{ request('status') == 'Rejected' ? 'active' : '' }}">Rejected</button>
-                </form>
+                <div id="filter-form">
+                    <button type="button" name="status" value="all" class="filter-btn active">All</button>
+                    <button type="button" name="status" value="Pending" class="filter-btn">Pending</button>
+                    <button type="button" name="status" value="Accepted" class="filter-btn">Accepted</button>
+                    <button type="button" name="status" value="Completed" class="filter-btn">Completed</button>
+                    <button type="button" name="status" value="Rejected" class="filter-btn">Rejected</button>
+                </div>
             </div>
         </div>
         <div class="ctn-table table-responsive">
@@ -93,6 +88,38 @@
         </div>
     </main>
     <script src="{{ asset('js/scholar.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const tableRows = document.querySelectorAll('.ctn-table tbody tr');
+
+            // Attach click event to each filter button
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Get the filter value (status) from the button
+                    const filter = button.textContent.trim();
+
+                    // Update button active state
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // Loop through table rows and toggle visibility
+                    tableRows.forEach(row => {
+                        const statusCell = row.querySelector(
+                            'td:nth-child(4)'); // Adjust to Status column
+                        const statusText = statusCell.textContent.trim();
+
+                        // Show row if status matches or filter is "All"
+                        if (filter === 'All' || statusText === filter) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

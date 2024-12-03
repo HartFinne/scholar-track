@@ -66,6 +66,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\VarDumper\Caster\RedisCaster;
 use Barryvdh\DomPDF\Facade\Pdf;
+use GuzzleHttp\Promise\Create;
 
 class StaffController extends Controller
 {
@@ -413,10 +414,51 @@ class StaffController extends Controller
         }
     }
 
+    // public function showLTE(Request $request)
+    // {
+    //     $level = $request->input('level', 'All');
+    //     $status = $request->input('status', 'All');
+    //     $violation = $request->input('violation', 'All');
+    //     $eventtype = $request->input('eventtype', 'All');
+
+    //     $violations = lte::whereNotNull('eventtype')->get()->pluck('violation');
+
+    //     $query = lte::selectRaw('*');
+
+    //     if ($level != 'All') {
+    //         $query->whereHas('education', function ($sql) use ($level) {
+    //             $sql->where('scSchoolLevel', $level);
+    //         });
+    //     }
+
+    //     if ($status != 'All') {
+    //         $query->where('ltestatus', $status);
+    //     }
+
+    //     if ($violation != 'All') {
+    //         if (in_array($violation, $violations->toArray())) {
+    //             $query->where('violation', $violation);
+    //             if ($eventtype != 'All') {
+    //                 $query->where('eventtype', $eventtype);
+    //             }
+    //         } else {
+    //             $query->where('violation', $violation);
+    //         }
+    //     }
+
+    //     $lte = $query->paginate(10);
+
+    //     $concerns = lte::select('violation', 'eventtype')->distinct()->get();
+    //     $scholars = User::with(['basicInfo', 'education'])->get();
+
+    //     return view('staff.lte', compact('lte', 'scholars', 'concerns'));
+    // }
+
     public function showLTE()
     {
-        $lte = lte::with('hcattendance', 'csattendance')->paginate(10);
+        $lte = lte::paginate(10);
         $scholars = User::with(['basicInfo', 'education'])->get();
+
         return view('staff.lte', compact('lte', 'scholars'));
     }
 
@@ -444,11 +486,11 @@ class StaffController extends Controller
     public function updateltestatus($lid, Request $request)
     {
         try {
+            DB::beginTransaction();
             $letter = lte::where('lid', $lid)->first();
             $letter->ltestatus = $request->ltestatus;
             $letter->save();
             $scinfo = scholarshipinfo::where('caseCode', $letter->caseCode)->first();
-            $scholar = User::where('caseCode', $letter->caseCode)->first();
 
             if (in_array($letter->violation, ['Late', 'Absent', 'Left Early', 'Cancelled'])) {
                 $condition = $letter->violation . ' in ' . $letter->eventtype;
@@ -476,18 +518,6 @@ class StaffController extends Controller
                     $remark = '1st Offense';
                 }
 
-                $failedGradeStatuses = ['Failed GWA', 'Failed GWA (Chinese Subject)', 'Failed Grade in Subject/s'];
-
-                // Check if the violation matches one of the failed statuses
-                if (in_array($condition, $failedGradeStatuses)) {
-                    // Update scholarship status
-                    // dd($scinfo->scholarshipstatus);
-                    $scinfo->update([
-                        'scholarshipstatus' => 'Terminated',
-                        'updated_at' => now() // Ensure the timestamp is updated
-                    ]);
-                }
-
                 if (
                     ($remark == '3rd Offense' && $letter->violation == 'Absent' && $letter->eventtype == 'Humanities Class') ||
                     ($remark == '4th Offense' && in_array($letter->violation, ['Late', 'Left Early']) && $letter->eventtype == 'Humanities Class')
@@ -505,8 +535,11 @@ class StaffController extends Controller
                     'remark' => $remark,
                     'dateofpenalty' => $date,
                 ]);
-            } else if ($request->ltestatus == 'Excused') {
+            } else if ($request->ltestatus == 'Continuing') {
                 $scinfo->scholarshipstatus = 'Continuing';
+                $scinfo->save();
+            } else if ($request->ltestatus == 'Terminated') {
+                $scinfo->scholarshipstatus = 'Terminated';
                 $scinfo->save();
             }
 
@@ -514,7 +547,7 @@ class StaffController extends Controller
 
             return redirect()->back()->with('success', 'Successfully updated LTE status.');
         } catch (\Exception $e) {
-            DB::commit();
+            DB::rollBack();
 
             return redirect()->back()->with('failure', 'Failed to update LTE status. ' . $e->getMessage());
         }
@@ -970,7 +1003,7 @@ class StaffController extends Controller
         $summary = [
             'totalrenew' => renewal::whereBetween('datesubmitted', [$startdate, $enddate])->count(),
             'pending' => renewal::where('status', 'Pending')->whereBetween('datesubmitted', [$startdate, $enddate])->count(),
-            'approved' => renewal::where('status', 'Approved')->whereBetween('datesubmitted', [$startdate, $enddate])->count(),
+            'approved' => renewal::where('status', 'Accepted')->whereBetween('datesubmitted', [$startdate, $enddate])->count(),
             'rejected' => renewal::where('status', 'Rejected')->whereBetween('datesubmitted', [$startdate, $enddate])->count(),
         ];
 
@@ -1052,6 +1085,7 @@ class StaffController extends Controller
 
     public function showRenewalinfo($id)
     {
+        $worker = Auth::guard('staff')->user();
         $renewal = renewal::with('grade', 'casedetails', 'otherinfo')->where('rid', $id)->first();
         $user = User::with(
             'basicInfo',
@@ -1070,18 +1104,73 @@ class StaffController extends Controller
 
         $form = applicationforms::where('formname', 'Renewal')->first();
 
-        return view('staff.renewalinfo', compact('user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege'));
+        return view('staff.renewalinfo', compact('user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege', 'worker'));
     }
 
-    public function showAllowanceRegular(Request $request)
+    public function updateRenewalInfo($id, Request $request)
     {
-        // Get the status from the query parameters, default to empty string if none is selected
-        $status = $request->get('status', '');
+        try {
+            // Server-side validation
+            $request->validate([
+                'renewalstatus' => 'required|in:Accepted,Rejected',
+                'natureofneeds' => 'required|string|max:50',
+                'problemstatement' => 'required|string|max:255',
+                'receivedby' => 'required|string|max:255',
+                'datereceived' => 'required|date|before_or_equal:today',
+                'district' => 'required|string|max:50',
+                'volunteer' => 'required|string|max:255',
+                'referredby' => 'required|string|max:255',
+                'referphonenum' => 'required|min:11|max:12',
+                'relationship' => 'required|string|max:50',
+                'datereported' => 'required|date',
+            ]);
 
-        // Query RegularAllowance model and apply status filter if needed
-        $requests = RegularAllowance::when($status, function ($query) use ($status) {
-            return $query->where('status', $status); // Apply the filter
-        })->paginate(10);
+            // Start transaction
+            DB::beginTransaction();
+
+            // Find the renewal record by ID
+            $renewal = Renewal::findOrFail($id);  // Use `findOrFail()` to retrieve the model or throw a 404 error
+
+            // Update the renewal status
+            $renewal->status = $request->renewalstatus;
+            $renewal->save();  // Persist changes
+
+            // Create or update case details
+            RnwCaseDetails::create([
+                'rid' => $id,
+                'natureofneeds' => $request->natureofneeds,
+                'problemstatement' => $request->problemstatement,
+                'receivedby' => $request->receivedby,
+                'datereceived' => $request->datereceived,
+                'district' => $request->district,
+                'volunteer' => $request->volunteer,
+                'referredby' => $request->referredby,
+                'referphonenum' => $request->referphonenum,
+                'relationship' => $request->relationship,
+                'datereported' => $request->datereported
+            ]);
+
+            // Commit transaction
+            DB::commit();
+
+            // Return success response
+            return redirect()->back()->with('success', 'Successfully updated renewal status and case details.');
+        } catch (\Exception $e) {
+            // Rollback transaction on error
+            DB::rollBack();
+
+            // Log error with details
+            Log::error("Error: {$e->getMessage()}", ['exception' => $e]);
+
+            // Return failure response with error message
+            return redirect()->back()->with('failure', 'Failed to update renewal status and case details. ' . $e->getMessage())->withInput();
+        }
+    }
+
+
+    public function showAllowanceRegular()
+    {
+        $requests = RegularAllowance::paginate(10);
 
         return view('staff.regularallowance', compact('requests'));
     }
@@ -1188,34 +1277,45 @@ class StaffController extends Controller
             // Check if the file exists in the public disk
             if (!Storage::disk('public')->exists($filePath)) {
                 // Stop the process and return with failure message if file doesn't exist
-                return view('scholar.allowancerequest.scspecial', compact('scholar', 'forms'))->with('failure', 'File Not Found.');
+                return view('scholar.allowancerequest.scspecial', compact('scholars', 'forms'))->with('failure', 'File Not Found.');
             }
 
             // Read the Excel file from the public disk
-            $data[$formname] = Excel::toArray([], Storage::disk('public')->path($filePath));
+            $excelData = Excel::toArray([], Storage::disk('public')->path($filePath));
 
             // Ensure the file is not empty
-            if (!empty($data[$formname][0])) {
+            if (!empty($excelData[0])) {
                 // The first row contains the column headers
-                $headers = $data[$formname][0][0];
+                $headers = $excelData[0][0];
 
                 // Skip the first row (headers) and map each remaining row
                 $mappedData = array_map(function ($row) use ($headers) {
                     // Combine each row with headers as keys
                     return array_combine($headers, $row);
-                }, array_slice($data[$formname][0], 1)); // Skip the first row (headers)
+                }, array_slice($excelData[0], 1)); // Skip the first row (headers)
 
-                // Store the mapped data
+                // Define the custom sorting order for requestStatus
+                $statusOrder = ['Pending' => 1, 'Accepted' => 2, 'Completed' => 3, 'Rejected' => 4];
+
+                // Sort the mapped data based on requestStatus
+                usort($mappedData, function ($a, $b) use ($statusOrder) {
+                    $statusA = $statusOrder[$a['requestStatus']] ?? 5; // Default to 5 for unknown statuses
+                    $statusB = $statusOrder[$b['requestStatus']] ?? 5;
+                    return $statusA <=> $statusB;
+                });
+
+                // Store the sorted data
                 $data[$formname] = $mappedData;
             } else {
                 // If the file is empty, set an empty array
                 $data[$formname] = [];
             }
         }
-        // dd($data);
 
         return view('staff.specialallowance', compact('data', 'summary', 'scholars', 'forms'));
     }
+
+
     public function showspecrecinfo($requesttype, $id, $caseCode)
     {
         // Get the currently authenticated user and their related data
@@ -1267,6 +1367,98 @@ class StaffController extends Controller
         // Return the view with the single record and related data
         return view('staff.specreqinfo', compact('data', 'scholar', 'form', 'fields', 'files'));
     }
+
+    public function updatespecreq(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            // Validate the request
+            $validated = $request->validate([
+                'requestId' => 'required|integer',
+                'requestType' => 'required|string',
+                'requestStatus' => 'required|string',
+                'oldStatus' => 'required|string',
+                'releasedate' => 'nullable|date',
+            ]);
+
+            // Retrieve the form based on the type
+            $form = CreateSpecialAllowanceForm::where('formname', $request->requestType)->first();
+
+            if (!$form) {
+                return back()->with('failure', 'Form not found.');
+            }
+
+            // Get the file path from the form's database column
+            $filePath = $form->database;
+
+            // Check if the file exists in the public disk
+            if (!Storage::disk('public')->exists($filePath)) {
+                return back()->with('failure', 'File not found.');
+            }
+
+            // Load the Excel file using PhpSpreadsheet
+            $fileFullPath = Storage::disk('public')->path($filePath);
+            $spreadsheet = IOFactory::load($fileFullPath);
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Get the headers (first row)
+            $headers = $sheet->rangeToArray('A1:' . $sheet->getHighestColumn() . '1')[0];
+
+            // Find the index of key columns
+            $idIndex = array_search('id', $headers);
+            $statusIndex = array_search('requestStatus', $headers);
+            $releaseDateIndex = array_search('releaseDate', $headers);
+
+            if ($idIndex === false || $statusIndex === false || $releaseDateIndex === false) {
+                return back()->with('failure', 'Required columns are missing in the file.');
+            }
+
+            // Iterate through the rows to find the matching record
+            $rowIterator = $sheet->getRowIterator(2); // Start from the second row (data rows)
+            foreach ($rowIterator as $row) {
+                $rowIndex = $row->getRowIndex();
+                $rowData = $sheet->rangeToArray("A{$rowIndex}:" . $sheet->getHighestColumn() . "{$rowIndex}")[0];
+
+                if ($rowData[$idIndex] == $request->requestId) {
+                    // Calculate column letters for the status and release date
+                    $statusColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($statusIndex + 1);
+                    $releaseDateColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($releaseDateIndex + 1);
+
+                    // Update the relevant cells
+                    $sheet->setCellValue("{$statusColumn}{$rowIndex}", $request->requestStatus);
+                    $sheet->setCellValue("{$releaseDateColumn}{$rowIndex}", $request->releasedate ?? '');
+
+                    break; // Stop after finding and updating the record
+                }
+            }
+
+            // Save the updated file back to the same location
+            $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+            $writer->save($fileFullPath);
+
+            $summary = SpecialAllowanceSummary::first();
+
+            // Decrement the count for the old status
+            $oldStatus = strtolower($request->oldStatus);
+            if (in_array($request->oldStatus, ['Pending', 'Accepted', 'Completed', 'Rejected'])) {
+                $summary->{$oldStatus}--;
+            }
+
+            // Increment the count for the new status
+            $newStatus = strtolower($request->requestStatus);  // Assuming `requestStatus` holds the new status
+            if (in_array($request->requestStatus, ['Accepted', 'Completed', 'Rejected'])) {
+                $summary->{$newStatus}++;
+            }
+
+            $summary->save();
+            DB::commit();
+            return back()->with('success', 'Successfully updated request status.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('failure', 'Failed to update request status.');
+        }
+    }
+
 
     public function managespecialforms()
     {
@@ -1689,33 +1881,14 @@ class StaffController extends Controller
             $scholarsperlevel[$level] = ScEducation::where('scSchoolLevel', $level)->count();
         }
 
-        $colleges = User::with('basicInfo', 'education', 'scholarshipinfo')
-            ->whereHas('education', function ($query) {
-                $query->where('scSchoolLevel', 'College');
-            })
-            ->orderBy('caseCode', 'ASC')
-            ->paginate(10);
-
-        $shs = User::with('basicInfo', 'education', 'scholarshipinfo')
-            ->whereHas('education', function ($query) {
-                $query->where('scSchoolLevel', 'Senior High');
-            })
-            ->orderBy('caseCode', 'ASC')
-            ->paginate(10);
-
-        $jhs = User::with('basicInfo', 'education', 'scholarshipinfo')
-            ->whereHas('education', function ($query) {
-                $query->where('scSchoolLevel', 'Junior High');
-            })
-            ->orderBy('caseCode', 'ASC')
-            ->paginate(10);
-
-        $elem = User::with('basicInfo', 'education', 'scholarshipinfo')
-            ->whereHas('education', function ($query) {
-                $query->where('scSchoolLevel', 'Elementary');
-            })
-            ->orderBy('caseCode', 'ASC')
-            ->paginate(10);
+        $scholars = scholarshipinfo::with('basicInfo', 'education', 'User')
+            ->orderByRaw("CASE 
+                        WHEN scholarshipstatus = 'Continuing' THEN 1
+                        WHEN scholarshipstatus = 'On-Hold' THEN 2
+                        WHEN scholarshipstatus = 'Terminated' THEN 3
+                        ELSE 4
+                      END")
+            ->get();
 
         return view('staff.scholars', compact(
             'totalscholars',
@@ -1723,10 +1896,7 @@ class StaffController extends Controller
             'areas',
             'scholarsperarea',
             'scholarsperlevel',
-            'colleges',
-            'shs',
-            'jhs',
-            'elem'
+            'scholars'
         ));
     }
 

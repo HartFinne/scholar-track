@@ -28,10 +28,10 @@
         <div class="request-view">
             @php
                 $statusClasses = [
-                    'Pending' => 'bg-warning',
-                    'Accepted' => 'bg-success',
-                    'Completed' => 'bg-success',
-                    'Rejected' => 'bg-danger',
+                    'Pending' => 'bg-warning text-white',
+                    'Accepted' => 'bg-success text-white',
+                    'Completed' => 'bg-success text-white',
+                    'Rejected' => 'bg-danger text-white',
                 ];
 
                 $statusClass = $statusClasses[$data['requestStatus']] ?? 'bg-secondary text-white';
@@ -44,7 +44,10 @@
                     <span class="h5 card px-4 py-2 {{ $statusClass }} fw-bold text-center me-3">
                         {{ $data['requestStatus'] }}
                     </span>
-                    <button class="btn btn-success h5 px-4 py-2">Update Status</button>
+                    <button class="btn btn-success h5 px-4 py-2" data-bs-toggle="modal"
+                        data-bs-target="#updateStatusModal">
+                        Update Status
+                    </button>
                 </div>
             </div>
 
@@ -171,6 +174,51 @@
                         </div>
                     @endforeach
                 </div>
+            </div>
+        </div>
+    </div><!-- Modal -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="updateStatusModalLabel">Update Request Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="updateStatusForm" method="POST" action="{{ route('updatespecreq') }}">
+                    <div class="modal-body">
+                        @csrf
+                        <input type="hidden" name="requestId" value="{{ $data['id'] }}">
+                        <input type="hidden" name="requestType" value="{{ $form->formname }}">
+                        <input type="hidden" name="oldStatus" value="{{ $data['requestStatus'] }}">
+                        <div class="mb-3">
+                            <label for="requestStatus" class="form-label fw-bold">Status</label>
+                            <select class="form-select border-success" id="requestStatus" name="requestStatus"
+                                required>
+                                <option value="Accepted" {{ $data['requestStatus'] == 'Accepted' ? 'selected' : '' }}>
+                                    Accepted
+                                </option>
+                                <option value="Completed"
+                                    {{ $data['requestStatus'] == 'Completed' ? 'selected' : '' }}>
+                                    Completed
+                                </option>
+                                <option value="Rejected" {{ $data['requestStatus'] == 'Rejected' ? 'selected' : '' }}>
+                                    Rejected
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3" {{ $data['requestStatus'] == 'Pending' ? '' : 'hidden' }}>
+                            <label for="releasedate" class="form-label fw-bold">Date of Release</label>
+                            <input type="date" name="releasedate" min="{{ today()->toDateString() }}"
+                                value="{{ $data['releaseDate'] ?? '' }}" class="form-control border-success"
+                                required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" form="updateStatusForm" class="btn btn-success">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

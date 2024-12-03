@@ -34,36 +34,32 @@
                         back</a>
                 </div>
             </div>
-            <div class="container rounded mx-auto p-4" style="background-color: #eaebea">
-                <h5 class="px-4">
-                    <form class="row d-flex align-items-center mb-3"
-                        action="{{ route('updategradestatus', $grade->gid) }}" method="POST">
-                        @csrf
-                        <div class="col-md-2">Grade Status</div>
-                        <div class="col-md-8">
-                            <select name="gradestatus" class="form-control" style="cursor: pointer">
-                                <option value="Pending" {{ $grade->GradeStatus == 'Pending' ? 'selected' : '' }} hidden>
-                                    Pending
-                                </option>
-                                <option value="Passed" {{ $grade->GradeStatus == 'Passed' ? 'selected' : '' }}>Passed
-                                </option>
-                                <option value="Failed GWA" {{ $grade->GradeStatus == 'Failed GWA' ? 'selected' : '' }}>
-                                    Failed GWA</option>
-                                <option value="Failed GWA (Chinese Subject)"
-                                    {{ $grade->GradeStatus == 'Failed GWA (Chinese Subject)' ? 'selected' : '' }}>
-                                    Failed GWA (Chinese Subject)</option>
-                                <option value="Failed Grade"
-                                    {{ $grade->GradeStatus == 'Failed Grade in Subject/s' ? 'selected' : '' }}>
-                                    Failed Grade in Subject/s
-                                </option>
-                            </select>
+            <div class="card rounded mx-auto px-4 py-2 bg-light shadow-sm">
+                <div class="card-header bg-light">
+                    <div class="row h5 justify-content-center align-items-center">
+                        <div class="col-md-2 text-dark fw-bold">
+                            <span>Grade Status</span>
+                        </div>
+                        @php
+                            if ($grade->GradeStatus == 'Passed') {
+                                $style = 'bg-success';
+                            } else {
+                                $style = 'bg-danger';
+                            }
+                        @endphp
+                        <div class="col-md-2">
+                            <span
+                                class=" form-control fw-bold text-center text-white {{ $style }}">{{ $grade->GradeStatus }}</span>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-success w-100">Update Status</button>
+                            <!-- Button to trigger the modal -->
+                            <button type="button" class="btn btn-success w-100" data-bs-toggle="modal"
+                                data-bs-target="#gradeStatusModal">
+                                Update Status
+                            </button>
                         </div>
-                    </form>
-                </h5>
-
+                    </div>
+                </div>
                 <div class="row my-2">
                     <div class="col-md-3">School Year</div>
                     <div class="col-md-9 fw-bold">: <span>S.Y. {{ $grade->schoolyear }}</span></div>
@@ -117,6 +113,44 @@
                     @endif
                 </div>
 
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="gradeStatusModal" tabindex="-1" aria-labelledby="gradeStatusModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="gradeStatusModalLabel">Update Grade Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('updategradestatus', $grade->gid) }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 fw-bold">Grade Status</div>
+                            <div class="col-md-8">
+                                <select name="gradestatus" class="form-control border-success" style="cursor: pointer">
+                                    <option value="Passed" {{ $grade->GradeStatus == 'Passed' ? 'selected' : '' }}>
+                                        Passed</option>
+                                    <option value="Failed GWA"
+                                        {{ $grade->GradeStatus == 'Failed GWA' ? 'selected' : '' }}>Failed GWA
+                                    </option>
+                                    <option value="Failed GWA (Chinese Subject)"
+                                        {{ $grade->GradeStatus == 'Failed GWA (Chinese Subject)' ? 'selected' : '' }}>
+                                        Failed GWA (Chinese Subject)</option>
+                                    <option value="Failed Grade in Subject/s"
+                                        {{ $grade->GradeStatus == 'Failed Grade in Subject/s' ? 'selected' : '' }}>
+                                        Failed Grade in Subject/s</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

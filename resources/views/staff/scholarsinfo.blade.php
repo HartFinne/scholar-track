@@ -38,40 +38,47 @@
                     <!-- Scholarship Information Section -->
                     <div class="mb-3">
                         <h5 class="text-success">SCHOLARSHIP INFORMATION</h5>
-                        <form class="row g-3" action="{{ route('updatescholarshipstatus', $data->caseCode) }}"
-                            method="POST">
-                            @csrf
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Case Code</div>
                                     <div class="col-md-8">{{ $data->caseCode }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Assigned Area</div>
                                     <div class="col-md-8">{{ $data->scholarshipinfo->area }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Scholar Type</div>
                                     <div class="col-md-8">{{ $data->scholarshipinfo->scholartype }}</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Start of Scholarship</div>
                                     <div class="col-md-8">
                                         {{ \Carbon\Carbon::parse($data->scholarshipinfo->startdate)->format('F j, Y') }}
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">End of Scholarship</div>
                                     <div class="col-md-8">
                                         {{ \Carbon\Carbon::parse($data->scholarshipinfo->enddate)->format('F j, Y') }}
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-4 fw-bold">Scholarship Status</div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         @php
+                                            $style = '';
                                             if ($data->scholarshipinfo->scholarshipstatus == 'Continuing') {
                                                 $style = 'border-success text-success';
                                             } elseif ($data->scholarshipinfo->scholarshipstatus == 'On-Hold') {
@@ -80,28 +87,18 @@
                                                 $style = 'border-danger text-danger';
                                             }
                                         @endphp
-                                        <select name="scholarshipstatus"
-                                            class="form-select border {{ $style }} fw-bold">
-                                            <option value="Continuing"
-                                                {{ $data->scholarshipinfo->scholarshipstatus == 'Continuing' ? 'selected' : '' }}>
-                                                Continuing
-                                            </option>
-                                            <option value="On-Hold"
-                                                {{ $data->scholarshipinfo->scholarshipstatus == 'On-Hold' ? 'selected' : '' }}>
-                                                On-Hold
-                                            </option>
-                                            <option value="Terminated"
-                                                {{ $data->scholarshipinfo->scholarshipstatus == 'Terminated' ? 'selected' : '' }}>
-                                                Terminated
-                                            </option>
-                                        </select>
+                                        <span
+                                            class="form-control fw-bold {{ $style }}">{{ $data->scholarshipinfo->scholarshipstatus }}</span>
                                     </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-success">Update</button>
+                                    <div class="col-md-4">
+                                        <button type="button" class="btn btn-success w-100" data-bs-toggle="modal"
+                                            data-bs-target="#updateScholarshipStatusModal">
+                                            Update
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
 
                     <!-- Basic Information Section -->
@@ -109,12 +106,20 @@
                         <h5 class="text-success">BASIC INFORMATION</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Name</div>
                                     <div class="col-md-8">{{ $data->basicInfo->scLastname }},
                                         {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Chinese Name</div>
+                                    <div class="col-md-8">{{ $data->basicInfo->scChinesename }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Date of Birth</div>
                                     <div class="col-md-8">
                                         {{ \Carbon\Carbon::parse($data->basicInfo->scDateOfBirth)->format('F j, Y') }}
@@ -122,13 +127,91 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Age</div>
+                                    <div class="col-md-8">{{ $data->basicInfo->scAge }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Sex</div>
                                     <div class="col-md-8">{{ $data->basicInfo->scSex }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Indigenous Group</div>
+                                    <div class="col-md-8">{{ $data->basicInfo->scIndigenousgroup }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Occupation</div>
+                                    <div class="col-md-8">{{ $data->basicInfo->scOccupation }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Income</div>
+                                    <div class="col-md-8">{{ $data->basicInfo->scIncome }}</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-md-2 fw-bold">Facebook Link</div>
+                                    <div class="col-md-8">
+                                        <a href="{{ $data->basicInfo->scFblink }}" target="_blank"
+                                            class="link link-success">
+                                            {{ $data->basicInfo->scFblink }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-md-2 fw-bold">Email Address</div>
+                                    <div class="col-md-8">
+                                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ $data->scEmail }}"
+                                            class="link link-success" target="_blank">
+                                            {{ $data->scEmail }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Contact Number</div>
+                                    <div class="col-md-8">+{{ $data->scPhoneNum }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">T-Shirt Size</div>
                                     <div class="col-md-8">{{ $data->clothingSize->scTShirtSize }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Pants Size</div>
+                                    <div class="col-md-8">{{ $data->clothingSize->scPantsSize }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Jogging Pants Size</div>
+                                    <div class="col-md-8">{{ $data->clothingSize->scJoggingPantSize }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Shoes Size</div>
+                                    <div class="col-md-8">{{ $data->clothingSize->scShoesSize }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-4 fw-bold">Slippers Size</div>
+                                    <div class="col-md-8">{{ $data->clothingSize->scSlipperSize }}</div>
                                 </div>
                             </div>
                         </div>
@@ -139,21 +222,25 @@
                         <h5 class="text-success">ADDRESS INFORMATION</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Home Address</div>
                                     <div class="col-md-8">{{ $data->addressinfo->scResidential }}</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Region</div>
                                     <div class="col-md-8" id="region"></div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">City/Municipality</div>
                                     <div class="col-md-8" id="city"></div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Barangay</div>
                                     <div class="col-md-8" id="brgy"></div>
                                 </div>
@@ -166,28 +253,32 @@
                         <h5 class="text-success">EMERGENCY CONTACT</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Name</div>
                                     <div class="col-md-8">
                                         {{ old('scGuardianName', $data->basicInfo->scGuardianName) }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Relation</div>
                                     <div class="col-md-8">
                                         {{ old('scRelationToGuardian', $data->basicInfo->scRelationToGuardian) }}</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Email Address</div>
                                     <div class="col-md-8">
                                         {{ old('scGuardianEmailAddress', $data->basicInfo->scGuardianEmailAddress) }}
                                     </div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Contact Number</div>
                                     <div class="col-md-8">
-                                        {{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}
+                                        +{{ old('scGuardianPhoneNumber', $data->basicInfo->scGuardianPhoneNumber) }}
                                     </div>
                                 </div>
                             </div>
@@ -195,35 +286,42 @@
                     </div>
 
                     <!-- Educational Background Section -->
-                    <div>
+                    <div class="mb-3">
                         <h5 class="text-success">EDUCATIONAL BACKGROUND</h5>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">School Level</div>
                                     <div class="col-md-8">{{ $data->education->scSchoolLevel }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">School Name</div>
                                     <div class="col-md-8">{{ $data->education->scSchoolName }}</div>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="row mb-2">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Grade/Year Level</div>
                                     <div class="col-md-8">{{ $data->education->scYearGrade }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Course/Strand</div>
                                     <div class="col-md-8">{{ $data->education->scCourseStrandSec }}</div>
                                 </div>
-                                <div class="row mb-2">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row">
                                     <div class="col-md-4 fw-bold">Academic Year</div>
                                     <div class="col-md-8">{{ $data->education->scAcademicYear }}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
@@ -270,7 +368,7 @@
                                         <td class="text-center align-middle">{{ $grade->GradeStatus }}</td>
                                         <td class="text-center align-middle">
                                             <a href="{{ route('scholar-gradesinfo', ['gid' => $grade->gid]) }}"
-                                                class="btn btn-success">View</a>
+                                                class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -358,6 +456,46 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Update Scholarship Status Modal -->
+    <div class="modal fade" id="updateScholarshipStatusModal" tabindex="-1"
+        aria-labelledby="updateScholarshipStatusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white fw-bold">
+                    <h5 class="modal-title" id="updateScholarshipStatusModalLabel">Update Scholarship Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('updatescholarshipstatus', $data->caseCode) }}" method="POST">
+                    <div class="modal-body">
+                        @csrf
+                        <div class="row align-items-center">
+                            <div class="col-6">
+                                <label for="scholarshipstatus" class="form-label fw-bold">Select New Status</label>
+                            </div>
+                            <div class="col-6">
+                                <select name="scholarshipstatus" id="scholarshipstatus"
+                                    class="form-select border-success">
+                                    <option value="Continuing"
+                                        {{ $data->scholarshipinfo->scholarshipstatus == 'Continuing' ? 'selected' : '' }}>
+                                        Continuing</option>
+                                    <option value="Terminated"
+                                        {{ $data->scholarshipinfo->scholarshipstatus == 'Terminated' ? 'selected' : '' }}>
+                                        Terminated</option>
+                                    <option value="On-Hold"
+                                        {{ $data->scholarshipinfo->scholarshipstatus == 'On-Hold' ? 'selected' : '' }}>
+                                        On-Hold</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

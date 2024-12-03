@@ -13,43 +13,230 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
-<body>
+<body style="background-color: #fff !important">
     <!-- PAGE HEADER -->
     @include('partials._pageheader')
     <x-alert />
 
     <div class="ctnmain">
-        <div class="mx-auto mb-2" style="width: 8.5in">
-            <div class="col-md-2">
-                <a href="{{ route('scholarshiprenewal') }}" class="btn btn-success w-100">Go back</a>
-            </div>
+        <div class="row text-center">
+            <span class="h2 text-success fw-bold">Renewal Application Form</span>
         </div>
-            <div class="appinfo">
-                <div class="row my-2">
-                    <span class="col-md-3 label">Applicant Name</span>
-                    <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}" readonly>
+        <div class="container" style="width: 8.5in">
+            <!-- Action Buttons Row -->
+            <div class="row d-flex justify-content-between mb-2">
+                <div class="col-auto">
+                    <a href="{{ route('scholarshiprenewal') }}" class="btn btn-success w-100">Go back</a>
                 </div>
-                <div class="row my-2">
-                    <span class="col-md-3 label">Applicant Case Code</span>
-                    <span class="col-md-1 label">: </span>
-                    <input class="col-md-8" style="max-width: 35%; padding: 2px 5px;" value="{{ $user->caseCode }}" readonly>
-                </div>
-                <form class="row my-2" method="POST" action="update_status.html">
-                    <span class="col-md-3 label">Application Status</span>
-                    <span class="col-md-1 label">: </span>
-                    <select name="applicationstatus" class="col-md-8" style="max-width: 35%; padding: 2px 5px;">
-                        <option value="UNDER REVIEW" selected>UNDER REVIEW</option>
-                        <option value="ACCEPTED">ACCEPTED</option>
-                        <option value="REJECTED">REJECTED</option>
-                        <option value="WITHDRAWN">WITHDRAWN</option>
-                    </select>
-                    <button class="rounded border border-success mx-3" id="btnupdate">Save</button>
-                </form>
+                @if ($renewal->status == 'Pending')
+                    <div class="col-auto">
+                        <button class="btn btn-success w-100" data-bs-toggle="modal"
+                            data-bs-target="#updateStatusModal">
+                            Action Taken
+                        </button>
+                    </div>
+                @endif
             </div>
 
+            <!-- Applicant Details Section -->
+            <div class="row rounded bg-light border border-dark p-3 shadow">
+                <div class="col-12 mb-2">
+                    <div class="row align-items-center">
+                        <label class="col-md-4 text-dark fw-bold">Applicant Name</label>
+                        <span class="col-md-1 text-white">:</span>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control  border-dark bg-white text-dark"
+                                value="{{ $user->basicInfo->scLastname }}, {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}"
+                                readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 mb-2">
+                    <div class="row align-items-center">
+                        <label class="col-md-4 text-dark fw-bold">Applicant Case Code</label>
+                        <span class="col-md-1 text-white">:</span>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control  border-dark bg-white text-dark"
+                                value="{{ $user->caseCode }}" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                @php
+                    $color = match ($renewal->status) {
+                        'Pending' => 'bg-warning text-dark',
+                        'Accepted' => 'bg-success text-white',
+                        default => 'bg-danger text-dark',
+                    };
+                @endphp
+
+                <div class="col-12">
+                    <div class="row align-items-center">
+                        <label class="col-md-4 text-dark fw-bold">Application Status</label>
+                        <span class="col-md-1 text-white">:</span>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control border-dark fw-bold {{ $color }}"
+                                value="{{ $renewal->status }}" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="updateStatusModalLabel">Update Renewal Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="{{ route('updateRenewalInfo', $renewal->rid) }}">
+                        @csrf <!-- Ensure CSRF token is included for security -->
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <!-- Renewal Status -->
+                                <div class="col-12">
+                                    <label for="renewalstatus" class="fw-bold">Renewal Status</label>
+                                    <select name="renewalstatus" id="renewalstatus"
+                                        class="form-select border border-success" required>
+                                        <option value=""
+                                            {{ old('renewalstatus', $renewal->status) == 'Pending' ? 'selected' : '' }}
+                                            hidden>Pending</option>
+                                        <option value="Accepted"
+                                            {{ old('renewalstatus', $renewal->status) == 'Accepted' ? 'selected' : '' }}>
+                                            Accepted</option>
+                                        <option value="Rejected"
+                                            {{ old('renewalstatus', $renewal->status) == 'Rejected' ? 'selected' : '' }}>
+                                            Rejected</option>
+                                    </select>
+                                </div>
+
+                                <!-- Update Case Details Header -->
+                                <div class="col-12 fw-bold mt-3 mb-2">Update Case Details</div>
+
+                                <!-- Nature of Needs -->
+                                <div class="col-12 mb-2">
+                                    <label for="natureofneeds" class="fw-bold">Nature of Needs</label>
+                                    <select name="natureofneeds" id="natureofneeds"
+                                        class="form-select border border-success" required>
+                                        <option value="Education"
+                                            {{ old('natureofneeds') == 'Education' ? 'selected' : '' }}>
+                                            Education</option>
+                                        <option value="Financial"
+                                            {{ old('natureofneeds') == 'Financial' ? 'selected' : '' }}>
+                                            Financial</option>
+                                        <option value="Medical"
+                                            {{ old('natureofneeds') == 'Medical' ? 'selected' : '' }}>
+                                            Medical</option>
+                                        <option value="Food" {{ old('natureofneeds') == 'Food' ? 'selected' : '' }}>
+                                            Food</option>
+                                        <option value="Material"
+                                            {{ old('natureofneeds') == 'Material' ? 'selected' : '' }}>
+                                            Material</option>
+                                        <option value="Others"
+                                            {{ old('natureofneeds') == 'Others' ? 'selected' : '' }}>
+                                            Others</option>
+                                    </select>
+                                </div>
+
+                                <!-- Problem Statement -->
+                                <div class="col-12 mb-2">
+                                    <label for="problemstatement" class="fw-bold">Problem Statement</label>
+                                    <textarea name="problemstatement" id="problemstatement" rows="5" maxlength="255"
+                                        class="form-control border border-success" required style="resize: none">{{ old('problemstatement', $renewal->casedetails->problemstatement ?? '') }}</textarea>
+                                </div>
+
+                                <!-- Case Details -->
+                                <div class="col-md-6 mb-2">
+                                    <label for="receivedby" class="fw-bold">Received By</label>
+                                    <input type="text" name="receivedby" id="receivedby"
+                                        class="form-control border border-success" required
+                                        value="{{ old('receivedby', $renewal->casedetails->receivedby ?? $worker->name) }}"
+                                        maxlength="255">
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label for="datereceived" class="fw-bold">Date Received</label>
+                                    @if (!empty($renewal->casedetails->datereceived))
+                                        <input type="text" class="form-control border border-success"
+                                            value="{{ Carbon\Carbon::parse($renewal->casedetails->datereceived)->format('F j, Y') }}"
+                                            readonly>
+                                    @else
+                                        <input type="date" name="datereceived" id="datereceived"
+                                            class="form-control border border-success" required
+                                            min="{{ today()->toDateString() }}"
+                                            value="{{ old('datereceived', today()->toDateString()) }}">
+                                    @endif
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label for="district" class="fw-bold">Assigned District</label>
+                                    <input type="text" name="district" id="district"
+                                        class="form-control border border-success" required
+                                        value="{{ old('district', $renewal->casedetails->district ?? '') }}"
+                                        maxlength="50">
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label for="volunteer" class="fw-bold">Assigned Volunteer</label>
+                                    <input type="text" name="volunteer" id="volunteer"
+                                        class="form-control border border-success" required
+                                        value="{{ old('volunteer', $renewal->casedetails->volunteer ?? '') }}"
+                                        maxlength="255">
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label for="referredby" class="fw-bold">Referred By</label>
+                                    <input type="text" name="referredby" id="referredby"
+                                        class="form-control border border-success" required
+                                        value="{{ old('referredby', $renewal->casedetails->referredby ?? '') }}"
+                                        maxlength="255">
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label for="referphonenum" class="fw-bold">Referral Contact No.</label>
+                                    <input type="tel" name="referphonenum" id="referphonenum"
+                                        class="form-control border border-success" required
+                                        value="{{ old('referphonenum', $renewal->casedetails->referphonenum ?? '') }}"
+                                        maxlength="12" minlength="11" pattern="(09\d{9}|63\d{10})"
+                                        title="Format: 09######### or 63##########">
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label for="relationship" class="fw-bold">Relationship</label>
+                                    <input type="text" name="relationship" id="relationship"
+                                        class="form-control border border-success" required
+                                        value="{{ old('relationship', $renewal->casedetails->relationship ?? '') }}"
+                                        maxlength="50">
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label for="datereported" class="fw-bold">Date Reported</label>
+                                    @if (!empty($renewal->casedetails->datereported))
+                                        <input type="text" class="form-control border border-success"
+                                            value="{{ Carbon\Carbon::parse($renewal->casedetails->datereported)->format('F j, Y') }}"
+                                            readonly>
+                                    @else
+                                        <input type="date" name="datereported" id="datereported"
+                                            class="form-control border border-success" required
+                                            value="{{ old('datereported') }}">
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="appform-view">
-            <div class="page1">
+            <div class="page1 shadow">
                 <div class="header">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
                     <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
@@ -70,7 +257,7 @@
                     <div class="row mb-2">
                         <span class="col-md-4"></span>
                         <span class="col-md-2"><strong>New</strong></span>
-                        <span class="col-md-3"><strong>{{ $user->casecode }}</strong></span>
+                        <span class="col-md-3"><strong>{{ $user->caseCode }}</strong></span>
                         <span class="col-md-3"></span>
                     </div>
                     <div class="psec2">
@@ -144,7 +331,7 @@
                                     <td colspan="4">
                                         <span class="flabel">Are you a member of any indigenous group?</span><br>
                                         <span class="fvalue" id="indigenous">{{ $user->basicInfo->scIsIndigenous }}.
-                                            {{ $user->basicInfo->scIndigenousgroup ?? '' }}</span>
+                                            {{ $user->basicInfo->scIndigenousgroup == 'Not Applicable' ? '' : $user->basicInfo->scIndigenousgroup }}</span>
                                     </td>
                                 </tr>
                             </table>
@@ -276,49 +463,50 @@
                             <tbody id="familyTableBody">
                                 {{-- FATHER --}}
                                 <tr>
-                                    <td class="text-left align-center">{{ $father->name }}</td>
-                                    <td class="text-center align-center">{{ $father->age }}</td>
-                                    <td class="text-center align-center">{{ $father->sex }}</td>
+                                    <td class="text-left align-center">{{ $father->name ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->age ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->sex ?? '' }}</td>
                                     <td class="text-center align-center">
-                                        {{ \Carbon\Carbon::parse($father->birthdate)->format('F j, Y') }}
+                                        {{ \Carbon\Carbon::parse($father->birthdate)->format('F j, Y') ?? '' }}
                                     </td>
-                                    <td class="text-center align-center">{{ $father->relationship }}</td>
-                                    <td class="text-center align-center">{{ $father->religion }}</td>
-                                    <td class="text-center align-center">{{ $father->educattainment }}</td>
-                                    <td class="text-center align-center">{{ $father->occupation }}</td>
-                                    <td class="text-center align-center">{{ $father->company }}</td>
-                                    <td class="text-center align-center">{{ $father->income }}</td>
+                                    <td class="text-center align-center">{{ $father->relationship ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->religion ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->educattainment ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->occupation ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->company ?? '' }}
+                                    </td>
+                                    <td class="text-center align-center">{{ $father->income ?? '' }}</td>
                                 </tr>
                                 {{-- MOTHER --}}
                                 <tr>
-                                    <td class="text-left align-center">{{ $mother->name }}</td>
-                                    <td class="text-center align-center">{{ $mother->age }}</td>
-                                    <td class="text-center align-center">{{ $mother->sex }}</td>
+                                    <td class="text-left align-center">{{ $mother->name ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->age ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->sex ?? '' }}</td>
                                     <td class="text-center align-center">
-                                        {{ \Carbon\Carbon::parse($mother->birthdate)->format('F j, Y') }}
+                                        {{ \Carbon\Carbon::parse($mother->birthdate)->format('F j, Y') ?? '' }}
                                     </td>
-                                    <td class="text-center align-center">{{ $mother->relationship }}</td>
-                                    <td class="text-center align-center">{{ $mother->religion }}</td>
-                                    <td class="text-center align-center">{{ $mother->educattainment }}</td>
-                                    <td class="text-center align-center">{{ $mother->occupation }}</td>
-                                    <td class="text-center align-center">{{ $mother->company }}</td>
-                                    <td class="text-center align-center">{{ $mother->income }}</td>
+                                    <td class="text-center align-center">{{ $mother->relationship ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->religion ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->educattainment ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->occupation ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->company ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->income ?? '' }}</td>
                                 </tr>
                                 {{-- SIBLING/S --}}
                                 @foreach ($siblings as $sib)
                                     <tr>
-                                        <td class="text-left align-center">{{ $sib->name }}</td>
-                                        <td class="text-center align-center">{{ $sib->age }}</td>
-                                        <td class="text-center align-center">{{ $sib->sex }}</td>
+                                        <td class="text-left align-center">{{ $sib->name ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->age ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->sex ?? '' }}</td>
                                         <td class="text-center align-center">
-                                            {{ \Carbon\Carbon::parse($sib->birthdate)->format('F j, Y') }}
+                                            {{ \Carbon\Carbon::parse($sib->birthdate)->format('F j, Y') ?? '' }}
                                         </td>
-                                        <td class="text-center align-center">{{ $sib->relationship }}</td>
-                                        <td class="text-center align-center">{{ $sib->religion }}</td>
-                                        <td class="text-center align-center">{{ $sib->educattainment }}</td>
-                                        <td class="text-center align-center">{{ $sib->occupation }}</td>
-                                        <td class="text-center align-center">{{ $sib->company }}</td>
-                                        <td class="text-center align-center">{{ $sib->income }}</td>
+                                        <td class="text-center align-center">{{ $sib->relationship ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->religion ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->educattainment ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->occupation ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->company ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->income ?? '' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -367,7 +555,7 @@
                 </div>
             </div>
         </div>
-        <div class="page2">
+        <div class="page2 shadow">
             <div class="header">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo">
                 <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
@@ -436,25 +624,42 @@
                         <td>
                             <span class="slabel">Nature of Needs</span><br>
                             <span class="svalue" id="natureOfneeds">
-                                <input type="radio" id="financial" name="needs" value="Financial" readonly>
+                                <input type="radio" id="financial" name="natureofneeds" value="Financial"
+                                    {{ $renewal->casedetails->natureofneeds == 'Financial' ? 'checked' : '' }}
+                                    {{ $renewal->casedetails->natureofneeds != 'Financial' ? 'disabled' : '' }}>
                                 <label for="financial">Financial</label><br>
-                                <input type="radio" id="medical" name="needs" value="Medical" readonly>
+
+                                <input type="radio" id="medical" name="natureofneeds" value="Medical"
+                                    {{ $renewal->casedetails->natureofneeds == 'Medical' ? 'checked' : '' }}
+                                    {{ $renewal->casedetails->natureofneeds != 'Medical' ? 'disabled' : '' }}>
                                 <label for="medical">Medical</label><br>
-                                <input type="radio" id="food" name="needs" value="Food" readonly>
+
+                                <input type="radio" id="food" name="natureofneeds" value="Food"
+                                    {{ $renewal->casedetails->natureofneeds == 'Food' ? 'checked' : '' }}
+                                    {{ $renewal->casedetails->natureofneeds != 'Food' ? 'disabled' : '' }}>
                                 <label for="food">Food</label><br>
-                                <input type="radio" id="material" name="needs" value="Material" readonly>
+
+                                <input type="radio" id="material" name="natureofneeds" value="Material"
+                                    {{ $renewal->casedetails->natureofneeds == 'Material' ? 'checked' : '' }}
+                                    {{ $renewal->casedetails->natureofneeds != 'Material' ? 'disabled' : '' }}>
                                 <label for="material">Material</label><br>
-                                <input type="radio" id="educ" name="needs" value="Education" readonly
-                                    checked>
-                                <label for="educ"> Education</label><br>
-                                <input type="radio" id="others" name="needs" value="Others" readonly>
-                                <label for="others"> Others</label><br>
+
+                                <input type="radio" id="educ" name="natureofneeds" value="Education"
+                                    {{ $renewal->casedetails->natureofneeds == 'Education' ? 'checked' : '' }}
+                                    {{ $renewal->casedetails->natureofneeds != 'Education' ? 'disabled' : '' }}>
+                                <label for="educ">Education</label><br>
+
+                                <input type="radio" id="others" name="natureofneeds" value="Others"
+                                    {{ $renewal->casedetails->natureofneeds == 'Others' ? 'checked' : '' }}
+                                    {{ $renewal->casedetails->natureofneeds != 'Others' ? 'disabled' : '' }}>
+                                <label for="others">Others</label><br>
+                                {{-- @dd($renewal->natureofneeds) --}}
                             </span>
                         </td>
                         <td style="width: 600px;">
                             <span class="slabel"><strong>Problem Statement</strong></span><br>
-                            <textarea name="problemstatement" id="" rows="5" cols="6"
-                                placeholder="{{ $user->casedetails->problemstatement ?? '' }}" readonly></textarea>
+                            <textarea id="" rows="5" cols="6"
+                                placeholder="{{ $renewal->casedetails->problemstatement ?? '' }}" readonly></textarea>
                         </td>
                     </tr>
                 </table>
@@ -464,22 +669,22 @@
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Received By:
                         <input class="casedeets-input text-center" style="width: 65% !important" type="text"
-                            name="receiveby" value="{{ $user->casedetails->receiveby ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->receiveby ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Date Receive:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="datereceived" value="{{ $user->casedetails->datereceived ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->datereceived ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Assigned District:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="district" value="{{ $user->casedetails->district ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->district ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Assigned Volunteer:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="volunteer" value="{{ $user->casedetails->volunteer ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->volunteer ?? '' }}" readonly>
                     </div>
                 </div>
                 <div class="column col-md-7">
@@ -494,17 +699,17 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Case Referred By:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="referredby" value="{{ $user->casedetails->referredby ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->referredby ?? '' }}" readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Referral Contact no.:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="tel"
-                                name="referphonenum" value="{{ $user->casedetails->referphonenum ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->referphonenum ?? '' }}" readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
                             Beneficiary:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="relationship" value="{{ $user->casedetails->relationship ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->relationship ?? '' }}" readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Applicant's Signature:
@@ -513,15 +718,14 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Date Reported:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="datereported" value="{{ $user->casedetails->datereported ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->datereported ?? '' }}" readonly>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    {{-- Documents --}}
-        <div class="card mx-auto mt-3 mb-5 shadow-sm" style="width: 8.5in;">
+        {{-- Documents --}}
+        <div class="card mx-auto mt-3 mb-5 shadow" style="width: 8.5in;">
             <div class="card-header py-3 bg-success text-white">
                 <span class="h5 fw-bold">Submitted Documents</span>
             </div>
@@ -612,12 +816,9 @@
                 </div>
             </div>
         </div>
+    </div>
 
     <script>
-        document.getElementById('confirmWithdraw').addEventListener('click', function() {
-            window.location.href = "#";
-        });
-
         const regionCode = '{{ $user->addressinfo->region }}';
         const cityCode = '{{ $user->addressinfo->city }}';
         const barangayCode = '{{ $user->addressinfo->barangay }}';

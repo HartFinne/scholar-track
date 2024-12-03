@@ -392,12 +392,6 @@
                                         {{ old('lodgingType') == 'Bed Space' ? 'checked' : '' }}>
                                     <label for="bedSpace">Bed Space</label>
                                 </div>
-                                <div class="row-radio">
-                                    <input type="radio" id="notApplicable" name="lodgingType"
-                                        value="Not Applicable"
-                                        {{ old('lodgingType') == 'Not Applicable' ? 'checked' : '' }}>
-                                    <label for="notApplicable">Not Applicable</label>
-                                </div>
                             </div>
                             @error('lodgingType')
                                 <div class="text-danger">{{ $message }}</div>

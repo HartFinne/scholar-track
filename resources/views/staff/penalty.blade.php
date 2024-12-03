@@ -68,62 +68,10 @@
             <span class="text-success fw-bold h2">Penalty</span>
             <button type="button" id="btnaddpenalty" onclick="togglepenaltyform()">Create Penalty</button>
         </div>
-        <div class="ctnfilter">
-            <form action="#" class="filterform">
-                @csrf
-                <span class="filtertitle">Filter Result</span>
-                <div class="filtermenu">
-                    <span class="filterlabel">School Level</span>
-                    <div class="filteroptions">
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inyearall" checked>
-                            All
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="incollege">
-                            College
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inseniorhigh">
-                            Senior High
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="injuniorhigh">
-                            Junior High
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inelementary">
-                            Elementary
-                        </label>
-                    </div>
-                </div>
-                <div class="filtermenu">
-                    <span class="filterlabel">Remark</span>
-                    <div class="filteroptions">
-                        <label class="lbloptions">
-                            <input type="radio" id="inremarkall" name="remark" checked>
-                            All
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inoffense1" name="remark">
-                            1st Offense
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inoffense2" name="remark">
-                            2nd Offense
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inoffense3" name="remark">
-                            3rd Offense
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inoffense4" name="remark">
-                            4th Offense
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" id="btnapply">Apply</button>
-            </form>
+        <div class="row">
+            <div class="col-md-3">
+                <input type="search" placeholder="Search" class="form-control border-success">
+            </div>
         </div>
         <div class="ctntable table-responsive">
             <table class="table table-bordered" id="tblpenalty">
@@ -149,19 +97,17 @@
                             </td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('showpenaltyinfo', $penalty['caseCode']) }}"
-                                    class="btn btn-success">View</a>
+                                    class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-
         <!-- Pagination Links -->
         <div class="d-flex justify-content-center mt-3">
             {{ $penaltys->links('pagination::bootstrap-4') }}
         </div>
-
     </div>
 
     <div class="ctnpenaltyform" id="ctnpenaltyform">
@@ -249,6 +195,34 @@
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/togglepenaltyform.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.querySelector('input[type="search"]');
+            const table = document.getElementById('tblpenalty');
+            const tbody = table.querySelector('tbody');
+
+            searchInput.addEventListener('input', function() {
+                const query = searchInput.value.toLowerCase();
+                const rows = tbody.querySelectorAll('tr');
+
+                rows.forEach(function(row) {
+                    const nameCell = row.querySelector(
+                        'td:nth-child(2)'); // 2nd column: Scholar's Name
+                    const conditionCell = row.querySelector(
+                        'td:nth-child(3)'); // 3rd column: Condition
+                    const name = nameCell.textContent.toLowerCase();
+                    const condition = conditionCell.textContent.toLowerCase();
+
+                    // Check if the query matches either the Scholar's Name or Condition
+                    if (name.includes(query) || condition.includes(query)) {
+                        row.style.display = ''; // Show row
+                    } else {
+                        row.style.display = 'none'; // Hide row
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

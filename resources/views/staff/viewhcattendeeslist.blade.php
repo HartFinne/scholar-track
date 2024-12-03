@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -22,18 +21,25 @@
 
     <div class="ctnmain">
         <span class="text-success fw-bold h2">Humanities Class Attendees</span>
-        <div class="groupA">
-            <form action="#" class="searchbar">
-                <input type="search" placeholder="Search" id="insearch" required>
-                <button type="submit" id="btnsearch"><i class="fas fa-magnifying-glass"></i></button>
-            </form>
-            <div>
-                @if ($event->status == 'On Going')
-                    <a id="btnsave" href="{{ route('savehc', $event->hcid) }}">Mark as Done</a>
-                    <a id="btngoback" href="{{ route('attendancesystem', $event->hcid) }}">Go back</a>
-                @else
-                    <a id="btngoback" href="{{ route('humanitiesclass') }}">Go back</a>
-                @endif
+        <div class="row justify-content-between align-items-center">
+            <div class="col-md-3">
+                <input type="search" class="form-control border-success" placeholder="Search">
+            </div>
+            <div class="col-auto">
+                <div class="row">
+                    @if ($event->status == 'On Going')
+                        <div class="col-auto">
+                            <button class="btn btn-success" data-bs-toggle="modal"
+                                data-bs-target="#markAsDoneModal">Mark as
+                                Done</button>
+                        </div>
+                        <div class="col-auto">
+                            <a class="btn btn-success" href="{{ route('attendancesystem', $event->hcid) }}">Go back</a>
+                        </div>
+                    @else
+                        <a class="btn btn-success" href="{{ route('humanitiesclass') }}">Go back</a>
+                    @endif
+                </div>
             </div>
         </div>
 
@@ -98,7 +104,58 @@
         </div>
     </div>
 
+    <!-- Modal for Mark as Done Confirmation -->
+    <div class="modal fade" id="markAsDoneModal" tabindex="-1" aria-labelledby="markAsDoneModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white fw-bold">
+                    <h5 class="modal-title" id="markAsDoneModalLabel">Confirm Mark as Done</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to mark this event as done? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" action="{{ route('savehc', $event->hcid) }}">
+                        @csrf
+                        @method('GET')
+                        <button type="submit" class="btn btn-success">Yes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ asset('js/headercontrol.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Search filter function
+            const searchInput = document.querySelector('input[type="search"]');
+            const table = document.getElementById('tblpenalty');
+            const rows = table.querySelectorAll('tbody tr');
+
+            searchInput.addEventListener('input', function() {
+                const filter = searchInput.value.toLowerCase();
+
+                rows.forEach(row => {
+                    const nameCell = row.cells[1].textContent.toLowerCase();
+                    const timeInCell = row.cells[2].textContent.toLowerCase();
+                    const timeOutCell = row.cells[3].textContent.toLowerCase();
+                    const statusCell = row.cells[5].textContent.toLowerCase();
+
+                    // Check if any of the relevant columns match the search query
+                    if (nameCell.includes(filter) || timeInCell.includes(filter) || timeOutCell
+                        .includes(filter) || statusCell.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

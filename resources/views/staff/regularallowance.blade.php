@@ -43,28 +43,34 @@
         </div>
         <div class="divider"></div>
         <span class="text-success fw-bold h2">List of Requests</span>
-        <form action="{{ route('allowancerequests-regular') }}" method="GET" id="filter-form">
-            <button type="submit" name="status" value=""
-                class="btn btn-sm {{ request()->input('status') === '' || !request()->has('status') ? 'btn-success' : 'btn-outline-success' }}">
-                All
-            </button>
-            <button type="submit" name="status" value="Pending"
-                class="btn btn-sm {{ request()->input('status') === 'Pending' ? 'btn-success' : 'btn-outline-success' }}">
-                Pending
-            </button>
-            <button type="submit" name="status" value="Completed"
-                class="btn btn-sm {{ request()->input('status') === 'Completed' ? 'btn-success' : 'btn-outline-success' }}">
-                Completed
-            </button>
-            <button type="submit" name="status" value="Accepted"
-                class="btn btn-sm {{ request()->input('status') === 'Accepted' ? 'btn-success' : 'btn-outline-success' }}">
-                Accepted
-            </button>
-            <button type="submit" name="status" value="Rejected"
-                class="btn btn-sm {{ request()->input('status') === 'Rejected' ? 'btn-success' : 'btn-outline-success' }}">
-                Rejected
-            </button>
-        </form>
+        <div class="row align-items-center justify-content-between">
+            <div class="col-md-3">
+                <input type="search" class="border-success form-control" placeholder="Search">
+            </div>
+            <div class="col-auto">
+                <div class="row gx-2 align-items-center">
+                    <div class="col-auto">
+                        <button class="filter btn btn-sm btn-success w-100" id="toggleAll">All</button>
+                    </div>
+                    <div class="col-auto">
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleCollege">First
+                            Year</button>
+                    </div>
+                    <div class="col-auto">
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleSHS">Second Year</button>
+                    </div>
+                    <div class="col-auto">
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleJHS">Third Year</button>
+                    </div>
+                    <div class="col-auto">
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleElem">Fourth Year</button>
+                    </div>
+                    <div class="col-auto">
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleElem">Fifth Year</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="ctntable table-responsive">
             <table class="table table-bordered" id="tblscholarslist">
@@ -72,7 +78,7 @@
                     <tr>
                         <th class="text-center align-middle">Name</th>
                         <th class="text-center align-middle">Request Date</th>
-                        <th class="text-center align-middle">Status</th>
+                        <th class="text-center align-middle">Year Level</th>
                         <th class="text-center align-middle">Release Date</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
@@ -85,13 +91,13 @@
                             <td class="text-center align-middle">
                                 {{ $request->created_at ? \Carbon\Carbon::parse($request->created_at)->format('F j, Y') : 'N/A' }}
                             </td>
-                            <td class="text-center align-middle">{{ $request->status ?? 'Pending' }}</td>
+                            <td class="text-center align-middle">{{ $request->scYearGrade }}</td>
                             <td class="text-center align-middle">
                                 {{ $request->date_of_release ?? 'N/A - Update to include release date' }}
                             </td>
                             <td class="text-center align-middle">
                                 <a href="{{ route('allowancerequests-regular-info', ['id' => $request->id]) }}"
-                                    class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a>
+                                    class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                     @empty

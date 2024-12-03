@@ -21,38 +21,45 @@
     <!-- MAIN -->
     <div class="ctnmain">
         <div class="container">
-            <div class="container rounded bg-success p-3 mx-auto mb-2" style="width: 80%">
+            <div class="container rounded border border-success bg-light p-3 mx-auto mb-2" style="width: 80%">
                 <div class="row">
-                    <div class="col-md-10 text-light fw-bold h4 my-auto">{{ $scholar->basicInfo->scLastname }},
+                    <div class="col-md-10 text-success fw-bold h4 my-auto">
+                        {{ $scholar->basicInfo->scLastname }},
                         {{ $scholar->basicInfo->scFirstname }}
                     </div>
                     <div class="col-md-2">
                         <a href="{{ route('lte') }}" class="btn btn-success w-100">&lt Go back</a>
                     </div>
                 </div>
-                <div class="border-bottom my-3"></div>
-                <form class="row" method="post" action="{{ route('updateltestatus', $letter->lid) }}">
-                    @csrf
-                    <div class="col-md-4 text-light fw-bold h4 my-auto">Letter of Explanation Status</div>
-                    <div class="col-md-6 ">
-                        <select class="fw-bold text-success form-select" name="ltestatus">
-                            <option value="No Response" {{ $letter->ltestatus == 'No Response' ? 'selected' : '' }}>No
-                                Response
-                            </option>
-                            <option value="To Review" {{ $letter->ltestatus == 'To Review' ? 'selected' : '' }}>To
-                                Review
-                            </option>
-                            <option value="Excused" {{ $letter->ltestatus == 'Excused' ? 'selected' : '' }}>Excused
-                            </option>
-                            <option value="Unexcused" {{ $letter->ltestatus == 'Unexcused' ? 'selected' : '' }}>
-                                Unexcused
-                            </option>
-                        </select>
+                <div class="border-bottom border-success my-3"></div>
+                <div class="row justify-content-between">
+                    <!-- Letter Status Display -->
+                    <div class="col-md-10 d-flex align-items-center justify-content-between">
+                        <div class="col-auto text-success fw-bold h4">Letter of Explanation
+                            Status</div>
+                        <div class="col-auto">
+                            @php
+                                if ($letter->ltestatus == 'Terminated' || $letter->ltestatus == 'Unexcused') {
+                                    $css = 'bg-danger';
+                                } elseif ($letter->ltestatus == 'Continuing' || $letter->ltestatus == 'Excused') {
+                                    $css = 'bg-success';
+                                } else {
+                                    $css = 'bg-warning';
+                                }
+                            @endphp
+                            <span class="fw-bold text-white text-center h4 form-control {{ $css }}">
+                                {{ $letter->ltestatus }}
+                            </span>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-outline-light w-100">Update</button>
+                    <!-- Update Button -->
+                    <div class="col-md-2 text-end">
+                        <button type="button" class="btn btn-outline-success w-100" data-bs-toggle="modal"
+                            data-bs-target="#updateStatusModal">
+                            Update
+                        </button>
                     </div>
-                </form>
+                </div>
             </div>
 
             <div class="lte mb-3 border rounded border-success">
@@ -136,6 +143,52 @@
                         @endif
                     </div>
                 @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Status Modal -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1" aria-labelledby="updateStatusModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="updateStatusModalLabel">Update Letter of Explanation Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="{{ route('updateltestatus', $letter->lid) }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row gx-0 align-items-center mb-3">
+                            <div class="col-md-6">
+                                <span class="fw-bold my-auto">Status</span>
+                            </div>
+                            <div class="col-md-6">
+                                <select class="fw-bold text-success form-select" name="ltestatus">
+                                    @if ($letter->eventtype === null)
+                                        <option value="Terminated"
+                                            {{ $letter->ltestatus == 'Terminated' ? 'selected' : '' }}>
+                                            Terminated</option>
+                                        <option value="Continuing"
+                                            {{ $letter->ltestatus == 'Continuing' ? 'selected' : '' }}>
+                                            Continuing</option>
+                                    @else
+                                        <option value="Unexcused"
+                                            {{ $letter->ltestatus == 'Unexcused' ? 'selected' : '' }}>Unexcused
+                                        </option>
+                                        <option value="Excused"
+                                            {{ $letter->ltestatus == 'Excused' ? 'selected' : '' }}>Excused
+                                        </option>
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Update</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -23,7 +23,7 @@
 
     <!-- MAIN -->
     <div class="ctn-main">
-        <a href="" class="goback">&lt Go back</a>
+        <a href="{{ route('scregular') }}" class="goback">&lt Go back</a>
 
         <div class="regular-form">
             <div class="page1">

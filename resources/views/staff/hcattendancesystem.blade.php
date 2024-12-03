@@ -108,7 +108,6 @@
                     Please enter your password to confirm.
                 </span>
                 <input type="password" placeholder="Password" name="password" class="inpassword" required>
-                <span id="label3">This action cannot be undone.</span>
 
                 <div class="groupA1">
                     <button type="button" id="btnno" onclick="toggleexitdialog()">No</button>

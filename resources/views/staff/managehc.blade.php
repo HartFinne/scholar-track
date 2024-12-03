@@ -56,17 +56,18 @@
                                 {{ Carbon\Carbon::parse($class->hcdate)->format('F j, Y') }}</td>
                             <td class="text-center align-middle">{{ $class->totalattendees }}</td>
                             <td class="text-center align-middle">{{ $class->totalabsentees }}</td>
-                            <td class="text-center align-middle">
-                                <div class="column">
-                                    @if ($class->status == 'On Going')
-                                        <a href="{{ route('attendancesystem', $class->hcid) }}"
-                                            class="btn btn-sm mb-1 text-white"
-                                            style="width: 50%; background-color: #9ACD32; !important">Open Attendance
-                                            System</a>
-                                    @endif
-                                    <a href="{{ route('viewattendeeslist', $class->hcid) }}"
-                                        class="btn btn-sm btn-success" style="width: 50%;">View Details</a>
-                                </div>
+                            <td class="text-center align-middle fw-bold">
+                                <a href="{{ $class->status == 'On Going' ? route('attendancesystem', $class->hcid) : '#' }}"
+                                    class="btn btn-sm text-white 
+                                           {{ $class->status == 'On Going' ? 'btn-warning' : 'btn-secondary' }} 
+                                           border-0"
+                                    @if ($class->status != 'On Going') style="pointer-events: none;" @endif>
+                                    <i class="fas fa-calendar-check"></i>
+                                </a>
+                                <a href="{{ route('viewattendeeslist', $class->hcid) }}"
+                                    class="btn btn-sm btn-success border-0">
+                                    <i class="fas fa-users"></i>
+                                </a>
                             </td>
                         </tr>
                     @endforeach

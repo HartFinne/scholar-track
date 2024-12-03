@@ -184,7 +184,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/del-special-allowance-file/{id}', [StaffController::class, 'deleteDownloadableFile'])->name('deleteDownloadableFile');
     Route::post('/update-special-allowance-file/{id}', [StaffController::class, 'updateDownloadableFile'])->name('updateDownloadableFile');
     Route::get('/allowance-requests-special/{type}/{id}-{caseCode}', [StaffController::class, 'showspecrecinfo'])->name('showspecrecinfo');
-    Route::post('/updatespecreq/{requesttype}/{id}', [StaffController::class, 'updatespecreq'])->name('updatespecreq');
+    Route::post('/updatespecreq', [StaffController::class, 'updatespecreq'])->name('updatespecreq');
     // APPLICATION CRITERIA
     Route::get('/application-forms', [StaffController::class, 'showApplicationForms'])->name('applicationforms');
     Route::post('/update-application-forms/{formname}/{status}', [StaffController::class, 'updateappformstatus'])->name('updateappformstatus');
@@ -201,6 +201,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // RENEWAL
     Route::get('/renewal', [StaffController::class, 'showRenewal'])->name('scholarshiprenewal');
     Route::get('/renewal-info/{id}', [StaffController::class, 'showRenewalinfo'])->name('renewalinfo');
+    Route::post('/update-renewal-info/{id}', [StaffController::class, 'updateRenewalInfo'])->name('updateRenewalInfo');
     // SYSTEM ADMIN
     Route::get('/dashboard-admin', [StaffController::class, 'showDashboard'])->name('dashboard');
     Route::get('/users-scholar', [StaffController::class, 'showUsersScholar'])->name('users-scholar');

@@ -36,14 +36,6 @@
                 <span id="lbltotalscholars" class="label">Scholars per Area</span>
                 <canvas id="scholarsperarea" height="250px"></canvas>
             </div>
-            {{-- <div class="groupA1">
-                <span id="lbltotalscholars" class="label">Scholars Admitted per Area</span>
-                <span id="outtotalscholars" class="data">0</span>
-            </div> --}}
-            {{-- <div class="groupA1">
-                <span id="lbltotalscholars" class="label">Scholars per School</span>
-                <span id="outtotalscholars" class="data">0</span>
-            </div> --}}
             <div class="groupA1">
                 <span id="lbltotalscholars" class="label">Scholars per School Level</span>
                 <canvas id="scholarsperschoolevel" height="250px"></canvas>
@@ -51,21 +43,18 @@
         </div>
         <div class="divider"></div>
         <span class="fw-bold text-success h2">List of Scholars</span>
-        <div class="row gx-0 align-items-center">
-            <div class="col-md-1">
-                <button class="filter btn btn-sm btn-success w-100" id="toggleCollege">College</button>
+        <div class="row align-items-center justify-content-between">
+            <div class="col-md-3">
+                <input type="search" name="search" id="search" class="form-control border-success"
+                    placeholder="Search">
             </div>
-            <div class="col-md-1 mx-1">
-                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleSHS">Senior High</button>
-            </div>
-            <div class="col-md-1">
-                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleJHS">Junior High</button>
-            </div>
-            <div class="col-md-1 mx-1">
-                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleElem">Elementary</button>
+            <div class="col-auto">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#filterModal">
+                    Filter Results
+                </button>
             </div>
         </div>
-        <div class="ctn" id="college">
+        <div class="ctn" id="scholars">
             <div class="ctntable table-responsive">
                 <table class="table table-bordered">
                     <thead>
@@ -78,7 +67,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse ($colleges as $index => $data)
+                        @forelse ($scholars as $index => $data)
                             <tr>
                                 <td class="text-center align-middle">{{ $index + 1 }}</td>
                                 <td class="text-center align-middle">
@@ -90,11 +79,11 @@
                                     {{ $data->education->scYearGrade }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    {{ $data->scholarshipinfo->scholarshipstatus }}
+                                    {{ $data->scholarshipstatus }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-sm btn-success">View</a>
+                                    <a href="{{ route('scholar-viewinfo', ['id' => $data->User->id]) }}"
+                                        class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
                                 </td>
                             </tr>
                         @empty
@@ -104,172 +93,138 @@
                         @endforelse
                     </tbody>
                 </table>
-            </div>
-            <!-- Pagination Links -->
-            <div class="d-flex justify-content-center mt-3">
-                {{ $colleges->links('pagination::bootstrap-4') }}
             </div>
         </div>
-        <div class="ctn" id="shs" style="display: none;">
-            <div class="ctntable table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="text-center align-middle">#</th>
-                            <th class="text-center align-middle">Name</th>
-                            <th class="text-center align-middle">Grade Level</th>
-                            <th class="text-center align-middle">Scholarship Status</th>
-                            <th class="text-center align-middle">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($shs as $index => $data)
-                            <tr>
-                                <td class="text-center align-middle">{{ $index + 1 }}</td>
-                                <td class="text-center align-middle">
-                                    {{ $data->basicInfo->scLastname }},
-                                    {{ $data->basicInfo->scFirstname }}
-                                    {{ $data->basicInfo->scMiddlename }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    {{ $data->education->scYearGrade }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    {{ $data->scholarshipinfo->scholarshipstatus }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-sm btn-success">View</a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center">No data available</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <!-- Pagination Links -->
-            <div class="d-flex justify-content-center mt-3">
-                {{ $shs->links('pagination::bootstrap-4') }}
-            </div>
-        </div>
-        <div class="ctn" id="jhs" style="display: none;">
-            <div class="ctntable table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="text-center align-middle">#</th>
-                            <th class="text-center align-middle">Name</th>
-                            <th class="text-center align-middle">Grade Level</th>
-                            <th class="text-center align-middle">Scholarship Status</th>
-                            <th class="text-center align-middle">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($jhs as $index => $data)
-                            <tr>
-                                <td class="text-center align-middle">{{ $index + 1 }}</td>
-                                <td class="text-center align-middle">
-                                    {{ $data->basicInfo->scLastname }},
-                                    {{ $data->basicInfo->scFirstname }}
-                                    {{ $data->basicInfo->scMiddlename }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    {{ $data->education->scYearGrade }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    {{ $data->scholarshipinfo->scholarshipstatus }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-sm btn-success">View</a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center">No data available</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <!-- Pagination Links -->
-            <div class="d-flex justify-content-center mt-3">
-                {{ $jhs->links('pagination::bootstrap-4') }}
-            </div>
-        </div>
-        <div class="ctn" id="elem" style="display: none;">
-            <div class="ctntable table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="text-center align-middle">#</th>
-                            <th class="text-center align-middle">Name</th>
-                            <th class="text-center align-middle">Grade Level</th>
-                            <th class="text-center align-middle">Scholarship Status</th>
-                            <th class="text-center align-middle">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($elem as $index => $data)
-                            <tr>
-                                <td class="text-center align-middle">{{ $index + 1 }}</td>
-                                <td class="text-center align-middle">
-                                    {{ $data->basicInfo->scLastname }},
-                                    {{ $data->basicInfo->scFirstname }}
-                                    {{ $data->basicInfo->scMiddlename }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    {{ $data->education->scYearGrade }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    {{ $data->scholarshipinfo->scholarshipstatus }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    <a href="{{ route('scholar-viewinfo', ['id' => $data->id]) }}"
-                                        class="btn btn-sm btn-success">View</a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="text-center">No data available</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            <!-- Pagination Links -->
-            <div class="d-flex justify-content-center mt-3">
-                {{ $elem->links('pagination::bootstrap-4') }}
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="filterModalLabel">Filter Results</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="filter">
+                        <div class="modal-body">
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <span>School Level</span>
+                                    <select name="level" id="level" class="form-control border-success">
+                                        <option value="All">All</option>
+                                        <option value="College">College</option>
+                                        <option value="Senior High">Senior High</option>
+                                        <option value="Junior High">Junior High</option>
+                                        <option value="Elementary">Elementary</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <span>Scholarship Status</span>
+                                    <select name="status" id="status" class="form-control border-success">
+                                        <option value="All">All</option>
+                                        <option value="Continuing">Continuing</option>
+                                        <option value="On-Hold">On-Hold</option>
+                                        <option value="Terminated">Terminated</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">Cancel</button>
+                            <button type="submit" data-bs-dismiss="modal" class="btn btn-success">Apply
+                                Filter</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script>
-        $(document).ready(function() {
-            function toggleSection(buttonId, containerId) {
-                $(buttonId).click(function() {
-                    // Fade out all containers, then fade in the selected one
-                    $('.ctn').not(containerId).fadeOut('fast', function() {
-                        $(containerId).fadeIn('slow');
-                    });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search functionality
+            const searchInput = document.getElementById('search');
+            const scholarsContainer = document.getElementById('scholars');
+            const scholarsTable = scholarsContainer.querySelector('table tbody');
 
-                    // Update button classes to reflect active/inactive states
-                    $('.filter').not(buttonId).removeClass('btn-success').addClass('btn-outline-success');
-                    $(buttonId).removeClass('btn-outline-success').addClass('btn-success');
+            searchInput.addEventListener('input', function() {
+                const query = searchInput.value.toLowerCase();
+                const rows = scholarsTable.querySelectorAll('tr');
+
+                rows.forEach(function(row) {
+                    const nameCell = row.querySelector('td:nth-child(2)'); // Name column
+                    const levelCell = row.querySelector('td:nth-child(3)'); // Year Level column
+                    const statusCell = row.querySelector(
+                        'td:nth-child(4)'); // Scholarship Status column
+
+                    if (nameCell && levelCell && statusCell) {
+                        const name = nameCell.textContent.toLowerCase();
+                        const yearLevel = levelCell.textContent.toLowerCase();
+                        const status = statusCell.textContent.toLowerCase();
+
+                        // Show the row if the query matches any of the columns (name, year level, or status)
+                        if (name.includes(query) || yearLevel.includes(query) || status.includes(
+                                query)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
                 });
-            }
+            });
 
-            // Attach events to buttons
-            toggleSection('#toggleCollege', '#college');
-            toggleSection('#toggleSHS', '#shs');
-            toggleSection('#toggleJHS', '#jhs');
-            toggleSection('#toggleElem', '#elem');
+            // Filter form functionality
+            const filterForm = document.getElementById('filter');
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const level = document.getElementById('level').value;
+                const status = document.getElementById('status').value;
+
+                const rows = scholarsTable.querySelectorAll('tr');
+
+                rows.forEach(function(row) {
+                    const levelCell = row.querySelector('td:nth-child(3)'); // Year Level column
+                    const statusCell = row.querySelector(
+                        'td:nth-child(4)'); // Scholarship Status column
+
+                    if (levelCell && statusCell) {
+                        const rowLevel = levelCell.textContent.trim();
+                        const rowStatus = statusCell.textContent.trim();
+
+                        let showRow = true;
+
+                        // Filter by school level and year level
+                        if (level !== 'All') {
+                            if (level === 'College' && !(/First|Second|Third|Fourth|Fifth/.test(
+                                    rowLevel))) {
+                                showRow = false;
+                            } else if (level === 'Senior High' && !(/Grade 11|Grade 12/.test(
+                                    rowLevel))) {
+                                showRow = false;
+                            } else if (level === 'Junior High' && !(
+                                    /Grade 7|Grade 8|Grade 9|Grade 10/.test(rowLevel))) {
+                                showRow = false;
+                            } else if (level === 'Elementary' && !(
+                                    /Grade 1|Grade 2|Grade 3|Grade 4|Grade 5|Grade 6/.test(rowLevel)
+                                )) {
+                                showRow = false;
+                            }
+                        }
+
+                        // Filter by scholarship status
+                        if (status !== 'All' && !rowStatus.toLowerCase().includes(status
+                                .toLowerCase())) {
+                            showRow = false;
+                        }
+
+                        row.style.display = showRow ? '' : 'none';
+                    }
+                });
+
+                // Close the modal after applying filters
+                const modal = new bootstrap.Modal(document.getElementById('filterModal'));
+                modal.hide();
+            });
         });
-
 
         document.addEventListener('DOMContentLoaded', function() {
             // Convert the PHP array to a JavaScript object for scholars per area

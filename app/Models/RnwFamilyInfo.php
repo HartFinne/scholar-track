@@ -23,6 +23,7 @@ class RnwFamilyInfo extends Model
         'relationship',
         'educattainment',
         'occupation',
+        'company',
         'income',
     ];
 

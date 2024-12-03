@@ -40,6 +40,11 @@ class ScEducation extends Model
         return $this->hasMany(renewal::class, 'caseCode', 'caseCode');
     }
 
+    public function lte()
+    {
+        return $this->hasMany(lte::class, 'caseCode', 'caseCode');
+    }
+
     public function addressinfo()
     {
         return $this->hasOne(ScAddressInfo::class, 'caseCode', 'caseCode');
