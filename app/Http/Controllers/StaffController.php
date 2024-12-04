@@ -58,6 +58,11 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Exports\SpecialAllowanceFormExport;
 use App\Models\SpecialAllowanceSummary;
 use App\Notifications\appointment;
+use App\Notifications\EventUpdate;
+use App\Notifications\GradeUpdate;
+use App\Notifications\LteStatusUpdate;
+use App\Notifications\RenewalUpdate;
+use App\Notifications\ScholarshipStatus;
 use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
@@ -283,6 +288,65 @@ class StaffController extends Controller
             DB::commit();
 
             if ($status == 'Open') {
+
+
+                if ($form->formname == 'Renewal') {
+
+                    $api_key = env('MOVIDER_API_KEY');
+                    $api_secret = env('MOVIDER_API_SECRET');
+
+                    $users = User::all(); // Fetch all users
+                    $client = new \GuzzleHttp\Client();
+
+                    $failedSMS = [];
+                    $failedEmail = [];
+                    $message = 'Renewal application is now open. Deadline: ' . $form->deadline;
+
+                    foreach ($users as $user) {
+                        if ($user->notification_preference === 'sms') {
+                            // Send SMS using Movider API
+                            try {
+                                $response = $client->post('https://api.movider.co/v1/sms', [
+                                    'form_params' => [
+                                        'api_key' => $api_key,
+                                        'api_secret' => $api_secret,
+                                        'to' => $user->scPhoneNum,
+                                        'text' => $message,
+                                    ],
+                                ]);
+
+                                $responseBody = $response->getBody()->getContents();
+                                $decodedResponse = json_decode($responseBody, true);
+
+                                Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                                if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                                    $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                                }
+                            } catch (\Exception $e) {
+                                $failedSMS[] = $user->scPhoneNum;
+                                Log::info('Movider SMS Error', ['error' => $e->getMessage()]);
+                            }
+                        } else {
+                            // Send email notification
+                            try {
+                                $user->notify(new RenewalUpdate($form)); // Notify via email
+                            } catch (\Exception $e) {
+                                $failedEmail[] = $user->email; // Track failed emails
+                                Log::info('Email Notification Error', ['error' => $e->getMessage()]);
+                            }
+                        }
+                    }
+
+                    // Log any failed notifications
+                    if (!empty($failedSMS)) {
+                        Log::warning('Failed to send SMS to:', $failedSMS);
+                    }
+                    if (!empty($failedEmail)) {
+                        Log::warning('Failed to send emails to:', $failedEmail);
+                    }
+                }
+
+
                 return redirect()->back()->with('success', "{$formname} application is now open.");
             } else {
                 return redirect()->back()->with('success', "{$formname} application is now closed.");
@@ -321,6 +385,53 @@ class StaffController extends Controller
             $scholar->scholarshipstatus = $request->scholarshipstatus;
             $scholar->save();
 
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            $user = User::where('caseCode', $caseCode)->first();
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'Scholarshipt Status Update';
+
+            if ($user->notification_preference === 'sms') {
+                // Send the SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->scPhoneNum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $responseBody = $response->getBody()->getContents();
+                    $decodedResponse = json_decode($responseBody, true);
+
+                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                    // Check if phone_number_list is an array and not empty
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                    }
+                } catch (\Exception $e) {
+                    // Catch and handle any exception
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                }
+            } else {
+                // Send an email notification
+                try {
+                    $user->notify(new ScholarshipStatus($scholar));
+                } catch (\Exception $e) {
+                    // If email notification failed, add to failed list
+                    $failedEmail[] = $user->email;
+                }
+            }
             DB::commit();
             return redirect()->back()->with('success', 'Successfully updated scholarship status.');
         } catch (\Exception $e) {
@@ -352,6 +463,55 @@ class StaffController extends Controller
                 ->where('conditionid', $gid)->exists();
 
             $scholarshipinfo = scholarshipinfo::where('caseCode', $grade->caseCode)->first();
+
+
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            $user = User::where('caseCode', $grade->caseCode)->first();
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'Updated Grade Status';
+
+            if ($user->notification_preference === 'sms') {
+                // Send the SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->scPhoneNum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $responseBody = $response->getBody()->getContents();
+                    $decodedResponse = json_decode($responseBody, true);
+
+                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                    // Check if phone_number_list is an array and not empty
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                    }
+                } catch (\Exception $e) {
+                    // Catch and handle any exception
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                }
+            } else {
+                // Send an email notification
+                try {
+                    $user->notify(new GradeUpdate($grade));
+                } catch (\Exception $e) {
+                    // If email notification failed, add to failed list
+                    $failedEmail[] = $user->email;
+                }
+            }
 
             // Check if the grade status is neither "Passed" nor "Pending"
             if ($request->gradestatus != 'Passed' && $request->gradestatus != 'Pending' && !$lteExists) {
@@ -430,6 +590,55 @@ class StaffController extends Controller
             $scinfo = scholarshipinfo::where('caseCode', $letter->caseCode)->first();
             $scholar = User::where('caseCode', $letter->caseCode)->first();
 
+
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            $user = User::where('caseCode', $letter->caseCode)->first();
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'lte status update';
+
+            if ($user->notification_preference === 'sms') {
+                // Send the SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->scPhoneNum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $responseBody = $response->getBody()->getContents();
+                    $decodedResponse = json_decode($responseBody, true);
+
+                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                    // Check if phone_number_list is an array and not empty
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                    }
+                } catch (\Exception $e) {
+                    // Catch and handle any exception
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                }
+            } else {
+                // Send an email notification
+                try {
+                    $user->notify(new LteStatusUpdate($letter));
+                } catch (\Exception $e) {
+                    // If email notification failed, add to failed list
+                    $failedEmail[] = $user->email;
+                }
+            }
+
             if (in_array($letter->violation, ['Late', 'Absent', 'Left Early', 'Cancelled'])) {
                 $condition = $letter->violation . ' in ' . $letter->eventtype;
             } else {
@@ -466,6 +675,54 @@ class StaffController extends Controller
                         'scholarshipstatus' => 'Terminated',
                         'updated_at' => now() // Ensure the timestamp is updated
                     ]);
+
+                    $api_key = env('MOVIDER_API_KEY');
+                    $api_secret = env('MOVIDER_API_SECRET');
+
+                    $user = User::where('caseCode', $letter->caseCode)->first();
+
+                    // Initialize the Guzzle client
+                    $client = new \GuzzleHttp\Client();
+
+                    // Track failed SMS and failed email notifications
+                    $failedSMS = [];
+                    $failedEmail = [];
+                    $message = 'scholarship status update';
+
+                    if ($user->notification_preference === 'sms') {
+                        // Send the SMS using the Movider API
+                        try {
+                            $response = $client->post('https://api.movider.co/v1/sms', [
+                                'form_params' => [
+                                    'api_key' => $api_key,
+                                    'api_secret' => $api_secret,
+                                    'to' => $user->scPhoneNum,
+                                    'text' => $message,
+                                ],
+                            ]);
+
+                            $responseBody = $response->getBody()->getContents();
+                            $decodedResponse = json_decode($responseBody, true);
+
+                            Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                            // Check if phone_number_list is an array and not empty
+                            if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                                $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                            }
+                        } catch (\Exception $e) {
+                            // Catch and handle any exception
+                            $failedSMS[] = $user->scPhoneNum;
+                            Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                        }
+                    } else {
+                        // Send an email notification
+                        try {
+                            $user->notify(new LteStatusUpdate($scinfo));
+                        } catch (\Exception $e) {
+                            // If email notification failed, add to failed list
+                            $failedEmail[] = $user->email;
+                        }
+                    }
                 }
 
                 if (
@@ -475,6 +732,54 @@ class StaffController extends Controller
                     if ($scinfo) {
                         $scinfo->scholarshipstatus = 'On-Hold';
                         $scinfo->save();
+
+                        $api_key = env('MOVIDER_API_KEY');
+                        $api_secret = env('MOVIDER_API_SECRET');
+
+                        $user = User::where('caseCode', $letter->caseCode)->first();
+
+                        // Initialize the Guzzle client
+                        $client = new \GuzzleHttp\Client();
+
+                        // Track failed SMS and failed email notifications
+                        $failedSMS = [];
+                        $failedEmail = [];
+                        $message = 'scholarship status update';
+
+                        if ($user->notification_preference === 'sms') {
+                            // Send the SMS using the Movider API
+                            try {
+                                $response = $client->post('https://api.movider.co/v1/sms', [
+                                    'form_params' => [
+                                        'api_key' => $api_key,
+                                        'api_secret' => $api_secret,
+                                        'to' => $user->scPhoneNum,
+                                        'text' => $message,
+                                    ],
+                                ]);
+
+                                $responseBody = $response->getBody()->getContents();
+                                $decodedResponse = json_decode($responseBody, true);
+
+                                Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                                // Check if phone_number_list is an array and not empty
+                                if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                                    $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                                }
+                            } catch (\Exception $e) {
+                                // Catch and handle any exception
+                                $failedSMS[] = $user->scPhoneNum;
+                                Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                            }
+                        } else {
+                            // Send an email notification
+                            try {
+                                $user->notify(new LteStatusUpdate($scinfo));
+                            } catch (\Exception $e) {
+                                // If email notification failed, add to failed list
+                                $failedEmail[] = $user->email;
+                            }
+                        }
                     }
                 }
 
@@ -488,6 +793,54 @@ class StaffController extends Controller
             } else if ($request->ltestatus == 'Excused') {
                 $scinfo->scholarshipstatus = 'Continuing';
                 $scinfo->save();
+
+                $api_key = env('MOVIDER_API_KEY');
+                $api_secret = env('MOVIDER_API_SECRET');
+
+                $user = User::where('caseCode', $letter->caseCode)->first();
+
+                // Initialize the Guzzle client
+                $client = new \GuzzleHttp\Client();
+
+                // Track failed SMS and failed email notifications
+                $failedSMS = [];
+                $failedEmail = [];
+                $message = 'scholarship status update';
+
+                if ($user->notification_preference === 'sms') {
+                    // Send the SMS using the Movider API
+                    try {
+                        $response = $client->post('https://api.movider.co/v1/sms', [
+                            'form_params' => [
+                                'api_key' => $api_key,
+                                'api_secret' => $api_secret,
+                                'to' => $user->scPhoneNum,
+                                'text' => $message,
+                            ],
+                        ]);
+
+                        $responseBody = $response->getBody()->getContents();
+                        $decodedResponse = json_decode($responseBody, true);
+
+                        Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                        // Check if phone_number_list is an array and not empty
+                        if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                            $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                        }
+                    } catch (\Exception $e) {
+                        // Catch and handle any exception
+                        $failedSMS[] = $user->scPhoneNum;
+                        Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                    }
+                } else {
+                    // Send an email notification
+                    try {
+                        $user->notify(new LteStatusUpdate($scinfo));
+                    } catch (\Exception $e) {
+                        // If email notification failed, add to failed list
+                        $failedEmail[] = $user->email;
+                    }
+                }
             }
 
             DB::commit();
@@ -1968,6 +2321,69 @@ class StaffController extends Controller
                 'eventstatus' => $eventstatus
             ]);
 
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            // Get all users
+            $users = User::all();
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'Changes in the community service event';
+
+            foreach ($users as $user) {
+                // Check if the user prefers SMS
+                if ($user->notification_preference === 'sms') {
+                    // Send the SMS using the Movider API
+                    try {
+                        $response = $client->post('https://api.movider.co/v1/sms', [
+                            'form_params' => [
+                                'api_key' => $api_key,
+                                'api_secret' => $api_secret,
+                                'to' => $user->scPhoneNum, // Ensure that the user has a valid phone number
+                                'text' => $message,
+                            ],
+                        ]);
+
+                        $responseBody = $response->getBody()->getContents();
+                        $decodedResponse = json_decode($responseBody, true);
+
+                        Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+
+                        // Check if phone_number_list is an array and not empty
+                        if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                            $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                        }
+                    } catch (\Exception $e) {
+                        // Catch and handle any exception related to SMS
+                        $failedSMS[] = $user->scPhoneNum;
+                        Log::info('Movider SMS Error', ['error' => $e->getMessage()]);
+                    }
+                } else {
+                    // Send an email notification if not SMS
+                    try {
+                        $user->notify(new EventUpdate($event)); // Ensure the EventUpdate notification is correct
+                    } catch (\Exception $e) {
+                        // If email notification failed, add to failed list
+                        $failedEmail[] = $user->email;
+                        Log::info('Email Notification Error', ['error' => $e->getMessage()]);
+                    }
+                }
+            }
+
+            // After the loop, you can handle failed SMS and email notifications as needed.
+            if (!empty($failedSMS)) {
+                Log::warning('Failed to send SMS to the following numbers:', $failedSMS);
+            }
+
+            if (!empty($failedEmail)) {
+                Log::warning('Failed to send emails to the following addresses:', $failedEmail);
+            }
+
             return redirect()->route('communityservice')->with('success', 'Activity created successfully.');
         } catch (ValidationException $e) {
             DB::rollback();
@@ -2011,11 +2427,80 @@ class StaffController extends Controller
                 'eventstatus' => $request->eventstatus
             ]);
 
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            // Get all users
+            $users = User::all();
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'Changes in the community service event';
+
+            foreach ($users as $user) {
+                // Check if the user prefers SMS
+                if ($user->notification_preference === 'sms') {
+                    // Send the SMS using the Movider API
+                    try {
+                        $response = $client->post('https://api.movider.co/v1/sms', [
+                            'form_params' => [
+                                'api_key' => $api_key,
+                                'api_secret' => $api_secret,
+                                'to' => $user->scPhoneNum, // Ensure that the user has a valid phone number
+                                'text' => $message,
+                            ],
+                        ]);
+
+                        $responseBody = $response->getBody()->getContents();
+                        $decodedResponse = json_decode($responseBody, true);
+
+                        Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+
+                        // Check if phone_number_list is an array and not empty
+                        if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                            $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                        }
+                    } catch (\Exception $e) {
+                        // Catch and handle any exception related to SMS
+                        $failedSMS[] = $user->scPhoneNum;
+                        Log::info('Movider SMS Error', ['error' => $e->getMessage()]);
+                    }
+                } else {
+                    // Send an email notification if not SMS
+                    try {
+                        $user->notify(new EventUpdate($event)); // Ensure the EventUpdate notification is correct
+                    } catch (\Exception $e) {
+                        // If email notification failed, add to failed list
+                        $failedEmail[] = $user->email;
+                        Log::info('Email Notification Error', ['error' => $e->getMessage()]);
+                    }
+                }
+            }
+
+            // After the loop, you can handle failed SMS and email notifications as needed.
+            if (!empty($failedSMS)) {
+                Log::warning('Failed to send SMS to the following numbers:', $failedSMS);
+            }
+
+            if (!empty($failedEmail)) {
+                Log::warning('Failed to send emails to the following addresses:', $failedEmail);
+            }
+
+
             return redirect()->back()->with('success', 'Successfully updated activity details.');
         } catch (ValidationException $e) {
             DB::rollback();
             return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
+            Log::error('Error updating community service event: ' . $e->getMessage(), [
+                'stack' => $e->getTraceAsString(),
+                'csid' => $csid,
+                'request' => $request->all()
+            ]);
             return redirect()->back()->with('failure', 'Updating activity details was unsuccessful.');
         }
     }
@@ -2282,7 +2767,7 @@ class StaffController extends Controller
 
                 $attendanceinfo = hcattendance::where('caseCode', $absent->caseCode)->where('hcid', $hcid)->first();
 
-                lte::create([
+                $lte = lte::create([
                     'caseCode' => $absent->caseCode,
                     'violation' => 'Absent',
                     'conditionid' => $attendanceinfo->hcaid,
@@ -2297,6 +2782,55 @@ class StaffController extends Controller
                     'workername' => strtoupper($worker->name) . ", RSW",
                 ]);
             }
+
+            $api_key = env('MOVIDER_API_KEY');
+            $api_secret = env('MOVIDER_API_SECRET');
+
+            $user = User::where('caseCode', $attendees->caseCode)->first();
+
+            // Initialize the Guzzle client
+            $client = new \GuzzleHttp\Client();
+
+            // Track failed SMS and failed email notifications
+            $failedSMS = [];
+            $failedEmail = [];
+            $message = 'absent';
+
+            if ($user->notification_preference === 'sms') {
+                // Send the SMS using the Movider API
+                try {
+                    $response = $client->post('https://api.movider.co/v1/sms', [
+                        'form_params' => [
+                            'api_key' => $api_key,
+                            'api_secret' => $api_secret,
+                            'to' => $user->scPhoneNum,
+                            'text' => $message,
+                        ],
+                    ]);
+
+                    $responseBody = $response->getBody()->getContents();
+                    $decodedResponse = json_decode($responseBody, true);
+
+                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
+                    // Check if phone_number_list is an array and not empty
+                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
+                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
+                    }
+                } catch (\Exception $e) {
+                    // Catch and handle any exception
+                    $failedSMS[] = $user->scPhoneNum;
+                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
+                }
+            } else {
+                // Send an email notification
+                try {
+                    $user->notify(new LteAnnouncementCreated($lte));
+                } catch (\Exception $e) {
+                    // If email notification failed, add to failed list
+                    $failedEmail[] = $user->email;
+                }
+            }
+
 
             DB::commit();
 
