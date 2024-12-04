@@ -41,6 +41,7 @@ class RenewalUpdate extends Notification
             ->subject('Renewal Application Now Open')
             ->greeting('Greetings!')
             ->line("We are pleased to inform you that the renewal application for your scholarship is now open.")
+            ->line("**Deadline for Submission**: " . $this->form->endate->format('F j, Y')) // Format the deadline date nicely
             ->line("Please ensure that you submit all the required documents (e.g., report card, utility bill, reflection paper, etc.) before the deadline.")
             ->line("Status: " . $this->form->scholarshipstatus) // Current scholarship status
             ->action('Start Your Renewal', url('/roleselection')) // Link to the renewal page

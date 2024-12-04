@@ -311,8 +311,7 @@ class StaffController extends Controller
 
             if ($status == 'Open') {
 
-
-                if ($form->formname == 'Renewal') {
+                if ($formname == 'Renewal') {
 
                     $api_key = env('MOVIDER_API_KEY');
                     $api_secret = env('MOVIDER_API_SECRET');
