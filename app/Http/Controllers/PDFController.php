@@ -107,6 +107,9 @@ class PDFController extends Controller
 
         // Generate the PDF using Browsershot and save it
         $pdf = Browsershot::html($template)
+            ->setOption('args', ['--disable-web-security'])
+            ->ignoreHttpsErrors()
+            ->noSandbox()
             ->setNodeBinary('/usr/bin/node')
             ->setNpmBinary('/usr/bin/npm')
             ->setChromePath('/usr/bin/chromium-browser')
