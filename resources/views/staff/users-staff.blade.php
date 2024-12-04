@@ -22,16 +22,18 @@
 
     <div class="ctnmain">
         <span class="text-success fw-bold h2">Manage Staff Accounts</span>
-        <div class="groupA">
-            <form action="#" class="searchbar">
-                <input type="search" placeholder="Search" id="insearch" required>
-                <button type="submit" id="btnsearch">
-                    <i class="fas fa-magnifying-glass"></i>
+        <div class="row justify-content-between align-items-center my-3">
+            <!-- Search bar -->
+            <div class="col-md-3">
+                <input type="search" placeholder="Search" class="form-control border-success" id="searchInput">
+            </div>
+            <div class="col-auto">
+                <!-- Create New Account Button -->
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createAccountModal">
+                    Create New Account
                 </button>
-            </form>
-            <button id="btncreateacct" onclick="toggleform()">Create Account</button>
+            </div>
         </div>
-
         <div class="ctntable table-responsive">
             <table class="table table-bordered" id="tblpenalty">
                 <thead>
@@ -56,17 +58,17 @@
                                     <form method="POST" action="{{ route('staff.activate', $staff->id) }}"
                                         style="display:inline;">
                                         @csrf
-                                        <button type="submit" class="btn btn-success">Activate</button>
+                                        <button type="submit" class="btn btn-sm btn-success">Activate</button>
                                     </form>
                                 @else
                                     <form method="POST" action="{{ route('staff.deactivate', $staff->id) }}"
                                         style="display:inline;">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger">Deactivate</button>
+                                        <button type="submit" class="btn btn-sm btn-danger">Deactivate</button>
                                     </form>
                                 @endif
                                 <!-- View button -->
-                                <a href="{{ route('staff.view', $staff->id) }}" class="btn btn-primary">View</a>
+                                <a href="{{ route('staff.view', $staff->id) }}" class="btn btn-sm btn-primary">View</a>
                             </td>
                         </tr>
                     @endforeach
@@ -78,54 +80,73 @@
         </div>
     </div>
 
-    <!-- Account Creation Form -->
-    <form method="POST" action="{{ route('staccount.create') }}" id="formcreateacct">
-        @csrf <!-- Add CSRF token for security -->
-        <div class="formheader">
-            <span id="formtitle">Create New Account</span>
-            <button type="button" id="btncloseform" onclick="toggleform()"><i class="fas fa-xmark"></i></button>
+    <!-- Create Account Modal -->
+    <div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" action="{{ route('staccount.create') }}" class="modal-content">
+                @csrf <!-- Add CSRF token for security -->
+                <div class="modal-header bg-success text-white fw-bold">
+                    <h5 class="modal-title" id="createAccountModalLabel">Create New Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Staff Name</label>
+                        <input type="text" name="name" id="name" class="form-control border-success"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" name="email" id="email" class="form-control border-success"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <select name="role" id="role" class="form-control border-success" required>
+                            <option value="" disabled selected>Select a Role</option>
+                            <option value="Social Worker">Social Worker</option>
+                            <option value="System Admin">System Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="area" class="form-label">Area</label>
+                        <select name="area" id="area" class="form-control border-success" required>
+                            <option value="" disabled selected>Select an Area</option>
+                            <option value="Mindong">Mindong</option>
+                            <option value="Minxi">Minxi</option>
+                            <option value="Minzhong">Minzhong</option>
+                            <option value="Bicol">Bicol</option>
+                            <option value="Davao">Davao</option>
+                            <option value="Iloilo">Iloilo</option>
+                            <option value="Palo">Palo</option>
+                            <option value="Zamboanga">Zamboanga</option>
+                            <option value="Not Applicable">Not Applicable</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create</button>
+                </div>
+            </form>
         </div>
-        <div class="formcontent">
-            <span id="reminder">
-                The system will automatically send an email containing the user's account
-                credentials to the provided email address upon successful account creation.
-                Please verify that the email address is correct and active to ensure receipt
-                of this information.
-            </span>
-            <div class="groupC">
-                <span class="formlabel">Staff Name</span>
-                <input type="text" name="name" class="forminput" id="name">
-            </div>
-            <div class="groupC">
-                <span class="formlabel">Email Address</span>
-                <input type="email" name="email" class="forminput" id="email">
-            </div>
-            <div class="groupC">
-                <span class="formlabel">Role</span>
-                <select name="role" id="role" class="forminput">
-                    <option value="" disabled selected>Select a Role</option>
-                    <option value="Social Worker">Social Worker</option>
-                    <option value="System Admin">System Admin</option>
-                </select>
-            </div>
-            <div class="groupC">
-                <span class="formlabel">Area</span>
-                <select name="area" id="area" class="forminput" required>
-                    <option value="" disabled selected>Select an Area</option>
-                    <option value="Mindong">Mindong</option>
-                    <option value="Minxi">Minxi</option>
-                    <option value="Minzhong">Minzhong</option>
-                    <option value="Bicol">Bicol</option>
-                    <option value="Davao">Davao</option>
-                    <option value="Iloilo">Iloilo</option>
-                    <option value="Palo">Palo</option>
-                    <option value="Zamboanga">Zamboanga</option>
-                    <option value="Not Applicable">Not Applicable</option>
-                </select>
-            </div>
-            <button type="submit" id="btncreate">Create</button>
-        </div>
-    </form>
+    </div>
+
+    <!-- JavaScript for Search Bar -->
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function() {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('#tblpenalty tbody tr');
+
+            rows.forEach(row => {
+                let cells = Array.from(row.getElementsByTagName('td'));
+                let match = cells.some(cell => cell.textContent.toLowerCase().includes(filter));
+                row.style.display = match ? '' : 'none';
+            });
+        });
+    </script>
+
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/crud.js') }}"></script>

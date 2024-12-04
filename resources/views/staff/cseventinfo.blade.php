@@ -23,7 +23,7 @@
     <div class="ctnmain">
         <div class="groupA">
             <span class="pagetitle">Community Service Details</span>
-            <a href="{{ route('communityservice') }}" id="btngoback">Go back</a>
+            <a href="{{ route('communityservice') }}" class="btn btn-success">Go back</a>
         </div>
 
         <form class="groupB" method="POST" action="{{ route('updatecsevent', $event->csid) }}"

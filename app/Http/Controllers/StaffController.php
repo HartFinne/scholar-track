@@ -2964,25 +2964,25 @@ class StaffController extends Controller
 
             $worker = Auth::guard('staff')->user();
 
+            // Mark attendees with timeout
             hcattendance::where('hcid', $hcid)
                 ->whereNull('timeout')
                 ->update(['timeout' => Carbon::now(new \DateTimeZone('Asia/Manila'))]);
 
+            // Update event status
             $event = humanitiesclass::where('hcid', $hcid)->first();
             $event->status = 'Done';
             $event->save();
 
             // Get list of attendees' caseCodes
-            $attendees = hcattendance::where('hcid', $hcid)
-                ->pluck('caseCode');
+            $attendees = hcattendance::where('hcid', $hcid)->pluck('caseCode')->toArray();
 
             // Get list of absentees whose caseCode is not in the attendees
-            $absentees = User::whereNotIn('caseCode', $attendees->toArray())
-                ->get();
+            $absentees = User::whereNotIn('caseCode', $attendees)->get();
 
-            // Iterate over each absentee and create a new attendance record marking them as absent
             foreach ($absentees as $absent) {
-                hcattendance::create([
+                // Create attendance record for absentees
+                $attendanceRecord = hcattendance::create([
                     'hcid' => $hcid,
                     'caseCode' => $absent->caseCode,
                     'timein' => null,
@@ -2993,81 +2993,73 @@ class StaffController extends Controller
 
                 $event->increment('totalabsentees', 1);
 
-                $attendanceinfo = hcattendance::where('caseCode', $absent->caseCode)->where('hcid', $hcid)->first();
-
+                // Create an LTE record for the absentee
                 $lte = lte::create([
                     'caseCode' => $absent->caseCode,
                     'violation' => 'Absent',
-                    'conditionid' => $attendanceinfo->hcaid,
+                    'conditionid' => $attendanceRecord->hcaid,
                     'eventtype' => "Humanities Class",
                     'dateissued' => $event->hcdate,
                     'deadline' => Carbon::parse($event->hcdate)->addDays(3),
-                    'datesubmitted' => NULL,
-                    'reason' => NULL,
-                    'explanation' => NULL,
-                    'proof' => NULL,
+                    'datesubmitted' => null,
+                    'reason' => null,
+                    'explanation' => null,
+                    'proof' => null,
                     'ltestatus' => 'No Response',
                     'workername' => strtoupper($worker->name) . ", RSW",
                 ]);
+
+                // Notify absentee via SMS or email
+                $this->notifyAbsentee($absent, $lte, $worker);
             }
-
-            $api_key = env('MOVIDER_API_KEY');
-            $api_secret = env('MOVIDER_API_SECRET');
-
-            $user = User::where('caseCode', $attendees->caseCode)->first();
-
-            // Initialize the Guzzle client
-            $client = new \GuzzleHttp\Client();
-
-            // Track failed SMS and failed email notifications
-            $failedSMS = [];
-            $failedEmail = [];
-            $message = 'absent';
-
-            if ($user->notification_preference === 'sms') {
-                // Send the SMS using the Movider API
-                try {
-                    $response = $client->post('https://api.movider.co/v1/sms', [
-                        'form_params' => [
-                            'api_key' => $api_key,
-                            'api_secret' => $api_secret,
-                            'to' => $user->scPhoneNum,
-                            'text' => $message,
-                        ],
-                    ]);
-
-                    $responseBody = $response->getBody()->getContents();
-                    $decodedResponse = json_decode($responseBody, true);
-
-                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
-                    // Check if phone_number_list is an array and not empty
-                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
-                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
-                    }
-                } catch (\Exception $e) {
-                    // Catch and handle any exception
-                    $failedSMS[] = $user->scPhoneNum;
-                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
-                }
-            } else {
-                // Send an email notification
-                try {
-                    $user->notify(new LteAnnouncementCreated($lte));
-                } catch (\Exception $e) {
-                    // If email notification failed, add to failed list
-                    $failedEmail[] = $user->email;
-                }
-            }
-
 
             DB::commit();
 
             return redirect()->back()->with('success', "{$event->topic} has been successfully closed.");
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Attempt to save event has failed');
+            return redirect()->back()->with('failure', 'Attempt to save event has failed: ' . $e->getMessage());
         }
     }
+
+    private function notifyAbsentee($user, $lte, $worker)
+    {
+        $api_key = env('MOVIDER_API_KEY');
+        $api_secret = env('MOVIDER_API_SECRET');
+        $client = new \GuzzleHttp\Client();
+        $message = 'absent';
+        $failedSMS = [];
+        $failedEmail = [];
+
+        if ($user->notification_preference === 'sms') {
+            try {
+                $response = $client->post('https://api.movider.co/v1/sms', [
+                    'form_params' => [
+                        'api_key' => $api_key,
+                        'api_secret' => $api_secret,
+                        'to' => $user->scPhoneNum,
+                        'text' => $message,
+                    ],
+                ]);
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if (!isset($responseBody['phone_number_list']) || !is_array($responseBody['phone_number_list']) || empty($responseBody['phone_number_list'])) {
+                    $failedSMS[] = $user->scPhoneNum;
+                }
+            } catch (\Exception $e) {
+                $failedSMS[] = $user->scPhoneNum;
+                Log::error('Movider SMS Error', ['exception' => $e->getMessage()]);
+            }
+        } else {
+            try {
+                $user->notify(new LteAnnouncementCreated($lte));
+            } catch (\Exception $e) {
+                $failedEmail[] = $user->email;
+                Log::error('Email Notification Error', ['exception' => $e->getMessage()]);
+            }
+        }
+    }
+
 
     public function checkouthc($hcaid)
     {

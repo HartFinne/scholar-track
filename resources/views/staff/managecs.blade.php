@@ -23,7 +23,9 @@
     <x-alert />
 
     <div class="ctnmain">
-        <span class="text-success fw-bold h2">Community Service Overview</span>
+        <div class="row">
+            <span class="text-success fw-bold h2">Community Service Overview</span>
+        </div>
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total CS Events</span>
@@ -46,15 +48,23 @@
         </div>
         <div class="divider"></div>
         <span class="text-success fw-bold h2">List of Activities</span>
-        <div class="row gx-0 align-items-center">
-            <div class="col-md-1">
-                <button class="filter btn btn-sm btn-success w-100" id="toggleAll">All</button>
+        <div class="row justify-content-between align-items-center">
+            <div class="row col-auto">
+                <div class="col-auto">
+                    <button class="filter btn btn-sm btn-success w-100" id="toggleAll">All</button>
+                </div>
+                <div class="col-auto mx-1">
+                    <button class="filter btn btn-sm btn-outline-success w-100" id="toggleOpen">Open</button>
+                </div>
+                <div class="col-auto">
+                    <button class="filter btn btn-sm btn-outline-success w-100" id="toggleClosed">Closed</button>
+                </div>
             </div>
-            <div class="col-md-1 mx-1">
-                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleOpen">Open</button>
-            </div>
-            <div class="col-md-1">
-                <button class="filter btn btn-sm btn-outline-success w-100" id="toggleClosed">Closed</button>
+            <div class="col-auto">
+                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal"
+                    data-bs-target="#ctneventform">
+                    Add New Activity
+                </button>
             </div>
         </div>
         <div class="ctn" id="allEvents">
@@ -173,49 +183,65 @@
         </div>
     </div>
 
-    <div class="groupC" id="ctneventform" style="display: none;">
-        <div class="groupC1">
-            <span class="formtitle">Add new activity</span>
-            <button id="btnclose" onclick="toggleeventform()"><i class="fas fa-xmark"></i></button>
-        </div>
-        <form method="POST" action="{{ route('createcsevent') }}" enctype="multipart/form-data">
-            @csrf
-            <div class="groupC2">
-                <div class="groupC3">
-                    <label>Title</label>
-                    <input type="text" name="title" required>
+    <div class="modal fade" id="ctneventform" tabindex="-1" aria-labelledby="ctneventformLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white fw-bold">
+                    <h5 class="modal-title" id="ctneventformLabel">Add New Activity</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="groupC3">
-                    <label>Evect Location</label>
-                    <input type="text" name="eventloc" required>
-                </div>
-                <div class="groupC3">
-                    <label>Event Date</label>
-                    <input type="date" name="eventdate" required>
-                </div>
-                <div class="groupC3">
-                    <label>Start Time</label>
-                    <input type="time" name="starttime" required>
-                </div>
-                <div class="groupC3">
-                    <label>Meeting Place</label>
-                    <input type="text" name="meetingplace" required>
-                </div>
-                <div class="groupC3">
-                    <label>Call Time</label>
-                    <input type="time" name="calltime" required>
-                </div>
-                <div class="groupC3">
-                    <label>Facilitator Name</label>
-                    <input type="text" name="facilitator" required>
-                </div>
-                <div class="groupC3">
-                    <label>Number of Volunteers Needed</label>
-                    <input type="number" name="slotnum" required>
-                </div>
-                <button type="submit" id="btnpost">Post</button>
+                <form method="POST" action="{{ route('createcsevent') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body row">
+                        <div class="col-md-6 mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control border-success" id="title" name="title"
+                                required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="eventdate" class="form-label">Event Date</label>
+                            <input type="date" class="form-control border-success" id="eventdate"
+                                name="eventdate" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="eventloc" class="form-label">Event Location</label>
+                            <input type="text" class="form-control border-success" id="eventloc" name="eventloc"
+                                required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="starttime" class="form-label">Start Time</label>
+                            <input type="time" class="form-control border-success" id="starttime"
+                                name="starttime" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="meetingplace" class="form-label">Meeting Place</label>
+                            <input type="text" class="form-control border-success" id="meetingplace"
+                                name="meetingplace" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="calltime" class="form-label">Call Time</label>
+                            <input type="time" class="form-control border-success" id="calltime" name="calltime"
+                                required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="facilitator" class="form-label">Facilitator Name</label>
+                            <input type="text" class="form-control border-success" id="facilitator"
+                                name="facilitator" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="slotnum" class="form-label">Number of Volunteers Needed</label>
+                            <input type="number" class="form-control border-success" id="slotnum" name="slotnum"
+                                required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Post</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
