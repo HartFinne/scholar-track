@@ -38,7 +38,7 @@
                     <a href="{{ route('scholar-login') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2"
                         type="submit">Scholar</a>
                     <a href="{{ route('login-sw') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2"
-                        type="submit">Admin</a>
+                        type="submit">Staff</a>
 
                     <a href="{{ route('login-applicant') }}" class="btn btn-outline-secondary bnt-lg w-100 m-2"
                         type="submit">Applicant</a>

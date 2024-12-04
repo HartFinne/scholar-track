@@ -171,8 +171,6 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/allowance-requests-regular-details', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
     // Route::get('/allowance-requests-regular-details/{id}', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
     Route::view('/viewregularform', 'staff.viewregularform')->name('viewregulardetails');
-
-
     Route::post('/update-requests-regular/{id}', [StaffController::class, 'updateRegularAllowance'])->name('update-requests-regular.post');
     // ALLOWANCE REQUESTS - SPECIAL
     Route::get('/allowance-requests-special', [StaffController::class, 'showAllowanceSpecial'])->name('allowancerequests-special');
@@ -202,8 +200,16 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/renewal', [StaffController::class, 'showRenewal'])->name('scholarshiprenewal');
     Route::get('/renewal-info/{id}', [StaffController::class, 'showRenewalinfo'])->name('renewalinfo');
     Route::post('/update-renewal-info/{id}', [StaffController::class, 'updateRenewalInfo'])->name('updateRenewalInfo');
+    // APPLICANTS
+    Route::get('/applicants', [StaffController::class, 'showApplicants'])->name('applicants');
+    Route::get('/applicant-info/{casecode}', [StaffController::class, 'showapplicantinfo'])->name('applicantinfo');
+    Route::post('/applicant-info/{casecode}/update-status', [StaffController::class, 'updateapplicantstatus'])->name('updateapplicantstatus');
+    Route::post('/applicant-info/{casecode}/update-case-details', [StaffController::class, 'updateapplicantcd'])->name('updateapplicantcd');
+});
+
+Route::prefix('admin')->middleware('staff')->group(function () {
     // SYSTEM ADMIN
-    Route::get('/dashboard-admin', [StaffController::class, 'showDashboard'])->name('dashboard');
+    Route::get('/dashboard', [StaffController::class, 'showDashboard'])->name('dashboard');
     Route::get('/users-scholar', [StaffController::class, 'showUsersScholar'])->name('users-scholar');
     Route::get('/users-staff', [StaffController::class, 'showUserStaff'])->name('users-staff');
     Route::get('/users-applicants', [StaffController::class, 'showUserApplicants'])->name('users-applicant');
@@ -218,10 +224,6 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/scholar/activate/{id}', [StaffController::class, 'activateScholar'])->name('scholar.activate');
     Route::post('/scholar/deactivate/{id}', [StaffController::class, 'deactivateScholar'])->name('scholar.deactivate');
     // USER: APPLICANTS
-    Route::get('/applicants', [StaffController::class, 'showApplicants'])->name('applicants');
-    Route::get('/applicant-info/{casecode}', [StaffController::class, 'showapplicantinfo'])->name('applicantinfo');
-    Route::post('/applicant-info/{casecode}/update-status', [StaffController::class, 'updateapplicantstatus'])->name('updateapplicantstatus');
-    Route::post('/applicant-info/{casecode}/update-case-details', [StaffController::class, 'updateapplicantcd'])->name('updateapplicantcd');
     Route::get('/applicant-account-info/{apid}', [StaffController::class, 'showapplicantaccount'])->name('applicant.view');
     Route::post('/applicant/activate/{apid}', [StaffController::class, 'activateapplicant'])->name('applicant.activate');
     Route::post('/applicant/deactivate/{apid}', [StaffController::class, 'deactivateapplicant'])->name('applicant.deactivate');
