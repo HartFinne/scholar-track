@@ -134,8 +134,10 @@ class StaffController extends Controller
         } else {
             if ($applicant->educelemhs->schoollevel == 'Elementary') {
                 $form = applicationforms::where('formname', 'College')->first();
-            } else {
-                $form = applicationforms::where('formname', 'High School')->first();
+            } else if ($applicant->educelemhs->schoollevel == 'Junior High') {
+                $form = applicationforms::where('formname', 'Junior High')->first();
+            } else if ($applicant->educelemhs->schoollevel == 'Senior High') {
+                $form = applicationforms::where('formname', 'Senior High')->first();
             }
         }
 
