@@ -90,7 +90,7 @@ class PDFController extends Controller
             ->where('relationship', 'Mother')->first();
         $siblings = apfamilyinfo::where('casecode', $casecode)
             ->where('relationship', 'Sibling')->get();
-        $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
+        $iscollege = apceducation::where('casecode', $casecode)->exists();
 
         $data = [
             'title' => 'Application Form',
