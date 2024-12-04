@@ -90,7 +90,7 @@ class PDFController extends Controller
             ->where('relationship', 'Mother')->first();
         $siblings = apfamilyinfo::where('casecode', $casecode)
             ->where('relationship', 'Sibling')->get();
-        $iscollege = apceducation::where('casecode', $casecode)->first()->exists();
+        $iscollege = apceducation::where('casecode', $casecode)->exists();
 
         $data = [
             'title' => 'Application Form',
@@ -107,12 +107,10 @@ class PDFController extends Controller
 
         // Generate the PDF using Browsershot and save it
         $pdf = Browsershot::html($template)
-            ->setOption('args', ['--disable-web-security'])
+            ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
             ->ignoreHttpsErrors()
-            ->noSandbox()
             ->setNodeBinary('/usr/bin/node')
             ->setNpmBinary('/usr/bin/npm')
-            ->setChromePath('/usr/bin/chromium-browser')
             ->showBackground()
             ->margins(2, 4, 10, 4)
             ->format('Letter')

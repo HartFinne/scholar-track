@@ -186,7 +186,7 @@
                                 <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}
                                 </td>
                                 <td class="text-center align-middle">{{ $applicant->name }}</td>
-                                <td class="text-center align-middle">{{ $applicant->educcollege->ingrade }}</td>
+                                <td class="text-center align-middle">{{ $applicant->educelemhs->ingrade }}</td>
                                 <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('applicantinfo', $applicant->casecode) }}"
@@ -226,7 +226,7 @@
                                 <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}
                                 </td>
                                 <td class="text-center align-middle">{{ $applicant->name }}</td>
-                                <td class="text-center align-middle">{{ $applicant->educcollege->ingrade }}</td>
+                                <td class="text-center align-middle">{{ $applicant->educelemhs->ingrade }}</td>
                                 <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('applicantinfo', $applicant->casecode) }}"
@@ -266,7 +266,7 @@
                                 <td class="text-center align-middle">{{ $applicant->created_at->format('F d, Y') }}
                                 </td>
                                 <td class="text-center align-middle">{{ $applicant->name }}</td>
-                                <td class="text-center align-middle">{{ $applicant->educcollege->ingrade }}</td>
+                                <td class="text-center align-middle">{{ $applicant->educelemhs->ingrade }}</td>
                                 <td class="text-center align-middle">{{ $applicant->applicationstatus }}</td>
                                 <td class="text-center align-middle">
                                     <a href="{{ route('applicantinfo', $applicant->casecode) }}"
