@@ -29,8 +29,7 @@
     <div class="ctn-main">
         <div class="text-center">
             <h1 class="sub-title">Grades Submission</h1>
-            <p class="desc">Submit your General Weighted Average (GWA) and the scanned copy of pdf file of your
-                grades.</p>
+            <p class="desc">Upload the scanned copy of PDF file of your Report Card.</p>
         </div>
 
         <form action="{{ route('gradesub.post') }}" class="container text-center" method="POST"
@@ -74,6 +73,11 @@
                             value="{{ $term }}" readonly>
                     </div>
 
+                    <div class="{{ $institution->schoollevel == 'College' ? 'col-md-5' : 'col-md-6' }}">
+                        <label for="grades" class="fw-bold text-left">Copy of Report Card</label>
+                        <input type="file" id="grades" class="form-control" name="gradeImage" 
+                            accept="application/pdf, image/jpeg, image/png" required>
+                    </div>
                     @if ($institution->schoollevel == 'College')
                         <div class="col-md-2 mb-2">
                             <label for="gwa" class="fw-bold text-left">GWA</label>
@@ -85,13 +89,9 @@
                                 step="0.01">
                         </div>
                     @endif
+                </div>
 
-                    <div class="{{ $institution->schoollevel == 'College' ? 'col-md-5' : 'col-md-6' }}">
-                        <label for="grades" class="fw-bold text-left">Copy of Report Card</label>
-                        <input type="file" id="grades" class="form-control" name="gradeImage" 
-                            accept="application/pdf, image/jpeg, image/png" required>
-                    </div>
-
+                <div class="row mb-3">
                     @if ($institution->schoollevel != 'College')
                         <div class="{{ $institution->schoollevel == 'Senior High' ? 'col-md-3' : 'col-md-1' }} mb-2">
                             <label for="genave" class="fw-bold text-left">GWA</label>
@@ -185,7 +185,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" class="btn-submit fw-bold">Submit</button>
+                <button type="submit" class="btn-submit fw-bold mb-3">Submit</button>
             </div>
         </form>
 
@@ -195,12 +195,16 @@
                 <form action="{{ route('gradesub') }}" method="GET" id="filter-form">
                     <button type="submit" name="status" value="all"
                         class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
-                    <button type="submit" name="status" value="Pending"
-                        class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
                     <button type="submit" name="status" value="Passed"
                         class="filter-btn {{ request('status') == 'Passed' ? 'active' : '' }}">Passed</button>
-                    <button type="submit" name="status" value="Failed"
-                        class="filter-btn {{ request('status') == 'Failed' ? 'active' : '' }}">Failed</button>
+                    <button type="submit" name="status" value="Failed GWA"
+                        class="filter-btn {{ request('status') == 'Failed GWA' ? 'active' : '' }}">Failed GWA</button>
+                    @if ($institution->schoollevel != 'College')
+                        <button type="submit" name="status" value="Failed GWA (Chinese Subject)"
+                            class="filter-btn {{ request('status') == 'Failed GWA (Chinese Subject)' ? 'active' : '' }}">Failed GWA (Chinese Subject)</button>
+                    @endif
+                    <button type="submit" name="status" value="Failed Grade in Subject/s"
+                        class="filter-btn {{ request('status') == 'Failed Grade in Subject/s' ? 'active' : '' }}">Failed Grade in Subject/s</button>
                 </form>
             </div>
         </div>

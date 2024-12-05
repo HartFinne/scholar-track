@@ -26,15 +26,15 @@
 
         <form action="{{ route('manageprofile.post') }}" method="POST">
             @csrf
-            <div class="row d-flex justify-content-between align-items-center my-2">
-                <div class="col">
-                    <h1 class="h1 fw-bold">My Profile</h1>
+            <div class="profile">
+                <div>
+                    <h1 class="title fw-bold">My Profile</h1>
                 </div>
-                <div class="col-auto">
+                <div>
                     <button type="submit" class="btn-edit fw-bold">Save Profile</button>
                 </div>
             </div>
-            <div class="card bg-light border border-success p-4">
+            <div class="profile-view">
                 <div class="profile-info">
                     <h5 class="mb-3">SCHOLARSHIP INFORMATION</h5>
                     <div class="container">
@@ -150,23 +150,23 @@
                     <div class="container">
                         <div class="row mb-2">
                             <div class="col-md-2">T-Shirt Size</div>
-                            <div class="col-md-10">{{ $data->clothingSize->scTShirtSize }}</div>
+                            <span class="col-md-10">{{ $data->clothingSize->scTShirtSize }}</span>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">Shoe Size</div>
-                            <div class="col-md-10">{{ $data->clothingSize->scShoesSize }}</div>
+                            <span class="col-md-10">{{ $data->clothingSize->scShoesSize }}</span>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">Slippers Size</div>
-                            <div class="col-md-10">{{ $data->clothingSize->scSlipperSize }}</div>
+                            <span class="col-md-10">{{ $data->clothingSize->scSlipperSize }}</span>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">Pants Size</div>
-                            <div class="col-md-10">{{ $data->clothingSize->scPantsSize }}</div>
+                            <span class="col-md-10">{{ $data->clothingSize->scPantsSize }}</span>
                         </div>
                         <div class="row mb-2">
                             <div class="col-md-2">Jogging Pants Size</div>
-                            <div class="col-md-10">{{ $data->clothingSize->scJoggingPantSize }}</div>
+                            <span class="col-md-10">{{ $data->clothingSize->scJoggingPantSize }}</span>
                         </div>
                     </div>
                 </div>

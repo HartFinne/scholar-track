@@ -87,10 +87,13 @@
 
     .profile {
         display: block;
+        text-align: center;
     }
 
     .btn-edit {
         margin-bottom: 20px;
+        padding: 8px 30px;
+        font-size: 14px;
     }
 
     .profile-view {

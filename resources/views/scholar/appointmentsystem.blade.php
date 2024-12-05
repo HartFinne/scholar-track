@@ -134,8 +134,8 @@
                             class="filter-btn {{ request('status', 'all') == 'all' ? 'active' : '' }}">All</button>
                         <button type="submit" name="status" value="Pending"
                             class="filter-btn {{ request('status') == 'Pending' ? 'active' : '' }}">Pending</button>
-                        <button type="submit" name="status" value="Approved"
-                            class="filter-btn {{ request('status') == 'Approved' ? 'active' : '' }}">Approved</button>
+                        <button type="submit" name="status" value="Accepted"
+                            class="filter-btn {{ request('status') == 'Accepted' ? 'active' : '' }}">Accepted</button>
                         <button type="submit" name="status" value="Completed"
                             class="filter-btn {{ request('status') == 'Completed' ? 'active' : '' }}">Completed</button>
                         <button type="submit" name="status" value="Rejected"

@@ -32,12 +32,12 @@
                 <input type="search" name="search" class="search-input" placeholder="Search"
                     value="{{ request()->input('search') }}">
 
-                <select class="cs-area" aria-label="area">
+                <!-- <select class="cs-area" aria-label="area">
                     <option value="" disabled selected hidden>Select Area</option>
                     <option value="mindong">Mindong</option>
                     <option value="minxi">Minxi</option>
                     <option value="minzhong">Minzhong</option>
-                </select>
+                </select> -->
             </form>
         </div>
 
