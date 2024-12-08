@@ -101,27 +101,12 @@ class PDFController extends Controller
             'iscollege' => $iscollege
         ];
 
-        // Render the Blade view to HTML
-        $template = view('pdf-template', ['data' => $data])->render();
+        // Generate the PDF using DOMPDF and the Blade view
+        $pdf = PDF::loadView('pdf-template', $data)
+            ->setPaper('A4', 'portrait'); // Change to A4 if needed
 
-
-        // Generate the PDF using Browsershot and save it
-        $pdf = Browsershot::html($template)
-            ->setOption('args', ['--no-sandbox', '--disable-setuid-sandbox'])
-            ->ignoreHttpsErrors()
-            ->setNodeBinary('/usr/bin/node')
-            ->setNpmBinary('/usr/bin/npm')
-            ->showBackground()
-            ->margins(2, 4, 10, 4)
-            ->format('Letter')
-            ->logErrors()
-            ->pdf();
-
-        return new Response($pdf, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $applicant->name . '.pdf"', // Correct string interpolation
-            'Content-Length' => strlen($pdf)
-        ]);
+        // Stream the generated PDF in the browser
+        return $pdf->stream($applicant->name . '.pdf');
     }
     // {
     //     $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
