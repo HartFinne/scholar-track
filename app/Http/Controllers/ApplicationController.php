@@ -606,20 +606,24 @@ class ApplicationController extends Controller
                 throw new \Exception("Invalid incoming year provided.");
         }
 
+        // Fetch the latest case code like 'currentYearnextYear-%'
         $latestCase = DB::table('applicants')
             ->where('casecode', 'like', "{$currentYear}{$nextYear}-%")
             ->orderBy('casecode', 'desc')
             ->first();
 
-        $sequenceNumber = 1;
+        $sequenceNumber = 1; // Start from 1 if no records are found
 
         if ($latestCase) {
-            $latestSequence = intval(explode('-', $latestCase->casecode)[1]);
+            // Extract the numeric part of the casecode, assuming it is in the correct format
+            $latestSequence = intval(substr($latestCase->casecode, 5, 5)); // Adjust substring indexes based on expected length
             $sequenceNumber = $latestSequence + 1;
         }
 
+        // Format the sequence number to be zero-padded to 5 digits
         $formattedSequence = str_pad($sequenceNumber, 5, '0', STR_PAD_LEFT);
 
+        // Return the full case code in the specified format
         return "{$currentYear}{$nextYear}-{$formattedSequence}-{$levelCode}";
     }
 
