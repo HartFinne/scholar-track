@@ -21,10 +21,10 @@ return new class extends Migration
             $table->date('scDateOfBirth');
             $table->integer('scAge');
             $table->string('scSex', 10);
-            $table->string('scGuardianName', 50);
-            $table->string('scRelationToGuardian', 50);
-            $table->string('scGuardianEmailAddress', 255);
-            $table->string('scGuardianPhoneNumber', 12);
+            $table->string('scGuardianName', 255)->nullable();
+            $table->string('scRelationToGuardian', 50)->nullable();
+            $table->string('scGuardianEmailAddress', 255)->nullable();
+            $table->string('scGuardianPhoneNumber', 12)->nullable();
             $table->string('scOccupation', 100);
             $table->float('scIncome');
             $table->text('scFblink');

@@ -95,4 +95,9 @@ class applicants extends Authenticatable implements CanResetPassword
     {
         return $this->hasOne(apcasedetails::class, 'casecode', 'casecode');
     }
+
+    public function progress()
+    {
+        return $this->hasMany(approgress::class, 'casecode', 'casecode');
+    }
 }

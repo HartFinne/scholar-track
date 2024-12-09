@@ -56,6 +56,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Exports\SpecialAllowanceFormExport;
+use App\Models\approgress;
 use App\Models\SpecialAllowanceSummary;
 use App\Notifications\appointment;
 use App\Notifications\EventUpdate;
@@ -90,30 +91,36 @@ class StaffController extends Controller
 
     public function showApplicants()
     {
-        $totalapplicants = applicants::get()->count();
-        $applicants = [
-            'college' => applicants::whereHas('educcollege', function ($query) {
-                $query->whereNotNull('casecode');
-            })->orderBy('prioritylevel', 'DESC')->paginate(10),
-            'shs' => applicants::whereHas('educelemhs', function ($query) {
-                $query->where('schoollevel', 'Senior High');
-            })->orderBy('prioritylevel', 'DESC')->paginate(10),
-            'jhs' => applicants::whereHas('educelemhs', function ($query) {
-                $query->where('schoollevel', 'Junior High');
-            })->orderBy('prioritylevel', 'DESC')->paginate(10),
-            'elem' => applicants::whereHas('educelemhs', function ($query) {
-                $query->where('schoollevel', 'Elementary');
-            })->orderBy('prioritylevel', 'DESC')->paginate(10),
+        $applicants = applicants::with('educcollege', 'progress', 'educelemhs')
+            ->orderByRaw("
+            CASE
+                WHEN applicationstatus = 'Under Review' THEN 1
+                WHEN applicationstatus = 'Initial Interview' THEN 2
+                WHEN applicationstatus = 'Home Visit' THEN 3
+                WHEN applicationstatus = 'Panel Interview' THEN 4
+                WHEN applicationstatus = 'Accepted' THEN 5
+                WHEN applicationstatus = 'Denied' THEN 6
+                WHEN applicationstatus = 'Withdrawn' THEN 7
+                ELSE 8
+            END")
+            ->paginate(20);
+
+        $data = [
+            'totalapplicants' => applicants::get()->count(),
+            'review' => applicants::where('applicationstatus', 'Under Review')->count(),
+            'initial' => applicants::where('applicationstatus', 'Initial Interview')->count(),
+            'home' => applicants::where('applicationstatus', 'Home Visit')->count(),
+            'panel' => applicants::where('applicationstatus', 'Panel Interview')->count(),
+            'accepted' => applicants::where('applicationstatus', 'Accepted')->count(),
+            'denied' => applicants::where('applicationstatus', 'Denied')->count(),
+            'withdrawn' => applicants::where('applicationstatus', 'Withdrawn')->count(),
         ];
-        $pending = applicants::whereNotIn('applicationstatus', ['Accepted', 'Rejected', 'Withdrawn'])->count();
-        $accepted = applicants::where('applicationstatus', 'Accepted')->count();
-        $rejected = applicants::where('applicationstatus', 'Rejected')->count();
-        $withdrawn = applicants::where('applicationstatus', 'Withdrawn')->count();
+
         $college = apceducation::get()->count();
         $shs = apeheducation::whereIN('ingrade', ['Grade 11', 'Grade 12'])->get()->count();
         $jhs = apeheducation::whereIN('ingrade', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'])->get()->count();
         $elem = apeheducation::whereIN('ingrade', ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'])->get()->count();
-        return view('staff.applicants', compact('totalapplicants', 'applicants', 'pending', 'accepted', 'rejected', 'withdrawn', 'college', 'shs', 'jhs', 'elem'));
+        return view('staff.applicants', compact('data', 'applicants', 'college', 'shs', 'jhs', 'elem'));
     }
 
     public function showapplicantinfo($casecode)
@@ -121,6 +128,12 @@ class StaffController extends Controller
         $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
             ->where('casecode', $casecode)
             ->first();
+        $progress = [
+            'Under Review' => approgress::where('casecode', $casecode)->where('phase', 'Under Review')->first(),
+            'Initial Interview' => approgress::where('casecode', $casecode)->where('phase', 'Initial Interview')->first(),
+            'Home Visit' => approgress::where('casecode', $casecode)->where('phase', 'Home Visit')->first(),
+            'Panel Interview' => approgress::where('casecode', $casecode)->where('phase', 'Panel Interview')->first(),
+        ];
         $father = apfamilyinfo::where('casecode', $casecode)
             ->where('relationship', 'Father')->first();
         $mother = apfamilyinfo::where('casecode', $casecode)
@@ -141,9 +154,50 @@ class StaffController extends Controller
             }
         }
 
+        $needs = ['Financial', 'Medical', 'Food', 'Material', 'Education'];
+
         $worker = Auth::guard('staff')->user();
 
-        return view('staff.applicant-info', compact('applicant', 'father', 'mother', 'siblings', 'iscollege', 'worker', 'form'));
+        return view('staff.applicant-info', compact('applicant', 'progress', 'needs', 'father', 'mother', 'siblings', 'iscollege', 'worker', 'form'));
+    }
+
+    public function downloadApplicationForm($casecode)
+    {
+        $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
+            ->where('casecode', $casecode)
+            ->first();
+
+        $father = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Father')->first();
+        $mother = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Mother')->first();
+        $siblings = apfamilyinfo::where('casecode', $casecode)
+            ->where('relationship', 'Sibling')->get();
+        $iscollege = apceducation::where('casecode', $casecode)->exists();
+        if ($iscollege) {
+            $form = applicationforms::where('formname', 'College')->first();
+        } else {
+            if ($applicant->educelemhs->schoollevel == 'Elementary') {
+                $form = applicationforms::where('formname', 'College')->first();
+            } else if ($applicant->educelemhs->schoollevel == 'Junior High') {
+                $form = applicationforms::where('formname', 'Junior High')->first();
+            } else if ($applicant->educelemhs->schoollevel == 'Senior High') {
+                $form = applicationforms::where('formname', 'Senior High')->first();
+            }
+        }
+
+        // Prepare the data array with all necessary details
+        $data = [
+            'applicant'  => $applicant,
+            'father'     => $father,
+            'mother'     => $mother,
+            'siblings'   => $siblings,
+            'iscollege'       => $iscollege,
+            'form'       => $form,
+            'needs'      => ['Financial', 'Medical', 'Food', 'Material', 'Education']
+        ];
+        $pdf = Pdf::loadView('application-form', $data);
+        return $pdf->stream("Application-Form-{$applicant->casecode}.pdf");
     }
 
     public function updateapplicationinstructions($level, Request $request)
@@ -173,10 +227,69 @@ class StaffController extends Controller
     {
         DB::beginTransaction();
         try {
+            // dd($request->all());
+            $request->validate([
+                'status' => 'required|in:Passed,Failed',
+                'remark' => 'required|string|max:255',
+                'comment' => 'required|string|max:255',
+                'natureofneeds' => 'nullable|required_if:cbcasedeets,on|string|max:50',
+                'othersnatureofneeds' => 'nullable|required_if:natureofneeds,Others|string|max:50',
+                'problemstatement' => 'nullable|required_if:cbcasedeets,on|string|max:255',
+                'receivedby' => 'nullable|required_if:cbcasedeets,on|string|max:255',
+                'datereceived' => 'nullable|required_if:cbcasedeets,on|date',
+                'district' => 'nullable|required_if:cbcasedeets,on|string|max:50',
+                'volunteer' => 'nullable|required_if:cbcasedeets,on|string|max:255',
+                'referredby' => 'nullable|string|max:255',
+                'referphonenum' => 'nullable|string|digits_between:11,12',
+                'relationship' => 'nullable|string|max:255',
+                'datereported' => 'nullable|date',
+            ]);
+
+            $nextphase = match ($request->curphase) {
+                'Under Review' => 'Initial Interview',
+                'Initial Interview' => 'Home Visit',
+                'Home Visit' => 'Panel Interview',
+                'Panel Interview' => 'Accepted',
+                default => null,
+            };
+
             $applicant = applicants::where('casecode', $casecode)->first();
-            $applicant->applicationstatus = $request->applicationstatus;
-            $applicant->comment = $request->comment;
-            $applicant->save();
+            if ($request->status == 'Passed') {
+                $applicant->applicationstatus = $nextphase;
+                $applicant->save();
+
+                if ($nextphase == 'Accepted') {
+                    $this->createScholarAccount($casecode);
+                }
+            } else {
+                $applicant->applicationstatus = 'Denied';
+                $applicant->save();
+            }
+
+            approgress::create([
+                'casecode' => $casecode,
+                'phase' => $request->curphase,
+                'status' => $request->status,
+                'remark' => $request->remark,
+                'msg' => $request->comment,
+            ]);
+
+            if ($request->cbcasedeets === 'on') {
+                apcasedetails::create([
+                    'casecode' => $casecode,
+                    'natureofneeds' => $request->natureofneeds == 'Others' ? $request->othersnatureofneeds : $request->natureofneeds,
+                    'problemstatement' => $request->problemstatement,
+                    'receivedby' => $request->receivedby,
+                    'datereceived' => $request->datereceived,
+                    'district' => $request->district,
+                    'volunteer' => $request->volunteer,
+                    'referredby' => $request->referredby ?? null,
+                    'referphonenum' => $request->referphonenum ?? null,
+                    'relationship' => $request->relationship ?? null,
+                    'datereported' => $request->datereported ?? null,
+                ]);
+            }
+
             DB::commit();
 
             $api_key = env('MOVIDER_API_KEY');
@@ -227,12 +340,30 @@ class StaffController extends Controller
                 }
             }
 
-            return redirect()->back()->with('success', "Successfully updated application status.");
+            return redirect()->back()->with('success', "Successfully updated application progress of applicant {$casecode}.");
+        } catch (ValidationException $e) {
+            DB::rollback();
+            $errors = $e->errors();
+            $errorMessages = '<ul>';
+            foreach ($errors as $fieldErrors) {
+                foreach ($fieldErrors as $errorMessage) {
+                    $errorMessages .= '<li>' . $errorMessage . '</li>';
+                }
+            }
+            $errorMessages .= '</ul>';
+            return redirect()->back()->with('failure', 'Updating application progress has failed due to the following errors: ' . $errorMessages)->withInput();
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Failed to update application status. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update application progress. ' . $e->getMessage())->withInput();
         }
+    }
+
+    private function createScholarAccount($casecode)
+    {
+        $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
+            ->where('casecode', $casecode)
+            ->first();
     }
 
     public function updateApplicantCD($casecode, Request $request)
@@ -1109,13 +1240,13 @@ class StaffController extends Controller
         $courses = courses::where('level', 'College')->get();
         $strands = courses::where('level', 'Senior High')->get();
         $institutions = institutions::all();
-        $instruction =  [
-            'College' => ApplicationInstruction::where('schoollevel', 'College')->first(),
-            'Senior High' => ApplicationInstruction::where('schoollevel', 'Senior High')->first(),
-            'Junior High' => ApplicationInstruction::where('schoollevel', 'Junior High')->first(),
-            'Elementary' => ApplicationInstruction::where('schoollevel', 'Elementary')->first(),
-        ];
-        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands', 'forms', 'instruction'));
+        $instructionLevels = ['College', 'Senior High', 'Junior High', 'Elementary'];
+        $instruction = [];
+
+        foreach ($instructionLevels as $level) {
+            $instruction[$level] = ApplicationInstruction::where('schoollevel', $level)->first();
+        }
+        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands', 'forms', 'instruction', 'instructionLevels'));
     }
 
     public function updatecriteria(Request $request)
@@ -1124,7 +1255,7 @@ class StaffController extends Controller
         try {
             $request->validate(
                 [
-                    'cshours' => 'required|numeric|min:1',
+                    'cshours' => 'required|numeric|min:0',
                     'cgwa' => 'required|numeric|min:1|max:5',
                     'shsgwa' => 'required|numeric|min:1|max:100',
                     'jhsgwa' => 'required|numeric|min:1|max:100',

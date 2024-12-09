@@ -16,6 +16,10 @@
     border-radius: 8px;
 }
 
+.custom-card-bg {
+    background-color: #E8F5E9;
+}
+
 .label {
     font-size: 16px;
 }

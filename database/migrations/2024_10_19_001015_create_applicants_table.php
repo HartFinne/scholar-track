@@ -32,7 +32,6 @@ return new class extends Migration
             $table->string('isIndigenous', 3);
             $table->string('Indigenousgroup', 100)->nullable();
             $table->string('applicationstatus', 50);
-            $table->text('comment')->nullable();
             $table->unsignedTinyInteger('prioritylevel');
             $table->string('accountstatus', 10)->default('Active');
             $table->string('notification_preference')->default('sms');
@@ -159,6 +158,22 @@ return new class extends Migration
                 ->onDelete('CASCADE')
                 ->onUpdate('CASCADE');
         });
+
+        Schema::create('approgress', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('casecode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->string('phase', 25);
+            $table->string('status', 25)->nullable();
+            $table->string('remark', 255)->nullable();
+            $table->string('msg', 255)->nullable();
+            $table->timestamps();
+
+            $table->foreign('casecode')
+                ->references('casecode')
+                ->on('applicants')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
+        });
     }
 
     /**
@@ -166,6 +181,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('approgress');
         Schema::dropIfExists('apceducation');
         Schema::dropIfExists('apeheducation');
         Schema::dropIfExists('apfamilyinfo');

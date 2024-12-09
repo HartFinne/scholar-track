@@ -21,7 +21,7 @@
         <a href="{{ route('appinstructions') }}" class="btn-back fw-bold" style="text-decoration: none">&lt Go
             back</a>
         @if ($form->status == 'Closed')
-            <h1 class="title text-center fw-bold app-close">APPLICATION IS NOT YET OPEN.</h1>
+            <h1 class="title text-center fw-bold app-close">This form is currently not accepting any responses.</h1>
         @else
             {{-- header instruction --}}
             <div class="">

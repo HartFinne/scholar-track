@@ -1,0 +1,128 @@
+/* Container */
+.container {
+    width: 100%;
+    max-width: 960px;
+    /* Common width, adjust as per breakpoints */
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 16px;
+    /* Typically 15px in Bootstrap */
+    padding-left: 16px;
+}
+
+/* Borders and Shadow */
+.border {
+    border: 1px solid #dee2e6;
+    /* Lighter border color, change if needed */
+}
+
+.border-dark {
+    border-color: #343a40;
+    /* Darker border color for emphasis */
+}
+
+.shadow {
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+    /* Bootstrap's default shadow */
+}
+
+/* Padding, Margin, and Text */
+.p-5 {
+    padding: 3rem;
+    /* 48px if following Bootstrap's spacing scale */
+}
+
+.mb-5 {
+    margin-bottom: 3rem;
+    /* Adjust the margin-bottom */
+}
+
+/* Flexbox Grid */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.col-md-2,
+.col-md-3,
+.col-md-4,
+.col-md-8,
+.col-md-10,
+.col-auto {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+@media (min-width: 768px) {
+
+    /* Medium devices (tablets, 768px and up) */
+    .col-md-2 {
+        flex: 0 0 auto;
+        width: 16.66667%;
+    }
+
+    .col-md-3 {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+
+    .col-md-4 {
+        flex: 0 0 auto;
+        width: 33.33333%;
+    }
+
+    .col-md-8 {
+        flex: 0 0 auto;
+        width: 66.66667%;
+    }
+
+    .col-md-10 {
+        flex: 0 0 auto;
+        width: 83.33333%;
+    }
+}
+
+/* Text Centering and Underline */
+.text-center {
+    text-align: center;
+}
+
+.text-decoration-underline {
+    text-decoration: underline;
+}
+
+.fw-bold {
+    font-weight: bold;
+    /* Mimicking 'font-weight: bold' from Bootstrap */
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border-collapse: collapse;
+}
+
+.table-bordered {
+    border: 1px solid #dee2e6;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Additional Responsive Utility */
+@media (min-width: 992px) {
+    .justify-content-center {
+        justify-content: center;
+        /* Center items in flex container */
+    }
+}

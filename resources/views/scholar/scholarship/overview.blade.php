@@ -83,7 +83,7 @@
                 <div class="sc-renewal">
                     <hr>
                     <div class="text">
-                        <h5 class="fw-bold">YOU ALREADY APPLIED FOR SCHOLARSHIP RENEWAL.</h5>
+                        <h5 class="fw-bold">YOU HAVE ALREADY APPLIED FOR SCHOLARSHIP RENEWAL.</h5>
                     </div>
                     <hr>
                 </div>
@@ -101,7 +101,7 @@
             <div class="sc-renewal">
                 <hr>
                 <div class="text">
-                    <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOT YET OPEN.</h5>
+                    <h5 class="fw-bold">This form is currently not accepting any responses.</h5>
                 </div>
                 <hr>
             </div>

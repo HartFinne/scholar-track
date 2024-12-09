@@ -569,7 +569,7 @@
 
                     <div class="row">
                         <label for="guardianName">Guardian's Full Name</label>
-                        <input type="text" maxlength="50" id="guardianName" placeholder="" name="guardianName"
+                        <input type="text" maxlength="255" id="guardianName" placeholder="" name="guardianName"
                             value="{{ old('guardianName') }}" required>
                         @error('guardianName')
                             <span class="text-danger">{{ $message }}</span>
@@ -587,7 +587,7 @@
 
                     <div class="row">
                         <label for="guardianEmail">Guardian's Email Address</label>
-                        <input type="email" id="guardianEmail" placeholder="name@example.com"
+                        <input type="email" id="guardianEmail" maxlength="255" placeholder="name@example.com"
                             name="guardianEmailAddress" value="{{ old('guardianEmailAddress') }}" required>
                         @error('guardianEmailAddress')
                             <span class="text-danger">{{ $message }}</span>

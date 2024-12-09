@@ -56,10 +56,10 @@ class HomeController extends Controller
             $ScholarShipStatus = 'Continuing';
             $scStatus = 'Active';
 
-            $isEmailValid = $this->verifyEmail($request->emailAddress);
-            if (!$isEmailValid) {
-                return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
-            }
+            // $isEmailValid = $this->verifyEmail($request->emailAddress);
+            // if (!$isEmailValid) {
+            //     return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
+            // }
 
             $request->validate(
                 [

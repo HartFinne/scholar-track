@@ -13,6 +13,7 @@ use App\Models\apfamilyinfo;
 use App\Models\apcasedetails;
 use App\Models\applicationforms;
 use App\Models\ApplicationInstruction;
+use App\Models\approgress;
 use App\Models\aprequirements;
 use App\Models\criteria;
 use Illuminate\Console\Application;
@@ -392,7 +393,7 @@ class ApplicationController extends Controller
                 'fblink' => $request->fblink,
                 'isIndigenous' => $request->isIndigenous,
                 'indigenousgroup' => $request->indigenousgroup,
-                'applicationstatus' => "Under Review",
+                'applicationstatus' => 'Under Review',
                 'prioritylevel' => $prioritylevel,
             ]);
 
@@ -478,6 +479,14 @@ class ApplicationController extends Controller
                 'grant' => $request->grant,
                 'talent' => $request->talent,
                 'expectations' => $request->expectation,
+            ]);
+
+            approgress::create([
+                'casecode' => $casecode,
+                'phase' => 'Under Review',
+                'status' => null,
+                'remark' => null,
+                'msg' => null,
             ]);
 
             // get the files from form
@@ -571,6 +580,8 @@ class ApplicationController extends Controller
             case 'First Year':
             case 'Second Year':
             case 'Third Year':
+            case 'Fourth Year':
+            case 'Fifth Year':
                 $levelCode = 'CLG';
                 break;
             case 'Grade 11':

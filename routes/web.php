@@ -203,6 +203,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     // APPLICANTS
     Route::get('/applicants', [StaffController::class, 'showApplicants'])->name('applicants');
     Route::get('/applicant-info/{casecode}', [StaffController::class, 'showapplicantinfo'])->name('applicantinfo');
+    Route::get('/application-form/{casecode}', [StaffController::class, 'downloadApplicationForm'])->name('downloadApplicationForm');
     Route::post('/applicant-info/{casecode}/update-status', [StaffController::class, 'updateapplicantstatus'])->name('updateapplicantstatus');
     Route::post('/applicant-info/{casecode}/update-case-details', [StaffController::class, 'updateapplicantcd'])->name('updateapplicantcd');
 });
