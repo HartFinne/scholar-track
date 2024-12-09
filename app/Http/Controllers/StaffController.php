@@ -58,6 +58,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Exports\SpecialAllowanceFormExport;
 use App\Models\approgress;
+use App\Models\KnownSchools;
 use App\Models\SpecialAllowanceSummary;
 use App\Notifications\appointment;
 use App\Notifications\EventUpdate;
@@ -1262,22 +1263,53 @@ class StaffController extends Controller
         }
     }
 
-    public function showQualification()
+    public function showQualification(Request $request)
     {
+        // Retrieve all necessary data
         $forms = applicationforms::all();
-        $instructionLevels = ['College', 'Senior High', 'Junior High', 'Elementary'];
-        $instruction = [];
         $criteria = criteria::first();
         $areas = Areas::paginate(10, ['*'], 'areas_page');
         $institutions = institutions::paginate(10, ['*'], 'institutions_page');
         $courses = courses::where('level', 'College')->paginate(10, ['*'], 'courses_page');
         $strands = courses::where('level', 'Senior High')->paginate(10, ['*'], 'strands_page');
 
+        // Retrieve ApplicationInstruction grouped by schoollevel
+        $instructionLevels = ['College', 'Senior High', 'Junior High', 'Elementary'];
+        $instructions = ApplicationInstruction::whereIn('schoollevel', $instructionLevels)
+            ->get()
+            ->keyBy('schoollevel');
+
+        // Prepare instructions array to match the desired format
+        $instruction = [];
         foreach ($instructionLevels as $level) {
-            $instruction[$level] = ApplicationInstruction::where('schoollevel', $level)->first();
+            $instruction[$level] = $instructions->get($level, null);
         }
 
-        return view('staff.qualification', compact('areas', 'criteria', 'institutions', 'courses', 'strands', 'forms', 'instruction', 'instructionLevels'));
+        // Return all data to the view
+        return view('staff.qualification', compact(
+            'areas',
+            'criteria',
+            'institutions',
+            'courses',
+            'strands',
+            'forms',
+            'instruction',
+            'instructionLevels',
+        ));
+    }
+
+    public function fetchSchool(Request $request)
+    {
+        $inputSchool = $request->input('institute');
+
+        if (!$inputSchool) {
+            return response()->json(null, 400); // Bad request if no input is provided
+        }
+
+        // Perform a case-insensitive search for the school
+        $school = KnownSchools::whereRaw('LOWER(schoolname) = ?', [strtolower($inputSchool)])->first();
+
+        return response()->json($school); // Return school data or null if not found
     }
 
     public function updatecriteria(Request $request)
@@ -2130,7 +2162,6 @@ class StaffController extends Controller
             return back()->with('failure', 'Failed to update request status.');
         }
     }
-
 
     public function managespecialforms()
     {

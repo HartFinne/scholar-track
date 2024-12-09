@@ -1320,6 +1320,95 @@
             }
         });
     </script>
+    <script>
+        document.getElementById('institutionName').addEventListener('input', function() {
+            const inputInstitution = this.value.trim();
+
+            if (!inputInstitution) {
+                // Clear fields if input is empty
+                clearFields();
+                return;
+            }
+
+            // Perform AJAX request to fetch school details
+            fetch('/api/school', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({
+                        institute: inputInstitution
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        populateFields(data.academiccycle, data.highestgwa, 'College');
+                    } else {
+                        clearFields();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching school data:', error);
+                    clearFields(); // Clear fields on error for consistency
+                });
+        });
+
+        document.getElementById('schoolLevel').addEventListener('change', function() {
+            const selectedLevel = this.value;
+            const inputInstitution = document.getElementById('institutionName').value.trim();
+
+            if (selectedLevel === 'College' && inputInstitution) {
+                // Fetch school details again if College is selected
+                fetch('/api/school', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        },
+                        body: JSON.stringify({
+                            institute: inputInstitution
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data) {
+                            populateFields(data.academiccycle, data.highestgwa);
+                        } else {
+                            clearFields();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching school data:', error);
+                        clearFields();
+                    });
+            } else if (selectedLevel === 'Senior High') {
+                populateFields('Semester', 100);
+            } else {
+                populateFields('Quarter', 100);
+            }
+        });
+
+        // Function to populate form fields
+        function populateFields(academicCycle, highestGWA, schoolLevel = '') {
+            const schoolLevelSelect = document.getElementById('schoolLevel');
+            const academicCycleSelect = document.getElementById('academicCycle');
+            const highestGWAInput = document.getElementById('highestGWA');
+
+            if (schoolLevel) schoolLevelSelect.value = schoolLevel;
+            academicCycleSelect.value = academicCycle;
+            highestGWAInput.value = highestGWA;
+        }
+
+        // Function to clear form fields
+        function clearFields() {
+            document.getElementById('schoolLevel').value = '';
+            document.getElementById('academicCycle').value = '';
+            document.getElementById('highestGWA').value = '';
+        }
+    </script>
+
 </body>
 
 </html>
