@@ -45,21 +45,17 @@
                     <div class="row">
                         <label for="area">Assigned Area</label>
                         <select class="" aria-label="area" name="assignedArea" required>
-                            <option value="" hidden disabled {{ old('assignedArea') ? '' : 'selected' }}>Select
+                            <option value="" hidden selected {{ old('assignedArea') ? '' : 'selected' }}>Select
                                 area</option>
-                            <option value="Mindong" {{ old('assignedArea') == 'Mindong' ? 'selected' : '' }}>Mindong
-                            </option>
-                            <option value="Minxi" {{ old('assignedArea') == 'Minxi' ? 'selected' : '' }}>Minxi</option>
-                            <option value="Minzhong" {{ old('assignedArea') == 'Minzhong' ? 'selected' : '' }}>Minzhong
-                            </option>
-                            <option value="Bicol" {{ old('assignedArea') == 'Bicol' ? 'selected' : '' }}>Bicol</option>
-                            <option value="Davao" {{ old('assignedArea') == 'Davao' ? 'selected' : '' }}>Davao
-                            </option>
-                            <option value="Iloilo" {{ old('assignedArea') == 'Iloilo' ? 'selected' : '' }}>Iloilo
-                            </option>
-                            <option value="Palo" {{ old('assignedArea') == 'Palo' ? 'selected' : '' }}>Palo</option>
-                            <option value="Zamboanga" {{ old('assignedArea') == 'Zamboanga' ? 'selected' : '' }}>
-                                Zamboanga</option>
+                            @forelse ($areas as $area)
+                                <option value="{{ $area->areaname }}"
+                                    {{ old('assignedArea') == $area->areaname ? 'selected' : '' }}>
+                                    {{ $area->areaname }}
+                                </option>
+                            @empty
+                                <option value="" disabled {{ old('assignedArea') ? '' : 'selected' }}>Failed to
+                                    load options</option>
+                            @endforelse
                         </select>
                         @error('assignedArea')
                             <span class="text-danger">{{ $message }}</span>

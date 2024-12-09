@@ -37,10 +37,10 @@
 
     <div class="ctnmain">
         <div class="container">
-            <div class="row g-5">
+            <div class="row g-5 d-flex align-items-stretch">
                 {{-- APPLICATION FORMS --}}
-                <div class="col-md-6">
-                    <fieldset class="row mb-3 p-3 rounded border border-success">
+                <div class="col-md-6 d-flex flex-column">
+                    <fieldset class="row mb-3 p-3 rounded border border-success flex-fill">
                         <legend class="fw-bold text-success h4">Manage Application Forms</legend>
                         <div class="ctntable table-responsive">
                             <table class="table table-bordered" id="tblapplicationforms">
@@ -83,7 +83,7 @@
                                             aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <div class="modal-header">
+                                                    <div class="modal-header bg-danger text-white fw-bold">
                                                         <h5 class="modal-title"
                                                             id="closeApplicationModalLabel{{ $form->formname }}">
                                                             Confirm
@@ -116,8 +116,8 @@
                 </div>
 
                 {{-- APPLICATION INSTRUCTIONS --}}
-                <div class="col-md-6">
-                    <fieldset class="row mb-3 p-3 rounded border border-success">
+                <div class="col-md-6 d-flex flex-column">
+                    <fieldset class="row mb-3 p-3 rounded border border-success flex-fill">
                         <legend class="fw-bold text-success h4">Manage Application Instructions</legend>
                         <div class="ctntable table-responsive">
                             <table class="table table-bordered">
@@ -132,9 +132,10 @@
                                         <tr>
                                             <td class="text-center align-middle">{{ $level }}</td>
                                             <td class="text-center align-middle">
-                                                <button class="btn btn-success btn-sm open-modal-btn"
+                                                <button class="btn btn-warning btn-sm open-modal-btn"
                                                     data-bs-toggle="modal"
-                                                    data-bs-target="#{{ Str::slug($level) }}InstructionModal">Edit</button>
+                                                    data-bs-target="#{{ Str::slug($level) }}InstructionModal"><i
+                                                        class="fas fa-edit"></i></button>
                                             </td>
                                         </tr>
                                         {{-- Modal for Each Instruction --}}
@@ -144,7 +145,7 @@
                                             aria-hidden="true">
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
-                                                    <div class="modal-header bg-success text-white">
+                                                    <div class="modal-header bg-warning fw-bold">
                                                         <h5 class="modal-title"
                                                             id="{{ Str::slug($level) }}InstructionModalLabel">
                                                             {{ $level }} Application Instructions
@@ -160,33 +161,38 @@
                                                             {{-- Who can apply? --}}
                                                             <div class="mb-3">
                                                                 <label for="{{ Str::slug($level) }}Applicants"
-                                                                    class="form-label">Who can apply?</label>
-                                                                <textarea class="form-control" name="applicants" id="{{ Str::slug($level) }}Applicants" rows="4">{!! $details->applicants ?? '' !!}</textarea>
+                                                                    class="form-label fw-bold">Who can apply?</label>
+                                                                <textarea class="form-control border-success" name="applicants" id="{{ Str::slug($level) }}Applicants"
+                                                                    rows="4">{!! $details->applicants ?? '' !!}</textarea>
                                                             </div>
                                                             {{-- What are the qualifications? --}}
                                                             <div class="mb-3">
                                                                 <label for="{{ Str::slug($level) }}Qualifications"
-                                                                    class="form-label">What are the
+                                                                    class="form-label fw-bold">What are the
                                                                     qualifications?</label>
-                                                                <textarea class="form-control" name="qualifications" id="{{ Str::slug($level) }}Qualifications" rows="4">{!! $details->qualifications ?? '' !!}</textarea>
+                                                                <textarea class="form-control border-success" name="qualifications" id="{{ Str::slug($level) }}Qualifications"
+                                                                    rows="4">{!! $details->qualifications ?? '' !!}</textarea>
                                                             </div>
                                                             {{-- Documents to prepare --}}
                                                             <div class="mb-3">
                                                                 <label for="{{ Str::slug($level) }}Documents"
-                                                                    class="form-label">Documents to prepare:</label>
-                                                                <textarea class="form-control" name="documents" id="{{ Str::slug($level) }}Documents" rows="4">{!! $details->requireddocuments ?? '' !!}</textarea>
+                                                                    class="form-label fw-bold">Documents to
+                                                                    prepare:</label>
+                                                                <textarea class="form-control border-success" name="documents" id="{{ Str::slug($level) }}Documents"
+                                                                    rows="4">{!! $details->requireddocuments ?? '' !!}</textarea>
                                                             </div>
                                                             {{-- Application Process --}}
                                                             <div class="mb-3">
                                                                 <label for="{{ Str::slug($level) }}Process"
-                                                                    class="form-label">Application Process:</label>
-                                                                <textarea class="form-control" name="process" id="{{ Str::slug($level) }}Process" rows="4">{!! $details->applicationprocess ?? '' !!}</textarea>
+                                                                    class="form-label fw-bold">Application
+                                                                    Process:</label>
+                                                                <textarea class="form-control border-success" name="process" id="{{ Str::slug($level) }}Process" rows="4">{!! $details->applicationprocess ?? '' !!}</textarea>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-bs-dismiss="modal">Cancel</button>
-                                                            <button type="submit" class="btn btn-success">Save
+                                                            <button type="submit" class="btn btn-warning">Save
                                                                 Changes</button>
                                                         </div>
                                                     </form>
@@ -225,64 +231,202 @@
 
             {{-- SCHOLARSHIP REQUIREMENTS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
-                <div class="row justify-content-between align-items-center mb-2">
-                    <div class="col-auto">
+                <div class="row justify-content-between align-items-center mx-auto">
+                    <div class="col-md-6 mb-2">
                         <legend class="fw-bold text-success h4">Scholarship Requirements</legend>
                     </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                    <div class="col-md-2 mb-2">
+                        <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal"
                             data-bs-target="#editRequirementsModal">
                             Edit Requirements
                         </button>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mx-auto">
                     <div class="col-md-2 mb-3">
-                        <label for="cshours" class="form-label">Required CS Hours</label>
+                        <label for="cshours" class="form-label fw-bold">Required CS Hours</label>
                         <input type="number" class="form-control border-success" id="cshours"
                             value="{{ $criteria->cshours ?? 'Not Set' }}" readonly>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <label for="cgwa" class="form-label">College GWA</label>
+                        <label for="cgwa" class="form-label fw-bold">College GWA</label>
                         <input type="number" class="form-control border-success" id="cgwa"
                             value="{{ $criteria->cgwa ?? 'Not Set' }}" readonly>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <label for="shsgwa" class="form-label">Senior High GWA</label>
+                        <label for="shsgwa" class="form-label fw-bold">Senior High GWA</label>
                         <input type="number" class="form-control border-success" id="shsgwa"
                             value="{{ $criteria->shsgwa ?? 'Not Set' }}" readonly>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <label for="jhsgwa" class="form-label">Junior High GWA</label>
+                        <label for="jhsgwa" class="form-label fw-bold">Junior High GWA</label>
                         <input type="number" class="form-control border-success" id="jhsgwa"
                             value="{{ $criteria->jhsgwa ?? 'Not Set' }}" readonly>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <label for="elemgwa" class="form-label">Elementary GWA</label>
+                        <label for="elemgwa" class="form-label fw-bold">Elementary GWA</label>
                         <input type="number" class="form-control border-success" id="elemgwa"
                             value="{{ $criteria->elemgwa ?? 'Not Set' }}" readonly>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mx-auto">
                     <div class="col-md-2 mb-3">
-                        <label for="fincome" class="form-label">Father's Income</label>
+                        <label for="fincome" class="form-label fw-bold">Father's Income</label>
                         <input type="number" class="form-control border-success" id="fincome"
                             value="{{ $criteria->fincome ?? 'Not Set' }}" readonly>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <label for="mincome" class="form-label">Mother's Income</label>
+                        <label for="mincome" class="form-label fw-bold">Mother's Income</label>
                         <input type="number" class="form-control border-success" id="mincome"
                             value="{{ $criteria->mincome ?? 'Not Set' }}" readonly>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <label for="sincome" class="form-label">Siblings' Income</label>
+                        <label for="sincome" class="form-label fw-bold">Siblings' Income</label>
                         <input type="number" class="form-control border-success" id="sincome"
                             value="{{ $criteria->sincome ?? 'Not Set' }}" readonly>
                     </div>
                     <div class="col-md-2 mb-3">
-                        <label for="aincome" class="form-label">Applicant's Income</label>
+                        <label for="aincome" class="form-label fw-bold">Applicant's Income</label>
                         <input type="number" class="form-control border-success" id="aincome"
                             value="{{ $criteria->aincome ?? 'Not Set' }}" readonly>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- Areas Section -->
+            <fieldset class="row mb-3 p-3 rounded border border-success">
+                <div class="row justify-content-between align-items-center mb-2 mx-auto">
+                    <div class="col-auto">
+                        <legend class="fw-bold text-success h4">Areas</legend>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                            data-bs-target="#addAreaModal">
+                            Add Area
+                        </button>
+                    </div>
+                </div>
+                <div class="row mx-auto">
+                    <div class="ctntable table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center align-middle">Area Name</th>
+                                    <th class="text-center align-middle">Area Code</th>
+                                    <th class="text-center align-middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($areas as $area)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $area->areaname }}</td>
+                                        <td class="text-center align-middle">{{ $area->areacode }}</td>
+                                        <td class="text-center align-middle">
+                                            <button type="button" class="btn btn-sm btn-warning"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editAreaModal{{ $area->id }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteAreaModal{{ $area->id }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <!-- Edit Area Modal -->
+                                    <div class="modal fade" id="editAreaModal{{ $area->id }}" tabindex="-1"
+                                        aria-labelledby="editAreaModalLabel{{ $area->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-warning fw-bold">
+                                                    <h5 class="modal-title"
+                                                        id="editAreaModalLabel{{ $area->id }}">
+                                                        Edit Area</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form method="POST" action="{{ route('updateArea', $area->id) }}">
+                                                    @csrf
+                                                    <div class="modal-body">
+                                                        <div
+                                                            class="row mb-3 align-items-center justify-content-center">
+                                                            <div class="col-md-4">
+                                                                <label for="areaName{{ $area->id }}"
+                                                                    class="form-label fw-bold">Area Name</label>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <input type="text"
+                                                                    class="form-control border-success"
+                                                                    id="areaName{{ $area->id }}"
+                                                                    name="newareaname" value="{{ $area->areaname }}"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="row mb-3 align-items-center justify-content-center">
+                                                            <div class="col-md-4">
+                                                                <label for="areaCode{{ $area->id }}"
+                                                                    class="form-label fw-bold">Area Code</label>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <input type="text"
+                                                                    class="form-control border-success"
+                                                                    id="areaCode{{ $area->id }}"
+                                                                    name="newareacode" value="{{ $area->areacode }}"
+                                                                    required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-warning">Save
+                                                            Changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Delete Area Confirmation Modal -->
+                                    <div class="modal fade" id="deleteAreaModal{{ $area->id }}" tabindex="-1"
+                                        aria-labelledby="deleteAreaModalLabel{{ $area->id }}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-danger text-white fw-bold">
+                                                    <h5 class="modal-title"
+                                                        id="deleteAreaModalLabel{{ $area->id }}">
+                                                        Confirm Delete</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete this area: {{ $area->areaname }}?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <form method="POST"
+                                                        action="{{ route('deleteArea', $area->id) }}"
+                                                        style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <tr>
+                                        <td class="text-center align-middle" colspan="4">No Records Found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                        <!-- Pagination Links -->
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $areas->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -319,7 +463,7 @@
                                         <td class="text-center align-middle">{{ $institution->academiccycle }}</td>
                                         <td class="text-center align-middle">{{ $institution->highestgwa }}</td>
                                         <td class="text-center align-middle">
-                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                 data-bs-target="#editInstitutionModal{{ $institution->inid }}"><i
                                                     class="fas fa-edit"></i></button>
                                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
@@ -334,7 +478,7 @@
                                         aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header">
+                                                <div class="modal-header bg-warning fw-bold">
                                                     <h5 class="modal-title"
                                                         id="editInstitutionModalLabel{{ $institution->inid }}">Edit
                                                         Institution</h5>
@@ -344,16 +488,19 @@
                                                 <form method="POST"
                                                     action="{{ route('updateinstitution', $institution->inid) }}">
                                                     @csrf
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
+                                                    <div class="modal-body row">
+                                                        <div class="col-md-12 mb-3">
                                                             <label for="newSchoolName{{ $institution->inid }}"
-                                                                class="form-label">Institution Name</label>
-                                                            <textarea class="form-control" id="newSchoolName{{ $institution->inid }}" name="newschoolname" required>{{ $institution->schoolname }}</textarea>
+                                                                class="form-label fw-bold">Institution Name</label>
+                                                            <input class="form-control border-success"
+                                                                id="newSchoolName{{ $institution->inid }}"
+                                                                name="newschoolname" maxlength="255" required
+                                                                value="{{ $institution->schoolname }}">
                                                         </div>
-                                                        <div class="mb-3">
+                                                        <div class="col-md-4 mb-3">
                                                             <label for="newSchoolLevel{{ $institution->inid }}"
-                                                                class="form-label">School Level</label>
-                                                            <select class="form-control"
+                                                                class="form-label fw-bold">School Level</label>
+                                                            <select class="form-select border-success"
                                                                 id="newSchoolLevel{{ $institution->inid }}"
                                                                 name="newschoollevel" required>
                                                                 <option value="College"
@@ -370,10 +517,10 @@
                                                                     Elementary</option>
                                                             </select>
                                                         </div>
-                                                        <div class="mb-3">
+                                                        <div class="col-md-4 mb-3">
                                                             <label for="newAcademicCycle{{ $institution->inid }}"
-                                                                class="form-label">Academic Cycle</label>
-                                                            <select class="form-control"
+                                                                class="form-label fw-bold">Academic Cycle</label>
+                                                            <select class="form-select border-success"
                                                                 id="newAcademicCycle{{ $institution->inid }}"
                                                                 name="newacademiccycle" required>
                                                                 <option value="Semester"
@@ -387,10 +534,10 @@
                                                                     Quarter</option>
                                                             </select>
                                                         </div>
-                                                        <div class="mb-3">
+                                                        <div class="col-md-4 mb-3">
                                                             <label for="newGWA{{ $institution->inid }}"
-                                                                class="form-label">Highest GWA</label>
-                                                            <input type="number" class="form-control"
+                                                                class="form-label fw-bold">Highest GWA</label>
+                                                            <input type="number" class="form-control border-success"
                                                                 id="newGWA{{ $institution->inid }}" name="newgwa"
                                                                 required min="1" max="100" step="0.01"
                                                                 value="{{ $institution->highestgwa }}">
@@ -399,7 +546,7 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" the class="btn btn-success">Save
+                                                        <button type="submit" the class="btn btn-warning">Save
                                                             Changes</button>
                                                     </div>
                                                 </form>
@@ -413,7 +560,7 @@
                                         aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header">
+                                                <div class="modal-header bg-danger text-white fw-bold">
                                                     <h5 class="modal-title"
                                                         id="deleteInstitutionModalLabel{{ $institution->inid }}">
                                                         Confirm
@@ -441,6 +588,10 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <!-- Pagination Links -->
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $institutions->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -471,7 +622,7 @@
                                     <tr>
                                         <td class="text-center align-middle">{{ $course->coursename }}</td>
                                         <td class="text-center align-middle">
-                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                 data-bs-target="#editCourseModal{{ $course->coid }}"><i
                                                     class="fas fa-edit"></i></button>
                                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
@@ -484,7 +635,7 @@
                                         aria-labelledby="editCourseModalLabel{{ $course->coid }}" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header">
+                                                <div class="modal-header bg-warning fw-bold">
                                                     <h5 class="modal-title"
                                                         id="editCourseModalLabel{{ $course->coid }}">
                                                         Edit Course</h5>
@@ -497,14 +648,17 @@
                                                     <div class="modal-body">
                                                         <div class="mb-3">
                                                             <label for="newCourseName{{ $course->coid }}"
-                                                                class="form-label">Course Name</label>
-                                                            <textarea class="form-control" id="newCourseName{{ $course->coid }}" name="newcoursename" required>{{ $course->coursename }}</textarea>
+                                                                class="form-label fw-bold">Course Name</label>
+                                                            <input class="form-control border-success"
+                                                                id="newCourseName{{ $course->coid }}"
+                                                                name="newcoursename" required
+                                                                value="{{ $course->coursename }}">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-success">Save
+                                                        <button type="submit" class="btn btn-warning">Save
                                                             Changes</button>
                                                     </div>
                                                 </form>
@@ -512,12 +666,12 @@
                                         </div>
                                     </div>
                                     <!-- Delete Course Confirmation Modal -->
-                                    <div class="modal fade" id="deleteCourseModal{{ $course->coid }}" tabindex="-1"
-                                        aria-labelledby="deleteCourseModalLabel{{ $course->coid }}"
+                                    <div class="modal fade" id="deleteCourseModal{{ $course->coid }}"
+                                        tabindex="-1" aria-labelledby="deleteCourseModalLabel{{ $course->coid }}"
                                         aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header">
+                                                <div class="modal-header bg-danger text-white fw-bold">
                                                     <h5 class="modal-title"
                                                         id="deleteCourseModalLabel{{ $course->coid }}">Confirm Delete
                                                     </h5>
@@ -544,6 +698,10 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <!-- Pagination Links -->
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $courses->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -562,7 +720,7 @@
                 </div>
                 <div class="row mx-auto">
                     <div class="ctntable table-responsive">
-                        <table class="table table-bordered" id="tblcourses">
+                        <table class="table table-bordered" id="tblstrands">
                             <thead>
                                 <tr>
                                     <th class="text-center" style="width: 75%;">Strand</th>
@@ -570,11 +728,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($strands as $strand)
+                                @forelse ($strands as $strand)
                                     <tr>
                                         <td class="text-center align-middle">{{ $strand->coursename }}</td>
                                         <td class="text-center align-middle">
-                                            <button class="btn btn-sm btn-success" data-bs-toggle="modal"
+                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                                 data-bs-target="#editStrandModal{{ $strand->coid }}"><i
                                                     class="fas fa-edit"></i></button>
                                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
@@ -584,10 +742,11 @@
                                     </tr>
                                     <!-- Edit Strand Modal -->
                                     <div class="modal fade" id="editStrandModal{{ $strand->coid }}" tabindex="-1"
-                                        aria-labelledby="editStrandModalLabel{{ $strand->coid }}" aria-hidden="true">
+                                        aria-labelledby="editStrandModalLabel{{ $strand->coid }}"
+                                        aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header">
+                                                <div class="modal-header bg-warning fw-bold">
                                                     <h5 class="modal-title"
                                                         id="editStrandModalLabel{{ $strand->coid }}">
                                                         Edit Strand</h5>
@@ -600,14 +759,17 @@
                                                     <div class="modal-body">
                                                         <div class="mb-3">
                                                             <label for="newStrandName{{ $strand->coid }}"
-                                                                class="form-label">Strand Name</label>
-                                                            <textarea class="form-control" id="newStrandName{{ $strand->coid }}" name="newcoursename" required>{{ $strand->coursename }}</textarea>
+                                                                class="form-label fw-bold">Strand Name</label>
+                                                            <input class="form-control border-success"
+                                                                id="newStrandName{{ $strand->coid }}"
+                                                                name="newcoursename" required
+                                                                value="{{ $strand->coursename }}">
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-success">Save
+                                                        <button type="submit" class="btn btn-warning">Save
                                                             Changes</button>
                                                     </div>
                                                 </form>
@@ -615,12 +777,12 @@
                                         </div>
                                     </div>
                                     <!-- Delete Strand Confirmation Modal -->
-                                    <div class="modal fade" id="deleteStrandModal{{ $strand->coid }}" tabindex="-1"
-                                        aria-labelledby="deleteStrandModalLabel{{ $strand->coid }}"
+                                    <div class="modal fade" id="deleteStrandModal{{ $strand->coid }}"
+                                        tabindex="-1" aria-labelledby="deleteStrandModalLabel{{ $strand->coid }}"
                                         aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <div class="modal-header">
+                                                <div class="modal-header bg-danger text-white fw-bold">
                                                     <h5 class="modal-title"
                                                         id="deleteStrandModalLabel{{ $strand->coid }}">Confirm Delete
                                                     </h5>
@@ -644,9 +806,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td class="text-center align-middle" colspan="2">No Records Found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
+                        <!-- Pagination Links -->
+                        <div class="d-flex justify-content-center mt-3">
+                            {{ $strands->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </fieldset>
@@ -658,7 +828,7 @@
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header bg-success text-white">
+                <div class="modal-header bg-warning fw-bold">
                     <h5 class="modal-title" id="editRequirementsModalLabel">Edit Scholarship Requirements</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -671,9 +841,9 @@
                                     <label for="cshours" class="form-label fw-bold">Required CS Hours</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="0" class="form-control" id="cshours"
-                                        name="cshours" value="{{ $criteria->cshours ?? '' }}" placeholder="Not Set"
-                                        required>
+                                    <input type="number" min="0" class="form-control border-success"
+                                        id="cshours" name="cshours" value="{{ $criteria->cshours ?? '' }}"
+                                        placeholder="Not Set" required>
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -681,9 +851,10 @@
                                     <label for="cgwa" class="form-label fw-bold">College GWA</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" max="5" class="form-control"
-                                        id="cgwa" name="cgwa" value="{{ $criteria->cgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
+                                    <input type="number" min="1" max="5"
+                                        class="form-control border-success" id="cgwa" name="cgwa"
+                                        value="{{ $criteria->cgwa ?? '' }}" placeholder="Not Set" required
+                                        step="0.01">
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -691,9 +862,10 @@
                                     <label for="shsgwa" class="form-label fw-bold">Senior High GWA</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" max="100" class="form-control"
-                                        id="shsgwa" name="shsgwa" value="{{ $criteria->shsgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
+                                    <input type="number" min="1" max="100"
+                                        class="form-control border-success" id="shsgwa" name="shsgwa"
+                                        value="{{ $criteria->shsgwa ?? '' }}" placeholder="Not Set" required
+                                        step="0.01">
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -701,9 +873,10 @@
                                     <label for="jhsgwa" class="form-label fw-bold">Junior High GWA</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" max="100" class="form-control"
-                                        id="jhsgwa" name="jhsgwa" value="{{ $criteria->jhsgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
+                                    <input type="number" min="1" max="100"
+                                        class="form-control border-success" id="jhsgwa" name="jhsgwa"
+                                        value="{{ $criteria->jhsgwa ?? '' }}" placeholder="Not Set" required
+                                        step="0.01">
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -711,9 +884,10 @@
                                     <label for="elemgwa" class="form-label fw-bold">Elementary GWA</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" max="100" class="form-control"
-                                        id="elemgwa" name="elemgwa" value="{{ $criteria->elemgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
+                                    <input type="number" min="1" max="100"
+                                        class="form-control border-success" id="elemgwa" name="elemgwa"
+                                        value="{{ $criteria->elemgwa ?? '' }}" placeholder="Not Set" required
+                                        step="0.01">
                                 </div>
                             </div>
                         </div>
@@ -723,9 +897,9 @@
                                     <label for="fincome" class="form-label fw-bold">Father's Income</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="fincome"
-                                        name="fincome" value="{{ $criteria->fincome ?? '' }}" placeholder="Not Set"
-                                        required>
+                                    <input type="number" min="1" class="form-control border-success"
+                                        id="fincome" name="fincome" value="{{ $criteria->fincome ?? '' }}"
+                                        placeholder="Not Set" required>
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -733,9 +907,9 @@
                                     <label for="mincome" class="form-label fw-bold">Mother's Income</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="mincome"
-                                        name="mincome" value="{{ $criteria->mincome ?? '' }}" placeholder="Not Set"
-                                        required>
+                                    <input type="number" min="1" class="form-control border-success"
+                                        id="mincome" name="mincome" value="{{ $criteria->mincome ?? '' }}"
+                                        placeholder="Not Set" required>
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -743,9 +917,9 @@
                                     <label for="sincome" class="form-label fw-bold">Siblings' Income</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="sincome"
-                                        name="sincome" value="{{ $criteria->sincome ?? '' }}" placeholder="Not Set"
-                                        required>
+                                    <input type="number" min="1" class="form-control border-success"
+                                        id="sincome" name="sincome" value="{{ $criteria->sincome ?? '' }}"
+                                        placeholder="Not Set" required>
                                 </div>
                             </div>
                             <div class="row align-items-center mt-3">
@@ -753,16 +927,58 @@
                                     <label for="aincome" class="form-label fw-bold">Applicant's Income</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="aincome"
-                                        name="aincome" value="{{ $criteria->aincome ?? '' }}" placeholder="Not Set"
-                                        required>
+                                    <input type="number" min="1" class="form-control border-success"
+                                        id="aincome" name="aincome" value="{{ $criteria->aincome ?? '' }}"
+                                        placeholder="Not Set" required>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <button type="submit" class="btn btn-warning">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Area Modal -->
+    <div class="modal fade" id="addAreaModal" tabindex="-1" aria-labelledby="addAreaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white fw-bold">
+                    <h5 class="modal-title" id="addAreaModalLabel">Add Area</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ route('addArea') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row mb-3 align-items-center justify-content-center">
+                            <div class="col-md-4">
+                                <label for="areaName" class="form-label fw-bold">Area Name</label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control border-success" id="areaName"
+                                    name="areaname" placeholder="Enter area name" required
+                                    value="{{ old('areaname') }}">
+                            </div>
+                        </div>
+                        <div class="row mb-3 align-items-center justify-content-center">
+                            <div class="col-md-4">
+                                <label for="areaCode" class="form-label fw-bold">Area Code</label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control border-success" id="areaCode"
+                                    name="areacode" placeholder="Enter area code" required
+                                    value="{{ old('areacode') }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Add Area</button>
                     </div>
                 </form>
             </div>
@@ -774,21 +990,21 @@
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-success text-white fw-bold">
                     <h5 class="modal-title" id="addInstitutionModalLabel">Add New Institution</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="{{ route('addinstitution') }}">
                     @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="institutionName" class="form-label">Institution Name</label>
-                            <input type="text" class="form-control" id="institutionName" name="institute"
-                                required>
+                    <div class="modal-body row">
+                        <div class="col-md-12 mb-3">
+                            <label for="institutionName" class="form-label fw-bold">Institution Name</label>
+                            <input type="text" class="form-control border-success" id="institutionName"
+                                name="institute" maxlength="255" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="schoolLevel" class="form-label">School Level</label>
-                            <select class="form-control" id="schoolLevel" name="schoollevel" required>
+                        <div class="col-md-4 mb-3">
+                            <label for="schoolLevel" class="form-label fw-bold">School Level</label>
+                            <select class="form-select border-success" id="schoolLevel" name="schoollevel" required>
                                 <option value="" selected hidden>Select Level</option>
                                 <option value="College">College</option>
                                 <option value="Senior High">Senior High</option>
@@ -796,19 +1012,20 @@
                                 <option value="Elementary">Elementary</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="academicCycle" class="form-label">Academic Cycle</label>
-                            <select class="form-control" id="academicCycle" name="academiccycle" required>
+                        <div class="col-md-4 mb-3">
+                            <label for="academicCycle" class="form-label fw-bold">Academic Cycle</label>
+                            <select class="form-select border-success" id="academicCycle" name="academiccycle"
+                                required>
                                 <option value="" selected hidden>Select Cycle</option>
                                 <option value="Semester">Semester</option>
                                 <option value="Trimester">Trimester</option>
                                 <option value="Quarter">Quarter</option>
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label for="highestGWA" class="form-label">Highest GWA</label>
-                            <input type="number" class="form-control" id="highestGWA" name="highestgwa" required
-                                step="0.01" min="1" max="100">
+                        <div class="col-md-4 mb-3">
+                            <label for="highestGWA" class="form-label fw-bold">Highest GWA</label>
+                            <input type="number" class="form-control border-success" id="highestGWA"
+                                name="highestgwa" required step="0.01" min="1" max="100">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -825,7 +1042,7 @@
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-success text-white fw-bold">
                     <h5 class="modal-title" id="addCourseModalLabel">Add New Course</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -833,8 +1050,9 @@
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="courseName" class="form-label">Course Name</label>
-                            <input type="text" class="form-control" id="courseName" name="course" required>
+                            <label for="courseName" class="form-label fw-bold">Course Name</label>
+                            <input type="text" class="form-control border-success" id="courseName" name="course"
+                                required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -851,7 +1069,7 @@
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-success text-white fw-bold">
                     <h5 class="modal-title" id="addStrandModalLabel">Add New Strand</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -859,8 +1077,9 @@
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="strandName" class="form-label">Strand Name</label>
-                            <input type="text" class="form-control" id="strandName" name="strand" required>
+                            <label for="strandName" class="form-label fw-bold">Strand Name</label>
+                            <input type="text" class="form-control border-success" id="strandName" name="strand"
+                                required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -893,7 +1112,7 @@
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-success text-white fw-bold">
                     <h5 class="modal-title" id="openApplicationModalLabel">Open Application Form</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -905,13 +1124,15 @@
                                 Set deadline for submission of hard copy of documents:
                             </div>
                             <div class="row mb-3">
-                                <input required type="date" id="deadline" name="deadline" class="form-control">
+                                <input required type="date" id="deadline" name="deadline"
+                                    class="form-control border-success">
                             </div>
                             <div class="row mb-1">
                                 Set end date of application:
                             </div>
                             <div class="row mb-3">
-                                <input required type="date" id="enddate" name="enddate" class="form-control">
+                                <input required type="date" id="enddate" name="enddate"
+                                    class="form-control border-success">
                             </div>
                             <div class="row small">
                                 Note: The form automatically close after the end.
@@ -984,9 +1205,7 @@
                 };
             });
         }
-    </script>
 
-    <script>
         // Function to save form data to localStorage
         function saveFormData() {
             const collegeApplicants = document.getElementById('collegeApplicants').value;

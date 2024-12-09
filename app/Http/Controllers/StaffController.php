@@ -19,6 +19,7 @@ use App\Models\ScEducation;
 use App\Models\scholarshipinfo;
 use App\Models\grades;
 use App\Models\criteria;
+use App\Models\Areas;
 use App\Models\institutions;
 use App\Models\courses;
 use App\Models\ApplicationInstruction;
@@ -81,6 +82,31 @@ class StaffController extends Controller
     {
         $worker = Auth::guard('staff')->user();
         return view('staff.profile-socialworker', compact('worker'));
+    }
+
+    public function updateStaffAccount(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|max:255',
+                'contactno' => 'required|string|max:12|min:11',
+            ]);
+
+            DB::beginTransaction();
+            $worker = Auth::guard('staff')->user();
+            $worker = staccount::where('id', $worker->id)->first();
+            $worker->name = $request->name;
+            $worker->email = $request->email;
+            $worker->mobileno = $request->contactno;
+            $worker->save();
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Successfully updated account information.');
+        } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
+            return redirect()->back()->with('failure', 'Failed to update account information.');
+        }
     }
 
     public function showAccountSA()
@@ -425,6 +451,7 @@ class StaffController extends Controller
 
             return redirect()->back()->with('success', "Successfully updated case details of applicant.");
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
             return redirect()->back()->with('failure', 'Failed to update case details of applicant. ' . $e->getMessage());
         }
@@ -589,6 +616,7 @@ class StaffController extends Controller
             DB::commit();
             return redirect()->back()->with('success', 'Successfully updated scholarship status.');
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
             return redirect()->back()->with('failure', 'Failed to update scholarship status. ' . $e->getMessage());
         }
@@ -1091,6 +1119,7 @@ class StaffController extends Controller
 
             return redirect()->back()->with('success', 'Successfully updated LTE status.');
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
 
             return redirect()->back()->with('failure', 'Failed to update LTE status. ' . $e->getMessage());
@@ -1236,17 +1265,19 @@ class StaffController extends Controller
     public function showQualification()
     {
         $forms = applicationforms::all();
-        $criteria = criteria::first();
-        $courses = courses::where('level', 'College')->get();
-        $strands = courses::where('level', 'Senior High')->get();
-        $institutions = institutions::all();
         $instructionLevels = ['College', 'Senior High', 'Junior High', 'Elementary'];
         $instruction = [];
+        $criteria = criteria::first();
+        $areas = Areas::paginate(10, ['*'], 'areas_page');
+        $institutions = institutions::paginate(10, ['*'], 'institutions_page');
+        $courses = courses::where('level', 'College')->paginate(10, ['*'], 'courses_page');
+        $strands = courses::where('level', 'Senior High')->paginate(10, ['*'], 'strands_page');
 
         foreach ($instructionLevels as $level) {
             $instruction[$level] = ApplicationInstruction::where('schoollevel', $level)->first();
         }
-        return view('staff.qualification', compact('criteria', 'institutions', 'courses', 'strands', 'forms', 'instruction', 'instructionLevels'));
+
+        return view('staff.qualification', compact('areas', 'criteria', 'institutions', 'courses', 'strands', 'forms', 'instruction', 'instructionLevels'));
     }
 
     public function updatecriteria(Request $request)
@@ -1312,8 +1343,101 @@ class StaffController extends Controller
             DB::rollback();
             return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollback();
             return redirect()->back()->with('failure', 'Unable to update scholarship requirements.');
+        }
+    }
+
+    public function addArea(Request $request)
+    {
+        try {
+            $request->validate([
+                'areaname' => 'required|string|max:100',
+                'areacode' => 'required|string|max:3',
+            ]);
+
+            $nameExists = Areas::where('areaname', $request->areaname)
+                ->exists();
+
+            $codeExists = Areas::where('areacode', $request->areacode)
+                ->exists();
+
+            if ($nameExists) {
+                return redirect()->back()->with('failure', 'Failed to update area. Duplicate area name.')->withInput();
+            } else if ($codeExists) {
+                return redirect()->back()->with('failure', 'Failed to update area. Duplicate area code.')->withInput();
+            }
+
+            DB::beginTransaction();
+            Areas::create([
+                'areaname' => $request->areaname,
+                'areacode' => $request->areacode,
+            ]);
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "Successfully added area: {$request->areaname}.");
+        } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
+            DB::rollback();
+            Log::error("Failed to update area: {$e->getMessage()}");
+            return redirect()->back()->with('failure', "Failed to add area.")->withInput();
+        }
+    }
+
+    public function updateArea($id, Request $request)
+    {
+        try {
+            $request->validate([
+                'newareaname' => 'required|string|max:100',
+                'newareacode' => 'required|string|max:3',
+            ]);
+
+            $nameExists = Areas::where('areaname', $request->newareaname)
+                ->where('id', '!=', $id)
+                ->exists();
+
+            $codeExists = Areas::where('areacode', $request->newareacode)
+                ->where('id', '!=', $id)
+                ->exists();
+
+            if ($nameExists) {
+                return redirect()->back()->with('failure', 'Failed to update area. Duplicate area name.');
+            } else if ($codeExists) {
+                return redirect()->back()->with('failure', 'Failed to update area. Duplicate area code.');
+            }
+
+            $area = Areas::where('id', $id)->first();
+            DB::beginTransaction();
+            $area->areaname = $request->newareaname;
+            $area->areacode = $request->newareacode;
+            $area->save();
+            DB::commit();
+
+            return redirect()->back()->with('success', "Successfully updated area: {$request->newareaname}.");
+        } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
+            DB::rollback();
+            Log::error("Failed to update area: {$e->getMessage()}");
+            return redirect()->back()->with('failure', "Failed to update area.");
+        }
+    }
+
+    public function deleteArea($id)
+    {
+        DB::beginTransaction();
+        try {
+            $area = Areas::findOrFail($id);
+            $area->delete();
+
+            DB::commit();
+            return redirect()->back()->with('success', "Successfully deleted the area: {$area->areaname}.");
+        } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
+            DB::rollback();
+            Log::error("Failed to delete area: {$e->getMessage()}");
+            return redirect()->back()->with('failure', "Failed to delete area.");
         }
     }
 
@@ -1351,6 +1475,7 @@ class StaffController extends Controller
             DB::rollback();
             return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollback();
 
             return redirect()->back()->with('failure', 'Failed to add institution.');
@@ -1392,6 +1517,7 @@ class StaffController extends Controller
             DB::rollback();
             return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollback();
 
             return redirect()->back()->with('failure', 'Failed to update institution.') . $e->getMessage();
@@ -1408,6 +1534,7 @@ class StaffController extends Controller
             DB::commit();
             return redirect()->back()->with('success', 'Successfully deleted the institution.');
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollback();
             return redirect()->back()->with('failure', 'Failed to delete institution.');
         }
@@ -1499,6 +1626,7 @@ class StaffController extends Controller
             DB::rollback();
             return redirect()->back()->with('failure', $e->getMessage());
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollback();
 
             if (courses::where('coursename', $request->newcoursename)->exists()) {
@@ -1528,6 +1656,7 @@ class StaffController extends Controller
             DB::commit();
             return redirect()->back()->with('success', "Successfully deleted {$type}.");
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollback();
             return redirect()->back()->with('failure', "Failed to delete {$type}.");
         }
@@ -1584,7 +1713,7 @@ class StaffController extends Controller
             WHEN status = 'Withdrawn' THEN 4
             ELSE 5
         END
-    ")
+        ")
             ->paginate(10);
 
         // Fetch data for Junior High School
@@ -1602,7 +1731,7 @@ class StaffController extends Controller
             WHEN status = 'Withdrawn' THEN 4
             ELSE 5
         END
-    ")
+        ")
             ->paginate(10);
 
         // Fetch data for Elementary
@@ -1620,7 +1749,7 @@ class StaffController extends Controller
             WHEN status = 'Withdrawn' THEN 4
             ELSE 5
         END
-    ")
+        ")
             ->paginate(10);
 
         // Pass data to the view
@@ -1711,14 +1840,12 @@ class StaffController extends Controller
         }
     }
 
-
     public function showAllowanceRegular()
     {
         $requests = RegularAllowance::paginate(10);
 
         return view('staff.regularallowance', compact('requests'));
     }
-
 
     public function viewAllowanceRegularInfo()
     {
@@ -1801,11 +1928,12 @@ class StaffController extends Controller
                 return redirect()->back()->with('failure', 'Regular Allowances recorded, but some notifications failed.' . $failureDetails);
             }
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
             return redirect()->back()->with('failure', 'Unable to update request. ' . $e->getMessage());
         }
     }
-    // no pagination
+
     public function showAllowanceSpecial()
     {
         $summary = SpecialAllowanceSummary::first();
@@ -1858,7 +1986,6 @@ class StaffController extends Controller
 
         return view('staff.specialallowance', compact('data', 'summary', 'scholars', 'forms'));
     }
-
 
     public function showspecrecinfo($requesttype, $id, $caseCode)
     {
@@ -1998,6 +2125,7 @@ class StaffController extends Controller
             DB::commit();
             return back()->with('success', 'Successfully updated request status.');
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
             return back()->with('failure', 'Failed to update request status.');
         }
@@ -2098,6 +2226,7 @@ class StaffController extends Controller
             // Return success message
             return redirect()->back()->with('success', 'Special Allowance Form created successfully.');
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
 
             // Return error message
@@ -2214,6 +2343,7 @@ class StaffController extends Controller
             // Return success message
             return redirect()->back()->with('success', 'Special Allowance Form updated successfully.');
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
 
             // Return error message if any exception occurs
@@ -2460,7 +2590,7 @@ class StaffController extends Controller
 
     public function showUserStaff()
     {
-        $staffAccounts = Staccount::paginate(10);
+        $staffAccounts = staccount::paginate(10);
 
         return view('staff.users-staff', compact('staffAccounts'));
     }
@@ -2478,7 +2608,7 @@ class StaffController extends Controller
 
     public function activateStaff($id)
     {
-        $user = Staccount::findOrFail($id);
+        $user = staccount::findOrFail($id);
         $user->status = 'Active';
         $user->save();
 
@@ -2487,7 +2617,7 @@ class StaffController extends Controller
 
     public function deactivateStaff($id)
     {
-        $user = Staccount::findOrFail($id);
+        $user = staccount::findOrFail($id);
         $user->status = 'Inactive';
         $user->save();
 
@@ -2532,7 +2662,7 @@ class StaffController extends Controller
 
     public function showStaffInfo($id)
     {
-        $user = Staccount::findOrFail($id);
+        $user = staccount::findOrFail($id);
 
         return view('staff.admstaffinfo', compact('user'));
     }
@@ -3148,6 +3278,7 @@ class StaffController extends Controller
 
             return redirect()->back()->with('success', "{$event->topic} has been successfully closed.");
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
             return redirect()->back()->with('failure', 'Attempt to save event has failed: ' . $e->getMessage());
         }
@@ -3190,7 +3321,6 @@ class StaffController extends Controller
             }
         }
     }
-
 
     public function checkouthc($hcaid)
     {
@@ -3285,6 +3415,7 @@ class StaffController extends Controller
 
             return $this->viewattendeeslist($attendee->hcid)->with('success', 'Checkout was successful.');
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
 
             return $this->viewattendeeslist($attendee->hcid)->with('failure', 'Checkout was unsuccessful.');
@@ -3437,7 +3568,7 @@ class StaffController extends Controller
             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
             ELSE 4 
         END
-    ")
+        ")
             ->orderBy('endcontract', 'ASC')
             ->select('summarycollege.*')
             ->get();
@@ -3452,7 +3583,7 @@ class StaffController extends Controller
             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
             ELSE 4 
         END
-    ")
+        ")
             ->orderBy('endcontract', 'ASC')
             ->select('summaryshs.*')
             ->get();
@@ -3467,7 +3598,7 @@ class StaffController extends Controller
             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
             ELSE 4 
         END
-    ")
+        ")
             ->orderBy('endcontract', 'ASC')
             ->select('summaryjhs.*')
             ->get();
@@ -3482,7 +3613,7 @@ class StaffController extends Controller
             WHEN scholarshipinfo.scholarshipstatus = 'Terminated' THEN 3
             ELSE 4 
         END
-    ")
+        ")
             ->orderBy('endcontract', 'ASC')
             ->select('summaryelem.*')
             ->get();
@@ -3495,312 +3626,6 @@ class StaffController extends Controller
         ];
         return view('staff.scholarship-report', compact('colleges', 'shs', 'jhs', 'elem', 'acadyear', 'reports'));
     }
-
-    // public function generateSummaryReport(Request $request)
-    // {
-    //     try {
-    //         $request->validate([
-    //             'schoollevel' => 'required|string',
-    //             'periodtype' => 'required|string',
-    //             'period' => 'required_if:periodtype,Monthly,Quarterly|string',
-    //             'year' => 'required|string'
-    //         ]);
-
-    //         // $reportname = 'Scholarship_Summary_Report_' . $level . '_' . $date . '_' . $year;
-
-    //         $worker = Auth::guard('staff')->user();
-
-    //         $level = $request->schoollevel;
-    //         $type = $request->periodtype;
-    //         $date = $request->period;
-    //         $year = $request->year;
-    //         $monthNames = [
-    //             'January' => 1,
-    //             'February' => 2,
-    //             'March' => 3,
-    //             'April' => 4,
-    //             'May' => 5,
-    //             'June' => 6,
-    //             'July' => 7,
-    //             'August' => 8,
-    //             'September' => 9,
-    //             'October' => 10,
-    //             'November' => 11,
-    //             'December' => 12,
-    //         ];
-
-    //         $quarters = [
-    //             'First Quarter' => [$year . '-01-01', $year . '-03-31'],
-    //             'Second Quarter' => [$year . '-04-01', $year . '-06-30'],
-    //             'Third Quarter' => [$year . '-07-01', $year . '-09-30'],
-    //             'Fourth Quarter' => [$year . '-10-01', $year . '-12-31'],
-    //         ];
-
-
-    //         if ($type == 'Monthly') {
-    //             $month = $monthNames[$date];
-    //             $datescope = $month . ', ' . $year;
-    //         } else if ($type == 'Quarterly') {
-    //             [$startdate, $enddate] = $quarters[$date];
-    //             $datescope = \Carbon\Carbon::parse($startdate)->format('F j, Y') . ' - ' . \Carbon\Carbon::parse($enddate)->format('F j, Y');
-    //         } else if ($type == 'Annually') {
-    //             $datescope = $year;
-    //         }
-
-    //         if ($level == 'All') {
-    //             if ($type === 'Annually') {
-    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)->count();
-    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->groupBy('scholartype', 'scholarshipstatus')
-    //                     ->orderBy('scholartype')
-    //                     ->orderBy('scholarshipstatus')
-    //                     ->get();
-    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->groupBy('area')
-    //                     ->orderBy('area')
-    //                     ->get();
-    //                 $scperlevelschool = ScEducation::selectRaw('scSchoolName, scSchoolLevel, COUNT(*) as sccount')
-    //                     ->whereHas('scholarshipinfo', function ($query) use ($year) {
-    //                         $query->whereYear('startdate', $year);
-    //                     })
-    //                     ->groupBy('scSchoolName', 'scSchoolLevel')
-    //                     ->orderBy('scSchoolName')
-    //                     ->orderBy('scSchoolLevel')
-    //                     ->get();
-    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
-    //                     ->whereYear('datesubmitted', $year)
-    //                     ->groupBy('status')
-    //                     ->orderBy('status')
-    //                     ->get();
-    //                 $college = $this->getUsersBySchoolLevel($year, 'College');
-    //                 $shs = $this->getUsersBySchoolLevel($year, 'Senior High');
-    //                 $jhs = $this->getUsersBySchoolLevel($year, 'Junior High');
-    //                 $elem = $this->getUsersBySchoolLevel($year, 'Elementary');
-    //             } elseif ($type === 'Monthly') {
-    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)->whereMonth('startdate', $month)->count();
-    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->whereMonth('startdate', $month)
-    //                     ->groupBy('scholartype', 'scholarshipstatus')
-    //                     ->orderBy('scholartype')
-    //                     ->orderBy('scholarshipstatus')
-    //                     ->get();
-    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->whereMonth('startdate', $month)
-    //                     ->groupBy('area')
-    //                     ->orderBy('area')
-    //                     ->get();
-    //                 $scperlevelschool = ScEducation::selectRaw('scSchoolName, scSchoolLevel, COUNT(*) as sccount')
-    //                     ->whereHas('scholarshipinfo', function ($query) use ($year, $month) {
-    //                         $query->whereYear('startdate', $year)
-    //                             ->whereMonth('startdate', $month);
-    //                     })
-    //                     ->groupBy('scSchoolName', 'scSchoolLevel')
-    //                     ->orderBy('scSchoolName')
-    //                     ->orderBy('scSchoolLevel')
-    //                     ->get();
-    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
-    //                     ->whereYear('datesubmitted', $year)
-    //                     ->whereMonth('datesubmitted', $month)
-    //                     ->groupBy('status')
-    //                     ->orderBy('status')
-    //                     ->get();
-    //             } elseif ($type === 'Quarterly') {
-    //                 $totalscholars = scholarshipinfo::whereBetween('startdate', [$startdate, $enddate])->count();
-    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
-    //                     ->whereBetween('startdate', [$startdate, $enddate])
-    //                     ->groupBy('scholartype', 'scholarshipstatus')
-    //                     ->orderBy('scholartype')
-    //                     ->orderBy('scholarshipstatus')
-    //                     ->get();
-    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
-    //                     ->whereBetween('startdate', [$startdate, $enddate])
-    //                     ->groupBy('area')
-    //                     ->orderBy('area')
-    //                     ->get();
-    //                 $scperlevelschool = ScEducation::selectRaw('scSchoolName, scSchoolLevel, COUNT(*) as sccount')
-    //                     ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
-    //                         $query->whereBetween('startdate', [$startdate, $enddate]);
-    //                     })
-    //                     ->groupBy('scSchoolName', 'scSchoolLevel')
-    //                     ->orderBy('scSchoolName')
-    //                     ->orderBy('scSchoolLevel')
-    //                     ->get();
-    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
-    //                     ->whereBetween('datesubmitted', [$startdate, $enddate])
-    //                     ->groupBy('status')
-    //                     ->orderBy('status')
-    //                     ->get();
-    //             }
-    //         } else {
-    //             if ($type === 'Annually') {
-    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->count();
-    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('scholartype', 'scholarshipstatus')
-    //                     ->orderBy('scholartype')
-    //                     ->orderBy('scholarshipstatus')
-    //                     ->get();
-    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('area')
-    //                     ->orderBy('area')
-    //                     ->get();
-    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
-    //                     ->whereYear('datesubmitted', $year)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('status')
-    //                     ->orderBy('status')
-    //                     ->get();
-    //                 $scperschool = ScEducation::selectRaw('scSchoolName, COUNT(*) as sccount')
-    //                     ->where('scSchoolLevel', $level)
-    //                     ->whereHas('scholarshipinfo', function ($query) use ($year) {
-    //                         $query->whereYear('startdate', $year);
-    //                     })
-    //                     ->groupBy('scSchoolName')
-    //                     ->get();
-    //                 if ($level == 'Senior High' || $level == 'College') {
-    //                     $scpercoursestrand = ScEducation::selectRaw('scCourseStrandSec, COUNT(*) as sccount')
-    //                         ->where('scSchoolLevel', $level)
-    //                         ->whereHas('scholarshipinfo', function ($query) use ($year) {
-    //                             $query->whereYear('startdate', $year);
-    //                         })
-    //                         ->groupBy('scCourseStrandSec')
-    //                         ->get();
-    //                 }
-    //             } elseif ($type === 'Monthly') {
-    //                 $totalscholars = scholarshipinfo::whereYear('startdate', $year)->whereMonth('startdate', $month)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })->count();
-    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->whereMonth('startdate', $month)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('scholartype', 'scholarshipstatus')
-    //                     ->orderBy('scholartype')
-    //                     ->orderBy('scholarshipstatus')
-    //                     ->get();
-    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
-    //                     ->whereYear('startdate', $year)
-    //                     ->whereMonth('startdate', $month)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('area')
-    //                     ->orderBy('area')
-    //                     ->get();
-    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
-    //                     ->whereYear('datesubmitted', $year)
-    //                     ->whereMonth('datesubmitted', $month)
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('status')
-    //                     ->orderBy('status')
-    //                     ->get();
-    //                 $scperschool = ScEducation::selectRaw('scSchoolName, COUNT(*) as sccount')
-    //                     ->where('scSchoolLevel', $level)
-    //                     ->whereHas('scholarshipinfo', function ($query) use ($month, $year) {
-    //                         $query->whereYear('startdate', $year)->whereMonth('startdate', $month);
-    //                     })
-    //                     ->groupBy('scSchoolName')
-    //                     ->get();
-    //                 if ($level == 'Senior High' || $level == 'College') {
-    //                     $scpercoursestrand = ScEducation::selectRaw('scCourseStrandSec, COUNT(*) as sccount')
-    //                         ->where('scSchoolLevel', $level)
-    //                         ->whereHas('scholarshipinfo', function ($query) use ($month, $year) {
-    //                             $query->whereYear('startdate', $year)->whereMonth('startdate', $month);
-    //                         })
-    //                         ->groupBy('scCourseStrandSec')
-    //                         ->get();
-    //                 }
-    //             } elseif ($type === 'Quarterly') {
-    //                 $totalscholars = scholarshipinfo::whereBetween('startdate', [$startdate, $enddate])->count();
-    //                 $scpertypestatus = scholarshipinfo::selectRaw('scholartype, scholarshipstatus, COUNT(*) as sccount')
-    //                     ->whereBetween('startdate', [$startdate, $enddate])
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('scholartype', 'scholarshipstatus')
-    //                     ->orderBy('scholartype')
-    //                     ->orderBy('scholarshipstatus')
-    //                     ->get();
-    //                 $scperarea = scholarshipinfo::selectRaw('area, COUNT(*) as sccount')
-    //                     ->whereBetween('startdate', [$startdate, $enddate])
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('area')
-    //                     ->orderBy('area')
-    //                     ->get();
-    //                 $renewalsperstatus = renewal::selectRaw('status, COUNT(*) as sccount')
-    //                     ->whereBetween('datesubmitted', [$startdate, $enddate])
-    //                     ->whereHas('education', function ($query) use ($level) {
-    //                         $query->where('scSchoolLevel', $level);
-    //                     })
-    //                     ->groupBy('status')
-    //                     ->orderBy('status')
-    //                     ->get();
-    //                 $scperschool = ScEducation::selectRaw('scSchoolName, COUNT(*) as sccount')
-    //                     ->where('scSchoolLevel', $level)
-    //                     ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
-    //                         $query->whereBetween('startdate', [$startdate, $enddate]);
-    //                     })
-    //                     ->groupBy('scSchoolName')
-    //                     ->get();
-    //                 if ($level == 'Senior High' || $level == 'College') {
-    //                     $scpercoursestrand = ScEducation::selectRaw('scCourseStrandSec, COUNT(*) as sccount')
-    //                         ->where('scSchoolLevel', $level)
-    //                         ->whereHas('scholarshipinfo', function ($query) use ($startdate, $enddate) {
-    //                             $query->whereBetween('startdate', [$startdate, $enddate]);
-    //                         })
-    //                         ->groupBy('scCourseStrandSec')
-    //                         ->get();
-    //                 }
-    //             }
-    //         }
-
-    //         $data = [
-    //             'totalscholars' => $totalscholars,
-    //             'scpertypestatus' => $scpertypestatus,
-    //             'scperarea' => $scperarea,
-    //             'scperlevelschool' => $scperlevelschool ?? NULL,
-    //             'scperschool' => $scperschool ?? NULL,
-    //             'scpercoursestrand' => $scpercoursestrand ?? NULL,
-    //             'renewalsperstatus' => $renewalsperstatus,
-    //             'level' => $level,
-    //             'scope' => $datescope,
-    //             'college' => $college,
-    //             'shs' => $shs,
-    //             'jhs' => $jhs,
-    //             'elem' => $elem,
-    //         ];
-
-    //         // return Redirect()->back()->with('success', 'Successfully generated Report Name');
-    //         $pdf = Pdf::loadView('staff.reports.summaryreport-pdf', $data);
-    //         return $pdf->stream("scholarship-report-{$date}.pdf");
-    //     } catch (\Exception $e) {
-    //         return Redirect()->back()->with('failure', 'An error has occurred. ' . $e->getMessage());
-    //     }
-    // }
 
     public function generateSummaryReport(Request $request)
     {
@@ -3972,6 +3797,7 @@ class StaffController extends Controller
             DB::commit();
             return Redirect()->back()->with('success', "{$reportname} has been generated successfully.");
         } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
             return Redirect()->back()->with('failure', 'An error has occurred. ' . $e->getMessage());
         }

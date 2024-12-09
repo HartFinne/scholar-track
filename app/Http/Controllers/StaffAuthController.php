@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class StaffAuthController extends Controller
 {
@@ -39,6 +40,42 @@ class StaffAuthController extends Controller
             return redirect()->back()->with('failure', 'Invalid email or password.');
         }
     }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'newpassword' => [
+                    'required',
+                    'regex:/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/',
+                ],
+                'confirmpassword' => 'required|same:newpassword',
+            ], [
+                'confirmpassword.same' => 'The new password and confirm password must match.',
+                'newpassword.regex' => 'The new password must contain at least one uppercase letter, one lowercase letter, one number, one special character, and be at least 8 characters long.',
+            ]);
+
+            // Get the currently authenticated user
+            $user = Auth::guard('staff')->user();
+            $user = staccount::where('id', $user->id)->first();
+
+            // Check if the current password matches the user's actual password
+            if (!Hash::check($request->currentpassword, $user->password)) {
+                return redirect()->back()->with('failure', 'The current password is incorrect.');
+            }
+            DB::beginTransaction();
+            $user->password = Hash::make($request->newpassword);
+            $user->save();
+            DB::commit();
+            // Redirect with success message
+            return redirect()->back()->with('success', 'Password changed successfully.');
+        } catch (\Exception $e) {
+            Log::error("Error: {$e->getMessage()}");
+            DB::rollBack();
+            return redirect()->back()->with('failure', 'Failed to change password. If this issue persists, please contact us at inquiriescholartrack@gmail.com');
+        }
+    }
+
     public function createAccount(Request $request)
     {
         try {
