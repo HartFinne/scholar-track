@@ -8,9 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <link rel="stylesheet" href="{{ asset('css/registration.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -45,8 +42,8 @@
                     <div class="row">
                         <label for="area">Assigned Area</label>
                         <select class="" aria-label="area" name="assignedArea" required>
-                            <option value="" hidden selected {{ old('assignedArea') ? '' : 'selected' }}>Select
-                                area</option>
+                            <option value="" hidden disabled selected {{ old('assignedArea') ? '' : 'selected' }}>
+                                Select area</option>
                             @forelse ($areas as $area)
                                 <option value="{{ $area->areaname }}"
                                     {{ old('assignedArea') == $area->areaname ? 'selected' : '' }}>
@@ -80,9 +77,9 @@
                         <label for="fname">First Name</label>
                         <input type="text" id="fname" maxlength="50" class="reg-input" name="firstName"
                             value="{{ old('firstName') }}" required>
-                        {{-- @error('firstName')
+                        @error('firstName')
                             <span class="text-danger">{{ $message }}</span>
-                        @enderror --}}
+                        @enderror
                     </div>
 
                     <div class="row">
@@ -658,81 +655,57 @@
                 </div>
 
                 <script>
+                    // Elements
                     const passwordInput = document.getElementById('password');
                     const confirmPasswordInput = document.getElementById('password_confirmation');
                     const passwordMatchWarning = document.getElementById('passwordMatchWarning');
                     const registerButton = document.querySelector('.btn-register');
-
-                    // Requirement elements
-                    const lengthRequirement = document.getElementById('lengthRequirement');
-                    const uppercaseRequirement = document.getElementById('uppercaseRequirement');
-                    const lowercaseRequirement = document.getElementById('lowercaseRequirement');
-                    const numberRequirement = document.getElementById('numberRequirement');
-                    const specialCharRequirement = document.getElementById('specialCharRequirement');
+                    const requirementElements = {
+                        length: document.getElementById('lengthRequirement'),
+                        uppercase: document.getElementById('uppercaseRequirement'),
+                        lowercase: document.getElementById('lowercaseRequirement'),
+                        number: document.getElementById('numberRequirement'),
+                        specialChar: document.getElementById('specialCharRequirement')
+                    };
 
                     // Disable register button initially
                     registerButton.disabled = true;
 
-                    passwordInput.addEventListener('input', function() {
-                        checkPasswordRequirements();
-                        checkPasswordMatch();
-                        toggleRegisterButton();
+                    // Event Listeners
+                    [passwordInput, confirmPasswordInput].forEach(input => {
+                        input.addEventListener('input', () => {
+                            const passwordValidations = checkPasswordRequirements(passwordInput.value);
+                            updateUI(passwordValidations);
+                            checkPasswordMatch();
+                            toggleRegisterButton();
+                        });
                     });
 
-                    confirmPasswordInput.addEventListener('input', function() {
-                        checkPasswordMatch();
-                        toggleRegisterButton();
-                    });
-
-                    function checkPasswordRequirements() {
-                        const passwordValue = passwordInput.value;
-
-                        // Check length requirement
-                        if (passwordValue.length >= 8) {
-                            lengthRequirement.classList.remove('text-danger');
-                            lengthRequirement.classList.add('text-success');
-                        } else {
-                            lengthRequirement.classList.remove('text-success');
-                            lengthRequirement.classList.add('text-danger');
-                        }
-
-                        // Check uppercase requirement
-                        if (/[A-Z]/.test(passwordValue)) {
-                            uppercaseRequirement.classList.remove('text-danger');
-                            uppercaseRequirement.classList.add('text-success');
-                        } else {
-                            uppercaseRequirement.classList.remove('text-success');
-                            uppercaseRequirement.classList.add('text-danger');
-                        }
-
-                        // Check lowercase requirement
-                        if (/[a-z]/.test(passwordValue)) {
-                            lowercaseRequirement.classList.remove('text-danger');
-                            lowercaseRequirement.classList.add('text-success');
-                        } else {
-                            lowercaseRequirement.classList.remove('text-success');
-                            lowercaseRequirement.classList.add('text-danger');
-                        }
-
-                        // Check number requirement
-                        if (/[0-9]/.test(passwordValue)) {
-                            numberRequirement.classList.remove('text-danger');
-                            numberRequirement.classList.add('text-success');
-                        } else {
-                            numberRequirement.classList.remove('text-success');
-                            numberRequirement.classList.add('text-danger');
-                        }
-
-                        // Check special character requirement (accept any non-alphanumeric character)
-                        if (/[^a-zA-Z0-9]/.test(passwordValue)) {
-                            specialCharRequirement.classList.remove('text-danger');
-                            specialCharRequirement.classList.add('text-success');
-                        } else {
-                            specialCharRequirement.classList.remove('text-success');
-                            specialCharRequirement.classList.add('text-danger');
-                        }
+                    // Check password requirements
+                    function checkPasswordRequirements(password) {
+                        return {
+                            length: password.length >= 8,
+                            uppercase: /[A-Z]/.test(password),
+                            lowercase: /[a-z]/.test(password),
+                            number: /[0-9]/.test(password),
+                            specialChar: /[^a-zA-Z0-9]/.test(password)
+                        };
                     }
 
+                    // Update the UI based on requirements
+                    function updateUI(validations) {
+                        Object.keys(validations).forEach(key => {
+                            if (validations[key]) {
+                                requirementElements[key].classList.remove('text-danger');
+                                requirementElements[key].classList.add('text-success');
+                            } else {
+                                requirementElements[key].classList.remove('text-success');
+                                requirementElements[key].classList.add('text-danger');
+                            }
+                        });
+                    }
+
+                    // Check if the passwords match
                     function checkPasswordMatch() {
                         if (passwordInput.value !== confirmPasswordInput.value) {
                             passwordMatchWarning.classList.remove('d-none');
@@ -741,19 +714,14 @@
                         }
                     }
 
+                    // Enable or disable the register button
                     function toggleRegisterButton() {
-                        // Enable the register button only if all requirements are met and passwords match
-                        const allRequirementsMet =
-                            passwordInput.value.length >= 8 &&
-                            /[A-Z]/.test(passwordInput.value) &&
-                            /[a-z]/.test(passwordInput.value) &&
-                            /[0-9]/.test(passwordInput.value) &&
-                            /[^a-zA-Z0-9]/.test(passwordInput.value) &&
+                        const allRequirementsMet = Object.values(checkPasswordRequirements(passwordInput.value)).every(Boolean) &&
                             passwordInput.value === confirmPasswordInput.value;
-
                         registerButton.disabled = !allRequirementsMet;
                     }
                 </script>
+
             </form>
         </div>
     </div>

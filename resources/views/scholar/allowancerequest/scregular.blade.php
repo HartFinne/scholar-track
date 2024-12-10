@@ -23,9 +23,15 @@
     <x-alert />
 
     <div class="ctn-main">
-        <h1 class="title">Regular Allowance</h1>
-
-        <a href="{{ route('regularform') }}" class="btn-request fw-bold">Request Regular Allowance</a>
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="title">Regular Allowance</h1>
+            </div>
+            <div class="col-md-6">
+                <a href="{{ route('regularform') }}" class="btn-request fw-bold" style="margin-left: auto">Regular
+                    Allowance Form <i class="fas fa-angle-double-right"></i></a>
+            </div>
+        </div>
 
         <p class="table-title"> My Requests </p>
         <div class="ctn-table table-responsive">
@@ -35,21 +41,28 @@
                         <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Academic Year</th>
                         <th class="text-center align-middle">Semester</th>
-                        <th class="text-center align-middle">Date of Request</th>
+                        <th class="text-center align-middle">Date Submitted</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($requests as $request)
+                    @forelse ($requests as $index => $req)
                         <tr>
-                            <td>{{ $request->regularID }}</td>
-                            <td>{{ $request->grades ? $request->grades->schoolyear : 'N/A' }}</td>
-                            <td>{{ $request->grades ? $request->grades->SemesterQuarter : 'N/A' }}</td>
-                            <td>{{ Carbon\Carbon::parse($request->created_at)->format('F j, Y') }}</td>
-                            <td><a href="{{ route('regularforminfo', ['id' => $request->regularID]) }}"
-                                    class="btn-view">View</a></td>
+                            <td class="text-center align-middle">{{ $index + 1 }}</td>
+                            <td class="text-center align-middle">{{ $req->schoolyear }}</td>
+                            <td class="text-center align-middle">{{ $req->semester }}</td>
+                            <td class="text-center align-middle">
+                                {{ Carbon\Carbon::parse($req->created_at)->format('F j, Y') }}</td>
+                            <td class="text-center align-middle">
+                                <a href="{{ route('regularforminfo', $req->regularID) }}"
+                                    class="btn btn-sm btn-success"><i class="fas fa-eye"></i></a>
+                            </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td class="text-center align-middle" colspan="5">No Records Found.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

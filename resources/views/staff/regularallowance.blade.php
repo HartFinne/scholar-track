@@ -22,23 +22,15 @@
         <div class="groupA">
             <div class="groupA1">
                 <span class="label">Total Requests</span>
-                <span class="data" id="totalrequests">0</span>
+                <span class="data" id="totalrequests">{{ $data['All'] }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Pending</span>
-                <span class="data" id="pending">0</span>
+                <span class="data" id="pending">{{ $data['Pending'] }}</span>
             </div>
             <div class="groupA1">
                 <span class="label">Completed</span>
-                <span class="data" id="completed">0</span>
-            </div>
-            <div class="groupA1">
-                <span class="label">Accepted</span>
-                <span class="data" id="completed">0</span>
-            </div>
-            <div class="groupA1">
-                <span class="label">Rejected</span>
-                <span class="data" id="rejected">0</span>
+                <span class="data" id="completed">{{ $data['Completed'] }}</span>
             </div>
         </div>
         <div class="divider"></div>
@@ -77,32 +69,32 @@
                 <thead>
                     <tr>
                         <th class="text-center align-middle">Name</th>
-                        <th class="text-center align-middle">Request Date</th>
+                        <th class="text-center align-middle">Date Submitted</th>
                         <th class="text-center align-middle">Year Level</th>
-                        <th class="text-center align-middle">Release Date</th>
+                        <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($requests as $request)
+                    @forelse ($requests as $req)
                         <tr>
-                            <td class="text-center align-middle">{{ $request->scLastname ?? 'N/A' }},
-                                {{ $request->scFirstname ?? 'N/A' }}</td>
+                            <td class="text-center align-middle">{{ $req->basicInfo->scLastname }},
+                                {{ $req->basicInfo->scFirstname }} {{ $req->basicInfo->scMiddlename }}</td>
                             <td class="text-center align-middle">
-                                {{ $request->created_at ? \Carbon\Carbon::parse($request->created_at)->format('F j, Y') : 'N/A' }}
+                                {{ $req->created_at ? \Carbon\Carbon::parse($req->created_at)->format('F j, Y') : 'Failed to load' }}
                             </td>
-                            <td class="text-center align-middle">{{ $request->scYearGrade }}</td>
+                            <td class="text-center align-middle">{{ $req->education->scYearGrade }}</td>
                             <td class="text-center align-middle">
-                                {{ $request->date_of_release ?? 'N/A - Update to include release date' }}
+                                {{ $req->status ?? 'Failed to load' }}
                             </td>
                             <td class="text-center align-middle">
-                                <a href="{{ route('allowancerequests-regular-info', ['id' => $request->id]) }}"
+                                <a href="{{ route('allowancerequests-regular-info', ['id' => $req->regularID]) }}"
                                     class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td class="text-center align-middle" colspan="6">No Records Found.</td>
+                            <td class="text-center align-middle" colspan="5">No Records Found.</td>
                         </tr>
                     @endforelse
                 </tbody>

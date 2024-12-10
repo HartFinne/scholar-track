@@ -168,7 +168,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/letter-of-explanation-info/{lid}', [StaffController::class, 'updateltestatus'])->name('updateltestatus');
     // ALLOWANCE REQUESTS - REGULAR
     Route::get('/allowance-requests-regular', [StaffController::class, 'showAllowanceRegular'])->name('allowancerequests-regular');
-    Route::get('/allowance-requests-regular-details', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
+    Route::get('/allowance-requests-regular-details/{id}', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
     // Route::get('/allowance-requests-regular-details/{id}', [StaffController::class, 'viewAllowanceRegularInfo'])->name('allowancerequests-regular-info');
     Route::view('/viewregularform', 'staff.viewregularform')->name('viewregulardetails');
     Route::post('/update-requests-regular/{id}', [StaffController::class, 'updateRegularAllowance'])->name('update-requests-regular.post');

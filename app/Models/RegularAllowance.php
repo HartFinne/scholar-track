@@ -12,15 +12,27 @@ class RegularAllowance extends Model
     protected $table = 'regular_allowance';
     protected $primaryKey = 'regularID';
     protected $fillable = [
-        'gid',
+        'caseCode',
+        'schoolyear',
+        'semester',
         'start_of_semester',
         'end_of_semester',
         'status',
     ];
 
-    public function grades()
+    public function user()
     {
-        return $this->belongsTo(grades::class, 'gid', 'gid');
+        return $this->belongsTo(User::class, 'caseCode', 'caseCode');
+    }
+
+    public function education()
+    {
+        return $this->belongsTo(ScEducation::class, 'caseCode', 'caseCode');
+    }
+
+    public function basicInfo()
+    {
+        return $this->belongsTo(ScBasicInfo::class, 'caseCode', 'caseCode');
     }
 
     public function classReference()

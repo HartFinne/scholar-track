@@ -9,11 +9,13 @@ use App\Models\{
     RegularAllowance,
     ClassReference,
     ClassSchedule,
+    institutions,
     TravelItinerary,
     TravelLocation,
     LodgingInfo,
     OjtTravelItinerary,
-    OjtLocation
+    OjtLocation,
+    staccount
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -28,27 +30,34 @@ class RegularAllowanceForm extends Controller
 {
     public function showSCRegular()
     {
-        $requests = RegularAllowance::with('grades')
-            ->whereRelation('grades', 'caseCode', Auth::user()->caseCode)
-            ->get();
+        $user = Auth::user();
+        $requests = RegularAllowance::where('caseCode', $user->caseCode)
+            ->orderBy('schoolyear', 'DESC')
+            ->orderByRaw("CASE
+                WHEN semester = '1st Semester' THEN 3
+                WHEN semester = '2nd Semester' THEN 2
+                WHEN semester = '3rd Semester' THEN 1
+                ELSE 4
+                END")->get();
         return view('scholar.allowancerequest.scregular', compact('requests'));
     }
 
     public function showRegularFormInfo($id)
     {
-        $data = User::with(['basicInfo', 'education', 'scholarshipinfo', 'addressinfo'])
-            ->where('id', Auth::id())
-            ->first();
-
-        $regularAllowance = RegularAllowance::with([
-            'grades',
+        $req = RegularAllowance::with([
             'classReference.classSchedules',
             'travelItinerary.travelLocations',
             'lodgingInfo',
             'ojtTravelItinerary.ojtLocations'
         ])->findOrFail($id);
 
-        return view('scholar.allowancerequest.regularforminfo', compact('data', 'regularAllowance'));
+        $data = User::with(['basicInfo', 'education', 'scholarshipinfo', 'addressinfo'])
+            ->where('caseCode', $req->caseCode)
+            ->first();
+
+        $worker = staccount::where('area', $data->scholarshipinfo->area)->first();
+
+        return view('scholar.allowancerequest.regularforminfo', compact('data', 'req', 'worker'));
     }
 
     public function showRegularForm()
@@ -58,25 +67,32 @@ class RegularAllowanceForm extends Controller
             ->where('id', $user->id)
             ->first();
 
-        $latestSemester = grades::select('SemesterQuarter', 'gid')
-            ->latest('created_at')
-            ->first();
+        $cycle = institutions::where('schoolname', $data->education->scSchoolName)
+            ->where('schoollevel', $data->education->scSchoolLevel)->pluck('academiccycle')->first();
 
-        $availableSemesters = [];
-        if ($latestSemester && !$this->hasExistingAllowance($latestSemester->gid)) {
-            $availableSemesters[] = $latestSemester->toArray();
-        }
+        // dd($semester);
 
-        return view('scholar.allowancerequest.regularform', compact('data', 'availableSemesters'));
+        // $latestSemester = grades::select('SemesterQuarter', 'gid')
+        //     ->latest('created_at')
+        //     ->first();
+
+        // $availableSemesters = [];
+        // if ($latestSemester && !$this->hasExistingAllowance($latestSemester->gid)) {
+        //     $availableSemesters[] = $latestSemester->toArray();
+        // }
+
+        return view('scholar.allowancerequest.regularform', compact('data', 'cycle'));
     }
 
     public function storeRegularForm(Request $request)
     {
+        $user = Auth::user();
+        $user = User::with('education')->where('id', $user->id)->first();
         $validatedData = $request->validate($this->validationRules(), $this->validationMessages());
 
         DB::beginTransaction();
         try {
-            $regularAllowance = $this->createRegularAllowance($validatedData);
+            $regularAllowance = $this->createRegularAllowance($validatedData, $user->caseCode, $user->education->scAcademicYear);
             $directoryPath = $this->createUserDirectory($regularAllowance);
 
             $classReference = $this->createClassReference($validatedData, $directoryPath, $regularAllowance);
@@ -96,8 +112,8 @@ class RegularAllowanceForm extends Controller
     private function validationRules()
     {
         return [
-            'boardAddress' => 'nullable|string|max:255',
-            'sem' => 'required|exists:grades,gid',
+            'boardAddress' => 'nullable|required_if:lodgingType,Dorm,Boarding House,Bed Space|string|max:255',
+            'sem' => 'required|in:1st Semester,2nd Semester,3rd Semester',
             'startSem' => 'required|date',
             'endSem' => 'required|date|after_or_equal:startSem',
             'time' => 'required|array',
@@ -119,10 +135,10 @@ class RegularAllowanceForm extends Controller
             'estimatedTime.*' => 'nullable|string|max:100',
             'vehicleType.*' => 'nullable|string|max:100',
             'fareRate.*' => 'nullable|integer|min:0',
-            'nameOwner' => 'nullable|string|max:255',
-            'contactNoOwner' => 'nullable|string|max:15',
-            'rent' => 'nullable|integer|min:0',
-            'lodgingType' => 'nullable|in:Dorm,Boarding House,Bed Space',
+            'nameOwner' => 'nullable|required_if:lodgingType,Dorm,Boarding House,Bed Space|string|max:255',
+            'contactNoOwner' => 'nullable|required_if:lodgingType,Dorm,Boarding House,Bed Space|string|max:15',
+            'rent' => 'nullable|integer|required_if:lodgingType,Dorm,Boarding House,Bed Space|min:0',
+            'lodgingType' => 'nullable|in:Dorm,Boarding House,Bed Space,Not Applicable',
             'startOjt' => 'nullable|date',
             'endOjt' => 'nullable|date|after_or_equal:startOjt',
             'OJTfrom.*' => 'nullable|string|max:100',
@@ -151,10 +167,12 @@ class RegularAllowanceForm extends Controller
             ->exists();
     }
 
-    private function createRegularAllowance($data)
+    private function createRegularAllowance($data, $casecode, $schoolyear)
     {
         return RegularAllowance::create([
-            'gid' => $data['sem'],
+            'caseCode' => $casecode,
+            'schoolyear' => $schoolyear,
+            'semester' => $data['sem'],
             'start_of_semester' => $data['startSem'],
             'end_of_semester' => $data['endSem'],
             'status' => 'Pending',
@@ -219,8 +237,16 @@ class RegularAllowanceForm extends Controller
 
     private function createLodgingInfo($data, $regularID)
     {
-        // Check if at least one lodging info field is provided
-        if (!empty($data['boardAddress']) || !empty($data['nameOwner']) || !empty($data['contactNoOwner']) || !empty($data['rent']) || !empty($data['lodgingType'])) {
+        if ($data['lodgingType'] == 'Not Applicable') {
+            LodgingInfo::create([
+                'regularID' => $regularID,
+                'address' => null,
+                'name_owner' => null,
+                'contact_no_owner' => null,
+                'monthly_rent' => null,
+                'lodging_type' => $data['lodgingType'],
+            ]);
+        } else {
             LodgingInfo::create([
                 'regularID' => $regularID,
                 'address' => $data['boardAddress'],

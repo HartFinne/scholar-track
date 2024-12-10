@@ -83,31 +83,22 @@
                     </div>
                     <div class="row">
                         <div class="column">
-                            <label for="boardAddress">Boarding House Address (If applicable)</label>
-                            <input type="text" id="boardAddress" name="boardAddress"
-                                value="{{ old('boardAddress') }}">
-                            @error('boardAddress')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="column">
                             <label for="sem">Semester</label>
                             <select name="sem" id="sem" required>
                                 <option value="" selected hidden>Select semester</option>
-                                @foreach ($availableSemesters as $semester)
-                                    <option value="{{ $semester['gid'] }}"
-                                        {{ old('sem') == $semester['gid'] ? 'selected' : '' }}>
-                                        {{ $semester['SemesterQuarter'] }}
-                                    </option>
-                                @endforeach
+                                <option value="1st Semester" {{ old('sem') == '1st Semester' ? 'selected' : '' }}>1st
+                                    Semester</option>
+                                <option value="2nd Semester" {{ old('sem') == '2nd Semester' ? 'selected' : '' }}>2nd
+                                    Semester</option>
+                                @if ($cycle == 'Trimester')
+                                    <option value="3rd Semester" {{ old('sem') == '3rd Semester' ? 'selected' : '' }}>
+                                        3rd Semester</option>
+                                @endif
                             </select>
                             @error('sem')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-
                         <div class="column">
                             <label for="startSem">Start of Semester</label>
                             <input type="date" id="startSem" name="startSem" value="{{ old('startSem') }}"
@@ -120,22 +111,6 @@
                             <label for="endSem">End of Semester</label>
                             <input type="date" id="endSem" name="endSem" value="{{ old('endSem') }}" required>
                             @error('endSem')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="column">
-                            <label for="startOjt">Start of OJT</label>
-                            <input type="date" id="startOjt" name="startOjt" value="{{ old('startOjt') }}">
-                            @error('startOjt')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="column">
-                            <label for="endOjt">End of OJT</label>
-                            <input type="date" id="endOjt" name="endOjt" value="{{ old('endOjt') }}">
-                            @error('endOjt')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -171,50 +146,52 @@
                             <tr>
                                 <td>
                                     <input type="text" id="time" name="time[]"
-                                        placeholder="ex: 7:00 AM - 8:00 AM" required value="{{ old('time.0') }}">
+                                        placeholder="ex: 7:00 AM - 8:00 AM" required value="{{ old('time.0') }}"
+                                        maxlength="50"
+                                        pattern="^(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)\s-\s(0?[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$">
                                     @error('time.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </td>
 
                                 <td><input type="text" class="sub" id="mon" name="mon[]"
-                                        placeholder="Course Code" value="{{ old('mon.0') }}">
+                                        placeholder="Course Code" value="{{ old('mon.0') }}" maxlength="50">
                                     @error('mon.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </td>
                                 <td><input type="text" class="sub" id="tue" name="tue[]"
-                                        placeholder="Course Code" value="{{ old('tue.0') }}">
+                                        placeholder="Course Code" value="{{ old('tue.0') }}" maxlength="50">
                                     @error('tue.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </td>
                                 <td><input type="text" class="sub" id="wed" name="wed[]"
-                                        placeholder="Course Code" value="{{ old('wed.0') }}">
+                                        placeholder="Course Code" value="{{ old('wed.0') }}" maxlength="50">
                                     @error('wed.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </td>
                                 <td><input type="text" class="sub" id="thu" name="thu[]"
-                                        placeholder="Course Code" value="{{ old('thu.0') }}">
+                                        placeholder="Course Code" value="{{ old('thu.0') }}" maxlength="50">
                                     @error('thu.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </td>
                                 <td><input type="text" class="sub" id="fri" name="fri[]"
-                                        placeholder="Course Code" value="{{ old('fri.0') }}">
+                                        placeholder="Course Code" value="{{ old('fri.0') }}" maxlength="50">
                                     @error('fri.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </td>
                                 <td><input type="text" class="sub" id="sat" name="sat[]"
-                                        placeholder="Course Code" value="{{ old('sat.0') }}">
+                                        placeholder="Course Code" value="{{ old('sat.0') }}" maxlength="50">
                                     @error('sat.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
                                 </td>
                                 <td><input type="text" class="sub" id="sun" name="sun[]"
-                                        placeholder="Course Code" value="{{ old('sun.0') }}">
+                                        placeholder="Course Code" value="{{ old('sun.0') }}" maxlength="50">
                                     @error('sun.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -248,7 +225,6 @@
 
                 <fieldset class="custom-fieldset">
                     <legend>DAILY TRAVEL ITINERARY FORM</legend>
-                    <span>Fill out this section only if you commute from home to school.</span>
                     <div id="destination-container">
                         <div class="destination-info">
                             <p class="text-center fw-bold" style="text-decoration: underline;">Destination (Vice
@@ -288,7 +264,7 @@
                                 <div class="column">
                                     <label for="fareRate">Student Fare Rate</label>
                                     <input type="number" name="fareRate[]" value="{{ old('fareRate.0') }}"
-                                        step="0.01">
+                                        step="0.01" min="0">
                                     @error('fareRate.0')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -304,7 +280,7 @@
                         <div class="column">
                             <label for="totalCosts">Total Costs per day</label>
                             <input type="number" name="totalCosts" id="totalCosts" value="{{ old('totalCosts') }}"
-                                step="0.01">
+                                step="0.01" min="0">
                             @error('totalCosts')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -346,7 +322,7 @@
                 <fieldset class="custom-fieldset">
                     <legend>LODGING INFORMATION</legend>
                     <span>Fill out this section only if you are renting a place while studying.</span>
-                    <div class="row">
+                    <div class="row mt-2">
                         <div class="column">
                             <label for="nameOwner">Name of owner/landlady/landlord</label>
                             <input type="text" name="nameOwner" id="nameOwner" value="{{ old('nameOwner') }}">
@@ -357,8 +333,18 @@
                         <div class="column">
                             <label for="contactNoOwner">Contact Number</label>
                             <input type="tel" id="contactNoOwner" name="contactNoOwner"
-                                value="{{ old('contactNoOwner') }}">
+                                value="{{ old('contactNoOwner') }}" maxlength="12" minlength="11">
                             @error('contactNoOwner')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="column">
+                            <label for="boardAddress">Boarding House Address</label>
+                            <input type="text" id="boardAddress" name="boardAddress"
+                                value="{{ old('boardAddress') }}" maxlength="255">
+                            @error('boardAddress')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -376,10 +362,9 @@
                             <label for="lodgingType">Type of Lodging</label>
                             <div class="radio-group">
                                 <input type="hidden" name="lodgingType" value="">
-
                                 <div class="row-radio">
                                     <input type="radio" id="dorm" name="lodgingType" value="Dorm"
-                                        {{ old('lodgingType') == 'Dorm' ? 'checked' : '' }}>
+                                        {{ old('lodgingType') == 'Dorm' ? 'checked' : '' }} required>
                                     <label for="dorm">Dorm (inside the campus)</label>
                                 </div>
                                 <div class="row-radio">
@@ -392,6 +377,12 @@
                                         {{ old('lodgingType') == 'Bed Space' ? 'checked' : '' }}>
                                     <label for="bedSpace">Bed Space</label>
                                 </div>
+                                <div class="row-radio">
+                                    <input type="radio" id="notApplicable" name="lodgingType"
+                                        value="Not Applicable"
+                                        {{ old('lodgingType') == 'Not Applicable' ? 'checked' : '' }}>
+                                    <label for="notApplicable">Not Applicable</label>
+                                </div>
                             </div>
                             @error('lodgingType')
                                 <div class="text-danger">{{ $message }}</div>
@@ -400,11 +391,60 @@
                     </div>
                 </fieldset>
 
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Get references to the radio buttons and input fields
+                        const notApplicableRadio = document.getElementById('notApplicable');
+                        const inputFields = document.querySelectorAll('#nameOwner, #contactNoOwner, #rent, #boardAddress');
 
+                        // Function to handle enabling/disabling of input fields
+                        function handleLodgingTypeChange() {
+                            if (notApplicableRadio.checked) {
+                                // If "Not Applicable" is selected, disable and clear input fields
+                                inputFields.forEach(input => {
+                                    input.value = ''; // Clear the value
+                                    input.setAttribute('disabled', 'disabled'); // Disable the input
+                                    input.removeAttribute('required'); // Remove required attribute
+                                });
+                            } else {
+                                // If another option is selected, enable and add required to input fields
+                                inputFields.forEach(input => {
+                                    input.removeAttribute('disabled'); // Enable the input
+                                    input.setAttribute('required', 'required'); // Add required attribute
+                                });
+                            }
+                        }
+
+                        // Attach event listeners to the radio buttons
+                        document.querySelectorAll('input[name="lodgingType"]').forEach(radio => {
+                            radio.addEventListener('change', handleLodgingTypeChange);
+                        });
+
+                        // Initialize the state on page load
+                        handleLodgingTypeChange();
+                    });
+                </script>
 
                 <fieldset class="custom-fieldset">
                     <legend>OJT DAILY TRAVEL ITINERARY FORM</legend>
-                    <span>Fill out this section only if you are currently undergoing On-the-Job Training (OJT).</span>
+                    <span class="fw-bold">Fill out this section only if you are currently undergoing On-the-Job
+                        Training (OJT).</span>
+                    <div class="row mt-3">
+                        <div class="column">
+                            <label for="startOjt">Start of OJT</label>
+                            <input type="date" id="startOjt" name="startOjt" value="{{ old('startOjt') }}">
+                            @error('startOjt')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="column">
+                            <label for="endOjt">End of OJT</label>
+                            <input type="date" id="endOjt" name="endOjt" value="{{ old('endOjt') }}">
+                            @error('endOjt')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="column">
                             <label for="endorsement">Photocopy of Endorsement</label>

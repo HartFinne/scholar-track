@@ -1268,10 +1268,18 @@ class StaffController extends Controller
         // Retrieve all necessary data
         $forms = applicationforms::all();
         $criteria = criteria::first();
-        $areas = Areas::paginate(10, ['*'], 'areas_page');
-        $institutions = institutions::paginate(10, ['*'], 'institutions_page');
-        $courses = courses::where('level', 'College')->paginate(10, ['*'], 'courses_page');
-        $strands = courses::where('level', 'Senior High')->paginate(10, ['*'], 'strands_page');
+        $areas = Areas::orderBy('areaname')->paginate(10, ['*'], 'areas_page');
+        $institutions = institutions::orderByRaw('CASE
+            WHEN schoollevel = "Elementary" THEN 4
+            WHEN schoollevel = "Junior High" THEN 3
+            WHEN schoollevel = "Senior High" THEN 2
+            WHEN schoollevel = "College" THEN 1
+            ELSE 5 END')
+            ->orderBy('schoolname')
+            ->paginate(10, ['*'], 'institutions_page');
+
+        $courses = courses::where('level', 'College')->orderBy('coursename')->paginate(10, ['*'], 'courses_page');
+        $strands = courses::where('level', 'Senior High')->orderBy('coursename')->paginate(10, ['*'], 'strands_page');
 
         // Retrieve ApplicationInstruction grouped by schoollevel
         $instructionLevels = ['College', 'Senior High', 'Junior High', 'Elementary'];
@@ -1874,14 +1882,40 @@ class StaffController extends Controller
 
     public function showAllowanceRegular()
     {
-        $requests = RegularAllowance::paginate(10);
+        $requests = RegularAllowance::with('basicInfo', 'education')
+            ->orderBy('created_at', 'DESC')
+            ->orderBy('schoolyear', 'DESC')
+            ->orderByRaw("CASE
+                WHEN semester = '1st Semester' THEN 3
+                WHEN semester = '2nd Semester' THEN 2
+                WHEN semester = '3rd Semester' THEN 1
+                ELSE 4
+                END")->paginate(10);
 
-        return view('staff.regularallowance', compact('requests'));
+        $data = [
+            'All' => RegularAllowance::all()->count(),
+            'Pending' => RegularAllowance::where('status', 'Pending')->count(),
+            'Completed' => RegularAllowance::where('status', 'Completed')->count(),
+        ];
+
+        return view('staff.regularallowance', compact('requests', 'data'));
     }
 
-    public function viewAllowanceRegularInfo()
+    public function viewAllowanceRegularInfo($id)
     {
-        return view('staff.regularallowanceinfo');
+        $req = RegularAllowance::with([
+            'classReference.classSchedules',
+            'travelItinerary.travelLocations',
+            'lodgingInfo',
+            'ojtTravelItinerary.ojtLocations'
+        ])->findOrFail($id);
+
+        $data = User::with(['basicInfo', 'education', 'scholarshipinfo', 'addressinfo'])
+            ->where('caseCode', $req->caseCode)
+            ->first();
+
+        $worker = staccount::where('area', $data->scholarshipinfo->area)->first();
+        return view('staff.regularallowanceinfo', compact('data', 'req', 'worker'));
     }
 
     public function updateRegularAllowance(Request $request, $id)

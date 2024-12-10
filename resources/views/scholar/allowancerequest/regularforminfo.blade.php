@@ -11,6 +11,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .border-dash {
+            border-style: dashed !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,6 +26,9 @@
     @include('partials._navbar')
     <x-alert />
 
+    @php
+        use Carbon\Carbon;
+    @endphp
     <!-- MAIN -->
     <div class="ctn-main">
         <a href="{{ route('scregular') }}" class="goback">&lt Go back</a>
@@ -37,19 +45,20 @@
                 <div>
                     <p class="form-title"><strong>ALLOWANCE REQUEST FORM</strong></p>
                     <div class="subtitle">
-                        <p>{{ $regularAllowance->grades->SemesterQuarter ?? '[Semester]' }}<br>
-                            {{ $regularAllowance->education->scYearGrade ?? '[School Year]' }}</p>
+                        <div>{{ $data->education->scCollegedept ?? 'Failed to load' }}</div>
+                        <div>{{ $req->semester ?? 'Failed to load' }} | SY:
+                            {{ $req->schoolyear ?? 'Failed to load' }}</div>
                     </div>
                 </div>
 
                 <div class="table1">
-                    <table>
+                    <table class="table-bordered border-dark">
                         <tr>
                             <td class="gray">Name</td>
-                            <td colspan="2">{{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scLastname }}
+                            <td>{{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scLastname }}
                             </td>
                             <td class="gray">Date Submitted</td>
-                            <td colspan="2">{{ $regularAllowance->created_at->format('m/d/Y') }}</td>
+                            <td>{{ Carbon::parse($req->created_at)->format('F j, Y') }}</td>
                         </tr>
                         <tr>
                             <td class="gray">School</td>
@@ -57,64 +66,73 @@
                         </tr>
                         <tr>
                             <td class="gray">School Category</td>
-                            <td colspan="2">{{ $data->education->scSchoolLevel }}</td>
+                            <td>{{ $data->education->scSchoolLevel }}</td>
                             <td class="gray">Contact No.</td>
-                            <td colspan="2">{{ $data->scPhoneNum }}</td>
+                            <td>{{ $data->scPhoneNum }}</td>
                         </tr>
                         <tr>
                             <td class="gray">Year Level</td>
-                            <td colspan="2">{{ $data->education->scYearGrade }}</td>
+                            <td>{{ $data->education->scYearGrade }}</td>
                             <td class="gray">Course</td>
-                            <td colspan="2">{{ $data->education->scCourseStrandSec }}</td>
+                            <td>{{ $data->education->scCourseStrandSec }}</td>
                         </tr>
-                        @php
-                            use Carbon\Carbon;
-                        @endphp
-
+                        <tr>
+                            <td class="gray">Home Address</td>
+                            <td>{{ $data->addressinfo->scResidential }}</td>
+                            <td class="gray">Boarding House Address</td>
+                            <td>{{ $data->lodgingInfo->address ?? 'Not Applicable' }}</td>
+                        </tr>
                         <tr>
                             <td class="gray">Start of Semester</td>
-                            <td colspan="2">
-                                {{ Carbon::parse($regularAllowance->start_of_semester)->format('m/d/Y') }}</td>
+                            <td>{{ Carbon::parse($req->start_of_semester)->format('F j, Y') }}</td>
+                            <td class="gray">End of Semester</td>
+                            <td>{{ Carbon::parse($req->end_of_semester)->format('F j, Y') }}
+                            </td>
                         </tr>
                         <tr>
-                            <td class="gray">End of Semester</td>
-                            <td colspan="2">{{ Carbon::parse($regularAllowance->end_of_semester)->format('m/d/Y') }}
+                            <td class="gray">Start of OJT</td>
+                            <td>{{ optional($req->ojtTravelItinerary)->start_of_ojt ? Carbon::parse($req->ojtTravelItinerary->start_of_ojt)->format('F j, Y') : 'Not Applicable' }}
+                            </td>
+                            </td>
+                            <td class="gray">End of OJT</td>
+                            <td>{{ optional($req->ojtTravelItinerary)->end_of_ojt ? Carbon::parse($req->ojtTravelItinerary->end_of_ojt)->format('F j, Y') : 'Not Applicable' }}
+                            </td>
                             </td>
                         </tr>
                     </table>
                 </div>
 
                 <div class="section">
-                    <p class="sec-title">CLASS SCHEDULE (REFERENCE ONLY)</p>
-                    <p>* Attached the photocopy of the official class schedule from the Registrar (Registration
+                    <div class="sec-title">CLASS SCHEDULE (REFERENCE ONLY)</div>
+                    <div>* Attached the photocopy of the official class schedule from the Registrar (Registration
                         Form)<br>
-                        * Attached duly accomplished daily travel itinerary.</p>
-                    <div class="table2">
-                        <table>
+                        * Attached duly accomplished daily travel itinerary.</div>
+                    <div class="table2 mt-2">
+                        <table class="table-bordered border-dark">
                             <thead>
                                 <tr>
-                                    <th>TIME</th>
-                                    <th>MON</th>
-                                    <th>TUE</th>
-                                    <th>WED</th>
-                                    <th>THU</th>
-                                    <th>FRI</th>
-                                    <th>SAT</th>
-                                    <th>SUN</th>
+                                    <th class="text-center align-middle">TIME</th>
+                                    <th class="text-center align-middle">MON</th>
+                                    <th class="text-center align-middle">TUE</th>
+                                    <th class="text-center align-middle">WED</th>
+                                    <th class="text-center align-middle">THU</th>
+                                    <th class="text-center align-middle">FRI</th>
+                                    <th class="text-center align-middle">SAT</th>
+                                    <th class="text-center align-middle">SUN</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($regularAllowance->classReference && $regularAllowance->classReference->classSchedules->isNotEmpty())
-                                    @foreach ($regularAllowance->classReference->classSchedules as $schedule)
+                                @if ($req->classReference && $req->classReference->classSchedules->isNotEmpty())
+                                    @foreach ($req->classReference->classSchedules as $schedule)
                                         <tr>
-                                            <td>{{ $schedule->time_slot }}</td>
-                                            <td>{{ $schedule->mon ?? '--' }}</td>
-                                            <td>{{ $schedule->tue ?? '--' }}</td>
-                                            <td>{{ $schedule->wed ?? '--' }}</td>
-                                            <td>{{ $schedule->thu ?? '--' }}</td>
-                                            <td>{{ $schedule->fri ?? '--' }}</td>
-                                            <td>{{ $schedule->sat ?? '--' }}</td>
-                                            <td>{{ $schedule->sun ?? '--' }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->time_slot }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->mon ?? '--' }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->tue ?? '--' }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->wed ?? '--' }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->thu ?? '--' }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->fri ?? '--' }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->sat ?? '--' }}</td>
+                                            <td class="text-center align-middle">{{ $schedule->sun ?? '--' }}</td>
                                         </tr>
                                     @endforeach
                                 @else
@@ -127,22 +145,25 @@
                     </div>
 
                 </div>
-                <hr>
+                <div class="border border-2 border-dash border-dark"></div>
                 <div class="section">
-                    <p class="sec-title">TO BE FILLED BY TC-CHARITY STAFF</p>
-                    <p><em>*Important note: The number of school days per month is 20 regardless
+                    <div class="sec-title">TO BE FILLED BY TC-CHARITY STAFF</div>
+                    <div><em>*Important note: The number of school days per month is 20 regardless
                             of the scholars' class schedule for the computation of transportation and food allowances.
                         </em>
-                    </p>
-                    <div class="table3">
-                        <table>
+                    </div>
+                    <div class="table3 mt-2">
+                        <table class="table-bordered border-dark">
                             <tr>
-                                <th colspan="3" class="table-heading">MONTHLY LIVING ALLOWANCES (MLA)</th>
+                                <th colspan="3"
+                                    class="table-heading text-center align-middle text-center align-middle">MONTHLY
+                                    LIVING
+                                    ALLOWANCES (MLA)</th>
                             </tr>
                             <tr>
-                                <th class="table-subheading">ALLOWANCE DESCRIPTION</th>
-                                <th class="table-subheading">COMPUTATION</th>
-                                <th class="table-subheading">TOTAL</th>
+                                <th class="table-subheading text-center">ALLOWANCE DESCRIPTION</th>
+                                <th class="table-subheading text-center">COMPUTATION</th>
+                                <th class="table-subheading text-center">TOTAL</th>
                             </tr>
                             <tr>
                                 <td>Transportation</td>
@@ -165,7 +186,8 @@
                                 <td></td>
                             </tr>
                             <tr>
-                                <th colspan="3" class="table-heading">SPECIAL ALLOWANCES (SA)</th>
+                                <th colspan="3" class="table-heading text-center align-middle">SPECIAL ALLOWANCES
+                                    (SA)</th>
                             </tr>
                             <tr>
                                 <td>Book</td>
@@ -202,7 +224,7 @@
                                 <td></td>
                                 <td></td>
                             </tr>
-                            <tr>
+                            <tr class="table-heading">
                                 <td>On-the-Job or Practicum Allowance</td>
                                 <td></td>
                                 <td></td>
@@ -213,24 +235,29 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="reminder">
-                        <p style="text-decoration: underline;">Reminder:</p>
-                        <p>1. Students who are on OJT must attach a photocopy of the endorsement
-                            as well as the letter of acceptance from the company. </p>
+                    <div class="reminder mb-3">
+                        <div style="text-decoration: underline; font-weight: bold">Reminder:</div>
+                        <div>1. Students who are on OJT must attach a photocopy of the endorsement
+                            as well as the letter of acceptance from the company. </div>
                     </div>
                     <div class="table4">
-                        <table>
+                        <table class="table-bordered border-dark">
                             <tr>
                                 <td>Requested and submitted by:</td>
                                 <td>Noted by:</td>
                             </tr>
                             <tr>
-                                <td>{{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scLastname }}</td>
-                                <td>[Staff Name]</td>
+                                <td class="pt-4 text-center h6">{{ $data->basicInfo->scFirstname }}
+                                    {{ collect(explode(' ', $data->basicInfo->scMiddlename))->map(fn($word) => substr($word, 0, 1))->implode('') }}.
+                                    {{ $data->basicInfo->scLastname }}</td>
+                                <td class="pt-4 text-center h6">{{ $req->name ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Signature Over Printed Name</td>
+                                <td>Signature Over Printed Name</td>
                             </tr>
                         </table>
                     </div>
-
                 </div>
             </div>
 
@@ -243,7 +270,7 @@
                     VICE
                     VERSA)</p>
                 <div class="table5">
-                    <table>
+                    <table class="table-bordered border-dark">
                         <tr class="header">
                             <td colspan="2">Destination (Vice Versa)</td>
                             <td rowspan="2">Estimated Travel Time</td>
@@ -256,13 +283,13 @@
                         </tr>
 
                         {{-- Loop through each travel location --}}
-                        @forelse ($regularAllowance->travelItinerary->travelLocations as $location)
+                        @forelse ($req->travelItinerary->travelLocations as $location)
                             <tr>
-                                <td>{{ $location->travel_from ?? '--' }}</td>
-                                <td>{{ $location->travel_to ?? '--' }}</td>
-                                <td>{{ $location->estimated_time ?? '--' }}</td>
-                                <td>{{ $location->vehicle_type ?? '--' }}</td>
-                                <td>{{ $location->fare_rate ?? '--' }}</td>
+                                <td class="text-left align-top">{{ $location->travel_from ?? '--' }}</td>
+                                <td class="text-left align-top">{{ $location->travel_to ?? '--' }}</td>
+                                <td class="text-center align-middle">{{ $location->estimated_time ?? '--' }}</td>
+                                <td class="text-center align-middle">{{ $location->vehicle_type ?? '--' }}</td>
+                                <td class="text-center align-middle">{{ $location->fare_rate ?? '--' }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -272,10 +299,10 @@
 
                         {{-- Calculate the total fare rate --}}
                         <tr>
-                            <td colspan="4" style="text-align: center;">Total Costs per day</td>
-                            <td>
+                            <td colspan="4" class="text-center align-middle">Total Costs per day</td>
+                            <td class="text-center align-middle">
                                 @php
-                                    $totalCost = $regularAllowance->travelItinerary->travelLocations->sum('fare_rate');
+                                    $totalCost = $req->travelItinerary->travelLocations->sum('fare_rate') * 2;
                                 @endphp
                                 {{ $totalCost > 0 ? number_format($totalCost, 2) : '--' }}
                             </td>
@@ -283,35 +310,37 @@
                     </table>
                 </div>
 
-
-
                 <p class="sec-title" style="text-align: center;">LODGING INFORMATION</p>
                 <div class="table6">
-                    <table>
+                    <table class="table-bordered border-dark">
                         <tr>
-                            <td style="width: 200px;">Name of owner/landlady/landlord</td>
-                            <td>{{ $regularAllowance->lodgingInfo->name_owner ?? '--' }}</td>
+                            <td style="width: 200px">Name of owner/landlady/landlord</td>
+                            <td class="text-left align-middle">{{ $req->lodgingInfo->name_owner ?? 'Not Applicable' }}
+                            </td>
                         </tr>
                         <tr>
                             <td>Contact number</td>
-                            <td>{{ $regularAllowance->lodgingInfo->contact_no_owner ?? '--' }}</td>
+                            <td class="text-left align-middle">
+                                {{ $req->lodgingInfo->contact_no_owner ?? 'Not Applicable' }}</td>
                         </tr>
                         <tr>
                             <td>Monthly rent</td>
-                            <td>{{ $regularAllowance->lodgingInfo->monthly_rent ?? '--' }}</td>
+                            <td class="text-left align-middle">
+                                {{ $req->lodgingInfo->monthly_rent ?? 'Not Applicable' }}</td>
                         </tr>
                         <tr>
                             <td>Type of lodging</td>
-                            <td>{{ $regularAllowance->lodgingInfo->lodging_type ?? '--' }}</td>
+                            <td class="text-left align-middle">{{ $req->lodgingInfo->lodging_type }}</td>
                         </tr>
                     </table>
                 </div>
 
 
-                <p class="sec-title" style="text-align: center;">OJT DAILY TRAVEL ITINERARY FORM (FROM HOUSE TO ASSIGNED
+                <p class="sec-title" style="text-align: center;">OJT DAILY TRAVEL ITINERARY FORM (FROM HOUSE TO
+                    ASSIGNED
                     COMPANY AND VICE VERSA)</p>
                 <div class="table7">
-                    <table>
+                    <table class="table-bordered border-dark">
                         <tr class="header">
                             <td colspan="2">Destination (Vice Versa)</td>
                             <td rowspan="2">Estimated Travel Time</td>
@@ -324,29 +353,32 @@
                         </tr>
 
                         {{-- Check if ojtTravelItinerary exists and has ojtLocations --}}
-                        @if ($regularAllowance->ojtTravelItinerary && $regularAllowance->ojtTravelItinerary->ojtLocations->isNotEmpty())
-                            @foreach ($regularAllowance->ojtTravelItinerary->ojtLocations as $location)
+                        @if ($req->ojtTravelItinerary && $req->ojtTravelItinerary->ojtLocations->isNotEmpty())
+                            @foreach ($req->ojtTravelItinerary->ojtLocations as $location)
                                 <tr>
-                                    <td>{{ $location->ojt_from ?? '--' }}</td>
-                                    <td>{{ $location->ojt_to ?? '--' }}</td>
-                                    <td>{{ $location->ojt_estimated_time ?? '--' }}</td>
-                                    <td>{{ $location->ojt_vehicle_type ?? '--' }}</td>
-                                    <td>{{ $location->ojt_fare_rate ?? '--' }}</td>
+                                    <td class="text-left align-top">{{ $location->ojt_from ?? '--' }}</td>
+                                    <td class="text-left align-top">{{ $location->ojt_to ?? '--' }}</td>
+                                    <td class="text-center align-middle">{{ $location->ojt_estimated_time ?? '--' }}
+                                    </td>
+                                    <td class="text-center align-middle">{{ $location->ojt_vehicle_type ?? '--' }}
+                                    </td>
+                                    <td class="text-center align-middle">{{ $location->ojt_fare_rate ?? '--' }}</td>
                                 </tr>
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="5" style="text-align: center;">No travel itinerary data available</td>
+                                <td colspan="5" class="text-center align-middle">No travel itinerary data available
+                                </td>
                             </tr>
                         @endif
 
                         {{-- Calculate and display the total fare rate if ojtLocations exist --}}
                         <tr>
-                            <td colspan="4" style="text-align: center;">Total Costs per day</td>
-                            <td>
+                            <td colspan="4" class="text-center align-middle">Total Costs per day</td>
+                            <td class="text-center align-middle">
                                 @php
-                                    $totalCost = $regularAllowance->ojtTravelItinerary
-                                        ? $regularAllowance->ojtTravelItinerary->ojtLocations->sum('ojt_fare_rate')
+                                    $totalCost = $req->ojtTravelItinerary
+                                        ? $req->ojtTravelItinerary->ojtLocations->sum('ojt_fare_rate')
                                         : 0;
                                 @endphp
                                 {{ $totalCost > 0 ? number_format($totalCost, 2) : '--' }}
@@ -358,51 +390,72 @@
 
                 <p><em>I HEREBY CERTIFY that the information provided in this form is complete, true,
                         and correct to the best of my knowledge.</em></p>
-                <div class="signature">
-                    <div class="group1">
-                        <p>Submitted by:</p>
-                        <div class="sign">
-                            <p class="name">{{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scLastname }}
-                            </p>
-                            <p>Scholar</p>
-                        </div>
-                    </div>
-                    <div class="group2">
-                        <p>Noted by:</p>
-                        <div class="sign">
-                            <p class="name">[Staff Name]</p>
-                            <p>Assigned Tzu Chi staff</p>
-                        </div>
-                    </div>
+                <div class="table-responsive">
+                    <table class="table-sm">
+                        <tr>
+                            <td width="30%" class="text-left align-middle">Submitted by:</td>
+                            <td width="40%" class="text-left align-middle"></td>
+                            <td width="30%" class="text-left align-middle">Noted by:</td>
+                        </tr>
+                        <tr>
+                            <td width="30%" class="pt-4 text-center h6">{{ $data->basicInfo->scFirstname }}
+                                {{ collect(explode(' ', $data->basicInfo->scMiddlename))->map(fn($word) => substr($word, 0, 1))->implode('') }}.
+                                {{ $data->basicInfo->scLastname }}</td>
+                            <td width="40%" class="text-left align-middle"></td>
+                            <td width="30%" class="pt-4 text-center h6">{{ $req->name ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td width="30%" class="text-left align-middle border-top border-dark">Signature over
+                                printed name of the
+                                scholar</td>
+                            <td width="40%" class="text-left align-middle"></td>
+                            <td width="30%" class="text-left align-middle border-top border-dark">Signature over
+                                printed name of assigned
+                                Tzu Chi staff</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
-            <div class="file-info">
-                <div class="info">
-                    <div class="label">Registration Form</div>
-                    <div class="value">: <a
-                            href="{{ url('storage/' . $regularAllowance->classReference->registration_form) }}"
-                            target="_blank">View File</a></div>
+            <div class="container p-4 border border-dark mx-auto shadow mt-4" style="width: 8.5in">
+                <!-- Registration Form Row -->
+                <div class="row mb-3 align-items-center justify-content-center">
+                    <div class="col-md-6">
+                        <strong>Registration Form :</strong>
+                    </div>
+                    <div class="col-md-6 text-center fw-bold h6">
+                        <a href="{{ url('storage/' . $req->classReference->registration_form) }}" target="_blank"
+                            class="link-success">View File</a>
+                    </div>
+                </div>
 
-                    <div class="label">Photocopy of Endorsement</div>
-                    <div class="value">:
-                        @if ($regularAllowance->ojtTravelItinerary && $regularAllowance->ojtTravelItinerary->endorsement)
-                            <a href="{{ url('storage/' . $regularAllowance->ojtTravelItinerary->endorsement) }}"
-                                target="_blank">View File</a>
+                <!-- Photocopy of Endorsement Row -->
+                <div class="row mb-3 align-items-center justify-content-center">
+                    <div class="col-md-6">
+                        <strong>Photocopy of Endorsement :</strong>
+                    </div>
+                    <div class="col-md-6 text-center fw-bold h6">
+                        @if ($req->ojtTravelItinerary && $req->ojtTravelItinerary->endorsement)
+                            <a href="{{ url('storage/' . $req->ojtTravelItinerary->endorsement) }}" target="_blank"
+                                class="link-success">View File</a>
                         @else
-                            <span>No file available</span>
+                            <span class="text-danger">No file available</span>
                         @endif
                     </div>
+                </div>
 
-                    <div class="label">Letter of Acceptance</div>
-                    <div class="value">:
-                        @if ($regularAllowance->ojtTravelItinerary && $regularAllowance->ojtTravelItinerary->acceptance)
-                            <a href="{{ url('storage/' . $regularAllowance->ojtTravelItinerary->acceptance) }}"
-                                target="_blank">View File</a>
+                <!-- Letter of Acceptance Row -->
+                <div class="row mb-3 align-items-center justify-content-center">
+                    <div class="col-md-6">
+                        <strong>Letter of Acceptance :</strong>
+                    </div>
+                    <div class="col-md-6 text-center fw-bold h6">
+                        @if ($req->ojtTravelItinerary && $req->ojtTravelItinerary->acceptance)
+                            <a href="{{ url('storage/' . $req->ojtTravelItinerary->acceptance) }}" target="_blank"
+                                class="link-success">View File</a>
                         @else
-                            <span>No file available</span>
+                            <span class="text-danger">No file available</span>
                         @endif
                     </div>
-
                 </div>
             </div>
         </div>
