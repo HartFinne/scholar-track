@@ -2752,10 +2752,27 @@ class StaffController extends Controller
             ->where('eventstatus', '!=', 'Closed')
             ->update(['eventstatus' => 'Closed']);
         $events = [
-            'all' => communityservice::paginate(10),
-            'open' => communityservice::where('eventstatus', 'Open')->paginate(10),
-            'closed' => communityservice::where('eventstatus', 'Closed')->paginate(10),
+            'all' => communityservice::orderBy('eventdate', 'ASC')
+                ->orderByRaw("CASE
+                            WHEN eventstatus = 'Open' THEN 1
+                            WHEN eventstatus = 'Closed' THEN 2
+                            ELSE 3
+                            END")
+                ->orderBy('updated_at', 'DESC')->paginate(10),
+            'open' => communityservice::where('eventstatus', 'Open')
+                ->orderByRaw("CASE
+                        WHEN eventstatus = 'Open' THEN 1
+                        WHEN eventstatus = 'Closed' THEN 2
+                        ELSE 3
+                        END")->orderBy('eventdate', 'ASC')->orderBy('updated_at', 'DESC')->paginate(10),
+            'closed' => communityservice::where('eventstatus', 'Closed')
+                ->orderByRaw("CASE
+                        WHEN eventstatus = 'Open' THEN 1
+                        WHEN eventstatus = 'Closed' THEN 2
+                        ELSE 3
+                        END")->orderBy('eventdate', 'ASC')->orderBy('updated_at', 'DESC')->paginate(10),
         ];
+
         $totalevents = communityservice::count();
         $openevents = communityservice::where('eventstatus', 'Open')->count();
         $closedevents = communityservice::where('eventstatus', 'Closed')->count();
@@ -3684,10 +3701,10 @@ class StaffController extends Controller
             ->get();
         $reports = [
             'All' => Reports::orderBy('dategenerated', "DESC")->paginate(5),
-            'College' => Reports::where('level', 'College')->orderBy('dategenerated', "DESC")->paginate(5),
-            'Senior High' => Reports::where('level', 'Senior High')->orderBy('dategenerated', "DESC")->paginate(5),
-            'Junior High' => Reports::where('level', 'Junior High')->orderBy('dategenerated', "DESC")->paginate(5),
-            'Elementary' => Reports::where('level', 'Elementary')->orderBy('dategenerated', "DESC")->paginate(5)
+            'College' => Reports::where('level', 'College')->orderBy('created_at', "DESC")->paginate(5),
+            'Senior High' => Reports::where('level', 'Senior High')->orderBy('created_at', "DESC")->paginate(5),
+            'Junior High' => Reports::where('level', 'Junior High')->orderBy('created_at', "DESC")->paginate(5),
+            'Elementary' => Reports::where('level', 'Elementary')->orderBy('created_at', "DESC")->paginate(5)
         ];
         return view('staff.scholarship-report', compact('colleges', 'shs', 'jhs', 'elem', 'acadyear', 'reports'));
     }
@@ -3756,7 +3773,7 @@ class StaffController extends Controller
 
             // Build common queries
             $commonQuery = scholarshipinfo::query();
-            $commonQuery->whereBetween('startdate', [$startdate, $enddate]);
+            $commonQuery->whereBetween('updated_at', [$startdate, $enddate]);
 
             if ($level !== 'All') {
                 $commonQuery->whereHas('education', function ($query) use ($level) {

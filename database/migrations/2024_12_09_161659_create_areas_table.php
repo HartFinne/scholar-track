@@ -14,8 +14,8 @@ return new class extends Migration
     {
         Schema::create('areas', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('areaname', 100);
-            $table->string('areacode', 3);
+            $table->string('areaname', 100)->unique();
+            $table->string('areacode', 3)->unique();
             $table->timestamps();
         });
 
@@ -26,7 +26,7 @@ return new class extends Migration
             ],
             [
                 'areaname' => "Minxi",
-                'areacode' => "MZ",
+                'areacode' => "MX",
             ],
             [
                 'areaname' => "Minzhong",
