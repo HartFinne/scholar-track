@@ -80,21 +80,6 @@
         </div>
     </div>
 
-    {{-- <!-- CONFIRMATION DIALOG -->
-    <div class="ctndialog" id="confirmdialog" style="display: none;">
-        <div class="groupA">
-            <i class="dialogicon1 fas fa-circle-question"></i>
-            <span id="label1">Are you sure this is you?</span>
-            <span id="label2">"<span id="scholarname">JUAN DELA CRUZ</span>"</span>
-            <span id="label3">This action cannot be undone.</span>
-
-            <div class="groupA1">
-                <button id="btnno" onclick="toggleconfirmationdialog()">No</button>
-                <button id="btnyes">Yes</button>
-            </div>
-        </div>
-    </div> --}}
-
     <!-- EXIT DIALOG -->
     <div class="ctndialog" id="exitdialog" style="display: none;">
         <div class="groupA">

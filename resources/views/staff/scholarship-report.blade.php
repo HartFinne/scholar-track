@@ -83,42 +83,26 @@
                                         {{ $report->datescope ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
-                                        {{ Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') ?? 'Failed to load data' }}
+                                        {{ $report->dategenerated ? Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') : 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         {{ $report->generatedby ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         <button class="btn btn-sm btn-success view-report" data-bs-toggle="modal"
-                                            data-bs-target="#fileModal-{{ $report->id }}">
+                                            data-bs-target="#fileModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-danger delete-report" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
-
-                                <div class="modal fade" id="fileModal-{{ $report->id }}" tabindex="-1"
-                                    aria-labelledby="fileModalLabel-{{ $report->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-xl" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title" id="fileModalLabel-{{ $report->id }}">Report
-                                                    Preview</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <iframe id="reportIframe"
-                                                    src="{{ url('storage/' . $report->filepath) }}"
-                                                    style="width: 100%; height: 80vh;" frameborder="0">
-                                                    Your browser does not support iframes. Please download the PDF file
-                                                    <a href="{{ url('storage/' . $report->filepath) }}" target="_blank"
-                                                        download>click here</a>.
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             @empty
                                 <tr>
                                     <td class="text-center align-middle" colspan="7">No Reports Found.</td>
@@ -159,43 +143,26 @@
                                         {{ $report->datescope ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
-                                        {{ Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') ?? 'Failed to load data' }}
+                                        {{ $report->dategenerated ? Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') : 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         {{ $report->generatedby ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         <button class="btn btn-sm btn-success view-report" data-bs-toggle="modal"
-                                            data-bs-target="#fileModal-{{ $report->id }}">
+                                            data-bs-target="#fileModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-danger delete-report" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
-
-                                <div class="modal fade" id="fileModal-{{ $report->id }}" tabindex="-1"
-                                    aria-labelledby="fileModalLabel-{{ $report->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-xl" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title" id="fileModalLabel-{{ $report->id }}">
-                                                    Report
-                                                    Preview</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <iframe id="reportIframe"
-                                                    src="{{ url('storage/' . $report->filepath) }}"
-                                                    style="width: 100%; height: 80vh;" frameborder="0">
-                                                    Your browser does not support iframes. Please download the PDF file
-                                                    <a href="{{ url('storage/' . $report->filepath) }}"
-                                                        target="_blank" download>click here</a>.
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             @empty
                                 <tr>
                                     <td class="text-center align-middle" colspan="7">No Reports Found.</td>
@@ -236,43 +203,26 @@
                                         {{ $report->datescope ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
-                                        {{ Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') ?? 'Failed to load data' }}
+                                        {{ $report->dategenerated ? Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') : 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         {{ $report->generatedby ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         <button class="btn btn-sm btn-success view-report" data-bs-toggle="modal"
-                                            data-bs-target="#fileModal-{{ $report->id }}">
+                                            data-bs-target="#fileModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-danger delete-report" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
-
-                                <div class="modal fade" id="fileModal-{{ $report->id }}" tabindex="-1"
-                                    aria-labelledby="fileModalLabel-{{ $report->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-xl" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title" id="fileModalLabel-{{ $report->id }}">
-                                                    Report
-                                                    Preview</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <iframe id="reportIframe"
-                                                    src="{{ url('storage/' . $report->filepath) }}"
-                                                    style="width: 100%; height: 80vh;" frameborder="0">
-                                                    Your browser does not support iframes. Please download the PDF file
-                                                    <a href="{{ url('storage/' . $report->filepath) }}"
-                                                        target="_blank" download>click here</a>.
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             @empty
                                 <tr>
                                     <td class="text-center align-middle" colspan="7">No Reports Found.</td>
@@ -313,43 +263,26 @@
                                         {{ $report->datescope ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
-                                        {{ Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') ?? 'Failed to load data' }}
+                                        {{ $report->dategenerated ? Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') : 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         {{ $report->generatedby ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         <button class="btn btn-sm btn-success view-report" data-bs-toggle="modal"
-                                            data-bs-target="#fileModal-{{ $report->id }}">
+                                            data-bs-target="#fileModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-danger delete-report" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
-
-                                <div class="modal fade" id="fileModal-{{ $report->id }}" tabindex="-1"
-                                    aria-labelledby="fileModalLabel-{{ $report->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-xl" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title" id="fileModalLabel-{{ $report->id }}">
-                                                    Report
-                                                    Preview</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <iframe id="reportIframe"
-                                                    src="{{ url('storage/' . $report->filepath) }}"
-                                                    style="width: 100%; height: 80vh;" frameborder="0">
-                                                    Your browser does not support iframes. Please download the PDF file
-                                                    <a href="{{ url('storage/' . $report->filepath) }}"
-                                                        target="_blank" download>click here</a>.
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             @empty
                                 <tr>
                                     <td class="text-center align-middle" colspan="7">No Reports Found.</td>
@@ -390,43 +323,26 @@
                                         {{ $report->datescope ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
-                                        {{ Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') ?? 'Failed to load data' }}
+                                        {{ $report->dategenerated ? Carbon\Carbon::parse($report->dategenerated)->format('F j, Y') : 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         {{ $report->generatedby ?? 'Failed to load data' }}
                                     </td>
                                     <td class="text-center align-middle">
                                         <button class="btn btn-sm btn-success view-report" data-bs-toggle="modal"
-                                            data-bs-target="#fileModal-{{ $report->id }}">
+                                            data-bs-target="#fileModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                        <button class="btn btn-sm btn-danger delete-report" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal" data-id="{{ $report->id }}"
+                                            data-name="{{ $report->reportname }}"
+                                            data-filepath="{{ $report->filepath }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
-
-                                <div class="modal fade" id="fileModal-{{ $report->id }}" tabindex="-1"
-                                    aria-labelledby="fileModalLabel-{{ $report->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-xl" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-success text-white">
-                                                <h5 class="modal-title" id="fileModalLabel-{{ $report->id }}">
-                                                    Report
-                                                    Preview</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <iframe id="reportIframe"
-                                                    src="{{ url('storage/' . $report->filepath) }}"
-                                                    style="width: 100%; height: 80vh;" frameborder="0">
-                                                    Your browser does not support iframes. Please download the PDF file
-                                                    <a href="{{ url('storage/' . $report->filepath) }}"
-                                                        target="_blank" download>click here</a>.
-                                                </iframe>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             @empty
                                 <tr>
                                     <td class="text-center align-middle" colspan="7">No Reports Found.</td>
@@ -826,6 +742,45 @@
         </div>
     </div>
 
+    {{-- View Report Modal --}}
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="fileModalLabel">Report Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="reportIframe" style="width: 100%; height: 80vh;" frameborder="0">
+                        Your browser does not support this function. Please download the PDF
+                        file.
+                        <a href="#" target="_blank" download>Download</a>.
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Delete Report Modal --}}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Report</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <span id="confirmText">Are you sure you really want to delete this
+                        report?</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger" id="deleteConfirmButton" href="#">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- LOADING MODAL  --}}
     <div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -953,6 +908,33 @@
                     showLoadingModal(event);
                 });
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update View Modal content
+            document.querySelectorAll('.view-report').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filepath = button.getAttribute('data-filepath');
+                    const modalIframe = document.getElementById('reportIframe');
+                    const downloadLink = modalIframe.nextElementSibling;
+                    modalIframe.src = `{{ url('storage/') }}/${filepath}`;
+                    downloadLink.href = modalIframe.src;
+                });
+            });
+
+            // Update Delete Modal content
+            document.querySelectorAll('.delete-report').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = button.getAttribute('data-id');
+                    const name = button.getAttribute('data-name');
+                    const confirmText = document.getElementById('confirmText');
+                    const deleteButton = document.getElementById('deleteConfirmButton');
+                    confirmText.textContent =
+                        `Are you sure you really want to delete the report: ${name}?`;
+                    deleteButton.href = `{{ route('deleteSummaryReport', '') }}/${id}`;
+                });
+            });
         });
     </script>
     <script src="{{ asset('js/headercontrol.js') }}"></script>

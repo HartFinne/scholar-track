@@ -13,14 +13,21 @@ return new class extends Migration
     {
         Schema::create('regular_allowance', function (Blueprint $table) {
             $table->increments('regularID');
-            $table->unsignedInteger('gid');
+            $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci');
+            $table->string('schoolyear', 10);
+            $table->string('semester', 25);
             $table->date('start_of_semester');
             $table->date('end_of_semester');
             $table->date('date_of_release')->nullable();
             $table->string('status', 20);
             $table->timestamps();
 
-            $table->foreign('gid')->references('gid')->on('grades')->onDelete('cascade')->onUpdate('cascade');
+            // Define foreign key constraint for 'caseCode' column
+            $table->foreign('caseCode') // Column in the child table
+                ->references('caseCode') // Column in the parent table
+                ->on('users') // Parent table
+                ->onDelete('cascade')
+                ->onUpdate('cascade');
         });
     }
 

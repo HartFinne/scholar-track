@@ -7,7 +7,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="{{ asset('css/style.css') }}" rel="stylesheet" />
-    <link href="{{ asset('css/sthome.css') }}" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -89,7 +88,7 @@
                                     <div class="mb-3">
                                         <label for="description" class="form-label">Description</label>
                                         <textarea class="form-control" id="description" name="description" rows="10" required
-                                            style="resize: none; height: max-content;">{{ $announcement->description }}</textarea>
+                                            style="resize: none; height: 40vh;">{{ $announcement->description }}</textarea>
                                     </div>
                                     <button type="submit" class="btn btn-success">Save</button>
                                 </form>
@@ -117,8 +116,8 @@
                         <div class="row mb-3">
                             <label for="recipients" class="col-md-3 col-form-label fw-bold">Select Recipients:</label>
                             <div class="col-md-9">
-                                <select class="form-select" name="recipients[]" id="recipients" multiple="multiple"
-                                    style="width: 100%;">
+                                <select name="recipients[]" id="recipients" multiple style="width: 100%;"
+                                    class="custom-form-control">
                                     <option value="all">All Users</option>
                                     @foreach ($users as $user)
                                         <option value="{{ $user->caseCode }}">
@@ -138,7 +137,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Message</label>
-                            <textarea class="form-control" id="inmessage" name="description" placeholder="Type here..." required></textarea>
+                            <textarea class="form-control" style="resize: none; height: 40vh" id="inmessage" name="description"
+                                placeholder="Type here..." required></textarea>
                         </div>
                         <div class="mb-3 text-end">
                             <button type="submit" class="btn btn-success">Post</button>

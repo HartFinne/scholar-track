@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('caseCode', 15)->charset('utf8mb4')->collation('utf8mb4_unicode_ci')->unique();
             $table->string('scLastname', 50);
             $table->string('scFirstname', 50);
-            $table->string('scMiddlename', 50);
+            $table->string('scMiddlename', 50)->nullable();
             $table->string('scChinesename', 255);
             $table->date('scDateOfBirth');
             $table->integer('scAge');

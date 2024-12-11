@@ -13,6 +13,7 @@ use App\Models\scholarshipinfo;
 use App\Models\Email;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+use App\Models\Areas;
 use Illuminate\Validation\Rules\Password;
 use Carbon\Carbon;
 
@@ -41,7 +42,9 @@ class HomeController extends Controller
             'College' => DB::table('courses')->where('level', 'College')->orderBy('coursename', 'ASC')->get()
         ];
 
-        return view('registration', compact('yearLevels', 'courses', 'institutions'));
+        $areas = Areas::all();
+
+        return view('registration', compact('yearLevels', 'courses', 'institutions', 'areas'));
     }
 
     function registerScholar(Request $request)
@@ -56,10 +59,10 @@ class HomeController extends Controller
             $ScholarShipStatus = 'Continuing';
             $scStatus = 'Active';
 
-            // $isEmailValid = $this->verifyEmail($request->emailAddress);
-            // if (!$isEmailValid) {
-            //     return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
-            // }
+            $isEmailValid = $this->verifyEmail($request->emailAddress);
+            if (!$isEmailValid) {
+                return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
+            }
 
             $request->validate(
                 [
@@ -173,7 +176,7 @@ class HomeController extends Controller
                 'caseCode' => $User->caseCode, // Foreign key from sc_account
                 'scFirstname' => $request->firstName,
                 'scLastname' => $request->lastName,
-                'scMiddlename' => $request->middleName,
+                'scMiddlename' => $request->middleName == 'Not Applicable' ? null : $request->middleName,
                 'scChinesename' => $request->chineseName,
                 'scDateOfBirth' => $request->birthdate,
                 'scAge' => $age,
@@ -245,25 +248,9 @@ class HomeController extends Controller
         $startyear = $date->format('y');
         $nextyear = $date->modify('+1 year')->format('y');
 
-        $areacode = '';
+        $area = Areas::where('areaname', $area)->first();
 
-        if ($area == 'Mindong') {
-            $areacode = 'MD';
-        } elseif ($area == 'Minxi') {
-            $areacode = 'MX';
-        } elseif ($area == 'Minzhong') {
-            $areacode = 'MZ';
-        } elseif ($area == 'Bicol') {
-            $areacode = 'BC';
-        } elseif ($area == 'Davao') {
-            $areacode = 'DV';
-        } elseif ($area == 'Iloilo') {
-            $areacode = 'ILO';
-        } elseif ($area == 'Palo') {
-            $areacode = 'PL';
-        } elseif ($area == 'Zamboanga') {
-            $areacode = 'ZB';
-        }
+        $areacode = $area->areacode;
 
         $latestCase = DB::table('users')
             ->where('caseCode', 'like', "{$startyear}{$nextyear}-%")

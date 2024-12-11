@@ -14,6 +14,7 @@ class applicationforms extends Model
     protected $primaryKey = 'afid';
 
     protected $fillable = [
+        'deadline',
         'status',
     ];
 }
