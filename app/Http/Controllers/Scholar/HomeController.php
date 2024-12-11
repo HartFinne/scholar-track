@@ -59,10 +59,10 @@ class HomeController extends Controller
             $ScholarShipStatus = 'Continuing';
             $scStatus = 'Active';
 
-            // $isEmailValid = $this->verifyEmail($request->emailAddress);
-            // if (!$isEmailValid) {
-            //     return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
-            // }
+            $isEmailValid = $this->verifyEmail($request->emailAddress);
+            if (!$isEmailValid) {
+                return redirect()->route('registration')->with('failure', 'Registration failed. Invalid email address')->withInput();
+            }
 
             $request->validate(
                 [
@@ -176,7 +176,7 @@ class HomeController extends Controller
                 'caseCode' => $User->caseCode, // Foreign key from sc_account
                 'scFirstname' => $request->firstName,
                 'scLastname' => $request->lastName,
-                'scMiddlename' => $request->middleName,
+                'scMiddlename' => $request->middleName == 'Not Applicable' ? null : $request->middleName,
                 'scChinesename' => $request->chineseName,
                 'scDateOfBirth' => $request->birthdate,
                 'scAge' => $age,
