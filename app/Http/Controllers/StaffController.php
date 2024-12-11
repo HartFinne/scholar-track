@@ -74,6 +74,8 @@ use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\VarDumper\Caster\RedisCaster;
 use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Promise\Create;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 
 class StaffController extends Controller
 {
@@ -1253,18 +1255,15 @@ class StaffController extends Controller
     {
         DB::beginTransaction();
         try {
-            $request->validate(
-                [
-                    'cshours' => 'required|numeric|min:0',
-                    'cgwa' => 'required|numeric|min:1|max:5',
-                    'shsgwa' => 'required|numeric|min:1|max:100',
-                    'jhsgwa' => 'required|numeric|min:1|max:100',
-                    'elemgwa' => 'required|numeric|min:1|max:100',
-                    'fincome' => 'required|numeric|min:0',
-                    'mincome' => 'required|numeric|min:0',
-                    'sincome' => 'required|numeric|min:0',
-                    'aincome' => 'required|numeric|min:0',
-                ],
+            // Fetch all columns from the criteria table
+            $columns = Schema::getColumnListing('criteria');
+
+            // Only allow validation for fields that exist in the table schema
+            $validatedData = $request->validate(
+                array_intersect_key(
+                    array_fill_keys($columns, 'required|numeric'), // Create validation rules dynamically
+                    $request->all() // Only include validated fields
+                ),
                 [
                     'cshours.min' => 'The required community service hours must not be less than 1.',
                     'cgwa.min' => 'Please input a valid GWA in college.',
@@ -1281,29 +1280,13 @@ class StaffController extends Controller
             $criteria = criteria::first();
 
             if (is_null($criteria)) {
-                criteria::create([
-                    'cshours' => $request->cshours,
-                    'cgwa' => $request->cgwa,
-                    'shsgwa' => $request->shsgwa,
-                    'jhsgwa' => $request->jhsgwa,
-                    'elemgwa' => $request->elemgwa,
-                    'fincome' => $request->fincome,
-                    'mincome' => $request->mincome,
-                    'sincome' => $request->sincome,
-                    'aincome' => $request->aincome,
-                ]);
+                // Create a new record if no existing record
+                criteria::create($validatedData);
             } else {
-                $criteria->update([
-                    'cshours' => $request->cshours,
-                    'cgwa' => $request->cgwa,
-                    'shsgwa' => $request->shsgwa,
-                    'jhsgwa' => $request->jhsgwa,
-                    'elemgwa' => $request->elemgwa,
-                    'fincome' => $request->fincome,
-                    'mincome' => $request->mincome,
-                    'sincome' => $request->sincome,
-                    'aincome' => $request->aincome,
-                ]);
+                // Update only existing columns, ensuring new columns are also included
+                $updateData = array_intersect_key($validatedData, array_flip($columns));
+                // dd($updateData);
+                $criteria->update($updateData);
             }
 
             DB::commit();
@@ -1316,6 +1299,46 @@ class StaffController extends Controller
             return redirect()->back()->with('failure', 'Unable to update scholarship requirements.');
         }
     }
+
+
+
+
+
+    public function addcriteria(Request $request)
+    {
+        $request->validate([
+            'criteriaType' => 'required|in:string,number',
+        ]);
+
+        $columnName = str_replace(' ', '_', strtolower($request->criteriaName));
+
+        // Generate the migration file
+        $migrationName = 'add_' . $columnName . '_to_criteria_table';
+        $timestamp = date('Y_m_d_His');
+        $migrationPath = database_path("migrations/{$timestamp}_{$migrationName}.php");
+
+        $migrationStub = $request->criteriaType === 'string'
+            ? file_get_contents(resource_path('stubs/add_string_column.stub'))
+            : file_get_contents(resource_path('stubs/add_number_column.stub'));
+
+        // Replace the placeholder with the actual column name
+        $migrationContent = str_replace('{{ columnName }}', $columnName, $migrationStub);
+        file_put_contents($migrationPath, $migrationContent);
+
+        // Run the migration
+        Artisan::call('migrate');
+
+        // Delete the migration file after successful execution
+        if (file_exists($migrationPath)) {
+            unlink($migrationPath);
+        }
+
+        // Redirect back with success message
+        return redirect()->back()->with('success', 'Criteria added successfully.');
+    }
+
+
+
 
     public function addinstitution(Request $request)
     {

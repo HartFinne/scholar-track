@@ -226,64 +226,27 @@
             {{-- SCHOLARSHIP REQUIREMENTS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
                 <div class="row justify-content-between align-items-center mb-2">
-                    <div class="col-auto">
-                        <legend class="fw-bold text-success h4">Scholarship Requirements</legend>
+                    <div class="col">
+                        <legend class="fw-bold text-success h4 mb-0">Scholarship Requirements</legend>
                     </div>
                     <div class="col-auto">
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                            data-bs-target="#editRequirementsModal">
+                        <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#editRequirementsModal">
                             Edit Requirements
+                        </button>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRequirementsModal">
+                            Add Requirement
                         </button>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-2 mb-3">
-                        <label for="cshours" class="form-label">Required CS Hours</label>
-                        <input type="number" class="form-control border-success" id="cshours"
-                            value="{{ $criteria->cshours ?? 'Not Set' }}" readonly>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label for="cgwa" class="form-label">College GWA</label>
-                        <input type="number" class="form-control border-success" id="cgwa"
-                            value="{{ $criteria->cgwa ?? 'Not Set' }}" readonly>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label for="shsgwa" class="form-label">Senior High GWA</label>
-                        <input type="number" class="form-control border-success" id="shsgwa"
-                            value="{{ $criteria->shsgwa ?? 'Not Set' }}" readonly>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label for="jhsgwa" class="form-label">Junior High GWA</label>
-                        <input type="number" class="form-control border-success" id="jhsgwa"
-                            value="{{ $criteria->jhsgwa ?? 'Not Set' }}" readonly>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label for="elemgwa" class="form-label">Elementary GWA</label>
-                        <input type="number" class="form-control border-success" id="elemgwa"
-                            value="{{ $criteria->elemgwa ?? 'Not Set' }}" readonly>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-2 mb-3">
-                        <label for="fincome" class="form-label">Father's Income</label>
-                        <input type="number" class="form-control border-success" id="fincome"
-                            value="{{ $criteria->fincome ?? 'Not Set' }}" readonly>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label for="mincome" class="form-label">Mother's Income</label>
-                        <input type="number" class="form-control border-success" id="mincome"
-                            value="{{ $criteria->mincome ?? 'Not Set' }}" readonly>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label for="sincome" class="form-label">Siblings' Income</label>
-                        <input type="number" class="form-control border-success" id="sincome"
-                            value="{{ $criteria->sincome ?? 'Not Set' }}" readonly>
-                    </div>
-                    <div class="col-md-2 mb-3">
-                        <label for="aincome" class="form-label">Applicant's Income</label>
-                        <input type="number" class="form-control border-success" id="aincome"
-                            value="{{ $criteria->aincome ?? 'Not Set' }}" readonly>
-                    </div>
+                <div class="d-flex flex-wrap">
+                    @foreach ($criteria->getAttributes() as $key => $value)
+                        @if(!in_array($key, ['crid', 'created_at', 'updated_at'])) <!-- Exclude standard fields like ID, timestamps -->
+                            <div class="col-md-2 mb-3 mx-2 ">
+                                <label for="{{ $key }}" class="form-label">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
+                                <input type="number" class="form-control border-success" id="{{ $key }}" value="{{ $value ?? 'Not Set' }}" readonly>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
             </fieldset>
 
@@ -664,99 +627,50 @@
                 </div>
                 <form method="POST" action="{{ route('updatecriteria') }}">
                     @csrf
-                    <div class="modal-body row justify-content-evenly">
-                        <div class="col-md-5">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <label for="cshours" class="form-label fw-bold">Required CS Hours</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="0" class="form-control" id="cshours"
-                                        name="cshours" value="{{ $criteria->cshours ?? '' }}" placeholder="Not Set"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="row align-items-center mt-3">
-                                <div class="col-md-8">
-                                    <label for="cgwa" class="form-label fw-bold">College GWA</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" max="5" class="form-control"
-                                        id="cgwa" name="cgwa" value="{{ $criteria->cgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
-                                </div>
-                            </div>
-                            <div class="row align-items-center mt-3">
-                                <div class="col-md-8">
-                                    <label for="shsgwa" class="form-label fw-bold">Senior High GWA</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" max="100" class="form-control"
-                                        id="shsgwa" name="shsgwa" value="{{ $criteria->shsgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
-                                </div>
-                            </div>
-                            <div class="row align-items-center mt-3">
-                                <div class="col-md-8">
-                                    <label for="jhsgwa" class="form-label fw-bold">Junior High GWA</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" max="100" class="form-control"
-                                        id="jhsgwa" name="jhsgwa" value="{{ $criteria->jhsgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
-                                </div>
-                            </div>
-                            <div class="row align-items-center mt-3">
-                                <div class="col-md-8">
-                                    <label for="elemgwa" class="form-label fw-bold">Elementary GWA</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" max="100" class="form-control"
-                                        id="elemgwa" name="elemgwa" value="{{ $criteria->elemgwa ?? '' }}"
-                                        placeholder="Not Set" required step="0.01">
-                                </div>
-                            </div>
+                    <div class="modal-body">
+                        <div class="d-flex flex-wrap">
+                            @foreach ($criteria->getAttributes() as $key => $value)
+                                @if(!in_array($key, ['crid', 'created_at', 'updated_at'])) <!-- Exclude standard fields like ID, timestamps -->
+                                    <div class="col-md-2 mb-3 mx-2 my-2">
+                                        <label for="{{ $key }}" class="form-label">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
+                                        <input type="number" class="form-control border-success" id="{{ $key }}" name="{{ $key }}" value="{{ $value ?? 'Not Set' }}" required>
+                                    </div>
+                                @endif
+                            @endforeach
                         </div>
-                        <div class="col-md-5">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <label for="fincome" class="form-label fw-bold">Father's Income</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="fincome"
-                                        name="fincome" value="{{ $criteria->fincome ?? '' }}" placeholder="Not Set"
-                                        required>
-                                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for add Requirements -->
+    <div class="modal fade" id="addRequirementsModal" tabindex="-1" aria-labelledby="addRequirementsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addRequirementsModalLabel">Add Scholarship Requirements</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ route('addcriteria') }}">
+                    @csrf
+                    <div class="modal-body row justify-content-evenly">
+                        <div class="row align-items-center">
+                            <div class="mb-3">
+                                <label for="criteriaName" class="form-label">Criteria Name</label>
+                                <input type="text" id="criteriaName" name="criteriaName" class="form-control" placeholder="e.g., English Grade" required>
                             </div>
-                            <div class="row align-items-center mt-3">
-                                <div class="col-md-8">
-                                    <label for="mincome" class="form-label fw-bold">Mother's Income</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="mincome"
-                                        name="mincome" value="{{ $criteria->mincome ?? '' }}" placeholder="Not Set"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="row align-items-center mt-3">
-                                <div class="col-md-8">
-                                    <label for="sincome" class="form-label fw-bold">Siblings' Income</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="sincome"
-                                        name="sincome" value="{{ $criteria->sincome ?? '' }}" placeholder="Not Set"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="row align-items-center mt-3">
-                                <div class="col-md-8">
-                                    <label for="aincome" class="form-label fw-bold">Applicant's Income</label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="number" min="1" class="form-control" id="aincome"
-                                        name="aincome" value="{{ $criteria->aincome ?? '' }}" placeholder="Not Set"
-                                        required>
-                                </div>
+                            <div class="mb-3">
+                                <label for="criteriaType" class="form-label">Data Type</label>
+                                <select id="criteriaType" name="criteriaType" class="form-control" required>
+                                    <option value="string">String</option>
+                                    <option value="number">Number</option>
+                                </select>
                             </div>
                         </div>
                     </div>
