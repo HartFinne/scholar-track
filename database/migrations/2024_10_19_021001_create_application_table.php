@@ -16,7 +16,6 @@ return new class extends Migration
             $table->increments('afid');
             $table->string('formname', 50);
             $table->date('deadline')->nullable();
-            $table->date('enddate')->nullable();
             $table->string('status', 6);
             $table->timestamps();
         });

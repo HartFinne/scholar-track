@@ -62,53 +62,118 @@
                                             <td class="text-center align-middle">{{ $form->status }}</td>
                                             <td class="text-center align-middle">
                                                 @if ($form->status == 'Closed')
-                                                    <button type="button" class="btn btn-success open-modal-btn"
+                                                    <button type="button" class="btn btn-sm btn-success open-modal-btn"
                                                         data-bs-toggle="modal" data-bs-target="#openApplicationModal"
                                                         data-formname="{{ $form->formname }}">
                                                         Open
                                                     </button>
                                                 @else
-                                                    <button type="button" class="btn btn-sm btn-danger"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#closeApplicationModal{{ $form->formname }}">
+                                                    <button type="button" class="btn btn-sm btn-danger close-modal-btn"
+                                                        data-bs-toggle="modal" data-bs-target="#closeApplicationModal"
+                                                        data-formname="{{ $form->formname }}">
                                                         Close
                                                     </button>
                                                 @endif
                                             </td>
                                         </tr>
-                                        <!-- Close Form Confirmation Modal -->
-                                        <div class="modal fade" id="closeApplicationModal{{ $form->formname }}"
-                                            tabindex="-1"
-                                            aria-labelledby="closeApplicationModalLabel{{ $form->formname }}"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-danger text-white fw-bold">
-                                                        <h5 class="modal-title"
-                                                            id="closeApplicationModalLabel{{ $form->formname }}">
-                                                            Confirm
-                                                            Closure</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
+                                    @endforeach
+
+                                    <!-- Close Form Confirmation Modal -->
+                                    <div class="modal fade" id="closeApplicationModal" tabindex="-1"
+                                        aria-labelledby="closeApplicationModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-danger text-white fw-bold">
+                                                    <h5 class="modal-title" id="closeApplicationModalLabel">Confirm
+                                                        Closure</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Are you sure you want to close the application form "<span
+                                                        id="closeFormName"></span>"?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <form id="closeApplicationForm" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-danger">Confirm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- open application form -->
+                                    <div class="modal fade" id="openApplicationModal" tabindex="-1"
+                                        aria-labelledby="openApplicationModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-success text-white fw-bold">
+                                                    <h5 class="modal-title" id="openApplicationModalLabel">Open
+                                                        Application Form</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <form id="openapplicationform" method="POST">
+                                                    @csrf
                                                     <div class="modal-body">
-                                                        Are you sure you want to close the application form
-                                                        "{{ $form->formname }}"?
+                                                        <div class="container">
+                                                            <div class="row mb-1">
+                                                                Set deadline for submission of hard copy of documents:
+                                                            </div>
+                                                            <div class="row mb-3">
+                                                                <input required type="date" id="deadline"
+                                                                    name="deadline" class="form-control border-success">
+                                                            </div>
+                                                            <div class="row small">
+                                                                Note: The form automatically closes after the end date.
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-bs-dismiss="modal">Cancel</button>
-                                                        <form method="post"
-                                                            action="{{ route('updateappformstatus', ['formname' => $form->formname, 'status' => 'Closed']) }}">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                class="btn btn-danger">Confirm</button>
-                                                        </form>
+                                                        <button type="submit" class="btn btn-success">Confirm</button>
                                                     </div>
-                                                </div>
+                                                </form>
                                             </div>
                                         </div>
-                                    @endforeach
+                                    </div>
+
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            // Open Modal Dynamic Action
+                                            const openModal = document.getElementById('openApplicationModal');
+                                            const openForm = document.getElementById('openapplicationform');
+
+                                            openModal.addEventListener('show.bs.modal', function(event) {
+                                                const button = event.relatedTarget;
+                                                const formname = button.getAttribute('data-formname');
+
+                                                openForm.action =
+                                                    `{{ route('updateappformstatus', ['formname' => '__FORMNAME__', 'status' => 'Open']) }}`
+                                                    .replace('__FORMNAME__', formname);
+                                            });
+
+                                            // Close Modal Dynamic Action
+                                            const closeModal = document.getElementById('closeApplicationModal');
+                                            const closeForm = document.getElementById('closeApplicationForm');
+                                            const closeFormNameSpan = document.getElementById('closeFormName');
+
+                                            closeModal.addEventListener('show.bs.modal', function(event) {
+                                                const button = event.relatedTarget;
+                                                const formname = button.getAttribute('data-formname');
+
+                                                closeFormNameSpan.textContent = formname;
+
+                                                closeForm.action =
+                                                    `{{ route('updateappformstatus', ['formname' => '__FORMNAME__', 'status' => 'Closed']) }}`
+                                                    .replace('__FORMNAME__', formname);
+                                            });
+                                        });
+                                    </script>
                                 </tbody>
                             </table>
                         </div>
@@ -150,8 +215,8 @@
                                                             id="{{ Str::slug($level) }}InstructionModalLabel">
                                                             {{ $level }} Application Instructions
                                                         </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
+                                                        <button type="button" class="btn-close"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <form
                                                         action="{{ route('updateapplicationinstructions', ['level' => $level]) }}"
@@ -323,104 +388,128 @@
                                         <td class="text-center align-middle">{{ $area->areacode }}</td>
                                         <td class="text-center align-middle">
                                             <button type="button" class="btn btn-sm btn-warning"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editAreaModal{{ $area->id }}">
+                                                data-bs-toggle="modal" data-bs-target="#editAreaModal"
+                                                data-id="{{ $area->id }}" data-name="{{ $area->areaname }}"
+                                                data-code="{{ $area->areacode }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button type="button" class="btn btn-sm btn-danger"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteAreaModal{{ $area->id }}">
+                                                data-bs-toggle="modal" data-bs-target="#deleteAreaModal"
+                                                data-id="{{ $area->id }}" data-name="{{ $area->areaname }}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </td>
                                     </tr>
-                                    <!-- Edit Area Modal -->
-                                    <div class="modal fade" id="editAreaModal{{ $area->id }}" tabindex="-1"
-                                        aria-labelledby="editAreaModalLabel{{ $area->id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-warning fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="editAreaModalLabel{{ $area->id }}">
-                                                        Edit Area</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <form method="POST" action="{{ route('updateArea', $area->id) }}">
-                                                    @csrf
-                                                    <div class="modal-body">
-                                                        <div
-                                                            class="row mb-3 align-items-center justify-content-center">
-                                                            <div class="col-md-4">
-                                                                <label for="areaName{{ $area->id }}"
-                                                                    class="form-label fw-bold">Area Name</label>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <input type="text"
-                                                                    class="form-control border-success"
-                                                                    id="areaName{{ $area->id }}"
-                                                                    name="newareaname" value="{{ $area->areaname }}"
-                                                                    required>
-                                                            </div>
-                                                        </div>
-                                                        <div
-                                                            class="row mb-3 align-items-center justify-content-center">
-                                                            <div class="col-md-4">
-                                                                <label for="areaCode{{ $area->id }}"
-                                                                    class="form-label fw-bold">Area Code</label>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <input type="text"
-                                                                    class="form-control border-success"
-                                                                    id="areaCode{{ $area->id }}"
-                                                                    name="newareacode" value="{{ $area->areacode }}"
-                                                                    required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-warning">Save
-                                                            Changes</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Delete Area Confirmation Modal -->
-                                    <div class="modal fade" id="deleteAreaModal{{ $area->id }}" tabindex="-1"
-                                        aria-labelledby="deleteAreaModalLabel{{ $area->id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-danger text-white fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="deleteAreaModalLabel{{ $area->id }}">
-                                                        Confirm Delete</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Are you sure you want to delete this area: {{ $area->areaname }}?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <form method="POST"
-                                                        action="{{ route('deleteArea', $area->id) }}"
-                                                        style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 @empty
                                     <tr>
                                         <td class="text-center align-middle" colspan="4">No Records Found.</td>
                                     </tr>
                                 @endforelse
+
+                                <!-- Edit Area Modal Template -->
+                                <div class="modal fade" id="editAreaModal" tabindex="-1"
+                                    aria-labelledby="editAreaModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-warning fw-bold">
+                                                <h5 class="modal-title" id="editAreaModalLabel">Edit Area</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <form method="POST" id="editAreaForm">
+                                                @csrf
+                                                <div class="modal-body">
+                                                    <div class="row mb-3 align-items-center justify-content-center">
+                                                        <div class="col-md-4">
+                                                            <label for="editAreaName" class="form-label fw-bold">Area
+                                                                Name</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="text" class="form-control border-success"
+                                                                id="editAreaName" name="newareaname" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3 align-items-center justify-content-center">
+                                                        <div class="col-md-4">
+                                                            <label for="editAreaCode" class="form-label fw-bold">Area
+                                                                Code</label>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="text" class="form-control border-success"
+                                                                id="editAreaCode" name="newareacode" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-warning">Save
+                                                        Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Area Modal Template -->
+                                <div class="modal fade" id="deleteAreaModal" tabindex="-1"
+                                    aria-labelledby="deleteAreaModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white fw-bold">
+                                                <h5 class="modal-title" id="deleteAreaModalLabel">Confirm Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body" id="deleteAreaBody">
+                                                <!-- Content dynamically inserted -->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" id="deleteAreaForm" style="display:inline;">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', () => {
+                                        // Edit Area Modal
+                                        const editAreaModal = document.getElementById('editAreaModal');
+                                        editAreaModal.addEventListener('show.bs.modal', (event) => {
+                                            const button = event.relatedTarget; // Button that triggered the modal
+                                            const id = button.getAttribute('data-id');
+                                            const name = button.getAttribute('data-name');
+                                            const code = button.getAttribute('data-code');
+
+                                            const editForm = document.getElementById('editAreaForm');
+                                            editForm.action =
+                                                `{{ route('updateArea', ['id' => '_FORMID_']) }}`
+                                                .replace('_FORMID_', id);
+                                            document.getElementById('editAreaName').value = name;
+                                            document.getElementById('editAreaCode').value = code;
+                                        });
+
+                                        // Delete Area Modal
+                                        const deleteAreaModal = document.getElementById('deleteAreaModal');
+                                        deleteAreaModal.addEventListener('show.bs.modal', (event) => {
+                                            const button = event.relatedTarget; // Button that triggered the modal
+                                            const id = button.getAttribute('data-id');
+                                            const name = button.getAttribute('data-name');
+
+                                            const deleteForm = document.getElementById('deleteAreaForm');
+                                            deleteForm.action =
+                                                `{{ route('deleteArea', ['id' => '_FORMID_']) }}`
+                                                .replace('_FORMID_', id);
+                                            document.getElementById('deleteAreaBody').textContent =
+                                                `Are you sure you want to delete this area: ${name}?`;
+                                        });
+                                    });
+                                </script>
                             </tbody>
                         </table>
                         <!-- Pagination Links -->
@@ -456,7 +545,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($institutions as $institution)
+                                @forelse ($institutions as $institution)
                                     <tr>
                                         <td class="text-center align-middle">{{ $institution->schoolname }}</td>
                                         <td class="text-center align-middle">{{ $institution->schoollevel }}</td>
@@ -464,129 +553,153 @@
                                         <td class="text-center align-middle">{{ $institution->highestgwa }}</td>
                                         <td class="text-center align-middle">
                                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                data-bs-target="#editInstitutionModal{{ $institution->inid }}"><i
-                                                    class="fas fa-edit"></i></button>
+                                                data-bs-target="#editInstitutionModal"
+                                                data-id="{{ $institution->inid }}"
+                                                data-name="{{ $institution->schoolname }}"
+                                                data-level="{{ $institution->schoollevel }}"
+                                                data-cycle="{{ $institution->academiccycle }}"
+                                                data-gwa="{{ $institution->highestgwa }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#deleteInstitutionModal{{ $institution->inid }}"><i
-                                                    class="fas fa-trash"></i></button>
+                                                data-bs-target="#deleteInstitutionModal"
+                                                data-id="{{ $institution->inid }}"
+                                                data-name="{{ $institution->schoolname }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
-                                    <!-- Edit Institution Modal -->
-                                    <div class="modal fade" id="editInstitutionModal{{ $institution->inid }}"
-                                        tabindex="-1"
-                                        aria-labelledby="editInstitutionModalLabel{{ $institution->inid }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-warning fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="editInstitutionModalLabel{{ $institution->inid }}">Edit
-                                                        Institution</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <form method="POST"
-                                                    action="{{ route('updateinstitution', $institution->inid) }}">
-                                                    @csrf
-                                                    <div class="modal-body row">
-                                                        <div class="col-md-12 mb-3">
-                                                            <label for="newSchoolName{{ $institution->inid }}"
-                                                                class="form-label fw-bold">Institution Name</label>
-                                                            <input class="form-control border-success"
-                                                                id="newSchoolName{{ $institution->inid }}"
-                                                                name="newschoolname" maxlength="255" required
-                                                                value="{{ $institution->schoolname }}">
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="newSchoolLevel{{ $institution->inid }}"
-                                                                class="form-label fw-bold">School Level</label>
-                                                            <select class="form-select border-success"
-                                                                id="newSchoolLevel{{ $institution->inid }}"
-                                                                name="newschoollevel" required>
-                                                                <option value="College"
-                                                                    {{ $institution->schoollevel == 'College' ? 'selected' : '' }}>
-                                                                    College</option>
-                                                                <option value="Senior High"
-                                                                    {{ $institution->schoollevel == 'Senior High' ? 'selected' : '' }}>
-                                                                    Senior High</option>
-                                                                <option value="Junior High"
-                                                                    {{ $institution->schoollevel == 'Junior High' ? 'selected' : '' }}>
-                                                                    Junior High</option>
-                                                                <option value="Elementary"
-                                                                    {{ $institution->schoollevel == 'Elementary' ? 'selected' : '' }}>
-                                                                    Elementary</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="newAcademicCycle{{ $institution->inid }}"
-                                                                class="form-label fw-bold">Academic Cycle</label>
-                                                            <select class="form-select border-success"
-                                                                id="newAcademicCycle{{ $institution->inid }}"
-                                                                name="newacademiccycle" required>
-                                                                <option value="Semester"
-                                                                    {{ $institution->academiccycle == 'Semester' ? 'selected' : '' }}>
-                                                                    Semester</option>
-                                                                <option value="Trimester"
-                                                                    {{ $institution->academiccycle == 'Trimester' ? 'selected' : '' }}>
-                                                                    Trimester</option>
-                                                                <option value="Quarter"
-                                                                    {{ $institution->academiccycle == 'Quarter' ? 'selected' : '' }}>
-                                                                    Quarter</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="newGWA{{ $institution->inid }}"
-                                                                class="form-label fw-bold">Highest GWA</label>
-                                                            <input type="number" class="form-control border-success"
-                                                                id="newGWA{{ $institution->inid }}" name="newgwa"
-                                                                required min="1" max="100" step="0.01"
-                                                                value="{{ $institution->highestgwa }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" the class="btn btn-warning">Save
-                                                            Changes</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Delete Institution Confirmation Modal -->
-                                    <div class="modal fade" id="deleteInstitutionModal{{ $institution->inid }}"
-                                        tabindex="-1"
-                                        aria-labelledby="deleteInstitutionModalLabel{{ $institution->inid }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-danger text-white fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="deleteInstitutionModalLabel{{ $institution->inid }}">
-                                                        Confirm
-                                                        Delete</h5>
-                                                    <button type="button" the class="btn-close"
-                                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Are you sure you want to delete this institution:
-                                                    {{ $institution->schoolname }}?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <form method="POST"
-                                                        action="{{ route('deleteinstitution', $institution->inid) }}"
-                                                        style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td class="text-center align-middle" colspan="5">No Records Found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
+
+                            <!-- Edit Institution Modal Template -->
+                            <div class="modal fade" id="editInstitutionModal" tabindex="-1"
+                                aria-labelledby="editInstitutionModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-warning fw-bold">
+                                            <h5 class="modal-title" id="editInstitutionModalLabel">Edit Institution
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <form method="POST" id="editInstitutionForm">
+                                            @csrf
+                                            <div class="modal-body row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="editSchoolName" class="form-label fw-bold">Institution
+                                                        Name</label>
+                                                    <input class="form-control border-success" id="editSchoolName"
+                                                        name="newschoolname" maxlength="255" required>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="editSchoolLevel" class="form-label fw-bold">School
+                                                        Level</label>
+                                                    <select class="form-select border-success" id="editSchoolLevel"
+                                                        name="newschoollevel" required>
+                                                        <option value="College">College</option>
+                                                        <option value="Senior High">Senior High</option>
+                                                        <option value="Junior High">Junior High</option>
+                                                        <option value="Elementary">Elementary</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="editAcademicCycle" class="form-label fw-bold">Academic
+                                                        Cycle</label>
+                                                    <select class="form-select border-success" id="editAcademicCycle"
+                                                        name="newacademiccycle" required>
+                                                        <option value="Semester">Semester</option>
+                                                        <option value="Trimester">Trimester</option>
+                                                        <option value="Quarter">Quarter</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="editGWA" class="form-label fw-bold">Highest
+                                                        GWA</label>
+                                                    <input type="number" class="form-control border-success"
+                                                        id="editGWA" name="newgwa" required min="1"
+                                                        max="100" step="0.01">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-warning">Save Changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Institution Modal Template -->
+                            <div class="modal fade" id="deleteInstitutionModal" tabindex="-1"
+                                aria-labelledby="deleteInstitutionModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white fw-bold">
+                                            <h5 class="modal-title" id="deleteInstitutionModalLabel">Confirm Delete
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="deleteInstitutionBody">
+                                            <!-- Content dynamically inserted -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancel</button>
+                                            <form method="POST" id="deleteInstitutionForm" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    // Edit Institution Modal
+                                    const editInstitutionModal = document.getElementById('editInstitutionModal');
+                                    editInstitutionModal.addEventListener('show.bs.modal', (event) => {
+                                        const button = event.relatedTarget; // Button that triggered the modal
+                                        const id = button.getAttribute('data-id');
+                                        const name = button.getAttribute('data-name');
+                                        const level = button.getAttribute('data-level');
+                                        const cycle = button.getAttribute('data-cycle');
+                                        const gwa = button.getAttribute('data-gwa');
+
+                                        const editForm = document.getElementById('editInstitutionForm');
+                                        editForm.action = `{{ route('updateinstitution', ['inid' => '_FORMID_']) }}`.replace(
+                                            '_FORMID_', id);
+
+                                        document.getElementById('editSchoolName').value = name;
+                                        document.getElementById('editSchoolLevel').value = level;
+                                        document.getElementById('editAcademicCycle').value = cycle;
+                                        document.getElementById('editGWA').value = gwa;
+                                    });
+
+                                    // Delete Institution Modal
+                                    const deleteInstitutionModal = document.getElementById('deleteInstitutionModal');
+                                    deleteInstitutionModal.addEventListener('show.bs.modal', (event) => {
+                                        const button = event.relatedTarget; // Button that triggered the modal
+                                        const id = button.getAttribute('data-id');
+                                        const name = button.getAttribute('data-name');
+
+                                        const deleteForm = document.getElementById('deleteInstitutionForm');
+                                        deleteForm.action = `{{ route('deleteinstitution', ['inid' => '_FORMID_']) }}`.replace(
+                                            '_FORMID_', id);
+
+                                        document.getElementById('deleteInstitutionBody').textContent =
+                                            `Are you sure you want to delete this institution: ${name}?`;
+                                    });
+                                });
+                            </script>
+
                         </table>
                         <!-- Pagination Links -->
                         <div class="d-flex justify-content-center mt-3">
@@ -618,85 +731,114 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($courses as $course)
+                                @forelse ($courses as $course)
                                     <tr>
                                         <td class="text-center align-middle">{{ $course->coursename }}</td>
                                         <td class="text-center align-middle">
                                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                data-bs-target="#editCourseModal{{ $course->coid }}"><i
-                                                    class="fas fa-edit"></i></button>
+                                                data-bs-target="#editCourseModal" data-id="{{ $course->coid }}"
+                                                data-name="{{ $course->coursename }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#deleteCourseModal{{ $course->coid }}"><i
-                                                    class="fas fa-trash"></i></button>
+                                                data-bs-target="#deleteCourseModal" data-id="{{ $course->coid }}"
+                                                data-name="{{ $course->coursename }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
-                                    <!-- Edit course modal -->
-                                    <div class="modal fade" id="editCourseModal{{ $course->coid }}" tabindex="-1"
-                                        aria-labelledby="editCourseModalLabel{{ $course->coid }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-warning fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="editCourseModalLabel{{ $course->coid }}">
-                                                        Edit Course</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <form method="POST"
-                                                    action="{{ route('updatecourse', $course->coid) }}">
-                                                    @csrf
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
-                                                            <label for="newCourseName{{ $course->coid }}"
-                                                                class="form-label fw-bold">Course Name</label>
-                                                            <input class="form-control border-success"
-                                                                id="newCourseName{{ $course->coid }}"
-                                                                name="newcoursename" required
-                                                                value="{{ $course->coursename }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-warning">Save
-                                                            Changes</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Delete Course Confirmation Modal -->
-                                    <div class="modal fade" id="deleteCourseModal{{ $course->coid }}"
-                                        tabindex="-1" aria-labelledby="deleteCourseModalLabel{{ $course->coid }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-danger text-white fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="deleteCourseModalLabel{{ $course->coid }}">Confirm Delete
-                                                    </h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Are you sure you want to delete this course:
-                                                    {{ $course->coursename }}?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <form method="POST"
-                                                        action="{{ route('deletecourse', $course->coid) }}"
-                                                        style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td class="text-center align-middle" colspan="2">No Records Found.</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
+
+                            <!-- Edit Course Modal Template -->
+                            <div class="modal fade" id="editCourseModal" tabindex="-1"
+                                aria-labelledby="editCourseModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-warning fw-bold">
+                                            <h5 class="modal-title" id="editCourseModalLabel">Edit Course</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <form method="POST" id="editCourseForm">
+                                            @csrf
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="editCourseName" class="form-label fw-bold">Course
+                                                        Name</label>
+                                                    <input class="form-control border-success" id="editCourseName"
+                                                        name="newcoursename" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-warning">Save Changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Delete Course Modal Template -->
+                            <div class="modal fade" id="deleteCourseModal" tabindex="-1"
+                                aria-labelledby="deleteCourseModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white fw-bold">
+                                            <h5 class="modal-title" id="deleteCourseModalLabel">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body" id="deleteCourseBody">
+                                            <!-- Content dynamically inserted -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancel</button>
+                                            <form method="POST" id="deleteCourseForm" style="display:inline;">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    // Edit Course Modal
+                                    const editCourseModal = document.getElementById('editCourseModal');
+                                    editCourseModal.addEventListener('show.bs.modal', (event) => {
+                                        const button = event.relatedTarget; // Button that triggered the modal
+                                        const id = button.getAttribute('data-id');
+                                        const name = button.getAttribute('data-name');
+
+                                        const editForm = document.getElementById('editCourseForm');
+                                        editForm.action = `{{ route('updatecourse', ['coid' => '_FORMID_']) }}`.replace('_FORMID_',
+                                            id);
+                                        document.getElementById('editCourseName').value = name;
+                                    });
+
+                                    // Delete Course Modal
+                                    const deleteCourseModal = document.getElementById('deleteCourseModal');
+                                    deleteCourseModal.addEventListener('show.bs.modal', (event) => {
+                                        const button = event.relatedTarget; // Button that triggered the modal
+                                        const id = button.getAttribute('data-id');
+                                        const name = button.getAttribute('data-name');
+
+                                        const deleteForm = document.getElementById('deleteCourseForm');
+                                        deleteForm.action = `{{ route('deletecourse', ['coid' => '_FORMID_']) }}`.replace(
+                                            '_FORMID_', id);
+                                        document.getElementById('deleteCourseBody').textContent =
+                                            `Are you sure you want to delete this course: ${name}?`;
+                                    });
+                                });
+                            </script>
                         </table>
                         <!-- Pagination Links -->
                         <div class="d-flex justify-content-center mt-3">
@@ -733,84 +875,111 @@
                                         <td class="text-center align-middle">{{ $strand->coursename }}</td>
                                         <td class="text-center align-middle">
                                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                data-bs-target="#editStrandModal{{ $strand->coid }}"><i
-                                                    class="fas fa-edit"></i></button>
+                                                data-bs-target="#editStrandModal" data-id="{{ $strand->coid }}"
+                                                data-name="{{ $strand->coursename }}">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
                                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#deleteStrandModal{{ $strand->coid }}"><i
-                                                    class="fas fa-trash"></i></button>
+                                                data-bs-target="#deleteStrandModal" data-id="{{ $strand->coid }}"
+                                                data-name="{{ $strand->coursename }}">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
-                                    <!-- Edit Strand Modal -->
-                                    <div class="modal fade" id="editStrandModal{{ $strand->coid }}" tabindex="-1"
-                                        aria-labelledby="editStrandModalLabel{{ $strand->coid }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-warning fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="editStrandModalLabel{{ $strand->coid }}">
-                                                        Edit Strand</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <form method="POST"
-                                                    action="{{ route('updatecourse', $strand->coid) }}">
-                                                    @csrf
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
-                                                            <label for="newStrandName{{ $strand->coid }}"
-                                                                class="form-label fw-bold">Strand Name</label>
-                                                            <input class="form-control border-success"
-                                                                id="newStrandName{{ $strand->coid }}"
-                                                                name="newcoursename" required
-                                                                value="{{ $strand->coursename }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-bs-dismiss="modal">Cancel</button>
-                                                        <button type="submit" class="btn btn-warning">Save
-                                                            Changes</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Delete Strand Confirmation Modal -->
-                                    <div class="modal fade" id="deleteStrandModal{{ $strand->coid }}"
-                                        tabindex="-1" aria-labelledby="deleteStrandModalLabel{{ $strand->coid }}"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-danger text-white fw-bold">
-                                                    <h5 class="modal-title"
-                                                        id="deleteStrandModalLabel{{ $strand->coid }}">Confirm Delete
-                                                    </h5>
-                                                    <button type="button" the class="btn-close"
-                                                        data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    Are you sure you want to delete this strand:
-                                                    {{ $strand->coursename }}?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <form method="POST"
-                                                        action="{{ route('deletecourse', $strand->coid) }}"
-                                                        style="display:inline;">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                 @empty
                                     <tr>
                                         <td class="text-center align-middle" colspan="2">No Records Found.</td>
                                     </tr>
                                 @endforelse
+
+                                <!-- Edit Strand Modal Template -->
+                                <div class="modal fade" id="editStrandModal" tabindex="-1"
+                                    aria-labelledby="editStrandModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-warning fw-bold">
+                                                <h5 class="modal-title" id="editStrandModalLabel">Edit Strand</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <form method="POST" id="editStrandForm">
+                                                @csrf
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="editStrandName" class="form-label fw-bold">Strand
+                                                            Name</label>
+                                                        <input class="form-control border-success" id="editStrandName"
+                                                            name="newcoursename" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-warning">Save
+                                                        Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Strand Modal Template -->
+                                <div class="modal fade" id="deleteStrandModal" tabindex="-1"
+                                    aria-labelledby="deleteStrandModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white fw-bold">
+                                                <h5 class="modal-title" id="deleteStrandModalLabel">Confirm Delete
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body" id="deleteStrandBody">
+                                                <!-- Content dynamically inserted -->
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" id="deleteStrandForm" style="display:inline;">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', () => {
+                                        // Edit Strand Modal
+                                        const editStrandModal = document.getElementById('editStrandModal');
+                                        editStrandModal.addEventListener('show.bs.modal', (event) => {
+                                            const button = event.relatedTarget; // Button that triggered the modal
+                                            const id = button.getAttribute('data-id');
+                                            const name = button.getAttribute('data-name');
+
+                                            const editForm = document.getElementById('editStrandForm');
+                                            editForm.action = `{{ route('updatecourse', ['coid' => '_FORMID_']) }}`.replace(
+                                                '_FORMID_',
+                                                id);
+                                            document.getElementById('editStrandName').value = name;
+                                        });
+
+                                        // Delete Strand Modal
+                                        const deleteStrandModal = document.getElementById('deleteStrandModal');
+                                        deleteStrandModal.addEventListener('show.bs.modal', (event) => {
+                                            const button = event.relatedTarget; // Button that triggered the modal
+                                            const id = button.getAttribute('data-id');
+                                            const name = button.getAttribute('data-name');
+
+                                            const deleteForm = document.getElementById('deleteStrandForm');
+                                            deleteForm.action = `{{ route('deletecourse', ['coid' => '_FORMID_']) }}`.replace(
+                                                '_FORMID_', id);
+                                            document.getElementById('deleteStrandBody').textContent =
+                                                `Are you sure you want to delete this strand: ${name}?`;
+                                        });
+                                    });
+                                </script>
                             </tbody>
                         </table>
                         <!-- Pagination Links -->
@@ -1107,47 +1276,6 @@
         </div>
     </div>
 
-    <!-- open application form -->
-    <div class="modal fade" id="openApplicationModal" tabindex="-1" aria-labelledby="openApplicationModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white fw-bold">
-                    <h5 class="modal-title" id="openApplicationModalLabel">Open Application Form</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="openapplicationform" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="container">
-                            <div class="row mb-1">
-                                Set deadline for submission of hard copy of documents:
-                            </div>
-                            <div class="row mb-3">
-                                <input required type="date" id="deadline" name="deadline"
-                                    class="form-control border-success">
-                            </div>
-                            <div class="row mb-1">
-                                Set end date of application:
-                            </div>
-                            <div class="row mb-3">
-                                <input required type="date" id="enddate" name="enddate"
-                                    class="form-control border-success">
-                            </div>
-                            <div class="row small">
-                                Note: The form automatically close after the end.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Confirm</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/criteriacontrol.js') }}"></script>
     <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
@@ -1294,21 +1422,6 @@
             loadFormData();
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('openApplicationModal');
-            const form = document.getElementById('openapplicationform');
-
-            modal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget; // Button that triggered the modal
-                const formname = button.getAttribute('data-formname'); // Extract form name
-
-                // Set the action dynamically based on the form name
-                form.action =
-                    `{{ route('updateappformstatus', ['formname' => '__FORMNAME__', 'status' => 'Open']) }}`
-                    .replace('__FORMNAME__', formname);
-            });
-        });
-
         document.addEventListener("DOMContentLoaded", function() {
             const importForm = document.getElementById("importForm");
 
@@ -1408,7 +1521,6 @@
             document.getElementById('highestGWA').value = '';
         }
     </script>
-
 </body>
 
 </html>

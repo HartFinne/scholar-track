@@ -236,6 +236,7 @@ Route::prefix('admin')->middleware('staff')->group(function () {
     // REPORTS
     Route::get('/scholarship-reports', [StaffController::class, 'showreports'])->name('showreports');
     Route::post('/generate-summary-report', [StaffController::class, 'generateSummaryReport'])->name('generateSummaryReport');
+    Route::get('/delete-summary-report/{id}', [StaffController::class, 'deleteSummaryReport'])->name('deleteSummaryReport');
 });
 
 // staff login, logout, account creation

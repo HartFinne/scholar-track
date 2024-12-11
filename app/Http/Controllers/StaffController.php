@@ -382,7 +382,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Failed to update application progress. ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('failure', 'Failed to update application progress. ')->withInput();
         }
     }
 
@@ -454,7 +454,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Failed to update case details of applicant. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update case details of applicant. ');
         }
     }
 
@@ -464,7 +464,6 @@ class StaffController extends Controller
         try {
             $form = applicationforms::where('formname', $formname)->first();
             $form->deadline = $status == 'Open' ? $request->deadline : NULL;
-            $form->enddate = $status == 'Open' ? $request->enddate : NULL;
             $form->status = $status;
             $form->save();
 
@@ -619,7 +618,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Failed to update scholarship status. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update scholarship status. ');
         }
     }
 
@@ -732,7 +731,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Failed to update grade status: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update grade status: ');
         }
     }
 
@@ -1123,7 +1122,7 @@ class StaffController extends Controller
             Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
 
-            return redirect()->back()->with('failure', 'Failed to update LTE status. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update LTE status. ');
         }
     }
 
@@ -1315,7 +1314,9 @@ class StaffController extends Controller
         }
 
         // Perform a case-insensitive search for the school
-        $school = KnownSchools::whereRaw('LOWER(schoolname) = ?', [strtolower($inputSchool)])->first();
+        $school = KnownSchools::whereRaw('LOWER(schoolname) = ?', [strtolower($inputSchool)])
+            ->orWhereRaw('? LIKE CONCAT("%", schoolname, "%")', [$inputSchool])
+            ->first();
 
         return response()->json($school); // Return school data or null if not found
     }
@@ -1622,7 +1623,7 @@ class StaffController extends Controller
 
                 DB::commit();
 
-                return redirect()->back()->with('failure', 'Successfully added a strand.');
+                return redirect()->back()->with('success', 'Successfully added a strand.');
             } catch (ValidationException $e) {
                 DB::rollback();
                 return redirect()->back()->with('failure', $e->getMessage());
@@ -1708,8 +1709,8 @@ class StaffController extends Controller
         $renewal = applicationforms::where('formname', 'Renewal')->first();
 
         $startdate = $renewal->updated_at->format('Y-m-d');
-        $enddate = $renewal->enddate
-            ? Carbon::parse($renewal->enddate)->format('Y-m-d')
+        $enddate = $renewal->deadline
+            ? Carbon::parse($renewal->deadline)->format('Y-m-d')
             : now()->addYear()->format('Y-m-d');
 
         // Generate summary data
@@ -1876,7 +1877,7 @@ class StaffController extends Controller
             Log::error("Error: {$e->getMessage()}", ['exception' => $e]);
 
             // Return failure response with error message
-            return redirect()->back()->with('failure', 'Failed to update renewal status and case details. ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('failure', 'Failed to update renewal status and case details. ')->withInput();
         }
     }
 
@@ -1996,7 +1997,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Unable to update request. ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Unable to update request. ');
         }
     }
 
@@ -2295,7 +2296,7 @@ class StaffController extends Controller
             DB::rollBack();
 
             // Return error message
-            return redirect()->back()->with('failure', 'An error occurred while creating the form: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('failure', 'An error occurred while creating the form: ')->withInput();
         }
     }
 
@@ -2412,7 +2413,7 @@ class StaffController extends Controller
             DB::rollBack();
 
             // Return error message if any exception occurs
-            return redirect()->back()->with('failure', 'An error occurred while updating the form: ' . $e->getMessage())->withInput();
+            return redirect()->back()->with('failure', 'An error occurred while updating the form: ')->withInput();
         }
     }
 
@@ -2534,7 +2535,7 @@ class StaffController extends Controller
 
             return redirect()->back()->with('success', "Successfully uploaded {$request->filename}.");
         } catch (\Exception $e) {
-            return redirect()->back()->with('failure', 'Duplicate file. Please try again.' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Duplicate file. Please try again.');
         }
     }
 
@@ -3362,7 +3363,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
-            return redirect()->back()->with('failure', 'Attempt to save event has failed: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Attempt to save event has failed: ');
         }
     }
 
@@ -3629,7 +3630,7 @@ class StaffController extends Controller
             DB::rollBack();
 
             // Redirect with an error message
-            return redirect()->back()->with('failure', 'Failed to update appointment status: ' . $e->getMessage());
+            return redirect()->back()->with('failure', 'Failed to update appointment status: ');
         }
     }
 
@@ -3700,7 +3701,7 @@ class StaffController extends Controller
             ->select('summaryelem.*')
             ->get();
         $reports = [
-            'All' => Reports::orderBy('dategenerated', "DESC")->paginate(5),
+            'All' => Reports::where('level', 'All')->orderBy('dategenerated', "DESC")->paginate(5),
             'College' => Reports::where('level', 'College')->orderBy('created_at', "DESC")->paginate(5),
             'Senior High' => Reports::where('level', 'Senior High')->orderBy('created_at', "DESC")->paginate(5),
             'Junior High' => Reports::where('level', 'Junior High')->orderBy('created_at', "DESC")->paginate(5),
@@ -3881,7 +3882,7 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
-            return Redirect()->back()->with('failure', 'An error has occurred. ' . $e->getMessage());
+            return Redirect()->back()->with('failure', 'An error has occurred. ');
         }
     }
 
@@ -3955,5 +3956,32 @@ class StaffController extends Controller
         ")
             ->select('users.*')
             ->get();
+    }
+
+    public function deleteSummaryReport($id)
+    {
+        DB::beginTransaction();
+        try {
+            $report = Reports::findOrFail($id);
+            $filepath = $report->filepath;
+
+            if (!$report) {
+                return Redirect()->back()->with('failure', 'Record not found.');
+            }
+
+            if (Storage::exists($filepath)) {
+                Storage::delete($filepath);
+            }
+
+            // Delete the record from the database
+            $report->delete();
+
+            DB::commit();
+            return Redirect()->back()->with('success', "Successfully deleted the report: {$report->reportname}.");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error: {$e->getMessage()}");
+            return Redirect()->back()->with('failure', "An error has occurred. If this issue persists, please contact us at inquiries@scholartrack.com");
+        }
     }
 }

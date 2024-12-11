@@ -218,7 +218,7 @@ class ScholarController extends Controller
         $appliedRenewal = Renewal::where('caseCode', $user->caseCode)
             ->whereBetween('datesubmitted', [
                 $renewal->updated_at->toDateString(),
-                $renewal->enddate
+                $renewal->deadline
             ])
             ->exists();
 
