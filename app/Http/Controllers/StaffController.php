@@ -3774,7 +3774,7 @@ class StaffController extends Controller
 
             // Build common queries
             $commonQuery = scholarshipinfo::query();
-            $commonQuery->whereBetween('updated_at', [$startdate, $enddate]);
+            $commonQuery->whereBetween('startdate', [$startdate, $enddate]);
 
             if ($level !== 'All') {
                 $commonQuery->whereHas('education', function ($query) use ($level) {
