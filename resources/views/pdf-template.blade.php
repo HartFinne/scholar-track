@@ -12,15 +12,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
 
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
-        @import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap");
-
-
-
         * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        }
+
+        .page-break {
+            page-break-after: always;
         }
 
         .ctn-main {
@@ -118,7 +117,7 @@
         }
 
         .personal-info .psec2 {
-            display: flex;
+   
             gap: 10px;
         }
 
@@ -256,6 +255,7 @@
 
         #sketchmap {
             height: 100%;
+            justify-content: space-evenly;
         }
 
         .instructions {
@@ -499,7 +499,7 @@
                 </div>
                 <div class="psec2">
                     <div class="table1 ">
-                        <table class="table table-bordered" id="table">
+                        <table class="table" id="table">
                             <tr>
                                 <td colspan="2">
                                     <span class="flabel">Name: (Last Name, First Name, Middle Name)</span><br>
@@ -567,10 +567,10 @@
                                 </td>
                             </tr>
                         </table>
-
+                        <img src="{{ public_path('storage/' . $applicant->requirements->idpic) }}" alt="ID Picture">
                     </div>
-                    <img src="{{ public_path('storage/uploads/application_requirements/id_pics/2425-00001-CLG_idpic.jpg') }}"
-                        alt="Applicant 1x1 Pic">
+                    
+
                 </div>
             </div>
 
@@ -769,15 +769,15 @@
                     <span style="white-space: pre-wrap;">{{ $applicant->otherinfo->talent }}</span>
                 </div>
 
-                <div class="row mt-2 page-break">
+                <div class="row mt-2">
                     <strong>What are your expectations from Tzu Chi Foundation?</strong>
                 </div>
-                <div class="row px-3">
+                <div class="row px-3 page-break">
                     <span style="white-space: pre-wrap;">{{ $applicant->otherinfo->expectations }}</span>
                 </div>
             </div>
 
-            <div class="signature">
+            <div class="signature ">
                 <p>I hereby attest that the information I have provided is true and correct. I also consents Tzu Chi
                     Foundation to obtain and retain my personal information for the purpose of this application.</p>
                 <div>
@@ -791,14 +791,14 @@
 
     <div class="page2">
         <div class="header">
-            <img src="{{ asset('images/logo.png') }}" class="logo" alt="Logo">
+            <img src="{{ public_path('images/logo.png') }}" alt="Logo">
             <p><strong><br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
             </p>
         </div>
         <h3 class="text-center my-3">Educational Assistance Application Form</h3>
         <span class="row"><strong><u>Sketch of Home Address</u></strong></span>
         <div class="sketchimg">
-            <img src="{{ asset('storage/' . $applicant->requirements->sketchmap) }}"
+            <img src="{{ public_path('storage/' . $applicant->requirements->sketchmap) }}"
                 alt="Sketch Map of Home Address" id="sketchmap">
         </div>
         <div class="instructions">

@@ -362,7 +362,18 @@ class ApplicationController extends Controller
             $casecode = $this->generatecasecode($request->incomingyear);
             $sincome = array_sum($request->sincome);
 
-            $prioritylevel = $this->determineprioritylevel($request->schoollevel, $request->income, $request->fincome, $request->mincome, $sincome, $request->gwa);
+            $prioritylevel = $this->determinePriorityLevel(
+                $request->schoollevel,
+                [
+                    'income' => $request->income,
+                    'father_income' => $request->fincome,
+                    'mother_income' => $request->mincome,
+                    'sibling_income' => $sincome,
+                    'gwa' => $request->gwa,
+                    'age' => $request->age
+                ]
+            );
+
 
             $parts = explode(' ', strtolower($request->scholarname));
             $password = end($parts) . '.tzuchi';
@@ -612,64 +623,97 @@ class ApplicationController extends Controller
         return "{$currentYear}{$nextYear}-{$formattedSequence}-{$levelCode}";
     }
 
-    public function determineprioritylevel($schoollevel, $income, $fincome, $mincome, $sincome, $gwa)
+
+    public function determinePriorityLevel($schoolLevel, array $userInputs)
     {
-        $criteria = criteria::first();
-        $prioritylevel = 0;
-        if ($fincome <= $criteria->fincome) {
-            $fincomelvl = 1;
-        } else {
-            $fincomelvl = 0;
+        // Step 1: Fetch all criteria from the database
+        $criteria = criteria::all(); // Assuming 'criteria' table contains all necessary rows
+
+        // Step 2: Initialize priority level
+        $priorityLevel = 0;
+
+        // Step 3: Iterate through each criterion dynamically
+        foreach ($criteria as $criterion) {
+            $criteriaName = $criterion->criteria_name; // Example: "family income"
+            $criteriaValue = $criterion->criteria_value; // Example: 15000
+
+            // Match user inputs to the current criterion
+            $matchedInput = null;
+
+            // Step 4: Use NLP to match user input keys to criteria dynamically
+            $labels = array_keys($userInputs); // Candidate labels are user input keys
+            $response = $this->useHuggingFaceNLP($criteriaName, $labels);
+
+            if ($response) {
+                $matchedLabel = $response['label'];
+                $matchedInput = $userInputs[$matchedLabel] ?? null;
+            }
+
+            // Step 5: Determine if the input meets the criterion
+            if ($matchedInput !== null && $matchedInput <= $criteriaValue) {
+                $priorityLevel++;
+            }
         }
 
-        if ($mincome <= $criteria->mincome) {
-            $mincomelvl = 1;
-        } else {
-            $mincomelvl = 0;
+        // Step 6: Handle school level-specific adjustments dynamically with NLP
+        $gwaKey = strtolower($schoolLevel) . '_gwa'; // Dynamically form the GWA key (e.g., "college_gwa")
+        $gwaValue = $userInputs['gwa'] ?? null;
+
+        if ($gwaValue !== null) {
+            // Prepare the criteria names as candidate labels for NLP
+            $criteriaNames = $criteria->pluck('criteria_name')->toArray();
+
+            // Use NLP to match the dynamically generated GWA key to the closest criteria name
+            $response = $this->useHuggingFaceNLP($gwaKey, $criteriaNames);
+
+            if ($response) {
+                $matchedCriteriaName = $response['label'];
+                $schoolCriteria = $criteria->firstWhere('criteria_name', $matchedCriteriaName);
+
+                if ($schoolCriteria && $gwaValue <= $schoolCriteria->criteria_value) {
+                    $priorityLevel++;
+                }
+            }
         }
 
-        if ($sincome <= $criteria->sincome) {
-            $sincomelvl = 1;
-        } else {
-            $sincomelvl = 0;
+        return $priorityLevel;
+    }
+
+    private function useHuggingFaceNLP($text, $labels)
+    {
+        $apiUrl = 'https://api-inference.huggingface.co/models/facebook/bart-large-mnli';
+        $headers = [
+            'Authorization: Bearer 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',
+            'Content-Type: application/json'
+        ];
+
+        $payload = json_encode([
+            'inputs' => $text,
+            'parameters' => [
+                'candidate_labels' => $labels
+            ]
+        ]);
+
+        $ch = curl_init($apiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        if ($response) {
+            $decoded = json_decode($response, true);
+            if (!empty($decoded['labels'])) {
+                return [
+                    'label' => $decoded['labels'][0],
+                    'score' => $decoded['scores'][0]
+                ];
+            }
         }
 
-        if ($income <= $criteria->aincome) {
-            $incomelvl = 1;
-        } else {
-            $incomelvl = 0;
-        }
-
-        if ($schoollevel == 'College') {
-            if ($gwa <= $criteria->cgwa) {
-                $cgwalvl = 1;
-            } else {
-                $cgwalvl = 0;
-            }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $cgwalvl;
-        } elseif ($schoollevel == 'Senior High') {
-            if ($gwa <= $criteria->cgwa) {
-                $shsgwalvl = 1;
-            } else {
-                $shsgwalvl = 0;
-            }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $shsgwalvl;
-        } elseif ($schoollevel == 'Junior High') {
-            if ($gwa <= $criteria->cgwa) {
-                $jhsgwalvl = 1;
-            } else {
-                $jhsgwalvl = 0;
-            }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $jhsgwalvl;
-        } elseif ($schoollevel == 'Elementary') {
-            if ($gwa <= $criteria->cgwa) {
-                $elemgwalvl = 1;
-            } else {
-                $elemgwalvl = 0;
-            }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $elemgwalvl;
-        }
-        return $prioritylevel;
+        return null;
     }
 
     public function cancelapplication($casecode)
