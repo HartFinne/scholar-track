@@ -152,7 +152,8 @@ class PDFController extends Controller
         ];
 
         $pdf = Pdf::loadView('application-form', $data)
-            ->setPaper('legal');
+            ->setPaper([0, 0, 576, 936])
+            ->set_option('defaultFont', 'Arial');
 
         return $pdf->stream("application-form-{$casecode}.pdf");
     }

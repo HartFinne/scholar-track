@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: sans-serif !important;
         }
 
         .appform-view {
@@ -468,7 +468,7 @@
                 </div>
             </div>
 
-            <div style="width: 100%; padding: 5px 10px; margin-bottom: 20px">
+            <div style="width: 100%; padding: 5px 10px; margin-bottom: 10px">
                 <ol>
                     <li>
                         The objective of Tzu Chi scholarship program is to provide financial assistance to
@@ -528,7 +528,7 @@
                 <p style="font-size: 12px; margin-bottom: 10px;">To be filled up by TZU CHI FOUNDATION</p>
                 <p style="font-size: 14px; margin-bottom: 5px;">Case Details</p>
             </div>
-            <table class="table" style="margin-bottom: 15px;">
+            <table class="table" style="margin-bottom: 5px;">
                 <tr>
                     <td width="20%">
                         <span><strong>Nature of Needs</strong></span><br>
