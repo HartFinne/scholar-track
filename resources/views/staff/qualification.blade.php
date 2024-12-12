@@ -333,6 +333,7 @@
 
             </fieldset>
 
+
             <!-- Areas Section -->
             <fieldset class="row mb-3 p-3 rounded border border-success">
                 <div class="row justify-content-between align-items-center mb-2 mx-auto">
@@ -979,26 +980,45 @@
                 <form method="POST" action="{{ route('updatecriteria') }}">
                     @csrf
                     <div class="modal-body">
-                        <div class="d-flex flex-wrap">
+                        <div class="row">
                             @if ($criteria->isNotEmpty())
                                 @foreach ($criteria as $criterion)
-                                    <div class="col-md-5 mb-3 mx-2 my-2">
-                                        <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
-                                            Criteria Name
-                                        </label>
-                                        <input type="text" class="form-control border-primary"
-                                            id="criteria_name_{{ $criterion->crid }}"
-                                            name="criteria[{{ $criterion->crid }}][name]"
-                                            value="{{ $criterion->criteria_name ?? '' }}" required>
-                                    </div>
-                                    <div class="col-md-5 mb-3 mx-2 my-2">
-                                        <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
-                                            Criteria Value
-                                        </label>
-                                        <input type="number" class="form-control border-success"
-                                            id="criteria_value_{{ $criterion->crid }}"
-                                            name="criteria[{{ $criterion->crid }}][value]"
-                                            value="{{ $criterion->criteria_value ?? '' }}" step="0.01" required>
+                                    <div class="row align-items-center mb-3">
+                                        <!-- Criteria Name -->
+                                        <div class="col-md-5">
+                                            <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
+                                                Criteria Name
+                                            </label>
+                                            <input type="text" class="form-control border-primary"
+                                                id="criteria_name_{{ $criterion->crid }}"
+                                                name="criteria[{{ $criterion->crid }}][name]"
+                                                value="{{ $criterion->criteria_name ?? '' }}" required>
+                                        </div>
+
+                                        <!-- Criteria Value -->
+                                        <div class="col-md-5">
+                                            <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
+                                                Criteria Value
+                                            </label>
+                                            <input type="number" class="form-control border-success"
+                                                id="criteria_value_{{ $criterion->crid }}"
+                                                name="criteria[{{ $criterion->crid }}][value]"
+                                                value="{{ $criterion->criteria_value ?? '' }}" step="0.01"
+                                                required>
+                                        </div>
+
+                                        <!-- Delete Button -->
+                                        <div class="col-md-2 text-end">
+                                            <form method="POST"
+                                                action="{{ route('deletecriteria', $criterion->crid) }}"
+                                                onsubmit="return confirm('Are you sure you want to delete this criterion?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger mt-4">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 @endforeach
                             @else
@@ -1014,7 +1034,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Modal for add Requirements -->
     <div class="modal fade" id="addRequirementsModal" tabindex="-1" aria-labelledby="addRequirementsModalLabel"
