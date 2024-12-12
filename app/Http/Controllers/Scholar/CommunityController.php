@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Scholar;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\communityservice;
+use App\Models\criteria;
 use App\Models\csattendance;
 use App\Models\csregistration;
 use App\Models\lte;
@@ -156,7 +157,8 @@ class CommunityController extends Controller
 
         // Fetch total and remaining hours as before
         $totalHoursSpent = $hoursPerActivity->sum('total_hours');
-        $totalRequiredHours = 8; // Example value, adjust as needed
+        $totalRequiredHours = criteria::where('criteria_name', 'like', '%CS Hour%')
+            ->value('criteria_value') ?? 0;
         $remainingHours = max($totalRequiredHours - $totalHoursSpent, 0);
 
         // Pass the data to the view

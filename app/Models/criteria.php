@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class criteria extends Model
 {
@@ -13,15 +14,15 @@ class criteria extends Model
 
     protected $primaryKey = 'crid';
 
-    protected $fillable = [
-        'cshours',
-        'cgwa',
-        'shsgwa',
-        'jhsgwa',
-        'elemgwa',
-        'fincome',
-        'mincome',
-        'sincome',
-        'aincome',
-    ];
+    protected $fillable = []; // Default to an empty array
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        // Dynamically set the $fillable array if it's empty
+        if (empty($this->fillable)) {
+            $this->fillable = Schema::getColumnListing($this->table);
+        }
+    }
 }

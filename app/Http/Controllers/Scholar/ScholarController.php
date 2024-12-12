@@ -238,7 +238,8 @@ class ScholarController extends Controller
             ->select(DB::raw('SUM(csattendance.hoursspent) as total_hours'))
             ->first();
 
-        $totalRequiredHours = criteria::selectRaw('criteria.cshours')->first()->cshours ?? 0;
+        $totalRequiredHours = Criteria::where('criteria_name', 'like', '%CS Hour%')
+            ->value('criteria_value') ?? 0;
 
         $completedHours = $communityServiceData->total_hours ?? 0;
         $remainingHours = max($totalRequiredHours - $completedHours, 0);
