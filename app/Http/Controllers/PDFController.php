@@ -22,7 +22,7 @@ use App\Models\communityservice;
 use App\Models\csattendance;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Spatie\Browsershot\Browsershot;
 use Illuminate\Http\Response;
@@ -131,6 +131,12 @@ class PDFController extends Controller
             }
         }
 
+        $cityApi = "https://psgc.gitlab.io/api/regions/{$applicant->region}/cities-municipalities/";
+        $city = Http::get($cityApi)->collect()->firstWhere('code', $applicant->city)['name'] ?? 'Unknown City/Municipality';
+
+        $barangayApi = "https://psgc.gitlab.io/api/cities-municipalities/{$applicant->city}/barangays/";
+        $barangay = Http::get($barangayApi)->collect()->firstWhere('code', $applicant->barangay)['name'] ?? 'Unknown Barangay';
+
         $needs = ['Financial', 'Medical', 'Food', 'Material', 'Education'];
 
         $data = [
@@ -141,12 +147,13 @@ class PDFController extends Controller
             'iscollege' => $iscollege,
             'form' => $form,
             'needs' => $needs,
+            'city' => $city,
+            'barangay' => $barangay,
         ];
 
         $pdf = Pdf::loadView('application-form', $data)
-                ->setPaper('legal');
+            ->setPaper('legal');
 
         return $pdf->stream("application-form-{$casecode}.pdf");
-        // return view('application-form', compact('data'));
     }
 }
