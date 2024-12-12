@@ -189,6 +189,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::get('/scholarship-settings', [StaffController::class, 'showQualification'])->name('qualification');
     Route::post('/updatecriteria', [StaffController::class, 'updatecriteria'])->name('updatecriteria');
     Route::post('/addcriteria', [StaffController::class, 'addcriteria'])->name('addcriteria');
+    Route::delete('/criteria/{id}', [StaffController::class, 'deletecriteria'])->name('deletecriteria');
     Route::post('/updateapplicationinstructions/{level}', [StaffController::class, 'updateapplicationinstructions'])->name('updateapplicationinstructions');
     Route::post('/addArea', [StaffController::class, 'addArea'])->name('addArea');
     Route::post('/updateArea/{id}', [StaffController::class, 'updateArea'])->name('updateArea');

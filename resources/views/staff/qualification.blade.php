@@ -965,20 +965,21 @@
 
     <!-- Modal for Editing Requirements -->
     <div class="modal fade" id="editRequirementsModal" tabindex="-1" aria-labelledby="editRequirementsModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-warning fw-bold">
-                    <h5 class="modal-title" id="editRequirementsModalLabel">Edit Scholarship Requirements</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST" action="{{ route('updatecriteria') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="d-flex flex-wrap">
-                            @if ($criteria->isNotEmpty())
-                                @foreach ($criteria as $criterion)
-                                    <div class="col-md-5 mb-3 mx-2 my-2">
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning fw-bold">
+                <h5 class="modal-title" id="editRequirementsModalLabel">Edit Scholarship Requirements</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ route('updatecriteria') }}">
+                @csrf
+                <div class="modal-body">
+                    <div class="d-flex flex-wrap">
+                        @if ($criteria->isNotEmpty())
+                            @foreach ($criteria as $criterion)
+                                <div class="d-flex col-12 align-items-center mb-3">
+                                    <div class="col-md-5">
                                         <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
                                             Criteria Name
                                         </label>
@@ -991,7 +992,7 @@
                                             required
                                         >
                                     </div>
-                                    <div class="col-md-5 mb-3 mx-2 my-2">
+                                    <div class="col-md-5">
                                         <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
                                             Criteria Value
                                         </label>
@@ -1005,20 +1006,30 @@
                                             required
                                         >
                                     </div>
-                                @endforeach
-                            @else
-                                <p>No criteria available to update.</p>
-                            @endif
-                        </div>
+                                    <div class="col-md-2 text-end">
+                                        <form method="POST" action="{{ route('deletecriteria', $criterion->crid) }}" onsubmit="return confirm('Are you sure you want to delete this criterion?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger mt-4">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <p>No criteria available to update.</p>
+                        @endif
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Save Changes</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
 
     <!-- Modal for add Requirements -->

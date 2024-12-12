@@ -1387,6 +1387,17 @@ class StaffController extends Controller
         }
     }
 
+
+    public function deletecriteria($id)
+    {
+        try {
+            Criteria::findOrFail($id)->delete();
+            return redirect()->back()->with('success', 'Criterion deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete criterion.');
+        }
+    }
+
     public function addArea(Request $request)
     {
         try {
