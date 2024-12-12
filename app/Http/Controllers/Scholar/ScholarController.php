@@ -1005,7 +1005,7 @@ class ScholarController extends Controller
         return view('scholar/scholarship.gradesub', compact('user', 'grades', 'status', 'institution', 'term'));
     }
 
-    public function extractGPA(Request $request)
+     public function extractGPA(Request $request)
     {
         $request->validate([
             'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:10240']
@@ -1062,6 +1062,11 @@ class ScholarController extends Controller
                 }
             }
 
+            // Delete the temporary file after extraction
+            if (file_exists($fileFullPath)) {
+                unlink($fileFullPath);
+            }
+
             if ($ocrGpa === null) {
                 return response()->json(['success' => false, 'message' => 'Could not extract GPA from the document.']);
             }
@@ -1069,6 +1074,11 @@ class ScholarController extends Controller
             // Return the extracted GPA as JSON
             return response()->json(['success' => true, 'extractedGpa' => $ocrGpa]);
         } catch (\Exception $e) {
+            // Ensure the file is deleted in case of errors
+            if (isset($fileFullPath) && file_exists($fileFullPath)) {
+                unlink($fileFullPath);
+            }
+
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
