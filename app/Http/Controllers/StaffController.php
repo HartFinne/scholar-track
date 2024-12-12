@@ -76,6 +76,8 @@ use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\VarDumper\Caster\RedisCaster;
 use Barryvdh\DomPDF\Facade\Pdf;
 use GuzzleHttp\Promise\Create;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 
 class StaffController extends Controller
 {
@@ -1266,7 +1268,7 @@ class StaffController extends Controller
     {
         // Retrieve all necessary data
         $forms = applicationforms::all();
-        $criteria = criteria::first();
+        $criteria = criteria::all();
         $areas = Areas::orderBy('areaname')->paginate(10, ['*'], 'areas_page');
         $institutions = institutions::orderByRaw('CASE
             WHEN schoollevel = "Elementary" THEN 4
@@ -1321,72 +1323,67 @@ class StaffController extends Controller
         return response()->json($school); // Return school data or null if not found
     }
 
-    public function updatecriteria(Request $request)
+    public function addCriteria(Request $request)
     {
         DB::beginTransaction();
+
         try {
-            $request->validate(
-                [
-                    'cshours' => 'required|numeric|min:0',
-                    'cgwa' => 'required|numeric|min:1|max:5',
-                    'shsgwa' => 'required|numeric|min:1|max:100',
-                    'jhsgwa' => 'required|numeric|min:1|max:100',
-                    'elemgwa' => 'required|numeric|min:1|max:100',
-                    'fincome' => 'required|numeric|min:0',
-                    'mincome' => 'required|numeric|min:0',
-                    'sincome' => 'required|numeric|min:0',
-                    'aincome' => 'required|numeric|min:0',
-                ],
-                [
-                    'cshours.min' => 'The required community service hours must not be less than 1.',
-                    'cgwa.min' => 'Please input a valid GWA in college.',
-                    'cgwa.max' => 'Please input a valid GWA in college.',
-                    'shsgwa.min' => 'Please input a valid General Average in Senior High.',
-                    'shsgwa.max' => 'Please input a valid General Average in Senior High.',
-                    'jhsgwa.min' => 'Please input a valid General Average in Junior High.',
-                    'jhsgwa.max' => 'Please input a valid General Average in Junior High.',
-                    'elemgwa.min' => 'Please input a valid General Average in Elementary.',
-                    'elemgwa.max' => 'Please input a valid General Average in Elementary.',
-                ]
-            );
+            // Validate the incoming request
+            $validated = $request->validate([
+                'criteriaName' => 'required|string|max:255',
+                'criteriaValue' => 'required',
+            ]);
 
-            $criteria = criteria::first();
+            // Save the new criterion
+            criteria::create([
+                'criteria_name' => $validated['criteriaName'],
+                'criteria_value' => $validated['criteriaValue'],
+            ]);
 
-            if (is_null($criteria)) {
-                criteria::create([
-                    'cshours' => $request->cshours,
-                    'cgwa' => $request->cgwa,
-                    'shsgwa' => $request->shsgwa,
-                    'jhsgwa' => $request->jhsgwa,
-                    'elemgwa' => $request->elemgwa,
-                    'fincome' => $request->fincome,
-                    'mincome' => $request->mincome,
-                    'sincome' => $request->sincome,
-                    'aincome' => $request->aincome,
-                ]);
-            } else {
-                $criteria->update([
-                    'cshours' => $request->cshours,
-                    'cgwa' => $request->cgwa,
-                    'shsgwa' => $request->shsgwa,
-                    'jhsgwa' => $request->jhsgwa,
-                    'elemgwa' => $request->elemgwa,
-                    'fincome' => $request->fincome,
-                    'mincome' => $request->mincome,
-                    'sincome' => $request->sincome,
-                    'aincome' => $request->aincome,
+            // Commit the transaction
+            DB::commit();
+
+            return redirect()->back()->with('success', 'New criteria added successfully.');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of any error
+            DB::rollback();
+
+            // Log the error for debugging purposes
+            Log::error('Error adding criteria: ' . $e->getMessage());
+
+            return redirect()->back()->with('failure', 'Unable to add new criteria. Please try again.');
+        }
+    }
+
+
+    public function updateCriteria(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'criteria.*.name' => 'required|string|max:255',
+                'criteria.*.value' => 'required|numeric|min:1',
+            ]);
+
+            // Loop through the submitted data
+            foreach ($validated['criteria'] as $crid => $data) {
+                criteria::where('crid', $crid)->update([
+                    'criteria_name' => $data['name'],
+                    'criteria_value' => $data['value'],
                 ]);
             }
 
             DB::commit();
-            return redirect()->back()->with('success', 'Successfully updated scholarship requirements');
+            return redirect()->back()->with('success', 'Criteria updated successfully.');
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('failure', $e->getMessage());
+            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollback();
-            return redirect()->back()->with('failure', 'Unable to update scholarship requirements.');
+            return redirect()->back()->with('failure', 'Unable to update criteria. Please try again.');
         }
     }
 

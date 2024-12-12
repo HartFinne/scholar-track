@@ -16,15 +16,8 @@ return new class extends Migration
     {
         Schema::create('criteria', function (Blueprint $table) {
             $table->increments('crid');
-            $table->unsignedInteger('cshours');
-            $table->float('cgwa');
-            $table->float('shsgwa');
-            $table->float('jhsgwa');
-            $table->float('elemgwa');
-            $table->unsignedInteger('fincome');
-            $table->unsignedInteger('mincome');
-            $table->unsignedInteger('sincome');
-            $table->unsignedInteger('aincome');
+            $table->string('criteria_name', 255);
+            $table->double('criteria_value');
             $table->timestamps();
         });
 

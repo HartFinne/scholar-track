@@ -188,6 +188,7 @@ Route::prefix('staff')->middleware('staff')->group(function () {
     Route::post('/update-application-forms/{formname}/{status}', [StaffController::class, 'updateappformstatus'])->name('updateappformstatus');
     Route::get('/scholarship-settings', [StaffController::class, 'showQualification'])->name('qualification');
     Route::post('/updatecriteria', [StaffController::class, 'updatecriteria'])->name('updatecriteria');
+    Route::post('/addcriteria', [StaffController::class, 'addcriteria'])->name('addcriteria');
     Route::post('/updateapplicationinstructions/{level}', [StaffController::class, 'updateapplicationinstructions'])->name('updateapplicationinstructions');
     Route::post('/addArea', [StaffController::class, 'addArea'])->name('addArea');
     Route::post('/updateArea/{id}', [StaffController::class, 'updateArea'])->name('updateArea');
@@ -263,3 +264,6 @@ Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->
 
 Route::post('/extract-gpa', [ScholarController::class, 'extractGPA'])->name('ocr.extract');
 Route::post('/api/school', [StaffController::class, 'fetchSchool']);
+
+
+Route::get('/test-priority', [ApplicationController::class, 'testDeterminePriorityLevel']);
