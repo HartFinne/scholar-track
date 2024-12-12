@@ -35,7 +35,7 @@
                         </div>
                     @endif
                 </div> --}}
-                <p class="mt-2 mb-1">Welcome to Tzu Chi Scholarship Application Form <strong>(College)</strong>.
+                <p class="mt-2 mb-1">Welcome to Tzu Chi Scholarship Application Form <strong>(High School/Elementary)</strong>.
                     Before you proceed, kindly read and understand the following statements:
                 <ol>
                     <li>
