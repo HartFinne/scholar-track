@@ -346,7 +346,16 @@ class ScholarController extends Controller
 
             $newacadyear = Carbon::now()->year . '-' . Carbon::now()->addYear()->year;
 
-            $prioritylevel = $this->determineprioritylevel($schoollevel, $request->income, $request->fincome, $request->mincome, $sincome, $request->gwa);
+            $prioritylevel = $this->determinePriorityLevel(
+                $request->schoollevel,
+                [
+                    'applicant income' => $request->income,
+                    'father income' => $request->fincome,
+                    'mother income' => $request->mincome,
+                    'sibling income' => $sincome,
+                    'gwa' => $request->gwa
+                ]
+            );
             $phoneNumber = $request->input('phonenum');
 
             if (str_starts_with($phoneNumber, '0')) {
@@ -804,64 +813,104 @@ class ScholarController extends Controller
         }
     }
 
-    public function determineprioritylevel($schoollevel, $income, $fincome, $mincome, $sincome, $gwa)
+    public function determinePriorityLevel($schoolLevel, $userInputs)
     {
-        $criteria = criteria::first();
-        $prioritylevel = 0;
-        if ($fincome <= $criteria->fincome) {
-            $fincomelvl = 1;
-        } else {
-            $fincomelvl = 0;
+        // Step 1: Fetch all criteria from the database
+        $criteria = Criteria::all(); // Assuming 'criteria' table contains all necessary rows
+
+        // Step 2: Initialize priority level
+        $priorityLevel = 0;
+
+        // Step 3: Add the GWA key dynamically to criteria names
+        $gwaKey = str_replace('_', ' ', strtoupper($schoolLevel) . ' gwa'); // Replace underscores with spaces
+
+        if ($schoolLevel === 'College') {
+            $gwaValue = $userInputs['College GWA'] ?? null;
         }
 
-        if ($mincome <= $criteria->mincome) {
-            $mincomelvl = 1;
-        } else {
-            $mincomelvl = 0;
+        if ($schoolLevel === 'Senior High') {
+            $gwaValue = $userInputs['Senior High GWA'] ?? null;
         }
 
-        if ($sincome <= $criteria->sincome) {
-            $sincomelvl = 1;
-        } else {
-            $sincomelvl = 0;
+        if ($schoolLevel === 'Junior High') {
+            $gwaValue = $userInputs['Junior High GWA'] ?? null;
         }
 
-        if ($income <= $criteria->aincome) {
-            $incomelvl = 1;
-        } else {
-            $incomelvl = 0;
+        if ($schoolLevel === 'Elementary') {
+            $gwaValue = $userInputs['Elementary GWA'] ?? null;
         }
 
-        if ($schoollevel == 'College') {
-            if ($gwa <= $criteria->cgwa) {
-                $cgwalvl = 1;
-            } else {
-                $cgwalvl = 0;
+
+        // Step 4: Collect criteria names and prepare for batch processing
+        $criteriaNames = $criteria->pluck('criteria_name')->toArray(); // Collect all criteria names
+        $labels = array_keys($userInputs); // User inputs as candidate labels
+
+        // Step 5: Call the batch NLP API
+        $batchResponses = $this->useHuggingFaceNLPBatch($criteriaNames, $labels);
+
+
+
+        // Step 6: Process each criterion with the batch response
+        foreach ($criteria as $criterion) {
+            $criteriaName = $criterion->criteria_name;
+            $criteriaValue = $criterion->criteria_value;
+
+            // General criteria matching using NLP
+            $response = $batchResponses[$criteriaName] ?? null;
+
+            if ($response && $response['score'] > 0.9) {
+                $matchedLabel = $response['label'];
+                $matchedInput = $userInputs[$matchedLabel] ?? null;
+
+                // Process general criteria if not already matched as GWA
+                if ($matchedInput !== null && $matchedInput <= $criteriaValue) {
+                    $priorityLevel++;
+                    Log::info("Batched NLP Match Found: {$criteriaName}, Name: {$matchedLabel}, Input: {$matchedInput}, Confidence Score: {$response['score']}, Priority Level: {$priorityLevel}");
+                }
             }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $cgwalvl;
-        } elseif ($schoollevel == 'Senior High') {
-            if ($gwa <= $criteria->cgwa) {
-                $shsgwalvl = 1;
-            } else {
-                $shsgwalvl = 0;
-            }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $shsgwalvl;
-        } elseif ($schoollevel == 'Junior High') {
-            if ($gwa <= $criteria->cgwa) {
-                $jhsgwalvl = 1;
-            } else {
-                $jhsgwalvl = 0;
-            }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $jhsgwalvl;
-        } elseif ($schoollevel == 'Elementary') {
-            if ($gwa <= $criteria->cgwa) {
-                $elemgwalvl = 1;
-            } else {
-                $elemgwalvl = 0;
-            }
-            $prioritylevel = $fincomelvl + $mincomelvl + $sincomelvl + $incomelvl + $elemgwalvl;
         }
-        return $prioritylevel;
+
+        return $priorityLevel;
+    }
+
+    private function useHuggingFaceNLPBatch($texts, $labels)
+    {
+        $apiUrl = 'https://api-inference.huggingface.co/models/facebook/bart-large-mnli';
+        $headers = [
+            'Authorization: Bearer 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',
+            'Content-Type: application/json'
+        ];
+
+        $responses = [];
+        foreach ($texts as $text) {
+            $payload = json_encode([
+                'inputs' => $text,
+                'parameters' => [
+                    'candidate_labels' => $labels
+                ]
+            ]);
+
+            $ch = curl_init($apiUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+            $response = curl_exec($ch);
+            curl_close($ch);
+
+            if ($response) {
+                $decoded = json_decode($response, true);
+                if (!empty($decoded['labels'])) {
+                    $responses[$text] = [
+                        'label' => $decoded['labels'][0],
+                        'score' => $decoded['scores'][0]
+                    ];
+                }
+            }
+        }
+
+        return $responses;
     }
 
     public function showRenewForm($id)
