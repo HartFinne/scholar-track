@@ -1268,7 +1268,7 @@ class StaffController extends Controller
     {
         // Retrieve all necessary data
         $forms = applicationforms::all();
-        $criteria = criteria::first();
+        $criteria = criteria::all();
         $areas = Areas::orderBy('areaname')->paginate(10, ['*'], 'areas_page');
         $institutions = institutions::orderByRaw('CASE
             WHEN schoollevel = "Elementary" THEN 4
@@ -1323,53 +1323,67 @@ class StaffController extends Controller
         return response()->json($school); // Return school data or null if not found
     }
 
-    public function updatecriteria(Request $request)
+    public function addCriteria(Request $request)
     {
         DB::beginTransaction();
+
         try {
-            // Fetch all columns from the criteria table
-            $columns = Schema::getColumnListing('criteria');
+            // Validate the incoming request
+            $validated = $request->validate([
+                'criteriaName' => 'required|string|max:255',
+                'criteriaValue' => 'required',
+            ]);
 
-            // Only allow validation for fields that exist in the table schema
-            $validatedData = $request->validate(
-                array_intersect_key(
-                    array_fill_keys($columns, 'required|numeric'), // Create validation rules dynamically
-                    $request->all() // Only include validated fields
-                ),
-                [
-                    'cshours.min' => 'The required community service hours must not be less than 1.',
-                    'cgwa.min' => 'Please input a valid GWA in college.',
-                    'cgwa.max' => 'Please input a valid GWA in college.',
-                    'shsgwa.min' => 'Please input a valid General Average in Senior High.',
-                    'shsgwa.max' => 'Please input a valid General Average in Senior High.',
-                    'jhsgwa.min' => 'Please input a valid General Average in Junior High.',
-                    'jhsgwa.max' => 'Please input a valid General Average in Junior High.',
-                    'elemgwa.min' => 'Please input a valid General Average in Elementary.',
-                    'elemgwa.max' => 'Please input a valid General Average in Elementary.',
-                ]
-            );
+            // Save the new criterion
+            criteria::create([
+                'criteria_name' => $validated['criteriaName'],
+                'criteria_value' => $validated['criteriaValue'],
+            ]);
 
-            $criteria = criteria::first();
+            // Commit the transaction
+            DB::commit();
 
-            if (is_null($criteria)) {
-                // Create a new record if no existing record
-                criteria::create($validatedData);
-            } else {
-                // Update only existing columns, ensuring new columns are also included
-                $updateData = array_intersect_key($validatedData, array_flip($columns));
-                // dd($updateData);
-                $criteria->update($updateData);
+            return redirect()->back()->with('success', 'New criteria added successfully.');
+        } catch (\Exception $e) {
+            // Rollback the transaction in case of any error
+            DB::rollback();
+
+            // Log the error for debugging purposes
+            Log::error('Error adding criteria: ' . $e->getMessage());
+
+            return redirect()->back()->with('failure', 'Unable to add new criteria. Please try again.');
+        }
+    }
+
+
+    public function updateCriteria(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'criteria.*.name' => 'required|string|max:255',
+                'criteria.*.value' => 'required|numeric|min:1',
+            ]);
+
+            // Loop through the submitted data
+            foreach ($validated['criteria'] as $crid => $data) {
+                criteria::where('crid', $crid)->update([
+                    'criteria_name' => $data['name'],
+                    'criteria_value' => $data['value'],
+                ]);
             }
 
             DB::commit();
-            return redirect()->back()->with('success', 'Successfully updated scholarship requirements');
+            return redirect()->back()->with('success', 'Criteria updated successfully.');
         } catch (ValidationException $e) {
             DB::rollback();
-            return redirect()->back()->with('failure', $e->getMessage());
+            return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollback();
-            return redirect()->back()->with('failure', 'Unable to update scholarship requirements.');
+            return redirect()->back()->with('failure', 'Unable to update criteria. Please try again.');
         }
     }
 
@@ -1464,46 +1478,6 @@ class StaffController extends Controller
             return redirect()->back()->with('failure', "Failed to delete area.");
         }
     }
-
-
-
-
-
-    public function addcriteria(Request $request)
-    {
-        $request->validate([
-            'criteriaType' => 'required|in:string,number',
-        ]);
-
-        $columnName = str_replace(' ', '_', strtolower($request->criteriaName));
-
-        // Generate the migration file
-        $migrationName = 'add_' . $columnName . '_to_criteria_table';
-        $timestamp = date('Y_m_d_His');
-        $migrationPath = database_path("migrations/{$timestamp}_{$migrationName}.php");
-
-        $migrationStub = $request->criteriaType === 'string'
-            ? file_get_contents(resource_path('stubs/add_string_column.stub'))
-            : file_get_contents(resource_path('stubs/add_number_column.stub'));
-
-        // Replace the placeholder with the actual column name
-        $migrationContent = str_replace('{{ columnName }}', $columnName, $migrationStub);
-        file_put_contents($migrationPath, $migrationContent);
-
-        // Run the migration
-        Artisan::call('migrate');
-
-        // Delete the migration file after successful execution
-        if (file_exists($migrationPath)) {
-            unlink($migrationPath);
-        }
-
-        // Redirect back with success message
-        return redirect()->back()->with('success', 'Criteria added successfully.');
-    }
-
-
-
 
     public function addinstitution(Request $request)
     {

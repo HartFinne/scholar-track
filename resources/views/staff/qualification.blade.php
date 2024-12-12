@@ -311,15 +311,22 @@
                     </div>
                 </div>
                 <div class="d-flex flex-wrap">
-                    @foreach ($criteria->getAttributes() as $key => $value)
-                        @if(!in_array($key, ['crid', 'created_at', 'updated_at'])) <!-- Exclude standard fields like ID, timestamps -->
-                            <div class="col-md-2 mb-3 mx-2 ">
-                                <label for="{{ $key }}" class="form-label">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
-                                <input type="number" class="form-control border-success" id="{{ $key }}" value="{{ $value ?? 'Not Set' }}" readonly>
-                            </div>
-                        @endif
+                    @foreach ($criteria as $criterion)
+                        <div class="col-md-3 mb-3 mx-2">
+                            <label for="{{ $criterion->criteria_name }}" class="form-label">
+                                {{ ucwords(str_replace('_', ' ', $criterion->criteria_name)) }}
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control border-success" 
+                                id="{{ $criterion->criteria_name }}" 
+                                value="{{ $criterion->criteria_value ?? 'Not Set' }}" 
+                                readonly
+                            >
+                        </div>
                     @endforeach
                 </div>
+                
             </fieldset>
 
             <!-- Areas Section -->
@@ -969,14 +976,39 @@
                     @csrf
                     <div class="modal-body">
                         <div class="d-flex flex-wrap">
-                            @foreach ($criteria->getAttributes() as $key => $value)
-                                @if(!in_array($key, ['crid', 'created_at', 'updated_at'])) <!-- Exclude standard fields like ID, timestamps -->
-                                    <div class="col-md-2 mb-3 mx-2 my-2">
-                                        <label for="{{ $key }}" class="form-label">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
-                                        <input type="number" class="form-control border-success" id="{{ $key }}" name="{{ $key }}" value="{{ $value ?? 'Not Set' }}" required>
+                            @if ($criteria->isNotEmpty())
+                                @foreach ($criteria as $criterion)
+                                    <div class="col-md-5 mb-3 mx-2 my-2">
+                                        <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
+                                            Criteria Name
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            class="form-control border-primary" 
+                                            id="criteria_name_{{ $criterion->crid }}" 
+                                            name="criteria[{{ $criterion->crid }}][name]" 
+                                            value="{{ $criterion->criteria_name ?? '' }}" 
+                                            required
+                                        >
                                     </div>
-                                @endif
-                            @endforeach
+                                    <div class="col-md-5 mb-3 mx-2 my-2">
+                                        <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
+                                            Criteria Value
+                                        </label>
+                                        <input 
+                                            type="number" 
+                                            class="form-control border-success" 
+                                            id="criteria_value_{{ $criterion->crid }}" 
+                                            name="criteria[{{ $criterion->crid }}][value]" 
+                                            value="{{ $criterion->criteria_value ?? '' }}"
+                                            step="0.01"  
+                                            required
+                                        >
+                                    </div>
+                                @endforeach
+                            @else
+                                <p>No criteria available to update.</p>
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -987,6 +1019,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Modal for add Requirements -->
     <div class="modal fade" id="addRequirementsModal" tabindex="-1" aria-labelledby="addRequirementsModalLabel"
@@ -1001,27 +1034,39 @@
                     @csrf
                     <div class="modal-body row justify-content-evenly">
                         <div class="row align-items-center">
-                            <div class="mb-3">
+                            <!-- Input for Criteria Name -->
+                            <div class="col-md-6 mb-3">
                                 <label for="criteriaName" class="form-label">Criteria Name</label>
-                                <input type="text" id="criteriaName" name="criteriaName" class="form-control" placeholder="e.g., English Grade" required>
+                                <input type="text" id="criteriaName" name="criteriaName" class="form-control"
+                                    placeholder="e.g., English Grade" required>
                             </div>
-                            <div class="mb-3">
+
+                            <!-- Select for Criteria Type -->
+                            {{-- <div class="col-md-4 mb-3">
                                 <label for="criteriaType" class="form-label">Data Type</label>
                                 <select id="criteriaType" name="criteriaType" class="form-control" required>
                                     <option value="string">String</option>
                                     <option value="number">Number</option>
                                 </select>
+                            </div> --}}
+
+                            <!-- Input for Initial Value -->
+                            <div class="col-md-6 mb-3">
+                                <label for="criteriaValue" class="form-label">Initial Value</label>
+                                <input type="number" id="criteriaValue" name="criteriaValue" class="form-control"
+                                    placeholder="e.g., 85" required>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-warning">Save Changes</button>
+                        <button type="submit" class="btn btn-warning">Save Criteria</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 
     <!-- Add Area Modal -->
     <div class="modal fade" id="addAreaModal" tabindex="-1" aria-labelledby="addAreaModalLabel"

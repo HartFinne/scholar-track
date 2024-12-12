@@ -264,3 +264,6 @@ Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->
 
 Route::post('/extract-gpa', [ScholarController::class, 'extractGPA'])->name('ocr.extract');
 Route::post('/api/school', [StaffController::class, 'fetchSchool']);
+
+
+Route::get('/test-priority', [ApplicationController::class, 'testDeterminePriorityLevel']);
