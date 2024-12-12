@@ -296,37 +296,41 @@
 
             {{-- SCHOLARSHIP REQUIREMENTS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
-                <div class="row justify-content-between align-items-center mx-auto">
+                <div class="row mx-auto mb-3 mx-auto">
                     <div class="col-md-6 mb-2">
-                        <legend class="fw-bold text-success h4">Scholarship Requirements</legend>
+                        <legend class="fw-bold text-success h4 my-auto">Scholarship Requirements</legend>
                     </div>
-                    <div class="col-md-2 mb-2">
-                        <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal"
-                            data-bs-target="#editRequirementsModal">
-                            Edit Requirements
-                        </button>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRequirementsModal">
-                            Add Requirement
-                        </button>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end">
+                            <div class="me-2">
+                                <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal"
+                                    data-bs-target="#editRequirementsModal">
+                                    Edit Requirements
+                                </button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-success w-100" data-bs-toggle="modal"
+                                    data-bs-target="#addRequirementsModal">
+                                    Add Requirement
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="d-flex flex-wrap">
+
+                <div class="row mx-auto">
                     @foreach ($criteria as $criterion)
-                        <div class="col-md-3 mb-3 mx-2">
+                        <div class="col-md-3 mb-3">
                             <label for="{{ $criterion->criteria_name }}" class="form-label">
                                 {{ ucwords(str_replace('_', ' ', $criterion->criteria_name)) }}
                             </label>
-                            <input 
-                                type="text" 
-                                class="form-control border-success" 
-                                id="{{ $criterion->criteria_name }}" 
-                                value="{{ $criterion->criteria_value ?? 'Not Set' }}" 
-                                readonly
-                            >
+                            <input type="text" class="form-control border-success"
+                                id="{{ $criterion->criteria_name }}"
+                                value="{{ $criterion->criteria_value ?? 'Not Set' }}" readonly>
                         </div>
                     @endforeach
                 </div>
-                
+
             </fieldset>
 
             <!-- Areas Section -->
@@ -982,28 +986,19 @@
                                         <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
                                             Criteria Name
                                         </label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control border-primary" 
-                                            id="criteria_name_{{ $criterion->crid }}" 
-                                            name="criteria[{{ $criterion->crid }}][name]" 
-                                            value="{{ $criterion->criteria_name ?? '' }}" 
-                                            required
-                                        >
+                                        <input type="text" class="form-control border-primary"
+                                            id="criteria_name_{{ $criterion->crid }}"
+                                            name="criteria[{{ $criterion->crid }}][name]"
+                                            value="{{ $criterion->criteria_name ?? '' }}" required>
                                     </div>
                                     <div class="col-md-5 mb-3 mx-2 my-2">
                                         <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
                                             Criteria Value
                                         </label>
-                                        <input 
-                                            type="number" 
-                                            class="form-control border-success" 
-                                            id="criteria_value_{{ $criterion->crid }}" 
-                                            name="criteria[{{ $criterion->crid }}][value]" 
-                                            value="{{ $criterion->criteria_value ?? '' }}"
-                                            step="0.01"  
-                                            required
-                                        >
+                                        <input type="number" class="form-control border-success"
+                                            id="criteria_value_{{ $criterion->crid }}"
+                                            name="criteria[{{ $criterion->crid }}][value]"
+                                            value="{{ $criterion->criteria_value ?? '' }}" step="0.01" required>
                                     </div>
                                 @endforeach
                             @else
@@ -1041,20 +1036,11 @@
                                     placeholder="e.g., English Grade" required>
                             </div>
 
-                            <!-- Select for Criteria Type -->
-                            {{-- <div class="col-md-4 mb-3">
-                                <label for="criteriaType" class="form-label">Data Type</label>
-                                <select id="criteriaType" name="criteriaType" class="form-control" required>
-                                    <option value="string">String</option>
-                                    <option value="number">Number</option>
-                                </select>
-                            </div> --}}
-
                             <!-- Input for Initial Value -->
                             <div class="col-md-6 mb-3">
                                 <label for="criteriaValue" class="form-label">Initial Value</label>
                                 <input type="number" id="criteriaValue" name="criteriaValue" class="form-control"
-                                    placeholder="e.g., 85" required>
+                                    placeholder="e.g., 85" required step="0.01" min="0">
                             </div>
                         </div>
                     </div>

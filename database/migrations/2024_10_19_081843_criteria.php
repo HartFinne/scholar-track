@@ -37,22 +37,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // DB::table('criteria')->insert([
-        //     [
-        //         'cshours' => 8,
-        //         'cgwa' => 2.25,
-        //         'shsgwa' => 82,
-        //         'jhsgwa' => 82,
-        //         'elemgwa' => 82,
-        //         'fincome' => 10000,
-        //         'mincome' => 10000,
-        //         'sincome' => 10000,
-        //         'aincome' => 10000,
-        //         'created_at' => now(),
-        //         'updated_at' => now(),
-        //     ]
-        // ]);
-
         DB::table('institutions')->insert([
             [
                 'schoolname' => "Polytechnic University of the Philippines",
