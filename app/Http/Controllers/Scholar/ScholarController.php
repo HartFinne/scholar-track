@@ -346,17 +346,37 @@ class ScholarController extends Controller
 
             $newacadyear = Carbon::now()->year . '-' . Carbon::now()->addYear()->year;
 
-            $prioritylevel = $this->determinePriorityLevel(
-                $request->schoollevel,
-                [
-                    'applicant income' => $request->income,
-                    'father income' => $request->fincome,
-                    'mother income' => $request->mincome,
-                    'sibling income' => $sincome,
-                    'gwa' => $request->gwa
-                ]
-            );
+            $gwaName = null; // Initialize the GWA key dynamically
+
+            // Determine the GWA key based on the school level
+            if ($request->schoollevel === 'College') {
+                $gwaName = 'College GWA';
+            } elseif ($request->schoollevel === 'Senior High') {
+                $gwaName = 'Senior High GWA';
+            } elseif ($request->schoollevel === 'Junior High') {
+                $gwaName = 'Junior High GWA';
+            } elseif ($request->schoollevel === 'Elementary') {
+                $gwaName = 'Elementary GWA';
+            }
+
+            // Build the userInputs array dynamically, including the GWA key if applicable
+            $userInputs = [
+                'applicant income' => $request->income,
+                'father income' => $request->fincome,
+                'mother income' => $request->mincome,
+                'sibling income' => $sincome,
+            ];
+
+            if ($gwaName !== null) {
+                $userInputs[$gwaName] = $request->gwa; // Add the GWA value dynamically
+            }
+
+            // Pass the updated userInputs to the determinePriorityLevel function
+            $prioritylevel = $this->determinePriorityLevel($request->schoollevel, $userInputs);
+
+
             $phoneNumber = $request->input('phonenum');
+
 
             if (str_starts_with($phoneNumber, '0')) {
                 $phoneNumber = '63' . substr($phoneNumber, 1);

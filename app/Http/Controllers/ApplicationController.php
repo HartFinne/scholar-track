@@ -363,16 +363,33 @@ class ApplicationController extends Controller
             $casecode = $this->generatecasecode($request->incomingyear);
             $sincome = array_sum($request->sincome);
 
-            $prioritylevel = $this->determinePriorityLevel(
-                $request->schoollevel,
-                [
-                    'applicant income' => $request->income,
-                    'father income' => $request->fincome,
-                    'mother income' => $request->mincome,
-                    'sibling income' => $sincome,
-                    'gwa' => $request->gwa
-                ]
-            );
+            $gwaName = null; // Initialize the GWA key dynamically
+
+            // Determine the GWA key based on the school level
+            if ($request->schoollevel === 'College') {
+                $gwaName = 'College GWA';
+            } elseif ($request->schoollevel === 'Senior High') {
+                $gwaName = 'Senior High GWA';
+            } elseif ($request->schoollevel === 'Junior High') {
+                $gwaName = 'Junior High GWA';
+            } elseif ($request->schoollevel === 'Elementary') {
+                $gwaName = 'Elementary GWA';
+            }
+
+            // Build the userInputs array dynamically, including the GWA key if applicable
+            $userInputs = [
+                'applicant income' => $request->income,
+                'father income' => $request->fincome,
+                'mother income' => $request->mincome,
+                'sibling income' => $sincome,
+            ];
+
+            if ($gwaName !== null) {
+                $userInputs[$gwaName] = $request->gwa; // Add the GWA value dynamically
+            }
+
+            // Pass the updated userInputs to the determinePriorityLevel function
+            $prioritylevel = $this->determinePriorityLevel($request->schoollevel, $userInputs);
 
             $parts = explode(' ', strtolower($request->scholarname));
             $password = end($parts) . '.tzuchi';
@@ -643,21 +660,6 @@ class ApplicationController extends Controller
         // Step 3: Add the GWA key dynamically to criteria names
         $gwaKey = str_replace('_', ' ', strtoupper($schoolLevel) . ' gwa'); // Replace underscores with spaces
 
-        if ($schoolLevel === 'College') {
-            $gwaValue = $userInputs['College GWA'] ?? null;
-        }
-
-        if ($schoolLevel === 'Senior High') {
-            $gwaValue = $userInputs['Senior High gwa'] ?? null;
-        }
-
-        if ($schoolLevel === 'Junior High') {
-            $gwaValue = $userInputs['Junior High gwa'] ?? null;
-        }
-
-        if ($schoolLevel === 'Elementary') {
-            $gwaValue = $userInputs['Elementary gwa'] ?? null;
-        }
 
 
         // Step 4: Collect criteria names and prepare for batch processing
