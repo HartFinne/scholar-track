@@ -143,7 +143,9 @@ class PDFController extends Controller
             'needs' => $needs,
         ];
 
-        $pdf = Pdf::loadView('application-form', $data);
+        $pdf = Pdf::loadView('application-form', $data)
+                ->setPaper('legal');
+
         return $pdf->stream("application-form-{$casecode}.pdf");
         // return view('application-form', compact('data'));
     }
