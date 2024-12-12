@@ -681,13 +681,6 @@ class ApplicationController extends Controller
                 $matchedLabel = $response['label'];
                 $matchedInput = $userInputs[$matchedLabel] ?? null;
 
-                // Check if the matched label corresponds to the GWA key
-                if ($criteriaNames === $gwaKey && $gwaValue !== null && $gwaValue <= $criteriaValue) {
-                    $priorityLevel++;
-                    Log::info("NLP GWA Match Found: {$criteriaName}, Name: {$matchedLabel}, GWA: {$gwaValue}, Confidence Score: {$response['score']}, Priority Level: {$priorityLevel}");
-                    continue; // Skip further processing for this criterion
-                }
-
                 // Process general criteria if not already matched as GWA
                 if ($matchedInput !== null && $matchedInput <= $criteriaValue) {
                     $priorityLevel++;
@@ -762,10 +755,7 @@ class ApplicationController extends Controller
     {
         $schoolLevel = 'College'; // Example school level
         $userInputs = [
-            'mother income' => 100,
-            'father income' => 100,
-            'sibling income' => 100,
-            'applicant income' => 100
+            'mother income' => 1000
         ];
 
         if ($schoolLevel === 'College') {

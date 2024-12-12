@@ -300,8 +300,8 @@
                     <div class="col-md-6 mb-2">
                         <legend class="fw-bold text-success h4">Scholarship Requirements</legend>
                     </div>
-                    <div class="col-md-2 mb-2">
-                        <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal"
+                    <div class="col-md-6 mb-2 d-flex justify-content-end">
+                        <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal"
                             data-bs-target="#editRequirementsModal">
                             Edit Requirements
                         </button>
@@ -326,8 +326,8 @@
                         </div>
                     @endforeach
                 </div>
-                
             </fieldset>
+            
 
             <!-- Areas Section -->
             <fieldset class="row mb-3 p-3 rounded border border-success">
@@ -975,10 +975,11 @@
             <form method="POST" action="{{ route('updatecriteria') }}">
                 @csrf
                 <div class="modal-body">
-                    <div class="d-flex flex-wrap">
+                    <div class="row">
                         @if ($criteria->isNotEmpty())
                             @foreach ($criteria as $criterion)
-                                <div class="d-flex col-12 align-items-center mb-3">
+                                <div class="row align-items-center mb-3">
+                                    <!-- Criteria Name -->
                                     <div class="col-md-5">
                                         <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
                                             Criteria Name
@@ -992,6 +993,8 @@
                                             required
                                         >
                                     </div>
+
+                                    <!-- Criteria Value -->
                                     <div class="col-md-5">
                                         <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
                                             Criteria Value
@@ -1006,6 +1009,8 @@
                                             required
                                         >
                                     </div>
+
+                                    <!-- Delete Button -->
                                     <div class="col-md-2 text-end">
                                         <form method="POST" action="{{ route('deletecriteria', $criterion->crid) }}" onsubmit="return confirm('Are you sure you want to delete this criterion?');">
                                             @csrf
@@ -1030,7 +1035,6 @@
         </div>
     </div>
 </div>
-
 
     <!-- Modal for add Requirements -->
     <div class="modal fade" id="addRequirementsModal" tabindex="-1" aria-labelledby="addRequirementsModalLabel"
