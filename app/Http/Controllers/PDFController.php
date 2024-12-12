@@ -78,6 +78,35 @@ class PDFController extends Controller
         return $pdf->stream("scholarship-report-{$date}.pdf");
     }
 
+    // public function generateapplicantform($casecode)
+    // {
+    //     $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
+    //         ->where('casecode', $casecode)
+    //         ->first();
+    //     $father = apfamilyinfo::where('casecode', $casecode)
+    //         ->where('relationship', 'Father')->first();
+    //     $mother = apfamilyinfo::where('casecode', $casecode)
+    //         ->where('relationship', 'Mother')->first();
+    //     $siblings = apfamilyinfo::where('casecode', $casecode)
+    //         ->where('relationship', 'Sibling')->get();
+    //     $iscollege = apceducation::where('casecode', $casecode)->exists();
+
+    //     $data = [
+    //         'title' => 'Application Form',
+    //         'applicant' => $applicant,
+    //         'father' => $father,
+    //         'mother' => $mother,
+    //         'siblings' => $siblings,
+    //         'iscollege' => $iscollege
+    //     ];
+
+    //     // Generate the PDF using DOMPDF and the Blade view
+    //     $pdf = PDF::loadView('pdf-template', $data)
+    //         ->setPaper('A4', 'portrait'); // Change to A4 if needed
+
+    //     // Stream the generated PDF in the browser
+    //     return $pdf->stream($applicant->name . '.pdf');
+    // }
 
     public function generateapplicantform($casecode)
     {
@@ -92,55 +121,27 @@ class PDFController extends Controller
             ->where('relationship', 'Sibling')->get();
         $iscollege = apceducation::where('casecode', $casecode)->exists();
 
+        if ($iscollege) {
+            $form = applicationforms::where('formname', 'College')->first();
+        } else {
+            if ($applicant->educelemhs->schoollevel == 'Elementary') {
+                $form = applicationforms::where('formname', 'College')->first();
+            } else {
+                $form = applicationforms::where('formname', 'High School')->first();
+            }
+        }
+
         $data = [
-            'title' => 'Application Form',
             'applicant' => $applicant,
             'father' => $father,
             'mother' => $mother,
             'siblings' => $siblings,
-            'iscollege' => $iscollege
+            'iscollege' => $iscollege,
+            'form' => $form,
         ];
 
-        // Generate the PDF using DOMPDF and the Blade view
-        $pdf = PDF::loadView('pdf-template', $data)
-            ->setPaper('A4', 'portrait'); // Change to A4 if needed
-
-        // Stream the generated PDF in the browser
-        return $pdf->stream($applicant->name . '.pdf');
+        $pdf = Pdf::loadView('application-form', $data);
+        return $pdf->stream("application-form-{$casecode}.pdf");
+        // return view('application-form', compact('data'));
     }
-    // {
-    //     $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
-    //         ->where('casecode', $casecode)
-    //         ->first();
-    //     $father = apfamilyinfo::where('casecode', $casecode)
-    //         ->where('relationship', 'Father')->first();
-    //     $mother = apfamilyinfo::where('casecode', $casecode)
-    //         ->where('relationship', 'Mother')->first();
-    //     $siblings = apfamilyinfo::where('casecode', $casecode)
-    //         ->where('relationship', 'Sibling')->get();
-    //     $iscollege = apceducation::where('casecode', $casecode)->exists();
-
-    //     if ($iscollege) {
-    //         $form = applicationforms::where('formname', 'College')->first();
-    //     } else {
-    //         if ($applicant->educelemhs->schoollevel == 'Elementary') {
-    //             $form = applicationforms::where('formname', 'College')->first();
-    //         } else {
-    //             $form = applicationforms::where('formname', 'High School')->first();
-    //         }
-    //     }
-
-    //     $data = [
-    //         'applicant' => $applicant,
-    //         'father' => $father,
-    //         'mother' => $mother,
-    //         'siblings' => $siblings,
-    //         'iscollege' => $iscollege,
-    //         'form' => $form,
-    //     ];
-
-    //     $pdf = Pdf::loadView('application-form', $data);
-    //     return $pdf->stream("application-form-{$casecode}.pdf");
-    //     // return view('application-form', compact('data'));
-    // }
 }
