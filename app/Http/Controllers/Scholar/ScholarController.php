@@ -1062,6 +1062,11 @@ class ScholarController extends Controller
                 }
             }
 
+            // Delete the temporary file after extraction
+            if (file_exists($fileFullPath)) {
+                unlink($fileFullPath);
+            }
+
             if ($ocrGpa === null) {
                 return response()->json(['success' => false, 'message' => 'Could not extract GPA from the document.']);
             }
@@ -1069,6 +1074,11 @@ class ScholarController extends Controller
             // Return the extracted GPA as JSON
             return response()->json(['success' => true, 'extractedGpa' => $ocrGpa]);
         } catch (\Exception $e) {
+            // Ensure the file is deleted in case of errors
+            if (isset($fileFullPath) && file_exists($fileFullPath)) {
+                unlink($fileFullPath);
+            }
+
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
@@ -1126,14 +1136,9 @@ class ScholarController extends Controller
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
 
+            $criteria = Criteria::where('criteria_name', 'like', '%' . $educ->scSchoolLevel . '%')->first();
 
-            $criteria = criteria::first();
-            $requiredgwa = [
-                'College' => $criteria->cgwa,
-                'Senior High' => $criteria->shsgwa,
-                'Junior High' => $criteria->jhsgwa,
-                'Elementary' => $criteria->elemgwa,
-            ];
+            $requiredgwa = $criteria->criteria_value;
 
             $gradingsystem = institutions::where('schoolname', $educ->scSchoolName)
                 ->where('schoollevel', $educ->scSchoolLevel)->first();

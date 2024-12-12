@@ -296,38 +296,43 @@
 
             {{-- SCHOLARSHIP REQUIREMENTS --}}
             <fieldset class="row mb-3 p-3 rounded border border-success">
-                <div class="row justify-content-between align-items-center mx-auto">
+                <div class="row mx-auto mb-3 mx-auto">
                     <div class="col-md-6 mb-2">
-                        <legend class="fw-bold text-success h4">Scholarship Requirements</legend>
+                        <legend class="fw-bold text-success h4 my-auto">Scholarship Requirements</legend>
                     </div>
-                    <div class="col-md-6 mb-2 d-flex justify-content-end">
-                        <button type="button" class="btn btn-warning me-2" data-bs-toggle="modal"
-                            data-bs-target="#editRequirementsModal">
-                            Edit Requirements
-                        </button>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRequirementsModal">
-                            Add Requirement
-                        </button>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end">
+                            <div class="me-2">
+                                <button type="button" class="btn btn-warning w-100" data-bs-toggle="modal"
+                                    data-bs-target="#editRequirementsModal">
+                                    Edit Requirements
+                                </button>
+                            </div>
+                            <div>
+                                <button type="button" class="btn btn-success w-100" data-bs-toggle="modal"
+                                    data-bs-target="#addRequirementsModal">
+                                    Add Requirement
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="d-flex flex-wrap">
+
+                <div class="row mx-auto">
                     @foreach ($criteria as $criterion)
-                        <div class="col-md-3 mb-3 mx-2">
+                        <div class="col-md-3 mb-3">
                             <label for="{{ $criterion->criteria_name }}" class="form-label">
                                 {{ ucwords(str_replace('_', ' ', $criterion->criteria_name)) }}
                             </label>
-                            <input 
-                                type="text" 
-                                class="form-control border-success" 
-                                id="{{ $criterion->criteria_name }}" 
-                                value="{{ $criterion->criteria_value ?? 'Not Set' }}" 
-                                readonly
-                            >
+                            <input type="text" class="form-control border-success"
+                                id="{{ $criterion->criteria_name }}"
+                                value="{{ $criterion->criteria_value ?? 'Not Set' }}" readonly>
                         </div>
                     @endforeach
                 </div>
+
             </fieldset>
-            
+
 
             <!-- Areas Section -->
             <fieldset class="row mb-3 p-3 rounded border border-success">
@@ -965,76 +970,70 @@
 
     <!-- Modal for Editing Requirements -->
     <div class="modal fade" id="editRequirementsModal" tabindex="-1" aria-labelledby="editRequirementsModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-warning fw-bold">
-                <h5 class="modal-title" id="editRequirementsModalLabel">Edit Scholarship Requirements</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" action="{{ route('updatecriteria') }}">
-                @csrf
-                <div class="modal-body">
-                    <div class="row">
-                        @if ($criteria->isNotEmpty())
-                            @foreach ($criteria as $criterion)
-                                <div class="row align-items-center mb-3">
-                                    <!-- Criteria Name -->
-                                    <div class="col-md-5">
-                                        <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
-                                            Criteria Name
-                                        </label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control border-primary" 
-                                            id="criteria_name_{{ $criterion->crid }}" 
-                                            name="criteria[{{ $criterion->crid }}][name]" 
-                                            value="{{ $criterion->criteria_name ?? '' }}" 
-                                            required
-                                        >
-                                    </div>
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning fw-bold">
+                    <h5 class="modal-title" id="editRequirementsModalLabel">Edit Scholarship Requirements</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ route('updatecriteria') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            @if ($criteria->isNotEmpty())
+                                @foreach ($criteria as $criterion)
+                                    <div class="row align-items-center mb-3">
+                                        <!-- Criteria Name -->
+                                        <div class="col-md-5">
+                                            <label for="criteria_name_{{ $criterion->crid }}" class="form-label">
+                                                Criteria Name
+                                            </label>
+                                            <input type="text" class="form-control border-primary"
+                                                id="criteria_name_{{ $criterion->crid }}"
+                                                name="criteria[{{ $criterion->crid }}][name]"
+                                                value="{{ $criterion->criteria_name ?? '' }}" required>
+                                        </div>
 
-                                    <!-- Criteria Value -->
-                                    <div class="col-md-5">
-                                        <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
-                                            Criteria Value
-                                        </label>
-                                        <input 
-                                            type="number" 
-                                            class="form-control border-success" 
-                                            id="criteria_value_{{ $criterion->crid }}" 
-                                            name="criteria[{{ $criterion->crid }}][value]" 
-                                            value="{{ $criterion->criteria_value ?? '' }}"
-                                            step="0.01"  
-                                            required
-                                        >
-                                    </div>
+                                        <!-- Criteria Value -->
+                                        <div class="col-md-5">
+                                            <label for="criteria_value_{{ $criterion->crid }}" class="form-label">
+                                                Criteria Value
+                                            </label>
+                                            <input type="number" class="form-control border-success"
+                                                id="criteria_value_{{ $criterion->crid }}"
+                                                name="criteria[{{ $criterion->crid }}][value]"
+                                                value="{{ $criterion->criteria_value ?? '' }}" step="0.01"
+                                                required>
+                                        </div>
 
-                                    <!-- Delete Button -->
-                                    <div class="col-md-2 text-end">
-                                        <form method="POST" action="{{ route('deletecriteria', $criterion->crid) }}" onsubmit="return confirm('Are you sure you want to delete this criterion?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger mt-4">
-                                                Delete
-                                            </button>
-                                        </form>
+                                        <!-- Delete Button -->
+                                        <div class="col-md-2 text-end">
+                                            <form method="POST"
+                                                action="{{ route('deletecriteria', $criterion->crid) }}"
+                                                onsubmit="return confirm('Are you sure you want to delete this criterion?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger mt-4">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                            @endforeach
-                        @else
-                            <p>No criteria available to update.</p>
-                        @endif
+                                @endforeach
+                            @else
+                                <p>No criteria available to update.</p>
+                            @endif
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Modal for add Requirements -->
     <div class="modal fade" id="addRequirementsModal" tabindex="-1" aria-labelledby="addRequirementsModalLabel"
@@ -1056,20 +1055,11 @@
                                     placeholder="e.g., English Grade" required>
                             </div>
 
-                            <!-- Select for Criteria Type -->
-                            {{-- <div class="col-md-4 mb-3">
-                                <label for="criteriaType" class="form-label">Data Type</label>
-                                <select id="criteriaType" name="criteriaType" class="form-control" required>
-                                    <option value="string">String</option>
-                                    <option value="number">Number</option>
-                                </select>
-                            </div> --}}
-
                             <!-- Input for Initial Value -->
                             <div class="col-md-6 mb-3">
                                 <label for="criteriaValue" class="form-label">Initial Value</label>
                                 <input type="number" id="criteriaValue" name="criteriaValue" class="form-control"
-                                    placeholder="e.g., 85" required>
+                                    placeholder="e.g., 85" required step="0.01" min="0">
                             </div>
                         </div>
                     </div>
