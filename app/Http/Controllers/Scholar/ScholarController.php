@@ -1005,7 +1005,7 @@ class ScholarController extends Controller
         return view('scholar/scholarship.gradesub', compact('user', 'grades', 'status', 'institution', 'term'));
     }
 
-     public function extractGPA(Request $request)
+    public function extractGPA(Request $request)
     {
         $request->validate([
             'gradeImage' => ['required', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:10240']
@@ -1136,14 +1136,9 @@ class ScholarController extends Controller
                 return redirect()->back()->with('failure', 'File upload failed. Please try again.')->withInput();
             }
 
+            $criteria = Criteria::where('criteria_name', 'like', '%' . $educ->scSchoolLevel . '%')->first();
 
-            $criteria = criteria::first();
-            $requiredgwa = [
-                'College' => $criteria->cgwa,
-                'Senior High' => $criteria->shsgwa,
-                'Junior High' => $criteria->jhsgwa,
-                'Elementary' => $criteria->elemgwa,
-            ];
+            $requiredgwa = $criteria->criteria_value;
 
             $gradingsystem = institutions::where('schoolname', $educ->scSchoolName)
                 ->where('schoollevel', $educ->scSchoolLevel)->first();
