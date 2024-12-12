@@ -1138,49 +1138,50 @@ class ScholarController extends Controller
 
             $criteria = Criteria::where('criteria_name', 'like', '%' . $educ->scSchoolLevel . '%')->first();
 
-            $requiredgwa = $criteria->criteria_value;
+            $requiredgwa = $criteria->criteria_value; // Assume it's now a single numeric value
 
-            $gradingsystem = institutions::where('schoolname', $educ->scSchoolName)
-                ->where('schoollevel', $educ->scSchoolLevel)->first();
-
-            // dd($gradingsystem);
+            $gradingsystem = Institutions::where('schoolname', $educ->scSchoolName)
+                ->where('schoollevel', $educ->scSchoolLevel)
+                ->first();
+            // Handle grading system logic
             if ($gradingsystem->highestgwa == 1) {
                 if ($educ->scSchoolLevel == 'College') {
-                    $gradeStatus = ($request->gwa > $requiredgwa['College']) ? 'Failed GWA' : 'Passed';
+                    $gradeStatus = ($request->gwa > $requiredgwa) ? 'Failed GWA' : 'Passed';
                 } else {
-                    if ($request->genave > $requiredgwa[$educ->scSchoolLevel]) {
+                    if ($request->genave > $requiredgwa) {
                         $gradeStatus = 'Failed GWA';
-                    } else if ($request->genave > $requiredgwa[$educ->scSchoolLevel]) {
+                    } elseif ($request->genave > $requiredgwa) {
                         $gradeStatus = 'Failed GWA (Chinese Subject)';
                     } else {
                         $gradeStatus = 'Passed';
                     }
                 }
-            } else if ($gradingsystem->highestgwa == 5) {
+            } elseif ($gradingsystem->highestgwa == 5) {
                 if ($educ->scSchoolLevel == 'College') {
-                    $gradeStatus = ($request->gwa < $requiredgwa['College']) ? 'Failed GWA' : 'Passed';
+                    $gradeStatus = ($request->gwa < $requiredgwa) ? 'Failed GWA' : 'Passed';
                 } else {
-                    if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                    if ($request->genave < $requiredgwa) {
                         $gradeStatus = 'Failed GWA';
-                    } else if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                    } elseif ($request->genave < $requiredgwa) {
                         $gradeStatus = 'Failed GWA (Chinese Subject)';
                     } else {
                         $gradeStatus = 'Passed';
                     }
                 }
-            } else if ($gradingsystem->highestgwa == 100) {
+            } elseif ($gradingsystem->highestgwa == 100) {
                 if ($educ->scSchoolLevel == 'College') {
-                    $gradeStatus = ($request->gwa < $requiredgwa['College']) ? 'Failed GWA' : 'Passed';
+                    $gradeStatus = ($request->gwa < $requiredgwa) ? 'Failed GWA' : 'Passed';
                 } else {
-                    if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                    if ($request->genave < $requiredgwa) {
                         $gradeStatus = 'Failed GWA';
-                    } else if ($request->genave < $requiredgwa[$educ->scSchoolLevel]) {
+                    } elseif ($request->genave < $requiredgwa) {
                         $gradeStatus = 'Failed GWA (Chinese Subject)';
                     } else {
                         $gradeStatus = 'Passed';
                     }
                 }
             }
+
 
             Log::info('User Data:', ['user' => $user]);
             Log::info('Basic Info:', ['basicInfo' => $user->basicInfo]);
