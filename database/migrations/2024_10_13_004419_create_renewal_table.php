@@ -50,6 +50,7 @@ return new class extends Migration
             $table->string('relationship', 50);
             $table->string('educattainment', 100);
             $table->string('occupation', 100);
+            $table->string('company', 100);
             $table->float('income');
             $table->timestamps();
 
