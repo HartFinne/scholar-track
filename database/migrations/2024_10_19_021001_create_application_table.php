@@ -24,7 +24,6 @@ return new class extends Migration
             [
                 'formname' => 'College',
                 'deadline' => '2025-01-31',
-                'enddate' => '2024-12-31',
                 'status' => 'Open',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -32,7 +31,6 @@ return new class extends Migration
             [
                 'formname' => 'Senior High',
                 'deadline' => NULL,
-                'enddate' => NULL,
                 'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -40,7 +38,6 @@ return new class extends Migration
             [
                 'formname' => 'Junior High',
                 'deadline' => NULL,
-                'enddate' => NULL,
                 'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -48,7 +45,6 @@ return new class extends Migration
             [
                 'formname' => 'Elementary',
                 'deadline' => NULL,
-                'enddate' => NULL,
                 'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -56,7 +52,6 @@ return new class extends Migration
             [
                 'formname' => 'Renewal',
                 'deadline' => NULL,
-                'enddate' => NULL,
                 'status' => 'Closed',
                 'created_at' => now(),
                 'updated_at' => now(),
