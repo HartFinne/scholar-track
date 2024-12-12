@@ -361,6 +361,7 @@ class ScholarController extends Controller
                 'email' => 'email|max:255',
                 'phonenum' => 'digits_between:11,12',
                 'occupation' => 'string|max:100',
+                'company' => 'string|max:100',
                 'income' => 'numeric|min:0',
                 'fblink' => 'url',
                 // Father info
