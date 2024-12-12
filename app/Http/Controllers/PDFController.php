@@ -131,6 +131,8 @@ class PDFController extends Controller
             }
         }
 
+        $needs = ['Financial', 'Medical', 'Food', 'Material', 'Education'];
+
         $data = [
             'applicant' => $applicant,
             'father' => $father,
@@ -138,6 +140,7 @@ class PDFController extends Controller
             'siblings' => $siblings,
             'iscollege' => $iscollege,
             'form' => $form,
+            'needs' => $needs,
         ];
 
         $pdf = Pdf::loadView('application-form', $data);
