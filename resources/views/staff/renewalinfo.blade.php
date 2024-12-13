@@ -29,12 +29,18 @@
                 </div>
                 @if ($renewal->status == 'Pending')
                     <div class="col-auto">
-                        <button class="btn btn-success w-100" data-bs-toggle="modal"
+                        <button class="btn btn-warning fw-bold w-100" data-bs-toggle="modal"
                             data-bs-target="#updateStatusModal">
                             Action Taken
                         </button>
                     </div>
                 @endif
+                <div class="col-auto row">
+                    <div class="col-auto">
+                        <a href="{{ route('generateRenewalForm', ['rid' => $renewal->rid]) }}" class="btn btn-success"
+                            target="_blank">Download Form</a>
+                    </div>
+                </div>
             </div>
 
             <!-- Applicant Details Section -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\apceducation;
+use App\Models\apeheducation;
 use App\Models\apfamilyinfo;
 use App\Models\applicants;
 use Illuminate\Http\Request;
@@ -13,10 +14,10 @@ use App\Models\renewal;
 use App\Models\lte;
 use App\Models\penalty;
 use App\Models\applicationforms;
-use App\Models\grades;
-use App\Models\datasets;
-use App\Models\evalresults;
-use App\Models\criteria;
+use App\Models\RnwCaseDetails;
+use App\Models\RnwEducation;
+use App\Models\RnwFamilyInfo;
+use App\Models\RnwOtherInfo;
 use App\Models\institutions;
 use App\Models\communityservice;
 use App\Models\csattendance;
@@ -124,11 +125,8 @@ class PDFController extends Controller
         if ($iscollege) {
             $form = applicationforms::where('formname', 'College')->first();
         } else {
-            if ($applicant->educelemhs->schoollevel == 'Elementary') {
-                $form = applicationforms::where('formname', 'College')->first();
-            } else {
-                $form = applicationforms::where('formname', 'High School')->first();
-            }
+            $level = apeheducation::where('casecode', $casecode)->pluck('schoollevel')->first();
+            $form = applicationforms::where('formname', $level)->first();
         }
 
         $cityApi = "https://psgc.gitlab.io/api/regions/{$applicant->region}/cities-municipalities/";
@@ -156,5 +154,51 @@ class PDFController extends Controller
             ->set_option('defaultFont', 'Arial');
 
         return $pdf->stream("application-form-{$casecode}.pdf");
+    }
+
+    public function generateRenewalForm($id)
+    {
+        $applicant = renewal::with('grade', 'casedetails', 'otherinfo')->where('rid', $id)->first();
+        $user = User::with(
+            'basicInfo',
+            'addressinfo',
+            'education',
+            'scholarshipinfo'
+        )->where('caseCode', $applicant->caseCode)
+            ->first();
+
+        $iscollege = ScEducation::where('scSchoolLevel', 'College')->where('caseCode', $user->caseCode)->exists();
+
+        $father = RnwFamilyInfo::where('caseCode', $user->caseCode)->where('relationship', 'Father')->first();
+        $mother = RnwFamilyInfo::where('caseCode', $user->caseCode)->where('relationship', 'Mother')->first();
+        $siblings = RnwFamilyInfo::where('caseCode', $user->caseCode)->where('relationship', 'Sibling')->get();
+
+        $form = applicationforms::where('formname', 'Renewal')->first();
+
+        $needs = ['Financial', 'Medical', 'Food', 'Material', 'Education'];
+        $cityApi = "https://psgc.gitlab.io/api/regions/{$user->addressinfo->scRegion}/cities-municipalities/";
+        $city = Http::get($cityApi)->collect()->firstWhere('code', $user->addressinfo->scCity)['name'] ?? 'Unknown City/Municipality';
+
+        $barangayApi = "https://psgc.gitlab.io/api/cities-municipalities/{$user->addressinfo->scCity}/barangays/";
+        $barangay = Http::get($barangayApi)->collect()->firstWhere('code', $user->addressinfo->scBarangay)['name'] ?? 'Unknown Barangay';
+
+        $data = [
+            'applicant' => $applicant,
+            'user' => $user,
+            'father' => $father,
+            'mother' => $mother,
+            'siblings' => $siblings,
+            'iscollege' => $iscollege,
+            'form' => $form,
+            'needs' => $needs,
+            'city' => $city,
+            'barangay' => $barangay,
+        ];
+
+        $pdf = Pdf::loadView('renewal-form', $data)
+            ->setPaper([0, 0, 576, 936])
+            ->set_option('defaultFont', 'Arial');
+
+        return $pdf->stream("renewal-form-{$user->caseCode}.pdf");
     }
 }

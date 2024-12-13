@@ -254,8 +254,9 @@ Route::prefix('staff')->controller(StaffAuthController::class)->group(function (
 Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->group(function () {
     Route::get('/scholarship-report', 'generatescholarshipreport')->name('generatescholarshipreport');
 });
-Route::prefix('applicant')->controller(PDFController::class)->group(function () {
+Route::controller(PDFController::class)->group(function () {
     Route::get('/applicant-form/{casecode}', 'generateapplicantform')->name('generateapplicantform');
+    Route::get('/renewal/applicant-form/{rid}', 'generateRenewalForm')->name('generateRenewalForm');
 });
 
 Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->group(function () {

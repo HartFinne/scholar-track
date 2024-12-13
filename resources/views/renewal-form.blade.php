@@ -211,7 +211,7 @@
             <div class="app-title">
                 <p>Educational Assistance Program</p>
                 <p><strong>APPLICATION FORM</strong></p>
-                <p id="schoolYear">S.Y. {{ date('Y') }}-{{ date('Y') + 1 }}</p>
+                <p id="schoolYear">S.Y. {{ $applicant->schoolyear }}</p>
             </div>
             <div class="personal-info" style="margin-bottom: 10px;">
                 <table width="100%" style="margin-bottom: 10px;">
@@ -224,7 +224,7 @@
                     <tr>
                         <td width="40%"></td>
                         <td width="15%"><strong>New</strong></td>
-                        <td width="25%"><strong>{{ $applicant->casecode }}</strong></td>
+                        <td width="25%"><strong>{{ $applicant->caseCode }}</strong></td>
                         <td width="20%" style="border-bottom: 1px solid #000;"></td>
                     </tr>
                 </table>
@@ -236,22 +236,25 @@
                                     <tr>
                                         <td colspan="2">
                                             <p class="flabel">Name: (Last Name, First Name, Middle Name)</p>
-                                            <p class="fvalue">{{ $applicant->name }}</p>
+                                            <p class="fvalue">{{ $user->basicInfo->scLastname }},
+                                                {{ $user->basicInfo->scFirstname }} {{ $user->basicInfo->scMiddlename }}
+                                            </p>
                                         </td>
                                         <td colspan="2">
                                             <span class="flabel">Chinese Name</span><br>
-                                            <span class="fvalue">{{ $applicant->chinesename }}</span>
+                                            <span class="fvalue">{{ $user->basicInfo->scChinesename }}</span>
                                         </td>
                                         <td>
                                             <span class="flabel">Gender</span><br>
-                                            <span class="fvalue" id="gender">{{ $applicant->sex }}</span>
+                                            <span class="fvalue" id="gender">{{ $user->basicInfo->scSex }}</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
                                             <span class="flabel">Home Address (House #/Unit #/Floor/Bldg. Name/Street
                                                 Name)</span><br>
-                                            <span class="fvalue" id="resAddress">{{ $applicant->homeaddress }}</span>
+                                            <span class="fvalue"
+                                                id="resAddress">{{ $user->addressinfo->scResidential }}</span>
                                         </td>
                                         <td>
                                             <span class="flabel">Barangay</span><br>
@@ -263,47 +266,48 @@
                                         </td>
                                         <td>
                                             <span class="flabel">Age</span><br>
-                                            <span class="fvalue" id="age">{{ $applicant->age }}</span>
+                                            <span class="fvalue" id="age">{{ $user->basicInfo->scAge }}</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <span class="flabel">Email address</span><br>
-                                            <span class="fvalue" id="email">{{ $applicant->email }}</span>
+                                            <span class="fvalue" id="email">{{ $user->scEmail }}</span>
                                         </td>
                                         <td>
                                             <span class="flabel">Occupation and Income</span><br>
                                             <span class="fvalue"
-                                                id="occupation">{{ $applicant->occupation }}</span>,<br>
-                                            <span class="fvalue" id="income">Php {{ $applicant->income }}</span>
+                                                id="occupation">{{ $user->basicInfo->scOccupation }}</span>,<br>
+                                            <span class="fvalue" id="income">Php
+                                                {{ $user->basicInfo->scIncome }}</span>
                                         </td>
                                         <td colspan="2">
                                             <span class="flabel">Cellphone No./Landline</span><br>
-                                            <span class="fvalue" id="phoneNum">{{ $applicant->phonenum }}</span>
+                                            <span class="fvalue" id="phoneNum">+{{ $user->scPhoneNum }}</span>
                                         </td>
                                         <td>
                                             <span class="flabel">Birthdate</span><br>
                                             <span class="fvalue"
-                                                id="birthDate">{{ \Carbon\Carbon::parse($applicant->birthdate)->format('F j, Y') }}</span>
+                                                id="birthDate">{{ \Carbon\Carbon::parse($user->basicInfo->scDateOfBirth)->format('F j, Y') }}</span>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <span class="flabel">Facebook Link</span><br>
                                             <a href="{{ $applicant->fblink }}" class=" link link-success"
-                                                id="fbName" target="_blank">{{ $applicant->fblink }}</a>
+                                                id="fbName" target="_blank">{{ $user->basicInfo->scFblink }}</a>
                                         </td>
                                         <td colspan="4">
                                             <span class="flabel">Are you a member of any indigenous group?</span><br>
-                                            <span class="fvalue" id="indigenous">{{ $applicant->isIndigenous }}.
-                                                {{ $applicant->indigenousgroup ?? '' }}</span>
+                                            <span class="fvalue"
+                                                id="indigenous">{{ $user->basicInfo->scIsIndigenous }}.
+                                                {{ $user->basicInfo->scIndigenousgroup ?? '' }}</span>
                                         </td>
                                     </tr>
                                 </table>
                             </td>
                             <td width="10%" style="vertical-align: top;">
-                                <img src="{{ public_path('storage/' . $applicant->requirements->idpic) }}"
-                                    alt="Applicant 1x1 Pic">
+                                <img src="{{ public_path('storage/' . $applicant->idpic) }}" alt="Applicant 1x1 Pic">
                             </td>
                         </tr>
                     </table>
@@ -321,86 +325,59 @@
                             <tr>
                                 <td width="40%">Name of University:</td>
                                 <td width="60%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educcollege->univname ?? '' }}</td>
+                                    {{ $applicant->education->scSchoolName ?? '' }}</td>
                             </tr>
                             <tr>
                                 <td width="40%">College Department:</td>
                                 <td width="60%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educcollege->collegedept ?? '' }}
-                                </td>
+                                    {{ $applicant->education->scCollegedept ?? '' }}</td>
                             </tr>
                             <tr>
                                 <td width="40%">Incoming Year Level:</td>
                                 <td width="60%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educcollege->inyear ?? '' }}
-                                </td>
+                                    {{ $applicant->education->scYearGrade ?? '' }}</td>
                             </tr>
                             <tr>
                                 <td width="40%">Course:</td>
                                 <td width="60%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educcollege->course ?? '' }}
-                                </td>
+                                    {{ $applicant->education->scCourseStrandSec ?? '' }}</td>
                             </tr>
                             <tr>
                                 <td width="40%">General Average Last Sem:</td>
                                 <td width="60%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educcollege->gwa ?? '' }}
-                                </td>
+                                    {{ $applicant->grade->gwa ?? '' }}</td>
                             </tr>
                         </table>
                     @else
                         <p style="text-align: center;"><strong>ELEMENTARY/HIGH SCHOOL</strong></p>
-                        <table width="100%" style="font-size: 14px">
-                            <tr>
-                                <td width="40%">Name of Elementary/High School:</td>
-                                <td width="60%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educelemhs->schoolname ?? '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="40%">Incoming Year Level:</td>
-                                <td width="60%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educelemhs->ingrade ?? '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                @if ($applicant->educelemhs->schoollevel == 'Senior High')
-                                    <td width="20%">Strand:</td>
-                                    <td width="25%" style="border-bottom: 1px solid #000">
-                                        {{ $applicant->educelemhs->strand ?? '' }}
-                                    </td>
-                                @else
-                                    <td width="20%">Section:</td>
-                                    <td width="25%" style="border-bottom: 1px solid #000">
-                                        {{ $applicant->educelemhs->strand ?? '' }}
-                                    </td>
-                                @endif
-                                <td width="10%"></td>
-                                <td width="45%" style="text-align: center">Chinese Subject</td>
-                            </tr>
-                            <tr>
-                                <td width="20%">General Average:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educelemhs->gwa ?? '' }}
-                                </td>
-                                <td width="10%"></td>
-                                <td width="20%">General Average:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educelemhs->chinesegwa ?? '' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="20%">Conduct:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educelemhs->gwaconduct ?? '' }}
-                                </td>
-                                <td width="10%"></td>
-                                <td width="20%">Conduct:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educelemhs->chinesegwaconduct ?? '' }}
-                                </td>
-                            </tr>
-                        </table>
+                        <tr>
+                            <td width="40%">Name of Elementary/High School:</td>
+                            <td width="60%" style="border-bottom: 1px solid #000">
+                                {{ $applicant->education->scSchoolName ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">Incoming Year Level:</td>
+                            <td width="60%" style="border-bottom: 1px solid #000">
+                                {{ $applicant->education->scYearGrade ?? '' }}</td>
+                        </tr>
+                        <tr>
+                            <td width="20%">
+                                {{ $applicant->education->scYearGrade == 'Senior High' ? 'Strand' : 'Section' }}:
+                            </td>
+                            <td width="25%" style="border-bottom: 1px solid #000">
+                                {{ $applicant->education->scCourseStrandSec ?? '' }}</td>
+                            <td width="10%"></td>
+                            <td width="45%" style="text-align: center">Chinese Subject</td>
+                        </tr>
+                        <tr>
+                            <td width="20%">General Average:</td>
+                            <td width="25%" style="border-bottom: 1px solid #000">
+                                {{ $applicant->grade->gwa ?? '' }}</td>
+                            <td width="10%"></td>
+                            <td width="20%">General Average:</td>
+                            <td width="25%" style="border-bottom: 1px solid #000">
+                                {{ $applicant->grade->gwa ?? '' }}</td>
+                        </tr>
                     @endif
                 </div>
             </div>
@@ -408,10 +385,10 @@
             <div class="fam-info">
                 <p class="sec-title fam" style="margin-bottom: 5px;"><strong><u>FAMILY INFORMATION</u></strong></p>
                 <div class="table1">
-                    <table class="table " style="max-width: 100%;">
+                    <table class="table" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th>Name <br><span>(Last Name, First Name)</span></th>
+                                <th>Name<br><span>(Last Name, First Name)</span></th>
                                 <th>Age</th>
                                 <th>Sex</th>
                                 <th>Birtdate <br><span></span></th>
@@ -483,7 +460,7 @@
                 <p>Talents & Skills/ Honor and Recognition/ Extracurricular/Community Involvement/Employment</p>
                 <span id="talents">{{ $applicant->otherinfo->talent }}</span>
                 <p>What are your expectations from Tzu Chi Foundation?</p>
-                <span id="expectations">{{ $applicant->otherinfo->expectations }}</span>
+                <span id="expectations">{{ $applicant->otherinfo->expectation }}</span>
             </div>
 
             <div class="signature">
@@ -502,8 +479,8 @@
             <div class="sketchome">
                 <p class="sec-title"><strong><u>SKETCH OF HOME ADDRESS</u></strong></p>
                 <div class="sketchimg">
-                    <img src="{{ public_path('storage/' . $applicant->requirements->sketchmap) }}"
-                        alt="Sketch Map of Home Address" style="height: 250px;">
+                    <img src="{{ public_path('storage/' . $applicant->sketchmap) }}" alt="Sketch Map of Home Address"
+                        style="height: 250px;">
                 </div>
             </div>
 

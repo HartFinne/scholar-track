@@ -49,7 +49,7 @@
             </div>
             <div class="col-md-3">
                 <div class="row my-1 mx-1">
-                    <a href="{{ route('generateapplicantform', ['casecode' => $user->caseCode]) }}"
+                    <a href="{{ route('generateRenewalForm', ['rid' => $renewal->rid]) }}"
                         class="btn btn-outline-success text-success bg-light" target="_blank">Download Form</a>
                 </div>
                 <div class="row mx-1">
