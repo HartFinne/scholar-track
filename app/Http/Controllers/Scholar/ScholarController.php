@@ -953,7 +953,9 @@ class ScholarController extends Controller
 
         $form = applicationforms::where('formname', 'Renewal')->first();
 
-        return view('scholar.scholarship.subrenewal', compact('user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege'));
+        $needs = ['Financial', 'Medical', 'Food', 'Material', 'Education'];
+
+        return view('scholar.scholarship.subrenewal', compact('needs', 'user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege'));
     }
 
     public function showGradeSubmission(Request $request)

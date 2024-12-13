@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
     <link rel="stylesheet" href="{{ asset('css/subrenewal.css') }}">
-    <!-- <link rel="stylesheet" href="{{ asset('css/appformview.css') }}"> -->
+    <link rel="stylesheet" href="{{ asset('css/appformview.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -20,9 +20,7 @@
     <!-- Include Navbar -->
     @include('partials._navbar')
 
-
     <!-- MAIN -->
-
     <div class="ctn-main">
         <a href="{{ route('overview') }}" class="goback">&lt Go back</a>
         <h1 class="title text-center">Scholarship Renewal</h1>
@@ -37,16 +35,16 @@
                         readonly>
                 </div>
                 <div class="row my-1">
-                        <span class="col-md-4 label" style="font-size: 15px;">Applicant Case Code</span>
-                        <span class="col-md-1 label">: </span>
-                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $user->caseCode }}"
-                            readonly>
+                    <span class="col-md-4 label" style="font-size: 15px;">Applicant Case Code</span>
+                    <span class="col-md-1 label">: </span>
+                    <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $user->caseCode }}"
+                        readonly>
                 </div>
                 <div class="row my-1">
                     <span class="col-md-4 label" style="font-size: 15px;">Application Status</span>
                     <span class="col-md-1 label">: </span>
                     <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $renewal->status }}"
-                         readonly>
+                        readonly>
                 </div>
             </div>
             <div class="col-md-3">
@@ -62,34 +60,32 @@
                 </div>
             </div>
         </div>
-            <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="withdrawModalLabel">Confirm Withdrawal</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to withdraw your application?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="confirmWithdraw">Confirm</button>
-                        </div>
+        <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="withdrawModalLabel">Confirm Withdrawal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to withdraw your application?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmWithdraw">Confirm</button>
                     </div>
                 </div>
             </div>
-
+        </div>
         <div class="appform-view">
-            <div class="page1">
+            <div class="page1 shadow">
                 <div class="header">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo">
                     <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
                     </p>
                 </div>
-                <div class="app-title text-center">
+                <div class="app-title">
                     <p>Educational Assistance Program</p>
                     <p><strong>APPLICATION FORM</strong></p>
                     <p id="schoolYear">S.Y. {{ date('Y') }}-{{ date('Y') + 1 }}</p>
@@ -104,7 +100,7 @@
                     <div class="row mb-2">
                         <span class="col-md-4"></span>
                         <span class="col-md-2"><strong>New</strong></span>
-                        <span class="col-md-3"><strong>{{ $user->casecode }}</strong></span>
+                        <span class="col-md-3"><strong>{{ $user->caseCode }}</strong></span>
                         <span class="col-md-3"></span>
                     </div>
                     <div class="psec2">
@@ -178,7 +174,7 @@
                                     <td colspan="4">
                                         <span class="flabel">Are you a member of any indigenous group?</span><br>
                                         <span class="fvalue" id="indigenous">{{ $user->basicInfo->scIsIndigenous }}.
-                                            {{ $user->basicInfo->scIndigenousgroup ?? '' }}</span>
+                                            {{ $user->basicInfo->scIndigenousgroup == 'Not Applicable' ? '' : $user->basicInfo->scIndigenousgroup }}</span>
                                     </td>
                                 </tr>
                             </table>
@@ -310,49 +306,50 @@
                             <tbody id="familyTableBody">
                                 {{-- FATHER --}}
                                 <tr>
-                                    <td class="text-left align-center">{{ $father->name }}</td>
-                                    <td class="text-center align-center">{{ $father->age }}</td>
-                                    <td class="text-center align-center">{{ $father->sex }}</td>
+                                    <td class="text-left align-center">{{ $father->name ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->age ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->sex ?? '' }}</td>
                                     <td class="text-center align-center">
-                                        {{ \Carbon\Carbon::parse($father->birthdate)->format('F j, Y') }}
+                                        {{ \Carbon\Carbon::parse($father->birthdate)->format('F j, Y') ?? '' }}
                                     </td>
-                                    <td class="text-center align-center">{{ $father->relationship }}</td>
-                                    <td class="text-center align-center">{{ $father->religion }}</td>
-                                    <td class="text-center align-center">{{ $father->educattainment }}</td>
-                                    <td class="text-center align-center">{{ $father->occupation }}</td>
-                                    <td class="text-center align-center">{{ $father->company }}</td>
-                                    <td class="text-center align-center">{{ $father->income }}</td>
+                                    <td class="text-center align-center">{{ $father->relationship ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->religion ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->educattainment ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->occupation ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $father->company ?? '' }}
+                                    </td>
+                                    <td class="text-center align-center">{{ $father->income ?? '' }}</td>
                                 </tr>
                                 {{-- MOTHER --}}
                                 <tr>
-                                    <td class="text-left align-center">{{ $mother->name }}</td>
-                                    <td class="text-center align-center">{{ $mother->age }}</td>
-                                    <td class="text-center align-center">{{ $mother->sex }}</td>
+                                    <td class="text-left align-center">{{ $mother->name ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->age ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->sex ?? '' }}</td>
                                     <td class="text-center align-center">
-                                        {{ \Carbon\Carbon::parse($mother->birthdate)->format('F j, Y') }}
+                                        {{ \Carbon\Carbon::parse($mother->birthdate)->format('F j, Y') ?? '' }}
                                     </td>
-                                    <td class="text-center align-center">{{ $mother->relationship }}</td>
-                                    <td class="text-center align-center">{{ $mother->religion }}</td>
-                                    <td class="text-center align-center">{{ $mother->educattainment }}</td>
-                                    <td class="text-center align-center">{{ $mother->occupation }}</td>
-                                    <td class="text-center align-center">{{ $mother->company }}</td>
-                                    <td class="text-center align-center">{{ $mother->income }}</td>
+                                    <td class="text-center align-center">{{ $mother->relationship ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->religion ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->educattainment ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->occupation ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->company ?? '' }}</td>
+                                    <td class="text-center align-center">{{ $mother->income ?? '' }}</td>
                                 </tr>
                                 {{-- SIBLING/S --}}
                                 @foreach ($siblings as $sib)
                                     <tr>
-                                        <td class="text-left align-center">{{ $sib->name }}</td>
-                                        <td class="text-center align-center">{{ $sib->age }}</td>
-                                        <td class="text-center align-center">{{ $sib->sex }}</td>
+                                        <td class="text-left align-center">{{ $sib->name ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->age ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->sex ?? '' }}</td>
                                         <td class="text-center align-center">
-                                            {{ \Carbon\Carbon::parse($sib->birthdate)->format('F j, Y') }}
+                                            {{ \Carbon\Carbon::parse($sib->birthdate)->format('F j, Y') ?? '' }}
                                         </td>
-                                        <td class="text-center align-center">{{ $sib->relationship }}</td>
-                                        <td class="text-center align-center">{{ $sib->religion }}</td>
-                                        <td class="text-center align-center">{{ $sib->educattainment }}</td>
-                                        <td class="text-center align-center">{{ $sib->occupation }}</td>
-                                        <td class="text-center align-center">{{ $sib->company }}</td>
-                                        <td class="text-center align-center">{{ $sib->income }}</td>
+                                        <td class="text-center align-center">{{ $sib->relationship ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->religion ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->educattainment ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->occupation ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->company ?? '' }}</td>
+                                        <td class="text-center align-center">{{ $sib->income ?? '' }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -401,7 +398,7 @@
                 </div>
             </div>
         </div>
-        <div class="page2">
+        <div class="page2 shadow">
             <div class="header">
                 <img src="{{ asset('images/logo.png') }}" alt="Logo">
                 <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
@@ -443,13 +440,13 @@
                             {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</span>.
                     </li>
                     <li>
-                        Late applicants will not be entertained.
+                        Late renewals will not be entertained.
                     </li>
                     <li>
                         All applications are subject for home visit and approval.
                     </li>
                     <li>
-                        The applicants will be notified on the acceptance or rejection of the application.
+                        The renewals will be notified on the acceptance or rejection of the application.
                     </li>
                     <li>
                         For inquiries, you may contact the Educational Assistance Program Staff with number
@@ -470,25 +467,30 @@
                         <td>
                             <span class="slabel">Nature of Needs</span><br>
                             <span class="svalue" id="natureOfneeds">
-                                <input type="radio" id="financial" name="needs" value="Financial" readonly>
-                                <label for="financial">Financial</label><br>
-                                <input type="radio" id="medical" name="needs" value="Medical" readonly>
-                                <label for="medical">Medical</label><br>
-                                <input type="radio" id="food" name="needs" value="Food" readonly>
-                                <label for="food">Food</label><br>
-                                <input type="radio" id="material" name="needs" value="Material" readonly>
-                                <label for="material">Material</label><br>
-                                <input type="radio" id="educ" name="needs" value="Education" readonly
-                                    checked>
-                                <label for="educ"> Education</label><br>
-                                <input type="radio" id="others" name="needs" value="Others" readonly>
-                                <label for="others"> Others</label><br>
+                                @foreach ($needs as $need)
+                                    <div class="col-12 align-items-center">
+                                        <input type="radio" value="{{ $need }}"
+                                            {{ isset($renewal->casedetails) && $renewal->casedetails->natureofneeds === $need ? 'checked' : '' }}
+                                            disabled>
+                                        <label>{{ $need }}</label>
+                                    </div>
+                                @endforeach
+                                <div class="col-12 align-items-center">
+                                    <input type="radio" value="Others"
+                                        {{ isset($renewal->casedetails) && $renewal->casedetails->natureofneeds === 'Others' ? 'checked' : '' }}
+                                        disabled>
+                                    <label>Others</label>
+                                </div>
+                                @if (isset($renewal->casedetails) && !in_array($renewal->casedetails->natureofneeds, $needs))
+                                    <input type="text" class="form-control border-bottom border-dark"
+                                        value="{{ $renewal->casedetails->natureofneeds }}">
+                                @endif
                             </span>
                         </td>
                         <td style="width: 600px;">
                             <span class="slabel"><strong>Problem Statement</strong></span><br>
-                            <textarea name="problemstatement" id="" rows="5" cols="6"
-                                placeholder="{{ $user->casedetails->problemstatement ?? '' }}" readonly></textarea>
+                            <textarea id="" rows="5" cols="6"
+                                placeholder="{{ $renewal->casedetails->problemstatement ?? '' }}" readonly></textarea>
                         </td>
                     </tr>
                 </table>
@@ -498,22 +500,22 @@
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Received By:
                         <input class="casedeets-input text-center" style="width: 65% !important" type="text"
-                            name="receiveby" value="{{ $user->casedetails->receiveby ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->receiveby ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Date Receive:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="datereceived" value="{{ $user->casedetails->datereceived ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->datereceived ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Assigned District:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="district" value="{{ $user->casedetails->district ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->district ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Assigned Volunteer:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            name="volunteer" value="{{ $user->casedetails->volunteer ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->volunteer ?? '' }}" readonly>
                     </div>
                 </div>
                 <div class="column col-md-7">
@@ -528,17 +530,17 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Case Referred By:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="referredby" value="{{ $user->casedetails->referredby ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->referredby ?? '' }}" readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Referral Contact no.:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="tel"
-                                name="referphonenum" value="{{ $user->casedetails->referphonenum ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->referphonenum ?? '' }}" readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
                             Beneficiary:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="relationship" value="{{ $user->casedetails->relationship ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->relationship ?? '' }}" readonly>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Applicant's Signature:
@@ -547,7 +549,7 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Date Reported:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                name="datereported" value="{{ $user->casedetails->datereported ?? '' }}" readonly>
+                                value="{{ $renewal->casedetails->datereported ?? '' }}" readonly>
                         </div>
                     </div>
                 </div>
@@ -555,97 +557,97 @@
         </div>
     </div>
     {{-- Documents --}}
-        <div class="card mx-auto mt-3 mb-5 shadow-sm" style="width: 8.5in;">
-            <div class="card-header py-3 bg-success text-white">
-                <span class="h5 fw-bold">Submitted Documents</span>
+    <div class="card mx-auto mt-3 mb-5 shadow-sm" style="width: 8.5in;">
+        <div class="card-header py-3 bg-success text-white">
+            <span class="h5 fw-bold">Submitted Documents</span>
+        </div>
+        <div class="card-body">
+            <div class="row mb-2 pb-2 border-bottom">
+                <div class="col-md-7 file">Latest Report Card</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->reportcard) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row mb-2 pb-2 border-bottom">
-                    <div class="col-md-7 file">Latest Report Card</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->reportcard) }}">
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Latest Registration Card</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->regiform) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Autobiography</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->autobio) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Family Picture</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->familypic) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Picture of House (Inside)</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->houseinside) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Picture of House (Outside)</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->houseoutside) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Latest Utility Bill</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->utilitybill) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Sketch Map of Home Address</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->sketchmap) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
+                </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Latest Pay Slip of Parent/s</div>
+                <div class="col-md-5 text-center">
+                    @if (!empty($renewal) && !empty($renewal->payslip))
+                        <a href="{{ asset('storage/' . $renewal->payslip) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
-                    </div>
+                    @else
+                        <span class="text-muted">No document available</span>
+                    @endif
                 </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Latest Registration Card</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->regiform) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Autobiography</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->autobio) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Family Picture</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->familypic) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Picture of House (Inside)</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->houseinside) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Picture of House (Outside)</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->houseoutside) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Latest Utility Bill</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->utilitybill) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Sketch Map of Home Address</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->sketchmap) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Latest Pay Slip of Parent/s</div>
-                    <div class="col-md-5 text-center">
-                        @if (!empty($renewal) && !empty($renewal->payslip))
-                            <a href="{{ asset('storage/' . $renewal->payslip) }}">
-                                <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                            </a>
-                        @else
-                            <span class="text-muted">No document available</span>
-                        @endif
-                    </div>
-                </div>
-                <div class="row mb-2 py-2 border-bottom">
-                    <div class="col-md-7 file">Certificate of Indigency</div>
-                    <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->indigencycert) }}">
-                            <i class="fa-solid fa-file-lines"></i> <span>View document</span>
-                        </a>
-                    </div>
+            </div>
+            <div class="row mb-2 py-2 border-bottom">
+                <div class="col-md-7 file">Certificate of Indigency</div>
+                <div class="col-md-5 text-center">
+                    <a href="{{ asset('storage/' . $renewal->indigencycert) }}">
+                        <i class="fa-solid fa-file-lines"></i> <span>View document</span>
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
 
     <script>
         document.getElementById('confirmWithdraw').addEventListener('click', function() {
