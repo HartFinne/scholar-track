@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ asset('css/partial.css') }}">
     <link rel="stylesheet" href="{{ asset('css/subrenewal.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/appformview.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
@@ -85,7 +84,7 @@
                     <p><strong>佛教慈濟慈善事業基金會菲律濱分會<br>Buddhist Compassion Relief Tzu Chi Foundation, Philippines</strong>
                     </p>
                 </div>
-                <div class="app-title">
+                <div class="app-title text-center">
                     <p>Educational Assistance Program</p>
                     <p><strong>APPLICATION FORM</strong></p>
                     <p id="schoolYear">S.Y. {{ date('Y') }}-{{ date('Y') + 1 }}</p>
@@ -407,7 +406,7 @@
             <h3 class="text-center my-3">Educational Assistance Application Form</h3>
             <span class="row"><strong><u>Sketch of Home Address</u></strong></span>
             <div class="sketchimg">
-                <img src="{{ asset('storage/' . $renewal->sketchmap) }}" alt="Sketch Map of Home Address"
+                <img class="sketchimg" src="{{ asset('storage/' . $renewal->sketchmap) }}" alt="Sketch Map of Home Address"
                     id="sketchmap">
             </div>
             <div class="instructions">

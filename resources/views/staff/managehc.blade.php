@@ -60,12 +60,12 @@
                                 <a href="{{ $class->status == 'On Going' ? route('attendancesystem', $class->hcid) : '#' }}"
                                     class="btn btn-sm text-white 
                                            {{ $class->status == 'On Going' ? 'btn-warning' : 'btn-secondary' }} 
-                                           border-0"
+                                           border-0" title="Open Attendance System"
                                     @if ($class->status != 'On Going') style="pointer-events: none;" @endif>
                                     <i class="fas fa-calendar-check"></i>
                                 </a>
                                 <a href="{{ route('viewattendeeslist', $class->hcid) }}"
-                                    class="btn btn-sm btn-success border-0">
+                                    class="btn btn-sm btn-success border-0" title="View List of Attendees">
                                     <i class="fas fa-users"></i>
                                 </a>
                             </td>
