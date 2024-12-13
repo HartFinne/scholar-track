@@ -28,7 +28,7 @@
                 <div class="col-auto">
                     <a href="{{ route('applicants') }}" class="btn btn-success w-100">Go back</a>
                 </div>
-                @if (!$applicant->applicationstatus == 'Denied' || !$applicant->applicationstatus == 'Withdrawn')
+                @if ($applicant->applicationstatus != 'Denied' && $applicant->applicationstatus != 'Withdrawn')
                     <div class="col-auto">
                         <button class="btn btn-warning fw-bold w-100" data-bs-toggle="modal"
                             data-bs-target="#actionModal">
