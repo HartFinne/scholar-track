@@ -410,7 +410,7 @@
             <h3 class="text-center my-3">Educational Assistance Application Form</h3>
             <span class="row"><strong><u>Sketch of Home Address</u></strong></span>
             <div class="sketchimg">
-                <img src="{{ asset('storage/' . $renewal->sketchmap) }}" alt="Sketch Map of Home Address"
+                <img class="sketchimg" src="{{ asset('storage/' . $renewal->sketchmap) }}" alt="Sketch Map of Home Address"
                     id="sketchmap">
             </div>
             <div class="instructions">
