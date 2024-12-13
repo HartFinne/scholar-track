@@ -10,7 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body style="background-color: #fff !important">
@@ -627,20 +626,20 @@
                                 @foreach ($needs as $need)
                                     <div class="col-12 align-items-center">
                                         <input type="radio" value="{{ $need }}"
-                                            {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === $need ? 'checked' : '' }}
+                                            {{ isset($renewal->casedetails) && $renewal->casedetails->natureofneeds === $need ? 'checked' : '' }}
                                             disabled>
                                         <label>{{ $need }}</label>
                                     </div>
                                 @endforeach
                                 <div class="col-12 align-items-center">
                                     <input type="radio" value="Others"
-                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Others' ? 'checked' : '' }}
+                                        {{ isset($renewal->casedetails) && $renewal->casedetails->natureofneeds === 'Others' ? 'checked' : '' }}
                                         disabled>
                                     <label>Others</label>
                                 </div>
-                                @if (isset($applicant->casedetails) && !in_array($applicant->casedetails->natureofneeds, $needs))
+                                @if (isset($renewal->casedetails) && !in_array($renewal->casedetails->natureofneeds, $needs))
                                     <input type="text" class="form-control border-bottom border-dark"
-                                        value="{{ $applicant->casedetails->natureofneeds }}">
+                                        value="{{ $renewal->casedetails->natureofneeds }}">
                                 @endif
                             </span>
                         </td>
