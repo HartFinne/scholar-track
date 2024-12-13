@@ -43,6 +43,11 @@
                     </div>
                 </div>
             </div>
+        </div>
+        @if ($applicant->applicationstatus == 'Withdrawn')
+            <div class="container h2 mb-3 text-center text-white fw-bold p-3 bg-danger shadow border border-danger">
+                Application Withdrawn</div>
+        @else
             @php
                 $stages = [
                     'Under Review' => $progress['Under Review']->status ?? null,
@@ -51,8 +56,11 @@
                     'Panel Interview' => $progress['Panel Interview']->status ?? null,
                 ];
 
-                function getStatusClass($status)
+                function getStatusClass($status, $isCurrent = false)
                 {
+                    if ($isCurrent) {
+                        return 'bg-warning text-dark'; // Highlight current stage
+                    }
                     return match ($status) {
                         'Passed' => 'bg-success text-white',
                         'Failed' => 'bg-danger text-white',
@@ -61,7 +69,6 @@
                     };
                 }
             @endphp
-
             <div class="container p-4 border border-dark shadow mb-4">
                 <div class="row mb-2">
                     <div class="col-12 fw-bold text-center h4">Application Progress</div>
@@ -84,7 +91,10 @@
                 {{-- Progress Bar --}}
                 <div class="row gx-0 px-2">
                     @foreach ($stages as $stage => $status)
-                        @php $statusClass = getStatusClass($status); @endphp
+                        @php
+                            $isCurrent = $applicant->applicationstatus == $stage;
+                            $statusClass = getStatusClass($status, $isCurrent);
+                        @endphp
                         <div style="width: 25%" class="text-center h5 fw-bold p-2 {{ $statusClass }}">
                             {{ $stage }}
                         </div>
@@ -111,6 +121,8 @@
                     @endforeach
                 </div>
             </div>
+        @endif
+        <div class="container">
             <div class="container border border-dark shadow p-5 mb-5">
                 <div class="row justify-content-center">
                     <img src="{{ asset('images/appform-header.png') }}" alt="header" style="width: 60%">
@@ -445,11 +457,13 @@
 
                 <div class="row text-center">
                     <div class="mb-5 mt-4">
-                        I hereby attest that the information I have provided is true and correct. I also consents Tzu
+                        I hereby attest that the information I have provided is true and correct. I also consents
+                        Tzu
                         Chi Foundation to obtain and retain my personal information for the purpose of this
                         application.
                     </div>
-                    <div class="col-auto border-top border-dark small mx-auto mt-2">Applicant's Signature over Printed
+                    <div class="col-auto border-top border-dark small mx-auto mt-2">Applicant's Signature over
+                        Printed
                         Name
                         and Date
                     </div>
@@ -479,7 +493,8 @@
                                 are only authorized to enroll in partner schools and authorized courses.
                             </li>
                             <li>
-                                Students with a failing grade on any subject, with <strong>general weighted average 82%
+                                Students with a failing grade on any subject, with <strong>general weighted average
+                                    82%
                                     both
                                     English and Chinese</strong> or with a grade on
                                 <strong>Conduct below B</strong> or with scholarship grant from other foundations or
@@ -491,7 +506,8 @@
                                 misleading information may lead to disqualification.
                             </li>
                             <li>
-                                Submit the following: <span class="fw-bold fst-italic">Photocopy of Report Card or copy
+                                Submit the following: <span class="fw-bold fst-italic">Photocopy of Report Card or
+                                    copy
                                     of
                                     grade
                                     form
@@ -499,7 +515,8 @@
                                     Form, Two (2) 1x1 ID Pictures, Autobiography, Family Picture, Copies of Utility
                                     Bills,
                                     Detailed Sketch of Home Address, Certificate
-                                    of indigence from the Barangay, Pictures of House (Inside and outside), Payslip or
+                                    of indigence from the Barangay, Pictures of House (Inside and outside), Payslip
+                                    or
                                     Income Tax Return of Both Parents (if working).</span>
                                 <strong>Deadline of Submission is on <span class="text-decoration-underline">
                                         {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</span></strong>
@@ -595,8 +612,10 @@
                     <div class="column col-md-7">
                         <div class="row">
                             <span class="note">
-                                Note: Important information are essential to be able to assess and evaluate students'
-                                situation. Also please note significant details for home visitation purposes. You may
+                                Note: Important information are essential to be able to assess and evaluate
+                                students'
+                                situation. Also please note significant details for home visitation purposes. You
+                                may
                                 use the back page if necessary.
                             </span>
                         </div>

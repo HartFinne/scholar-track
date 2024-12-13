@@ -6,6 +6,7 @@ use App\Models\applicants;
 use App\Models\apfamilyinfo;
 use App\Models\apceducation;
 use App\Models\applicationforms;
+use App\Models\approgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +25,13 @@ class ApplicantAuthController extends Controller
             ->where('relationship', 'Sibling')->get();
         $iscollege = apceducation::where('casecode', $casecode)->exists();
 
+        $progress = [
+            'Under Review' => approgress::where('casecode', $casecode)->where('phase', 'Under Review')->first(),
+            'Initial Interview' => approgress::where('casecode', $casecode)->where('phase', 'Initial Interview')->first(),
+            'Home Visit' => approgress::where('casecode', $casecode)->where('phase', 'Home Visit')->first(),
+            'Panel Interview' => approgress::where('casecode', $casecode)->where('phase', 'Panel Interview')->first(),
+        ];
+
         if ($iscollege) {
             $form = applicationforms::where('formname', 'College')->first();
         } else {
@@ -36,7 +44,7 @@ class ApplicantAuthController extends Controller
             }
         }
 
-        return view('applicant.applicant-portal', compact('applicant', 'father', 'mother', 'siblings', 'iscollege', 'form'));
+        return view('applicant.applicant-portal', compact('progress', 'applicant', 'father', 'mother', 'siblings', 'iscollege', 'form'));
     }
 
     public function showlogin()

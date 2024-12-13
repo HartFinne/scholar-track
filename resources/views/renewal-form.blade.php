@@ -350,34 +350,45 @@
                         </table>
                     @else
                         <p style="text-align: center;"><strong>ELEMENTARY/HIGH SCHOOL</strong></p>
-                        <tr>
-                            <td width="40%">Name of Elementary/High School:</td>
-                            <td width="60%" style="border-bottom: 1px solid #000">
-                                {{ $applicant->education->scSchoolName ?? '' }}</td>
-                        </tr>
-                        <tr>
-                            <td width="40%">Incoming Year Level:</td>
-                            <td width="60%" style="border-bottom: 1px solid #000">
-                                {{ $applicant->education->scYearGrade ?? '' }}</td>
-                        </tr>
-                        <tr>
-                            <td width="20%">
-                                {{ $applicant->education->scYearGrade == 'Senior High' ? 'Strand' : 'Section' }}:
-                            </td>
-                            <td width="25%" style="border-bottom: 1px solid #000">
-                                {{ $applicant->education->scCourseStrandSec ?? '' }}</td>
-                            <td width="10%"></td>
-                            <td width="45%" style="text-align: center">Chinese Subject</td>
-                        </tr>
-                        <tr>
-                            <td width="20%">General Average:</td>
-                            <td width="25%" style="border-bottom: 1px solid #000">
-                                {{ $applicant->grade->gwa ?? '' }}</td>
-                            <td width="10%"></td>
-                            <td width="20%">General Average:</td>
-                            <td width="25%" style="border-bottom: 1px solid #000">
-                                {{ $applicant->grade->gwa ?? '' }}</td>
-                        </tr>
+                        <table width="100%" style="font-size: 14px">
+                            <tr>
+                                <td width="40%">Name of Elementary/High School:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
+                                    {{ $applicant->education->scSchoolName ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="40%">Incoming Year Level:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
+                                    {{ $applicant->education->scYearGrade ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="40%">
+                                    {{ $applicant->education->scYearGrade == 'Senior High' ? 'Strand' : 'Section' }}:
+                                </td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
+                                    {{ $applicant->education->scCourseStrandSec ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align: center; font-weight: bold; padding-top: 10px;">
+                                    Chinese Subject
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="40%">General Average:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
+                                    {{ $applicant->grade->gwa ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="40%">Chinese General Average:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
+                                    {{ $applicant->grade->gwa ?? '' }}
+                                </td>
+                            </tr>
+                        </table>
                     @endif
                 </div>
             </div>

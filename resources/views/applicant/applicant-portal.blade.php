@@ -40,41 +40,107 @@
 
     <!-- MAIN -->
     <div class="ctnmain">
-        <div class="appform-view">
-            <div class="appinfo row mx-auto">
-                <div class="col-md-9">
-                    <div class="row my-1">
-                        <span class="col-md-4 label">Applicant Name</span>
-                        <span class="col-md-1 label">: </span>
-                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;" value="{{ $applicant->name }}"
-                            readonly>
-                    </div>
-                    <div class="row my-1">
-                        <span class="col-md-4 label">Applicant Case Code</span>
-                        <span class="col-md-1 label">: </span>
-                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;"
-                            value="{{ $applicant->casecode }}" readonly>
-                    </div>
-                    <div class="row my-1">
-                        <span class="col-md-4 label">Application Status</span>
-                        <span class="col-md-1 label">: </span>
-                        <input class="col-md-7" style="max-width: 70%; padding: 2px 5px;"
-                            value="{{ $applicant->applicationstatus }}" readonly>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="row my-1 mx-1">
+        @if ($applicant->applicationstatus == 'Withdrawn')
+            <div class="container h2 mb-3 text-center text-white fw-bold p-3 bg-danger shadow border border-danger"
+                style="width: 8.5in">
+                Application Withdrawn</div>
+        @else
+            <div class="container" style="width: 8.5in">
+                <div class="row justify-content-between">
+                    <!-- Download Form Button -->
+                    <div class="col-md-3 mb-2">
                         <a href="{{ route('generateapplicantform', ['casecode' => $applicant->casecode]) }}"
-                            class="btn btn-outline-success text-success bg-light" target="_blank">Download Form</a>
+                            class="btn btn-success w-100" target="_blank" style="height: max-content">
+                            Download Form
+                        </a>
                     </div>
-                    <div class="row mx-1">
-                        <button class="btn btn-danger" id="btnwithdraw" data-bs-toggle="modal"
+                    <!-- Withdraw Button -->
+                    <div class="col-md-3">
+                        <button class="btn btn-danger w-100" id="btnwithdraw" data-bs-toggle="modal"
                             data-bs-target="#withdrawModal">
                             Withdraw
                         </button>
                     </div>
                 </div>
             </div>
+
+            @php
+                $stages = [
+                    'Under Review' => $progress['Under Review']->status ?? null,
+                    'Initial Interview' => $progress['Initial Interview']->status ?? null,
+                    'Home Visit' => $progress['Home Visit']->status ?? null,
+                    'Panel Interview' => $progress['Panel Interview']->status ?? null,
+                ];
+
+                function getStatusClass($status, $isCurrent = false)
+                {
+                    if ($isCurrent) {
+                        return 'bg-warning text-dark'; // Highlight current stage
+                    }
+                    return match ($status) {
+                        'Passed' => 'bg-success text-white',
+                        'Failed' => 'bg-danger text-white',
+                        null => 'bg-light text-muted',
+                        default => 'bg-warning text-dark',
+                    };
+                }
+            @endphp
+
+            <div class="container p-4 border border-dark shadow mb-4 bg-white" style="width: 8.5in">
+                <div class="row mb-2">
+                    <div class="col-12 fw-bold text-center h4">Application Progress</div>
+                </div>
+
+                <div class="row">
+                    @foreach ($stages as $stage => $status)
+                        @if (!empty($progress[$stage]))
+                            <div class="col-md-3 text-muted">
+                                <div class="px-2 text-center fw-bold">
+                                    {{ \Carbon\Carbon::parse($progress[$stage]->created_at)->format('F d, h:i A') ?? '' }}
+                                </div>
+                            </div>
+                        @else
+                            @continue
+                        @endif
+                    @endforeach
+                </div>
+
+                {{-- Progress Bar --}}
+                <div class="row gx-0 px-2">
+                    @foreach ($stages as $stage => $status)
+                        @php
+                            $isCurrent = $applicant->applicationstatus == $stage;
+                            $statusClass = getStatusClass($status, $isCurrent);
+                        @endphp
+                        <div style="width: 25%" class="text-center h5 fw-bold p-2 {{ $statusClass }}">
+                            {{ $stage }}
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Detailed Information for Each Stage --}}
+                <div class="row">
+                    @foreach ($stages as $stage => $status)
+                        @if (!empty($progress[$stage]))
+                            <div class="col-md-3 text-muted">
+                                <div class="px-2">
+                                    <div class="small"><b>Status:</b> {{ $status ?? 'Pending' }}</div>
+                                    <div class="small"><b>Remark:</b>
+                                        {{ $progress[$stage]->remark ?? 'No remarks yet' }}</div>
+                                    <div class="small"><b>Message to Applicant:</b>
+                                        {{ $progress[$stage]->msg ?? 'No comments yet' }}
+                                    </div>
+                                </div>
+                            </div>
+                        @else
+                            @continue
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
+        <div class="appform-view">
             <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">

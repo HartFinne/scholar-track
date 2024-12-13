@@ -364,43 +364,48 @@
                                 </td>
                             </tr>
                             <tr>
-                                @if ($applicant->educelemhs->schoollevel == 'Senior High')
-                                    <td width="20%">Strand:</td>
-                                    <td width="25%" style="border-bottom: 1px solid #000">
-                                        {{ $applicant->educelemhs->strand ?? '' }}
-                                    </td>
-                                @else
-                                    <td width="20%">Section:</td>
-                                    <td width="25%" style="border-bottom: 1px solid #000">
-                                        {{ $applicant->educelemhs->strand ?? '' }}
-                                    </td>
-                                @endif
-                                <td width="10%"></td>
-                                <td width="45%" style="text-align: center">Chinese Subject</td>
+                                <td width="40%">
+                                    @if ($applicant->educelemhs->schoollevel == 'Senior High')
+                                        Strand:
+                                    @else
+                                        Section:
+                                    @endif
+                                </td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
+                                    {{ $applicant->educelemhs->strand ?? '' }}
+                                </td>
                             </tr>
                             <tr>
-                                <td width="20%">General Average:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
+                                <td width="40%">General Average:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
                                     {{ $applicant->educelemhs->gwa ?? '' }}
                                 </td>
-                                <td width="10%"></td>
-                                <td width="20%">General Average:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
+                            </tr>
+                            <tr>
+                                <td width="40%">Conduct:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
+                                    {{ $applicant->educelemhs->gwaconduct ?? '' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="text-align: center; font-weight: bold; padding-top: 10px;">
+                                    Chinese Subject
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="40%">General Average:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
                                     {{ $applicant->educelemhs->chinesegwa ?? '' }}
                                 </td>
                             </tr>
                             <tr>
-                                <td width="20%">Conduct:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
-                                    {{ $applicant->educelemhs->gwaconduct ?? '' }}
-                                </td>
-                                <td width="10%"></td>
-                                <td width="20%">Conduct:</td>
-                                <td width="25%" style="border-bottom: 1px solid #000">
+                                <td width="40%">Conduct:</td>
+                                <td width="60%" style="border-bottom: 1px solid #000">
                                     {{ $applicant->educelemhs->chinesegwaconduct ?? '' }}
                                 </td>
                             </tr>
                         </table>
+
                     @endif
                 </div>
             </div>

@@ -507,14 +507,6 @@ class ApplicationController extends Controller
                 'expectations' => $request->expectation,
             ]);
 
-            approgress::create([
-                'casecode' => $casecode,
-                'phase' => 'Under Review',
-                'status' => null,
-                'remark' => null,
-                'msg' => null,
-            ]);
-
             // get the files from form
             $idpic = $request->file('idpic');
             $reportcard = $request->file('reportcard');
