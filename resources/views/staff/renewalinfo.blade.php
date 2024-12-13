@@ -597,13 +597,13 @@
                             {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</span>.
                     </li>
                     <li>
-                        Late applicants will not be entertained.
+                        Late renewals will not be entertained.
                     </li>
                     <li>
                         All applications are subject for home visit and approval.
                     </li>
                     <li>
-                        The applicants will be notified on the acceptance or rejection of the application.
+                        The renewals will be notified on the acceptance or rejection of the application.
                     </li>
                     <li>
                         For inquiries, you may contact the Educational Assistance Program Staff with number
@@ -624,36 +624,24 @@
                         <td>
                             <span class="slabel">Nature of Needs</span><br>
                             <span class="svalue" id="natureOfneeds">
-                                <input type="radio" id="financial" name="natureofneeds" value="Financial"
-                                    {{ $renewal->casedetails->natureofneeds == 'Financial' ? 'checked' : '' }}
-                                    {{ $renewal->casedetails->natureofneeds != 'Financial' ? 'disabled' : '' }}>
-                                <label for="financial">Financial</label><br>
-
-                                <input type="radio" id="medical" name="natureofneeds" value="Medical"
-                                    {{ $renewal->casedetails->natureofneeds == 'Medical' ? 'checked' : '' }}
-                                    {{ $renewal->casedetails->natureofneeds != 'Medical' ? 'disabled' : '' }}>
-                                <label for="medical">Medical</label><br>
-
-                                <input type="radio" id="food" name="natureofneeds" value="Food"
-                                    {{ $renewal->casedetails->natureofneeds == 'Food' ? 'checked' : '' }}
-                                    {{ $renewal->casedetails->natureofneeds != 'Food' ? 'disabled' : '' }}>
-                                <label for="food">Food</label><br>
-
-                                <input type="radio" id="material" name="natureofneeds" value="Material"
-                                    {{ $renewal->casedetails->natureofneeds == 'Material' ? 'checked' : '' }}
-                                    {{ $renewal->casedetails->natureofneeds != 'Material' ? 'disabled' : '' }}>
-                                <label for="material">Material</label><br>
-
-                                <input type="radio" id="educ" name="natureofneeds" value="Education"
-                                    {{ $renewal->casedetails->natureofneeds == 'Education' ? 'checked' : '' }}
-                                    {{ $renewal->casedetails->natureofneeds != 'Education' ? 'disabled' : '' }}>
-                                <label for="educ">Education</label><br>
-
-                                <input type="radio" id="others" name="natureofneeds" value="Others"
-                                    {{ $renewal->casedetails->natureofneeds == 'Others' ? 'checked' : '' }}
-                                    {{ $renewal->casedetails->natureofneeds != 'Others' ? 'disabled' : '' }}>
-                                <label for="others">Others</label><br>
-                                {{-- @dd($renewal->natureofneeds) --}}
+                                @foreach ($needs as $need)
+                                    <div class="col-12 align-items-center">
+                                        <input type="radio" value="{{ $need }}"
+                                            {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === $need ? 'checked' : '' }}
+                                            disabled>
+                                        <label>{{ $need }}</label>
+                                    </div>
+                                @endforeach
+                                <div class="col-12 align-items-center">
+                                    <input type="radio" value="Others"
+                                        {{ isset($applicant->casedetails) && $applicant->casedetails->natureofneeds === 'Others' ? 'checked' : '' }}
+                                        disabled>
+                                    <label>Others</label>
+                                </div>
+                                @if (isset($applicant->casedetails) && !in_array($applicant->casedetails->natureofneeds, $needs))
+                                    <input type="text" class="form-control border-bottom border-dark"
+                                        value="{{ $applicant->casedetails->natureofneeds }}">
+                                @endif
                             </span>
                         </td>
                         <td style="width: 600px;">

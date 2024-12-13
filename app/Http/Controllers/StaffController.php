@@ -1826,7 +1826,9 @@ class StaffController extends Controller
 
         $form = applicationforms::where('formname', 'Renewal')->first();
 
-        return view('staff.renewalinfo', compact('user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege', 'worker'));
+        $needs = ['Financial', 'Medical', 'Food', 'Material', 'Education'];
+
+        return view('staff.renewalinfo', compact('needs', 'user', 'father', 'mother', 'siblings', 'form', 'renewal', 'iscollege', 'worker'));
     }
 
     public function updateRenewalInfo($id, Request $request)
