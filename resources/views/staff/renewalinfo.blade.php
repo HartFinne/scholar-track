@@ -726,7 +726,7 @@
                 <div class="row mb-2 pb-2 border-bottom">
                     <div class="col-md-7 file">Latest Report Card</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->reportcard) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->reportcard) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -734,7 +734,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Latest Registration Card</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->regiform) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->regiform) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -742,7 +742,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Autobiography</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->autobio) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->autobio) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -750,7 +750,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Family Picture</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->familypic) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->familypic) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -758,7 +758,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Picture of House (Inside)</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->houseinside) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->houseinside) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -766,7 +766,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Picture of House (Outside)</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->houseoutside) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->houseoutside) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -774,7 +774,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Latest Utility Bill</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->utilitybill) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->utilitybill) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -782,7 +782,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Sketch Map of Home Address</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->sketchmap) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->sketchmap) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
@@ -791,7 +791,7 @@
                     <div class="col-md-7 file">Latest Pay Slip of Parent/s</div>
                     <div class="col-md-5 text-center">
                         @if (!empty($renewal) && !empty($renewal->payslip))
-                            <a href="{{ asset('storage/' . $renewal->payslip) }}">
+                            <a target="_blank" href="{{ asset('storage/' . $renewal->payslip) }}">
                                 <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                             </a>
                         @else
@@ -802,7 +802,7 @@
                 <div class="row mb-2 py-2 border-bottom">
                     <div class="col-md-7 file">Certificate of Indigency</div>
                     <div class="col-md-5 text-center">
-                        <a href="{{ asset('storage/' . $renewal->indigencycert) }}">
+                        <a target="_blank" href="{{ asset('storage/' . $renewal->indigencycert) }}">
                             <i class="fa-solid fa-file-lines"></i> <span>View document</span>
                         </a>
                     </div>
