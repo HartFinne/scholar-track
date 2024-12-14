@@ -36,29 +36,35 @@
         <div class="divider"></div>
         <span class="text-success fw-bold h2">List of Requests</span>
         <div class="row align-items-center justify-content-between">
+            {{-- search bar --}}
             <div class="col-md-3">
                 <input type="search" class="border-success form-control" placeholder="Search">
             </div>
+            {{-- filter --}}
             <div class="col-auto">
                 <div class="row gx-2 align-items-center">
                     <div class="col-auto">
                         <button class="filter btn btn-sm btn-success w-100" id="toggleAll">All</button>
                     </div>
                     <div class="col-auto">
-                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleCollege">First
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleFirstYear">First
                             Year</button>
                     </div>
                     <div class="col-auto">
-                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleSHS">Second Year</button>
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleSecondYear">Second
+                            Year</button>
                     </div>
                     <div class="col-auto">
-                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleJHS">Third Year</button>
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleThirdYear">Third
+                            Year</button>
                     </div>
                     <div class="col-auto">
-                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleElem">Fourth Year</button>
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleFourthYear">Fourth
+                            Year</button>
                     </div>
                     <div class="col-auto">
-                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleElem">Fifth Year</button>
+                        <button class="filter btn btn-sm btn-outline-success w-100" id="toggleFifthYear">Fifth
+                            Year</button>
                     </div>
                 </div>
             </div>
@@ -108,6 +114,44 @@
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Universal Search Functionality (Search across all columns)
+            $("input[type='search']").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#tblscholarslist tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+
+            // Year Level Filtering
+            $(".filter").click(function() {
+                var filter = $(this).text().trim(); // Get the button text (e.g., 'First Year', 'All')
+
+                // Update active button styling
+                $(".filter").removeClass("btn-success").addClass("btn-outline-success");
+                $(this).removeClass("btn-outline-success").addClass("btn-success");
+
+                // Apply filter
+                $("#tblscholarslist tbody tr").each(function() {
+                    var yearLevel = $(this).find("td:eq(2)").text()
+                        .trim(); // Get the year level from the third column
+
+                    if (filter === "All") {
+                        $(this).show(); // Show all rows for "All" filter
+                    } else if (yearLevel === filter) {
+                        $(this).show(); // Show rows that match the filter
+                    } else {
+                        $(this).hide(); // Hide rows that do not match the filter
+                    }
+                });
+            });
+
+            // Initialize by showing all rows (default state)
+            $(".filter#toggleAll").trigger("click");
+        });
+    </script>
 </body>
 
 </html>
