@@ -140,7 +140,7 @@
 
                     if (filter === "All") {
                         $(this).show(); // Show all rows for "All" filter
-                    } else if (yearLevel === filter) {
+                    } else if (yearLevel.toLowerCase() === filter.toLowerCase()) {
                         $(this).show(); // Show rows that match the filter
                     } else {
                         $(this).hide(); // Hide rows that do not match the filter
