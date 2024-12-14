@@ -46,16 +46,16 @@ class appointment extends Notification implements ShouldQueue
             ->greeting('Greetings!');
 
         if ($status === 'Rejected') {
-            $message->line('We regret to inform you that your appointment has been ' . $status . '.')
-                ->line('If you believe this was a mistake, you may contact our support team for further clarification.');
+            $message->line('We regret to inform you that your appointment has been denied.')
+                ->line('If you have any questions, please contact one of our social welfare officers for clarification.');
         } elseif ($status === 'Accepted') {
-            $message->line('We are pleased to inform you that your appointment has been ' . $status . '.')
+            $message->line('We are pleased to inform you that your appointment has been approved.')
                 ->line('Please prepare any necessary documents and be on time for your appointment.');
         } elseif ($status === 'Cancelled') {
-            $message->line('We are pleased to inform you that your appointment has been ' . $status . '.')
-                ->line('Please prepare any necessary documents and be on time for your appointment.');
+            $message->line('We regret to inform you that your appointment has been cancelled due to unforeseen circumstances.')
+                ->line('If you have any questions, please contact one of our social welfare officers for clarification.');
         } else {
-            $message->line('Your appointment has been ' . $status . '.');
+            $message->line('Your appointment status has been updated. Please log in to your account to view full details.');
         }
 
         return $message;

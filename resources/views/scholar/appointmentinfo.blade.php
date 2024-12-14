@@ -27,12 +27,19 @@
 
         <div class="container mt-5">
             <div class="card border-0 mx-auto" style="max-width: 75%">
-                <div class="row d-flex justify-content-between">
-                    <div class="col-md-2 mb-2">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-md-2 mb-4">
                         <a href="{{ route('appointment') }}" class="btn btn-success w-100">&lt Go back</a>
                     </div>
                     <div class="col-md-2">
-                        <span class="h6 appointment-stat w-100">{{ $appointment->status }}</span>
+                        <span
+                            class="text-white h5 appointment-stat w-100 {{ $appointment->status == 'Pending'
+                                ? 'bg-warning border-warning'
+                                : ($appointment->status == 'Approved' || $appointment->status == 'Completed'
+                                    ? 'bg-success border-success'
+                                    : ($appointment->status == 'Cancelled' || $appointment->status == 'Denied'
+                                        ? 'bg-danger border-danger'
+                                        : '')) }}">{{ $appointment->status }}</span>
                     </div>
                 </div>
             </div>
@@ -65,6 +72,8 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('js/scholar.js') }}"></script>
 </body>
 
 </html>
