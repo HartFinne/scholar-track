@@ -351,7 +351,9 @@
                         <tbody>
                             @if ($grades == null || $grades->isEmpty())
                                 <tr>
-                                    <td class="text-center align-middle" colspan="6">No data available</td>
+                                    <td class="text-center align-middle"
+                                        colspan="{{ $data->education->scSchoolLevel == 'College' ? '6' : '9' }}">No
+                                        data available</td>
                                 </tr>
                             @else
                                 @foreach ($grades as $index => $grade)
