@@ -445,11 +445,14 @@
                                     <tr>
                                         <td class="text-center align-middle">{{ $index + 1 }}</td>
                                         <td class="text-center align-middle">
-                                            {{ \Carbon\Carbon::parse($attendance->humanitiesclass->hcdate)->format('F d, Y') }}
+                                            {{ \Carbon\Carbon::parse($attendance->humanitiesclass->hcdate)->format('F d, Y') ?? 'Failed to load' }}
                                         </td>
-                                        <td class="text-center align-middle">{{ $attendance->timein }}</td>
-                                        <td class="text-center align-middle">{{ $attendance->timeout }}</td>
-                                        <td class="text-center align-middle">{{ $attendance->status }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $attendance->timein ?? 'Failed to load' }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $attendance->timeout ?? 'Failed to load' }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $attendance->hcastatus ?? 'Failed to load' }}</td>
                                     </tr>
                                 @endforeach
                             @endif
