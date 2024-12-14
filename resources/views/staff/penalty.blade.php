@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="ctntable table-responsive">
-            <table class="table table-bordered" id="tblpenalty">
+            <table class="table table-bordered" id="tblpenalty" style="min-width: 50vh">
                 <thead>
                     <tr>
                         <th class="text-center align-middle">#</th>
@@ -141,7 +141,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="formlabel">Condition</label>
+                    <label class="formlabel">Concern</label>
                     <select name="condition" id="incondition" required>
                         <option value="" disabled selected>Select a Condition</option>
                         <option value="Lost Cash Card">Lost Cash Card</option>
@@ -149,28 +149,11 @@
                     </select>
                 </div>
 
-                {{-- <div class="form-group">
-                    <label class="formlabel">Remark</label>
-                    <select name="remark" id="inremark" required>
-                        <option value="" disabled selected>Select a Remark</option>
-                        <option value="1st Offense">1st Offense</option>
-                        <option value="2nd Offense">2nd Offense</option>
-                        <option value="3rd Offense">3rd Offense</option>
-                        <option value="4th Offense">4th Offense</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="formlabel">Date</label>
-                    <input type="date" name="date" id="indate" required>
-                </div> --}}
-
                 <span class="formnote">The scholar will be notified of this penalty once submitted.</span>
                 <button type="submit" id="btnsubmit">Submit</button>
             </form>
         </div>
 
-        <!-- JavaScript to Display Current Penalty Information -->
         <script>
             const penalties = @json($penalties);
 
