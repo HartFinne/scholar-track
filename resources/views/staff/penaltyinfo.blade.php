@@ -24,7 +24,7 @@
             <div class="pagetitle mb-4 mt-2">Penalty Details | {{ $scholar->basicInfo->scLastname }},
                 {{ $scholar->basicInfo->scFirstname }} {{ $scholar->basicInfo->scMiddlename }}</div>
             @foreach ($penalties as $condition => $group)
-                <div class="card mx-auto border border-success rounded shadow-md col-md-6">
+                <div class="card mx-auto border border-success rounded shadow-md col-md-6 mb-2 shadow">
                     <div class="card-header bg-success text-white text-center fw-bold h5">
                         {{ $condition }}
                     </div>
