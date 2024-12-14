@@ -81,12 +81,12 @@
                                     method="POST">
                                     @csrf
                                     <div class="mb-3">
-                                        <label for="title" class="form-label">Title</label>
+                                        <label for="title" class="form-label">Subject</label>
                                         <input type="text" class="form-control" id="title" name="title"
                                             value="{{ $announcement->title }}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="description" class="form-label">Description</label>
+                                        <label for="description" class="form-label">Message</label>
                                         <textarea class="form-control" id="description" name="description" rows="10" required
                                             style="resize: none; height: 40vh;">{{ $announcement->description }}</textarea>
                                     </div>
@@ -117,7 +117,7 @@
                             <label for="recipients" class="col-md-3 col-form-label fw-bold">Select Recipients:</label>
                             <div class="col-md-9">
                                 <select name="recipients[]" id="recipients" multiple style="width: 100%;"
-                                    class="custom-form-control">
+                                    class="custom-form-control" required>
                                     <option value="all">All Users</option>
                                     @foreach ($users as $user)
                                         <option value="{{ $user->caseCode }}">
