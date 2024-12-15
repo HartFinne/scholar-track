@@ -94,7 +94,7 @@
                     Result</button>
             </div>
         </div>
-        <div class="ctntable table-responsive">
+        <div style="min-height: 50vh" class="ctntable table-responsive">
             <table class="table table-bordered" id="tblapplicantslist">
                 <thead>
                     <tr>
@@ -128,10 +128,10 @@
                 </tbody>
             </table>
         </div>
-        <!-- Pagination Links -->
+        {{-- <!-- Pagination Links -->
         <div class="d-flex justify-content-center mt-3">
             {{ $applicants->links('pagination::bootstrap-4') }}
-        </div>
+        </div> --}}
     </div>
 
     <!-- Modal Structure -->

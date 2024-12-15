@@ -73,7 +73,7 @@
                 <input type="search" placeholder="Search" class="form-control border-success">
             </div>
         </div>
-        <div class="ctntable table-responsive">
+        <div style="min-height: 50vh" class="ctntable table-responsive">
             <table class="table table-bordered" id="tblpenalty" style="min-width: 50vh">
                 <thead>
                     <tr>
@@ -105,9 +105,9 @@
             </table>
         </div>
         <!-- Pagination Links -->
-        <div class="d-flex justify-content-center mt-3">
+        {{-- <div class="d-flex justify-content-center mt-3">
             {{ $penaltys->links('pagination::bootstrap-4') }}
-        </div>
+        </div> --}}
     </div>
 
     <div class="ctnpenaltyform" id="ctnpenaltyform">

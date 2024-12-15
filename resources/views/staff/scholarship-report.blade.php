@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="ctnreport" id="allReports">
-                <div class="ctntable table-responsive">
+                <div style="min-height: 50vh" class="ctntable table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -117,7 +117,7 @@
                 </div>
             </div>
             <div class="ctnreport" id="collegeReports" style="display: none">
-                <div class="ctntable table-responsive">
+                <div style="min-height: 50vh" class="ctntable table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -177,7 +177,7 @@
                 </div>
             </div>
             <div class="ctnreport" id="shsReports" style="display: none">
-                <div class="ctntable table-responsive">
+                <div style="min-height: 50vh" class="ctntable table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -237,7 +237,7 @@
                 </div>
             </div>
             <div class="ctnreport" id="jhsReports" style="display: none">
-                <div class="ctntable table-responsive">
+                <div style="min-height: 50vh" class="ctntable table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -297,7 +297,7 @@
                 </div>
             </div>
             <div class="ctnreport" id="elemReports" style="display: none">
-                <div class="ctntable table-responsive">
+                <div style="min-height: 50vh" class="ctntable table-responsive">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -416,7 +416,7 @@
                             <span class="fw-bold text-success h4 text-center">Academic Cycle:
                                 {{ $cycle }}</span>
                         </div>
-                        <div class="ctntable table-responsive">
+                        <div style="min-height: 50vh" class="ctntable table-responsive">
                             <table class="table table-bordered">
                                 <thead class="">
                                     <tr>
@@ -487,7 +487,7 @@
                             <span class="fw-bold text-success h4 text-center">Academic Cycle:
                                 {{ $cycle }}</span>
                         </div>
-                        <div class="ctntable table-responsive">
+                        <div style="min-height: 50vh" class="ctntable table-responsive">
                             <table class="table table-bordered">
                                 <thead class="">
                                     <tr>
@@ -556,7 +556,7 @@
                             <span class="fw-bold text-success h4 text-center">Academic Cycle:
                                 {{ $cycle }}</span>
                         </div>
-                        <div class="ctntable table-responsive">
+                        <div style="min-height: 50vh" class="ctntable table-responsive">
                             <table class="table table-bordered">
                                 <thead class="">
                                     <tr>
@@ -620,7 +620,7 @@
                             <span class="fw-bold text-success h4 text-center">Academic Cycle:
                                 {{ $cycle }}</span>
                         </div>
-                        <div class="ctntable table-responsive">
+                        <div style="min-height: 50vh" class="ctntable table-responsive">
                             <table class="table table-bordered">
                                 <thead class="">
                                     <tr>

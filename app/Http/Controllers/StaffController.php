@@ -132,7 +132,7 @@ class StaffController extends Controller
                 WHEN applicationstatus = 'Withdrawn' THEN 7
                 ELSE 8
             END")
-            ->paginate(20);
+            ->get();
 
         $data = [
             'totalapplicants' => applicants::get()->count(),
@@ -737,49 +737,22 @@ class StaffController extends Controller
         }
     }
 
-    // public function showLTE(Request $request)
-    // {
-    //     $level = $request->input('level', 'All');
-    //     $status = $request->input('status', 'All');
-    //     $violation = $request->input('violation', 'All');
-    //     $eventtype = $request->input('eventtype', 'All');
-
-    //     $violations = lte::whereNotNull('eventtype')->get()->pluck('violation');
-
-    //     $query = lte::selectRaw('*');
-
-    //     if ($level != 'All') {
-    //         $query->whereHas('education', function ($sql) use ($level) {
-    //             $sql->where('scSchoolLevel', $level);
-    //         });
-    //     }
-
-    //     if ($status != 'All') {
-    //         $query->where('ltestatus', $status);
-    //     }
-
-    //     if ($violation != 'All') {
-    //         if (in_array($violation, $violations->toArray())) {
-    //             $query->where('violation', $violation);
-    //             if ($eventtype != 'All') {
-    //                 $query->where('eventtype', $eventtype);
-    //             }
-    //         } else {
-    //             $query->where('violation', $violation);
-    //         }
-    //     }
-
-    //     $lte = $query->paginate(10);
-
-    //     $concerns = lte::select('violation', 'eventtype')->distinct()->get();
-    //     $scholars = User::with(['basicInfo', 'education'])->get();
-
-    //     return view('staff.lte', compact('lte', 'scholars', 'concerns'));
-    // }
-
     public function showLTE()
     {
-        $lte = lte::paginate(10);
+        $lte = lte::orderByRaw('
+                    CASE 
+                        WHEN ltestatus = "To Review" THEN 1
+                        WHEN ltestatus = "No Response" THEN 2
+                        WHEN ltestatus = "Excused" THEN 3
+                        WHEN ltestatus = "Continuing" THEN 4
+                        WHEN ltestatus = "Unexcused" THEN 5
+                        WHEN ltestatus = "Terminated" THEN 6
+                        ELSE 7
+                    END
+                ')
+            ->orderBy('created_at', 'ASC')
+            ->get();
+
         $scholars = User::with(['basicInfo', 'education'])->get();
 
         return view('staff.lte', compact('lte', 'scholars'));
@@ -1130,24 +1103,24 @@ class StaffController extends Controller
 
     public function showPenalty()
     {
-        // Paginate the penalties first
+        // Fetch all penalties with related basicInfo, ordered by dateofpenalty (latest first)
         $penaltys = Penalty::with('basicInfo')
             ->orderBy('dateofpenalty', 'desc') // Order by penalty date to get the latest
-            ->paginate(10); // Paginate with 10 records per page
+            ->get();
 
-        // After pagination, group the penalties by caseCode
-        $penaltysGrouped = $penaltys->getCollection()->groupBy('caseCode')->map(function ($penaltyGroup, $caseCode) {
+        // Group the penalties by caseCode
+        $penaltysGrouped = $penaltys->groupBy('caseCode')->map(function ($penaltyGroup, $caseCode) {
             $conditions = $penaltyGroup->pluck('condition')->unique()->join('<br>');
             $basicInfo = $penaltyGroup->first()->basicInfo;
             return [
                 'caseCode' => $caseCode,
                 'conditions' => $conditions,
-                'basicInfo' => $basicInfo
+                'basicInfo' => $basicInfo,
             ];
         });
 
         // Get all scholars
-        $scholars = User::with(['basicInfo'])->get();
+        $scholars = User::with('basicInfo')->get();
 
         // Get the latest penalty for each scholar
         $penalties = [];
@@ -1269,18 +1242,17 @@ class StaffController extends Controller
         // Retrieve all necessary data
         $forms = applicationforms::all();
         $criteria = criteria::all();
-        $areas = Areas::orderBy('areaname')->paginate(10, ['*'], 'areas_page');
+        $areas = Areas::orderBy('areaname')->get();
         $institutions = institutions::orderByRaw('CASE
             WHEN schoollevel = "Elementary" THEN 4
             WHEN schoollevel = "Junior High" THEN 3
             WHEN schoollevel = "Senior High" THEN 2
             WHEN schoollevel = "College" THEN 1
             ELSE 5 END')
-            ->orderBy('schoolname')
-            ->paginate(10, ['*'], 'institutions_page');
+            ->orderBy('schoolname')->get();
 
-        $courses = courses::where('level', 'College')->orderBy('coursename')->paginate(10, ['*'], 'courses_page');
-        $strands = courses::where('level', 'Senior High')->orderBy('coursename')->paginate(10, ['*'], 'strands_page');
+        $courses = courses::where('level', 'College')->orderBy('coursename')->get();
+        $strands = courses::where('level', 'Senior High')->orderBy('coursename')->get();
 
         // Retrieve ApplicationInstruction grouped by schoollevel
         $instructionLevels = ['College', 'Senior High', 'Junior High', 'Elementary'];
@@ -1745,7 +1717,7 @@ class StaffController extends Controller
                 ELSE 5
             END
         ")
-            ->paginate(10);
+            ->get();
 
         // Fetch data for Senior High School
         $shs = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
@@ -1763,7 +1735,7 @@ class StaffController extends Controller
             ELSE 5
         END
         ")
-            ->paginate(10);
+            ->get();
 
         // Fetch data for Junior High School
         $jhs = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
@@ -1781,7 +1753,7 @@ class StaffController extends Controller
             ELSE 5
         END
         ")
-            ->paginate(10);
+            ->get();
 
         // Fetch data for Elementary
         $elem = Renewal::with('otherinfo', 'casedetails', 'grade', 'education', 'basicInfo')
@@ -1799,7 +1771,7 @@ class StaffController extends Controller
             ELSE 5
         END
         ")
-            ->paginate(10);
+            ->get();
 
         // Pass data to the view
         return view('staff.renewal', compact('summary', 'college', 'shs', 'jhs', 'elem'));
@@ -1901,7 +1873,7 @@ class StaffController extends Controller
                 WHEN semester = '2nd Semester' THEN 2
                 WHEN semester = '3rd Semester' THEN 1
                 ELSE 4
-                END")->paginate(10);
+                END")->get();
 
         $data = [
             'All' => RegularAllowance::all()->count(),
@@ -2652,21 +2624,21 @@ class StaffController extends Controller
 
     public function showUsersScholar()
     {
-        $scholarAccounts = User::paginate(10);
+        $scholarAccounts = User::get();
 
         return view('staff.users-scholar', compact('scholarAccounts'));
     }
 
     public function showUserApplicants()
     {
-        $applicants = applicants::paginate(10);
+        $applicants = applicants::get();
 
         return view('staff.users-applicant', compact('applicants'));
     }
 
     public function showUserStaff()
     {
-        $staffAccounts = staccount::paginate(10);
+        $staffAccounts = staccount::get();
 
         return view('staff.users-staff', compact('staffAccounts'));
     }
@@ -2769,19 +2741,19 @@ class StaffController extends Controller
                             WHEN eventstatus = 'Closed' THEN 2
                             ELSE 3
                             END")
-                ->orderBy('updated_at', 'DESC')->paginate(10),
+                ->orderBy('updated_at', 'DESC')->get(),
             'open' => communityservice::where('eventstatus', 'Open')
                 ->orderByRaw("CASE
                         WHEN eventstatus = 'Open' THEN 1
                         WHEN eventstatus = 'Closed' THEN 2
                         ELSE 3
-                        END")->orderBy('eventdate', 'DESC')->orderBy('updated_at', 'DESC')->paginate(10),
+                        END")->orderBy('eventdate', 'DESC')->orderBy('updated_at', 'DESC')->get(),
             'closed' => communityservice::where('eventstatus', 'Closed')
                 ->orderByRaw("CASE
                         WHEN eventstatus = 'Open' THEN 1
                         WHEN eventstatus = 'Closed' THEN 2
                         ELSE 3
-                        END")->orderBy('eventdate', 'DESC')->orderBy('updated_at', 'DESC')->paginate(10),
+                        END")->orderBy('eventdate', 'DESC')->orderBy('updated_at', 'DESC')->get(),
         ];
 
         $totalevents = communityservice::count();
@@ -3089,7 +3061,7 @@ class StaffController extends Controller
 
     public function showHumanitiesClass()
     {
-        $classes = humanitiesclass::orderBy('hcdate', 'DESC')->paginate(10);
+        $classes = humanitiesclass::orderBy('hcdate', 'DESC')->get();
         return view('staff.managehc', compact('classes'));
     }
 
@@ -3555,7 +3527,7 @@ class StaffController extends Controller
                             WHEN status = 'Completed' THEN 4
                             WHEN status = 'Cancelled' THEN 5
                         END")
-            ->paginate(10);
+            ->get();
         return view('staff.appointments', compact('appointments'));
     }
 
@@ -3715,11 +3687,11 @@ class StaffController extends Controller
             ->select('summaryelem.*')
             ->get();
         $reports = [
-            'All' => Reports::where('level', 'All')->orderBy('dategenerated', "DESC")->paginate(5),
-            'College' => Reports::where('level', 'College')->orderBy('created_at', "DESC")->paginate(5),
-            'Senior High' => Reports::where('level', 'Senior High')->orderBy('created_at', "DESC")->paginate(5),
-            'Junior High' => Reports::where('level', 'Junior High')->orderBy('created_at', "DESC")->paginate(5),
-            'Elementary' => Reports::where('level', 'Elementary')->orderBy('created_at', "DESC")->paginate(5)
+            'All' => Reports::where('level', 'All')->orderBy('dategenerated', "DESC")->paginate(10),
+            'College' => Reports::where('level', 'College')->orderBy('created_at', "DESC")->paginate(10),
+            'Senior High' => Reports::where('level', 'Senior High')->orderBy('created_at', "DESC")->paginate(10),
+            'Junior High' => Reports::where('level', 'Junior High')->orderBy('created_at', "DESC")->paginate(10),
+            'Elementary' => Reports::where('level', 'Elementary')->orderBy('created_at', "DESC")->paginate(10),
         ];
         return view('staff.scholarship-report', compact('colleges', 'shs', 'jhs', 'elem', 'acadyear', 'reports'));
     }

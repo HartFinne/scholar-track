@@ -489,9 +489,9 @@
                             </tbody>
                         </table>
                         <!-- Pagination Links -->
-                        <div class="d-flex justify-content-center mt-3">
+                        {{-- <div class="d-flex justify-content-center mt-3">
                             {{ $areas->links('pagination::bootstrap-4') }}
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </fieldset>
@@ -678,9 +678,9 @@
 
                         </table>
                         <!-- Pagination Links -->
-                        <div class="d-flex justify-content-center mt-3">
+                        {{-- <div class="d-flex justify-content-center mt-3">
                             {{ $institutions->links('pagination::bootstrap-4') }}
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </fieldset>
@@ -817,9 +817,9 @@
                             </script>
                         </table>
                         <!-- Pagination Links -->
-                        <div class="d-flex justify-content-center mt-3">
+                        {{-- <div class="d-flex justify-content-center mt-3">
                             {{ $courses->links('pagination::bootstrap-4') }}
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </fieldset>
@@ -959,9 +959,9 @@
                             </tbody>
                         </table>
                         <!-- Pagination Links -->
-                        <div class="d-flex justify-content-center mt-3">
+                        {{-- <div class="d-flex justify-content-center mt-3">
                             {{ $strands->links('pagination::bootstrap-4') }}
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </fieldset>

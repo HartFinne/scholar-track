@@ -57,7 +57,7 @@
             </div>
         </div>
         <div class="ctn" id="college">
-            <div class="ctntable table-responsive">
+            <div style="min-height: 50vh" class="ctntable table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -93,12 +93,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-center mt-3">
+            {{-- <div class="d-flex justify-content-center mt-3">
                 {{ $college->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
         <div class="ctn" id="shs" style="display: none;">
-            <div class="ctntable table-responsive">
+            <div style="min-height: 50vh" class="ctntable table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -134,12 +134,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-center mt-3">
+            {{-- <div class="d-flex justify-content-center mt-3">
                 {{ $shs->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
         <div class="ctn" id="jhs" style="display: none;">
-            <div class="ctntable table-responsive">
+            <div style="min-height: 50vh" class="ctntable table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -175,12 +175,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-center mt-3">
+            {{-- <div class="d-flex justify-content-center mt-3">
                 {{ $jhs->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
         <div class="ctn" id="elem" style="display: none;">
-            <div class="ctntable table-responsive">
+            <div style="min-height: 50vh" class="ctntable table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -216,9 +216,9 @@
                     </tbody>
                 </table>
             </div>
-            <div class="d-flex justify-content-center mt-3">
+            {{-- <div class="d-flex justify-content-center mt-3">
                 {{ $elem->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
     </div>
 

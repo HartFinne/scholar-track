@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="ctn" id="scholars">
-            <div class="ctntable table-responsive">
+            <div style="min-height: 50vh" class="ctntable table-responsive">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -146,7 +146,10 @@
             const scholarsTable = scholarsContainer.querySelector('table tbody');
 
             searchInput.addEventListener('input', function() {
-                const query = searchInput.value.toLowerCase();
+                const query = searchInput.value.trim()
+                    .toLowerCase(); // Trim spaces and convert to lowercase
+                const queryWords = query.split(
+                    /\s+/); // Split the query into words (ignoring multiple spaces)
                 const rows = scholarsTable.querySelectorAll('tr');
 
                 rows.forEach(function(row) {
@@ -156,16 +159,20 @@
                         'td:nth-child(4)'); // Scholarship Status column
 
                     if (nameCell && levelCell && statusCell) {
-                        const name = nameCell.textContent.toLowerCase();
-                        const yearLevel = levelCell.textContent.toLowerCase();
-                        const status = statusCell.textContent.toLowerCase();
+                        const name = nameCell.textContent.trim().toLowerCase();
+                        const yearLevel = levelCell.textContent.trim().toLowerCase();
+                        const status = statusCell.textContent.trim().toLowerCase();
 
-                        // Show the row if the query matches any of the columns (name, year level, or status)
-                        if (name.includes(query) || yearLevel.includes(query) || status.includes(
-                                query)) {
-                            row.style.display = '';
+                        // Check if every word in the query matches any cell content
+                        const isMatch = queryWords.every(word =>
+                            name.includes(word) || yearLevel.includes(word) || status.includes(
+                                word)
+                        );
+
+                        if (isMatch) {
+                            row.style.display = ''; // Show matching row
                         } else {
-                            row.style.display = 'none';
+                            row.style.display = 'none'; // Hide non-matching row
                         }
                     }
                 });
@@ -194,25 +201,34 @@
 
                         // Filter by school level and year level
                         if (level !== 'All') {
-                            if (level === 'College' && !(/First|Second|Third|Fourth|Fifth/.test(
-                                    rowLevel))) {
+                            if (
+                                level === 'College' &&
+                                !/First|Second|Third|Fourth|Fifth/.test(rowLevel)
+                            ) {
                                 showRow = false;
-                            } else if (level === 'Senior High' && !(/Grade 11|Grade 12/.test(
-                                    rowLevel))) {
+                            } else if (
+                                level === 'Elementary' &&
+                                !/^Grade (1|2|3|4|5|6)$/.test(rowLevel)
+                            ) {
                                 showRow = false;
-                            } else if (level === 'Junior High' && !(
-                                    /Grade 7|Grade 8|Grade 9|Grade 10/.test(rowLevel))) {
+                            } else if (
+                                level === 'Senior High' &&
+                                !/^Grade (11|12)$/.test(rowLevel)
+                            ) {
                                 showRow = false;
-                            } else if (level === 'Elementary' && !(
-                                    /Grade 1|Grade 2|Grade 3|Grade 4|Grade 5|Grade 6/.test(rowLevel)
-                                )) {
+                            } else if (
+                                level === 'Junior High' &&
+                                !/^Grade (7|8|9|10)$/.test(rowLevel)
+                            ) {
                                 showRow = false;
                             }
                         }
 
                         // Filter by scholarship status
-                        if (status !== 'All' && !rowStatus.toLowerCase().includes(status
-                                .toLowerCase())) {
+                        if (
+                            status !== 'All' &&
+                            !rowStatus.toLowerCase().includes(status.toLowerCase())
+                        ) {
                             showRow = false;
                         }
 
@@ -224,6 +240,7 @@
                 const modal = new bootstrap.Modal(document.getElementById('filterModal'));
                 modal.hide();
             });
+
         });
 
         document.addEventListener('DOMContentLoaded', function() {

@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <div class="ctntable table-responsive">
+        <div style="min-height: 50vh" class="ctntable table-responsive">
             <table class="table table-bordered" id="tblpenalty">
                 <thead>
                     <tr>
@@ -60,7 +60,8 @@
                                 <a href="{{ $class->status == 'On Going' ? route('attendancesystem', $class->hcid) : '#' }}"
                                     class="btn btn-sm text-white 
                                            {{ $class->status == 'On Going' ? 'btn-warning' : 'btn-secondary' }} 
-                                           border-0" title="Open Attendance System"
+                                           border-0"
+                                    title="Open Attendance System"
                                     @if ($class->status != 'On Going') style="pointer-events: none;" @endif>
                                     <i class="fas fa-calendar-check"></i>
                                 </a>
@@ -76,9 +77,9 @@
         </div>
 
         <!-- Pagination Links -->
-        <div class="d-flex justify-content-center mt-3">
+        {{-- <div class="d-flex justify-content-center mt-3">
             {{ $classes->links('pagination::bootstrap-4') }}
-        </div>
+        </div> --}}
     </div>
 
     <div class="modal fade" id="createEventModal" tabindex="-1" aria-labelledby="createEventModalLabel"

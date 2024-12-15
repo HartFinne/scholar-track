@@ -20,7 +20,7 @@
 
     <div class="ctnmain">
         <span class="text-success fw-bold h2">Appointments</span>
-        <div class="ctntable table-responsive">
+        <div style="min-height: 50vh" class="ctntable table-responsive">
             <table class="table table-bordered" id="tblapplicationforms">
                 <thead>
                     <tr>
@@ -55,9 +55,9 @@
             </table>
         </div>
         <!-- Pagination Links -->
-        <div class="d-flex justify-content-center mt-3">
+        {{-- <div class="d-flex justify-content-center mt-3">
             {{ $appointments->links('pagination::bootstrap-4') }}
-        </div>
+        </div> --}}
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>

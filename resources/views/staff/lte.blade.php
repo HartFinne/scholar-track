@@ -19,62 +19,6 @@
 
     <div class="ctnmain">
         <span class="text-success fw-bold h2">Letter of Explanation</span>
-        {{-- <div class="ctnfilter">
-            <form action="#" class="filterform">
-                <span class="filtertitle">Filter Result</span>
-                <div class="filtermenu">
-                    <span class="filterlabel">School Level</span>
-                    <div class="filteroptions">
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inyearall" checked>
-                            All
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="incollege">
-                            College
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inseniorhigh">
-                            Senior High
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="injuniorhigh">
-                            Junior High
-                        </label>
-                        <label class="lbloptions">
-                            <input type="checkbox" id="inelementary">
-                            Elementary
-                        </label>
-                    </div>
-                </div>
-                <div class="filtermenu">
-                    <span class="filterlabel">Status</span>
-                    <div class="filteroptions">
-                        <label class="lbloptions">
-                            <input type="radio" id="instatusall" name="status" checked>
-                            All
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inpending" name="status">
-                            Pending
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="inexcused" name="status">
-                            Excused
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="innotexcused" name="status">
-                            Not Excused
-                        </label>
-                        <label class="lbloptions">
-                            <input type="radio" id="innoresponse" name="status">
-                            No Response
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" id="btnapply">Apply</button>
-            </form>
-        </div> --}}
         <div class="row justify-content-between">
             <div class="col-md-3">
                 <input type="search" class="form-control border border-success" placeholder="Search">
@@ -85,7 +29,7 @@
                 </button>
             </div>
         </div>
-        <div class="ctntable table-responsive">
+        <div style="min-height: 50vh" class="ctntable table-responsive">
             <table class="table table-bordered" id="tblscholarslist">
                 <thead>
                     <tr>
@@ -103,7 +47,7 @@
                 <tbody>
                     @forelse ($lte as $index => $letter)
                         <tr>
-                            <td class="text-center align-middle">{{ $lte->firstItem() + $index }}</td>
+                            <td class="text-center align-middle">{{ $index + 1 }}</td>
                             <td class="text-center align-middle">
                                 {{ \Carbon\Carbon::parse($letter->dateissued)->format('F d, Y') }}
                             </td>
@@ -138,9 +82,9 @@
                     @endforelse
                 </tbody>
             </table>
-            <div class="d-flex justify-content-center mt-3">
+            {{-- <div class="d-flex justify-content-center mt-3">
                 {{ $lte->links('pagination::bootstrap-4') }}
-            </div>
+            </div> --}}
         </div>
         <!-- Filter Modal -->
         <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
@@ -182,6 +126,8 @@
                                     <select class="form-select border-success" id="status" name="status">
                                         <option value="All" selected>All</option>
                                         <option value="No Response">No Response
+                                        </option>
+                                        <option value="To Review">To Review
                                         </option>
                                         <option value="Unexcused">Unexcused</option>
                                         <option value="Excused">

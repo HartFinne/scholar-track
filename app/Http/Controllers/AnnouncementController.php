@@ -16,7 +16,7 @@ class AnnouncementController extends Controller
     {
         $users = User::with('basicInfo')->get();
         $worker = Auth::guard('staff')->user();
-        $announcements = Announcement::where('author', $worker->name)->orderBy('created_at', 'DESC')->paginate(10);
+        $announcements = Announcement::where('author', $worker->name)->orderBy('created_at', 'DESC')->get();
 
         return view('staff.home', compact('users', 'announcements', 'worker'));
     }

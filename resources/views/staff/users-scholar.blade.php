@@ -31,7 +31,7 @@
             </form>
         </div>
 
-        <div class="ctntable table-responsive">
+        <div style="min-height: 50vh" class="ctntable table-responsive">
             <table class="table table-bordered" id="tblpenalty">
                 <thead>
                     <tr>
@@ -72,9 +72,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="d-flex justify-content-center mt-3">
+        {{-- <div class="d-flex justify-content-center mt-3">
             {{ $scholarAccounts->links('pagination::bootstrap-4') }}
-        </div>
+        </div> --}}
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
