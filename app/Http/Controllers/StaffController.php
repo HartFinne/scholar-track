@@ -3089,7 +3089,7 @@ class StaffController extends Controller
 
     public function showHumanitiesClass()
     {
-        $classes = humanitiesclass::paginate(10);
+        $classes = humanitiesclass::orderBy('hcdate', 'DESC')->paginate(10);
         return view('staff.managehc', compact('classes'));
     }
 
