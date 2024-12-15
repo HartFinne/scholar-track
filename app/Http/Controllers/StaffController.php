@@ -2763,7 +2763,7 @@ class StaffController extends Controller
             ->where('eventstatus', '!=', 'Closed')
             ->update(['eventstatus' => 'Closed']);
         $events = [
-            'all' => communityservice::orderBy('eventdate', 'ASC')
+            'all' => communityservice::orderBy('eventdate', 'DESC')
                 ->orderByRaw("CASE
                             WHEN eventstatus = 'Open' THEN 1
                             WHEN eventstatus = 'Closed' THEN 2
@@ -2775,13 +2775,13 @@ class StaffController extends Controller
                         WHEN eventstatus = 'Open' THEN 1
                         WHEN eventstatus = 'Closed' THEN 2
                         ELSE 3
-                        END")->orderBy('eventdate', 'ASC')->orderBy('updated_at', 'DESC')->paginate(10),
+                        END")->orderBy('eventdate', 'DESC')->orderBy('updated_at', 'DESC')->paginate(10),
             'closed' => communityservice::where('eventstatus', 'Closed')
                 ->orderByRaw("CASE
                         WHEN eventstatus = 'Open' THEN 1
                         WHEN eventstatus = 'Closed' THEN 2
                         ELSE 3
-                        END")->orderBy('eventdate', 'ASC')->orderBy('updated_at', 'DESC')->paginate(10),
+                        END")->orderBy('eventdate', 'DESC')->orderBy('updated_at', 'DESC')->paginate(10),
         ];
 
         $totalevents = communityservice::count();
