@@ -133,6 +133,7 @@
             {{ $applicants->links('pagination::bootstrap-4') }}
         </div>
     </div>
+
     <!-- Modal Structure -->
     <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -146,7 +147,6 @@
                         <div class="col-md-6 fw-bold">School Level</div>
                         <div class="col-md-6">
                             <select name="schoollevel" id="schoollevel" class="form-select border-success" required>
-                                <option value="" selected hidden>-- Select school level --</option>
                                 <option value="All">All</option>
                                 <option value="College">College</option>
                                 <option value="Senior High">Senior High</option>
@@ -159,7 +159,6 @@
                         <div class="col-md-6 fw-bold">Application Status</div>
                         <div class="col-md-6">
                             <select name="status" id="status" class="form-select border-success" required>
-                                <option value="" selected hidden>-- Select status --</option>
                                 <option value="All">All</option>
                                 <option value="Under Review">Under Review</option>
                                 <option value="Initial Interview">Initial Interview</option>
@@ -174,7 +173,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Apply Filter</button>
+                    <button type="submit" class="btn btn-success" data-bs-dismiss="modal">Apply Filter</button>
                 </div>
             </div>
         </div>
@@ -224,6 +223,63 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButton = document.querySelector('#filterModal .btn-success');
+            const schoolLevelSelect = document.getElementById('schoollevel');
+            const statusSelect = document.getElementById('status');
+            const tableRows = document.querySelectorAll('#tblapplicantslist tbody tr');
+
+            filterButton.addEventListener('click', function() {
+                const selectedSchoolLevel = schoolLevelSelect.value.toLowerCase();
+                const selectedStatus = statusSelect.value.toLowerCase();
+
+                tableRows.forEach(row => {
+                    // Skip the "No Records Found" row
+                    if (row.children.length < 6) return;
+
+                    const incomingYearLevel = row.children[3].textContent.trim().toLowerCase();
+                    const applicationStatus = row.children[4].textContent.trim().toLowerCase();
+
+                    let matchesSchoolLevel = false;
+
+                    // Determine if the row matches the selected school level
+                    if (selectedSchoolLevel === "all" || selectedSchoolLevel === "") {
+                        matchesSchoolLevel = true;
+                    } else if (selectedSchoolLevel === "college") {
+                        const collegeLevels = ["first year", "second year", "third year",
+                            "fourth year", "fifth year"
+                        ];
+                        matchesSchoolLevel = collegeLevels.includes(incomingYearLevel);
+                    } else if (selectedSchoolLevel === "senior high") {
+                        matchesSchoolLevel = incomingYearLevel.includes("grade 11") ||
+                            incomingYearLevel.includes("grade 12");
+                    } else if (selectedSchoolLevel === "junior high") {
+                        const juniorHighLevels = ["grade 7", "grade 8", "grade 9", "grade 10"];
+                        matchesSchoolLevel = juniorHighLevels.includes(incomingYearLevel);
+                    } else if (selectedSchoolLevel === "elementary") {
+                        const elementaryLevels = ["grade 1", "grade 2", "grade 3", "grade 4",
+                            "grade 5", "grade 6"
+                        ];
+                        matchesSchoolLevel = elementaryLevels.includes(incomingYearLevel);
+                    }
+
+                    // Determine if the row matches the selected status
+                    const matchesStatus =
+                        selectedStatus === "all" || selectedStatus === "" || applicationStatus ===
+                        selectedStatus;
+
+                    // Show or hide the row based on both criteria
+                    if (matchesSchoolLevel && matchesStatus) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+            });
+        });
+    </script>
+
 </body>
 
 </html>
