@@ -3427,7 +3427,11 @@ class StaffController extends Controller
             if ($attendee->timeout == NULL) {
                 $timeout = Carbon::now(new \DateTimeZone('Asia/Manila'));
                 $newhcstatus = 'Left Early';
-                $tardinessduration = $timeout->diffInMinutes($event->hcendtime, true);
+                if ($timeout->greaterThan($event->hcstarttime)) {
+                    $tardinessduration = $timeout->diffInMinutes($event->hcendtime, true);
+                } else {
+                    $tardinessduration = $timeout->diffInMinutes($event->hcstarttime, true);
+                }
 
                 $attendee->update([
                     'timeout' => $timeout,
@@ -3506,12 +3510,12 @@ class StaffController extends Controller
                 DB::commit();
             }
 
-            return $this->viewattendeeslist($attendee->hcid)->with('success', 'Checkout was successful.');
+            return redirect()->route('viewattendeeslist', $attendee->hcid)->with('success', 'Checkout was successful.');
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
             DB::rollBack();
 
-            return $this->viewattendeeslist($attendee->hcid)->with('failure', 'Checkout was unsuccessful.');
+            return redirect()->route('viewattendeeslist', $attendee->hcid)->with('failure', 'Checkout was unsuccessful.');
         }
     }
 
