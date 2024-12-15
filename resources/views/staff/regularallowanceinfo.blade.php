@@ -34,8 +34,12 @@
                 <div class="col-12 text-center">Regular Allowance Form</div>
             </div>
             <div class="row justify-content-between align-items-center">
-                <div class="col">
+                <div class="col" hidden>
                     <button class="btn btn-warning fw-bold">Update Request Detail</button>
+                </div>
+                <div class="col">
+                    <a class="btn btn-success fw-bold" target="_blank"
+                        href="{{ route('regularAllowanceForm', ['id' => $req->regularID]) }}">Download Form</a>
                 </div>
                 <div class="col text-end">
                     <a href="{{ route('allowancerequests-regular') }}" class="btn btn-success">Go back</a>

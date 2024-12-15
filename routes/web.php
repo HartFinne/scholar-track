@@ -257,6 +257,7 @@ Route::prefix('staff')->controller(PDFController::class)->middleware('staff')->g
 Route::controller(PDFController::class)->group(function () {
     Route::get('/applicant-form/{casecode}', 'generateapplicantform')->name('generateapplicantform');
     Route::get('/renewal/applicant-form/{rid}', 'generateRenewalForm')->name('generateRenewalForm');
+    Route::get('/allowance-request/form/{id}', 'regularAllowanceForm')->name('regularAllowanceForm');
 });
 
 Route::prefix('staff')->controller(EvalController::class)->middleware('staff')->group(function () {

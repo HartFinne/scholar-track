@@ -18,8 +18,8 @@ use App\Models\RnwCaseDetails;
 use App\Models\RnwEducation;
 use App\Models\RnwFamilyInfo;
 use App\Models\RnwOtherInfo;
-use App\Models\institutions;
-use App\Models\communityservice;
+use App\Models\staccount;
+use App\Models\RegularAllowance;
 use App\Models\csattendance;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -78,36 +78,6 @@ class PDFController extends Controller
         $pdf = Pdf::loadView('staff.reports.scholarship-report', $data);
         return $pdf->stream("scholarship-report-{$date}.pdf");
     }
-
-    // public function generateapplicantform($casecode)
-    // {
-    //     $applicant = applicants::with('educcollege', 'educelemhs', 'otherinfo', 'requirements', 'casedetails')
-    //         ->where('casecode', $casecode)
-    //         ->first();
-    //     $father = apfamilyinfo::where('casecode', $casecode)
-    //         ->where('relationship', 'Father')->first();
-    //     $mother = apfamilyinfo::where('casecode', $casecode)
-    //         ->where('relationship', 'Mother')->first();
-    //     $siblings = apfamilyinfo::where('casecode', $casecode)
-    //         ->where('relationship', 'Sibling')->get();
-    //     $iscollege = apceducation::where('casecode', $casecode)->exists();
-
-    //     $data = [
-    //         'title' => 'Application Form',
-    //         'applicant' => $applicant,
-    //         'father' => $father,
-    //         'mother' => $mother,
-    //         'siblings' => $siblings,
-    //         'iscollege' => $iscollege
-    //     ];
-
-    //     // Generate the PDF using DOMPDF and the Blade view
-    //     $pdf = PDF::loadView('pdf-template', $data)
-    //         ->setPaper('A4', 'portrait'); // Change to A4 if needed
-
-    //     // Stream the generated PDF in the browser
-    //     return $pdf->stream($applicant->name . '.pdf');
-    // }
 
     public function generateapplicantform($casecode)
     {
@@ -199,6 +169,35 @@ class PDFController extends Controller
             ->setPaper([0, 0, 576, 936])
             ->set_option('defaultFont', 'Arial');
 
-        return $pdf->stream("renewal-form-{$user->caseCode}.pdf");
+        return $pdf->stream("Renewal-Form-{$user->caseCode}.pdf");
+    }
+
+    public function regularAllowanceForm($id)
+    {
+        $req = RegularAllowance::with([
+            'classReference.classSchedules',
+            'travelItinerary.travelLocations',
+            'lodgingInfo',
+            'ojtTravelItinerary.ojtLocations'
+        ])->findOrFail($id);
+
+        $data = User::with(['basicInfo', 'education', 'scholarshipinfo', 'addressinfo'])
+            ->where('caseCode', $req->caseCode)
+            ->first();
+
+        $worker = staccount::where('area', $data->scholarshipinfo->area)->first();
+
+        $data = [
+            'req' => $req,
+            'data' => $data,
+            'worker' => $worker,
+        ];
+
+        $pdf = Pdf::loadView('regularallowance-form', $data)
+            ->setPaper('letter', 'portrait');
+        $pdf->setOption('margin-top', '50');
+
+        return $pdf->stream("Regular-Allowance-Form-{$req->caseCode}.pdf");
+        // return view('regularallowance-form', compact('data', 'req', 'worker'));
     }
 }

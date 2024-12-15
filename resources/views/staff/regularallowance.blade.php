@@ -124,32 +124,84 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 });
             });
+        });
 
-            // Year Level Filtering
-            $(".filter").click(function() {
-                var filter = $(this).text().trim(); // Get the button text (e.g., 'First Year', 'All')
+        document.addEventListener("DOMContentLoaded", function() {
+            const tableRows = document.querySelectorAll("#tblscholarslist tbody tr");
+            const allButton = document.getElementById("toggleAll");
+            const yearButtons = [{
+                    id: "toggleFirstYear",
+                    year: "First Year"
+                },
+                {
+                    id: "toggleSecondYear",
+                    year: "Second Year"
+                },
+                {
+                    id: "toggleThirdYear",
+                    year: "Third Year"
+                },
+                {
+                    id: "toggleFourthYear",
+                    year: "Fourth Year"
+                },
+                {
+                    id: "toggleFifthYear",
+                    year: "Fifth Year"
+                },
+            ];
 
-                // Update active button styling
-                $(".filter").removeClass("btn-success").addClass("btn-outline-success");
-                $(this).removeClass("btn-outline-success").addClass("btn-success");
+            // Function to reset the filters and show all rows
+            const showAllRows = () => {
+                tableRows.forEach(row => {
+                    row.style.display = "";
+                });
+                resetButtonStyles();
+                allButton.classList.remove("btn-outline-success");
+                allButton.classList.add("btn-success");
+            };
 
-                // Apply filter
-                $("#tblscholarslist tbody tr").each(function() {
-                    var yearLevel = $(this).find("td:eq(2)").text()
-                        .trim(); // Get the year level from the third column
-
-                    if (filter === "All") {
-                        $(this).show(); // Show all rows for "All" filter
-                    } else if (yearLevel.toLowerCase() === filter.toLowerCase()) {
-                        $(this).show(); // Show rows that match the filter
+            // Function to filter the table based on year level
+            const filterTable = (yearLevel) => {
+                tableRows.forEach(row => {
+                    const yearCell = row.querySelector("td:nth-child(3)");
+                    if (yearCell && yearCell.textContent.trim() === yearLevel) {
+                        row.style.display = "";
                     } else {
-                        $(this).hide(); // Hide rows that do not match the filter
+                        row.style.display = "none";
                     }
+                });
+            };
+
+            // Function to reset button styles
+            const resetButtonStyles = () => {
+                document.querySelectorAll(".filter").forEach(button => {
+                    button.classList.remove("btn-success");
+                    button.classList.add("btn-outline-success");
+                });
+            };
+
+            // Event listener for the "All" button
+            allButton.addEventListener("click", () => {
+                showAllRows();
+            });
+
+            // Event listeners for the year level buttons
+            yearButtons.forEach(({
+                id,
+                year
+            }) => {
+                const button = document.getElementById(id);
+                button.addEventListener("click", () => {
+                    filterTable(year);
+                    resetButtonStyles();
+                    button.classList.remove("btn-outline-success");
+                    button.classList.add("btn-success");
                 });
             });
 
-            // Initialize by showing all rows (default state)
-            $(".filter#toggleAll").trigger("click");
+            // Initialize by showing all rows
+            showAllRows();
         });
     </script>
 </body>
