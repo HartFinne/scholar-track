@@ -50,10 +50,10 @@
         @else
             @php
                 $stages = [
-                    'Under Review' => $progress['Under Review']->status ?? null,
-                    'Initial Interview' => $progress['Initial Interview']->status ?? null,
-                    'Home Visit' => $progress['Home Visit']->status ?? null,
-                    'Panel Interview' => $progress['Panel Interview']->status ?? null,
+                    'Under Review' => $progress['Under Review']->status ?? '',
+                    'Initial Interview' => $progress['Initial Interview']->status ?? '',
+                    'Home Visit' => $progress['Home Visit']->status ?? '',
+                    'Panel Interview' => $progress['Panel Interview']->status ?? '',
                 ];
 
                 function getStatusClass($status, $isCurrent = false)
@@ -64,7 +64,7 @@
                     return match ($status) {
                         'Passed' => 'bg-success text-white',
                         'Failed' => 'bg-danger text-white',
-                        null => 'bg-light text-muted',
+                        '' => 'bg-light text-muted',
                         default => 'bg-warning text-dark',
                     };
                 }
@@ -591,21 +591,21 @@
                             Date Received:
                             <div class="casedeets-input text-center"
                                 style="width: 50% !important; border-bottom: 1px solid #000;">
-                                {{ isset($applicant->casedetails->datereceived) ? $applicant->casedetails->datereceived : '' }}
+                                {{ isset($applicant->casedetails->datereceived) ? Carbon\Carbon::parse($applicant->casedetails->datereceived)->format('F j, Y') : '' }}
                             </div>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Assigned District:
                             <div class="casedeets-input text-center"
                                 style="width: 50% !important; border-bottom: 1px solid #000;">
-                                {{ isset($applicant->casedetails) && $applicant->casedetails->district ?? null }}
+                                {{ isset($applicant->casedetails->district) ? $applicant->casedetails->district : '' }}
                             </div>
                         </div>
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Assigned Volunteer:
                             <div class="casedeets-input text-center"
                                 style="width: 50% !important; border-bottom: 1px solid #000;">
-                                {{ isset($applicant->casedetails) && $applicant->casedetails->volunteer ?? null }}
+                                {{ isset($applicant->casedetails->volunteer) ? $applicant->casedetails->volunteer : '' }}
                             </div>
                         </div>
                     </div>
@@ -624,33 +624,35 @@
                                 Case Referred By:
                                 <div class="casedeets-input text-center"
                                     style="width: 45% !important; border-bottom: 1px solid #000;">
-                                    {{ isset($applicant->casedetails) && $applicant->casedetails->referredby ?? null }}
+                                    {{ isset($applicant->casedetails->referredby) ? $applicant->casedetails->referredby : '' }}
                                 </div>
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">
-                                Referral Contact no.:
+                                Referral Contact No.:
                                 <div class="casedeets-input text-center"
                                     style="width: 45% !important; border-bottom: 1px solid #000;">
-                                    {{ isset($applicant->casedetails) && $applicant->casedetails->referphonenum ?? null }}
+                                    {{ isset($applicant->casedetails->referphonenum) ? $applicant->casedetails->referphonenum : '' }}
                                 </div>
                             </div>
-                            <div class="row my-2 d-flex justify-content-between casedeets">Relationship with
-                                Beneficiary:
+                            <div class="row my-2 d-flex justify-content-between casedeets">
+                                Relationship with Beneficiary:
                                 <div class="casedeets-input text-center"
                                     style="width: 45% !important; border-bottom: 1px solid #000;">
-                                    {{ isset($applicant->casedetails) && $applicant->casedetails->relationship ?? null }}
+                                    {{ isset($applicant->casedetails->relationship) ? $applicant->casedetails->relationship : '' }}
                                 </div>
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Applicant's Signature:
                                 <div class="casedeets-input text-center"
-                                    style="width: 45% !important; border-bottom: 1px solid #000;"></div>
+                                    style="width: 45% !important; border-bottom: 1px solid #000;">
+                                    <!-- No value is assigned here as this is likely meant for user input -->
+                                </div>
                             </div>
                             <div class="row my-2 d-flex justify-content-between casedeets">
                                 Date Reported:
                                 <div class="casedeets-input text-center"
                                     style="width: 45% !important; border-bottom: 1px solid #000;">
-                                    {{ isset($applicant->casedetails) && $applicant->casedetails->datereported ?? date('Y-m-d') }}
+                                    {{ isset($applicant->casedetails->datereported) ? Carbon\Carbon::parse($applicant->casedetails->datereported)->format('F j, Y') : date('Y-m-d') }}
                                 </div>
                             </div>
                         </div>
