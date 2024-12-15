@@ -139,7 +139,7 @@
                 </div>
             @endif
         </fieldset>
-        <div class="row justify-content-center align-items-center">
+        {{-- <div class="row justify-content-center align-items-center">
             <div class="col-auto">
                 <a href="#" class="btn btn-success">Prev</a>
             </div>
@@ -149,7 +149,7 @@
             <div class="col-auto">
                 <a href="#" class="btn btn-success">Next</a>
             </div>
-        </div>
+        </div> --}}
     </div>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
