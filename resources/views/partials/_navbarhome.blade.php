@@ -14,8 +14,8 @@
     <button class="toggle-btn">Tagalog</button><br> -->
 
     <span><i class="fa-solid fa-bell"></i>Notification</span>
-    <button class="toggle-btn notification-btn" data-preference="sms" id="sms-btn"
-        @if (auth()->user()->notification_preference === 'sms') class="active" style='background-color: #4CAF50; color: white;' @endif>SMS</button>
+    {{-- <button class="toggle-btn notification-btn" data-preference="sms" id="sms-btn"
+        @if (auth()->user()->notification_preference === 'sms') class="active" style='background-color: #4CAF50; color: white;' @endif>SMS</button> --}}
     <button class="toggle-btn notification-btn" data-preference="email" id="email-btn"
         @if (auth()->user()->notification_preference === 'email') class="active" style='background-color: #4CAF50; color: white;' @endif>Email</button>
 
