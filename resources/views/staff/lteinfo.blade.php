@@ -90,6 +90,9 @@
                 @if ($letter->ltestatus == 'No Response')
                     <div class="container bg-warning fw-bold h4 py-2 text-dark text-center mt-4">Scholar Have Not Yet
                         Responded</div>
+                @elseif ($letter->ltestatus != 'No Response' && $letter->reason == '')
+                    <div class="container bg-warning fw-bold h4 py-2 text-dark text-center mt-4">Scholar Did Not
+                        Respond</div>
                 @else
                     <div class="container bg-success fw-bold h4 py-2 text-light text-center mt-4">Scholar's Response
                     </div>
@@ -104,7 +107,7 @@
                         <div class="row mb-2">
                             <div class="col-md-4">Reason</div>
                             <div class="col-md-8 fw-bold">
-                                {{ $letter->reason }}
+                                {{ $letter->reason ?? '--' }}
                             </div>
                         </div>
 

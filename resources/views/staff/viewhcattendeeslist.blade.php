@@ -94,7 +94,7 @@
                             @if ($event->status == 'On Going')
                                 <td class="text-center align-middle">
                                     <a href="{{ route('checkouthc', $attendee->hcaid) }} "
-                                        class="btn btn-danger">Check-out</a>
+                                        class="btn btn-sm btn-danger">Check-out</a>
                                 </td>
                             @endif
                         </tr>

@@ -409,8 +409,12 @@
                                             <td class="text-center align-middle">
                                                 {{ \Carbon\Carbon::parse($attendance->communityservice->eventdate)->format('F d, Y') }}
                                             </td>
-                                            <td class="text-center align-middle">{{ $attendance->timein }}</td>
-                                            <td class="text-center align-middle">{{ $attendance->timeout }}</td>
+                                            <td class="text-center align-middle">
+                                                {{ \Carbon\Carbon::parse($attendance->timein)->format('g:i A') ?? '--' }}
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                {{ \Carbon\Carbon::parse($attendance->timein)->format('g:i A') ?? '--' }}
+                                            </td>
                                             <td class="text-center align-middle">{{ $attendance->facilitator }}</td>
                                             <td class="text-center align-middle">{{ $attendance->csastatus }}</td>
                                         </tr>
@@ -447,14 +451,16 @@
                                     <tr>
                                         <td class="text-center align-middle">{{ $index + 1 }}</td>
                                         <td class="text-center align-middle">
-                                            {{ \Carbon\Carbon::parse($attendance->humanitiesclass->hcdate)->format('F d, Y') ?? 'Failed to load' }}
+                                            {{ \Carbon\Carbon::parse($attendance->humanitiesclass->hcdate)->format('F d, Y') ?? '--' }}
                                         </td>
                                         <td class="text-center align-middle">
-                                            {{ $attendance->timein ?? 'Failed to load' }}</td>
+                                            {{ \Carbon\Carbon::parse($attendance->timein)->format('g:i A') ?? '--' }}
+                                        </td>
                                         <td class="text-center align-middle">
-                                            {{ $attendance->timeout ?? 'Failed to load' }}</td>
+                                            {{ \Carbon\Carbon::parse($attendance->timein)->format('g:i A') ?? '--' }}
+                                        </td>
                                         <td class="text-center align-middle">
-                                            {{ $attendance->hcastatus ?? 'Failed to load' }}</td>
+                                            {{ $attendance->hcastatus ?? '--' }}</td>
                                     </tr>
                                 @endforeach
                             @endif

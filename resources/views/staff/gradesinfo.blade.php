@@ -62,32 +62,32 @@
                 </div>
                 <div class="row my-2">
                     <div class="col-md-3">School Year</div>
-                    <div class="col-md-9 fw-bold">: <span>S.Y. {{ $grade->schoolyear }}</span></div>
+                    <div class="col-md-9 fw-bold"><span>S.Y. {{ $grade->schoolyear }}</span></div>
                 </div>
 
                 <div class="row my-2">
                     <div class="col-md-3">Semester</div>
-                    <div class="col-md-9 fw-bold">: <span>{{ $grade->SemesterQuarter }}</span></div>
+                    <div class="col-md-9 fw-bold"><span>{{ $grade->SemesterQuarter }}</span></div>
                 </div>
 
                 <div class="row my-2">
                     <div class="col-md-3">
                         {{ $scholar->education->scSchoolLevel == 'College' ? 'GWA' : 'General Average' }}</div>
-                    <div class="col-md-9 fw-bold">: <span>{{ $grade->GWA }}</span></div>
+                    <div class="col-md-9 fw-bold"><span>{{ $grade->GWA }}</span></div>
                 </div>
 
                 @if ($scholar->education->scSchoolLevel != 'College')
                     <div class="row my-2">
                         <div class="col-md-3">Conduct</div>
-                        <div class="col-md-9 fw-bold">: <span>{{ $grade->GWAConduct }}</span></div>
+                        <div class="col-md-9 fw-bold"><span>{{ $grade->GWAConduct }}</span></div>
                     </div>
                     <div class="row my-2">
                         <div class="col-md-3">General Average (Chinese Subject)</div>
-                        <div class="col-md-9 fw-bold">: <span>{{ $grade->ChineseGWA }}</span></div>
+                        <div class="col-md-9 fw-bold"><span>{{ $grade->ChineseGWA }}</span></div>
                     </div>
                     <div class="row my-2">
                         <div class="col-md-3">Conduct (Chinese Subject)</div>
-                        <div class="col-md-9 fw-bold">: <span>{{ $grade->ChineseGWAConduct }}</span></div>
+                        <div class="col-md-9 fw-bold"><span>{{ $grade->ChineseGWAConduct }}</span></div>
                     </div>
                 @endif
 

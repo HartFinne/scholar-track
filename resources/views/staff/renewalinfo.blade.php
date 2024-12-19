@@ -118,7 +118,8 @@
                                 </div>
 
                                 <!-- Update Case Details Header -->
-                                <div class="col-12 fw-bold mt-3 mb-2">Update Case Details</div>
+                                <div class="col-12 fw-bold mt-3 mb-2 text-center">Update Case Details
+                                </div>
 
                                 <!-- Nature of Needs -->
                                 <div class="col-12 mb-2">
@@ -336,7 +337,7 @@
                                     <td colspan="4">
                                         <span class="flabel">Are you a member of any indigenous group?</span><br>
                                         <span class="fvalue" id="indigenous">{{ $user->basicInfo->scIsIndigenous }}.
-                                            {{ $user->basicInfo->scIndigenousgroup == 'Not Applicable' ? '' : $user->basicInfo->scIndigenousgroup }}</span>
+                                            {{ $user->basicInfo->scIsIndigenous == 'No' ? '' : $user->basicInfo->scIndigenousgroup }}</span>
                                     </td>
                                 </tr>
                             </table>
@@ -519,35 +520,21 @@
                     </div>
                 </div>
 
-                <div class="other-info column small">
-                    <div class="row mt-2">
-                        <strong>
-                            Grant/Assistance from other Government and Non-Government scholarships, School Discount
-                            (How
-                            much per sem?)
-                        </strong>
+                <div class="container small">
+                    <div class="row mt-2 border-bottom border-dark fw-bold">
+                        Grant/Assistance from other Government and Non-Government scholarships, School Discount (How
+                        much per sem?)
                     </div>
-                    <div class="row px-3">
-                        <span style="white-space: pre-wrap" id="grant">{{ $renewal->otherinfo->grant }}</span>
+                    <div class="row px-2">{{ $renewal->otherinfo->grant }}</div>
+                    <div class="row mt-2 border-bottom border-dark fw-bold">
+                        Talents & Skills/ Honor and Recognition/ Extracurricular/Community
+                        Involvement/Employment
                     </div>
-                    <div class="row mt-2">
-                        <strong>
-                            Talents & Skills/ Honor and Recognition/ Extracurricular/Community
-                            Involvement/Employment
-                        </strong>
+                    <div class="row px-2">{{ $renewal->otherinfo->talent }}</div>
+                    <div class="row mt-2 border-bottom border-dark fw-bold">
+                        What are your expectations from Tzu Chi Foundation?
                     </div>
-                    <div class="row px-3">
-                        <span style="white-space: pre-wrap" id="talents">{{ $renewal->otherinfo->talent }}</span>
-                    </div>
-                    <div class="row mt-2">
-                        <strong>
-                            What are your expectations from Tzu Chi Foundation?
-                        </strong>
-                    </div>
-                    <div class="row px-3">
-                        <span style="white-space: pre-wrap"
-                            id="expectations">{{ $renewal->otherinfo->expectation }}</span>
-                    </div>
+                    <div class="row px-2">{{ $renewal->otherinfo->expectation }}</div>
                 </div>
 
                 <div class="signature">
@@ -650,9 +637,8 @@
                             </span>
                         </td>
                         <td style="width: 600px;">
-                            <span class="slabel"><strong>Problem Statement</strong></span><br>
-                            <textarea id="" rows="5" cols="6"
-                                placeholder="{{ $renewal->casedetails->problemstatement ?? '' }}" readonly></textarea>
+                            <p><strong>Problem
+                                    Statement</strong><br>{{ $renewal->casedetails->problemstatement ?? '' }}</p>
                         </td>
                     </tr>
                 </table>
@@ -662,12 +648,13 @@
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Received By:
                         <input class="casedeets-input text-center" style="width: 65% !important" type="text"
-                            value="{{ $renewal->casedetails->receiveby ?? '' }}" readonly>
+                            value="{{ $renewal->casedetails->receivedby ?? '' }}" readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Date Receive:
                         <input class="casedeets-input text-center" style="width: 50% !important" type="text"
-                            value="{{ $renewal->casedetails->datereceived ?? '' }}" readonly>
+                            value="{{ isset($renewal->casedetails->datereceived) ? \Carbon\Carbon::parse($renewal->casedetails->datereceived)->format('F j, Y') : '' }}"
+                            readonly>
                     </div>
                     <div class="row my-2 d-flex justify-content-between casedeets">
                         Assigned District:
@@ -711,7 +698,8 @@
                         <div class="row my-2 d-flex justify-content-between casedeets">
                             Date Reported:
                             <input class="casedeets-input text-center" style="width: 45% !important" type="text"
-                                value="{{ $renewal->casedetails->datereported ?? '' }}" readonly>
+                                value="{{ isset($renewal->casedetails->datereported) ? \Carbon\Carbon::parse($renewal->casedetails->datereported)->format('F j, Y') : '' }}"
+                                readonly>
                         </div>
                     </div>
                 </div>
@@ -812,9 +800,9 @@
     </div>
 
     <script>
-        const regionCode = '{{ $user->addressinfo->region }}';
-        const cityCode = '{{ $user->addressinfo->city }}';
-        const barangayCode = '{{ $user->addressinfo->barangay }}';
+        const regionCode = '{{ $user->addressinfo->scRegion }}';
+        const cityCode = '{{ $user->addressinfo->scCity }}';
+        const barangayCode = '{{ $user->addressinfo->scBarangay }}';
 
         // Base API URLs
         const cityApi = `https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`;

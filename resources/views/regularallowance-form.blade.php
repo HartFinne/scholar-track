@@ -32,8 +32,6 @@
             max-width: 100%;
         }
 
-        .content {}
-
         .bg-light {
             background: #e4e4e4;
         }

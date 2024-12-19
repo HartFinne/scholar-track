@@ -66,7 +66,9 @@
     <div class="ctnmain">
         <div class="header">
             <span class="text-success fw-bold h2">Penalty</span>
-            <button type="button" id="btnaddpenalty" onclick="togglepenaltyform()">Create Penalty</button>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#penaltyModal">
+                Create Penalty
+            </button>
         </div>
         <div class="row">
             <div class="col-md-3">
@@ -109,72 +111,73 @@
             {{ $penaltys->links('pagination::bootstrap-4') }}
         </div> --}}
     </div>
-
-    <div class="ctnpenaltyform" id="ctnpenaltyform">
-        <div class="groupA">
-            <span class="formtitle">New penalty</span>
-            <button type="button" id="btnclose" onclick="togglepenaltyform()">
-                <i class="fas fa-xmark"></i>
-            </button>
+    <!-- Modal -->
+    <div class="modal fade" id="penaltyModal" tabindex="-1" aria-labelledby="penaltyModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title" id="penaltyModalLabel">New Penalty</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ route('penalty.post') }}" method="POST">
+                    <div class="modal-body">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="scholar_id" class="form-label">Scholar ID</label>
+                            <input list="scholarid" name="scholar_id" id="inscholarid"
+                                class="form-control border-success" required onchange="displayCurrentPenalty()">
+                            <datalist id="scholarid">
+                                @foreach ($scholars as $scholar)
+                                    <option value="{{ $scholar->caseCode }}">{{ $scholar->basicInfo->scFirstname }}
+                                        {{ $scholar->basicInfo->scLastname }}</option>
+                                @endforeach
+                            </datalist>
+                        </div>
+                        <div id="current-penalty" class="penalty-info border-success">
+                            <p><strong>Current Penalty:</strong></p>
+                            <p>Condition: <span id="current-condition">Select a scholar to view</span></p>
+                            <p>Remark: <span id="current-remark"></span></p>
+                            <p>Date Issued: <span id="current-date"></span></p>
+                        </div>
+                        <div class="mb-3">
+                            <label for="condition" class="form-label">Concern</label>
+                            <select name="condition" id="incondition" class="form-select border-success" required>
+                                <option value="" disabled selected>Select a Condition</option>
+                                <option value="Lost Cash Card">Lost Cash Card</option>
+                                <option value="Dress Code Violation">Dress Code Violation</option>
+                            </select>
+                        </div>
+                        <span class="form-note">The scholar will be notified of this penalty once submitted.</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-warning">Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="groupB">
-            <form action="{{ route('penalty.post') }}" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label class="formlabel">Scholar ID</label>
-                    <input list="scholarid" name="scholar_id" id="inscholarid" required
-                        onchange="displayCurrentPenalty()" style="width: 100%;">
-                    <datalist id="scholarid">
-                        @foreach ($scholars as $scholar)
-                            <option value="{{ $scholar->caseCode }}">{{ $scholar->basicInfo->scFirstname }}
-                                {{ $scholar->basicInfo->scLastname }}</option>
-                        @endforeach
-                    </datalist>
-                </div>
+    </div>
 
-                <!-- Display Current Penalty Information -->
-                <div id="current-penalty" class="penalty-info">
-                    <p><strong>Current Penalty:</strong></p>
-                    <p>Condition: <span id="current-condition">Select a scholar to view</span></p>
-                    <p>Remark: <span id="current-remark"></span></p>
-                    <p>Date Issued: <span id="current-date"></span></p>
-                </div>
+    <script>
+        const penalties = @json($penalties);
 
-                <div class="form-group">
-                    <label class="formlabel">Concern</label>
-                    <select name="condition" id="incondition" required>
-                        <option value="" disabled selected>Select a Condition</option>
-                        <option value="Lost Cash Card">Lost Cash Card</option>
-                        <option value="Dress Code Violation">Dress Code Violation</option>
-                    </select>
-                </div>
+        function displayCurrentPenalty() {
+            const scholarId = document.getElementById("inscholarid").value;
+            const penaltyDiv = document.getElementById("current-penalty");
 
-                <span class="formnote">The scholar will be notified of this penalty once submitted.</span>
-                <button type="submit" id="btnsubmit">Submit</button>
-            </form>
-        </div>
-
-        <script>
-            const penalties = @json($penalties);
-
-            function displayCurrentPenalty() {
-                const scholarId = document.getElementById("inscholarid").value;
-                const penaltyDiv = document.getElementById("current-penalty");
-
-                if (penalties[scholarId]) {
-                    const penalty = penalties[scholarId];
-                    penaltyDiv.innerHTML = `
+            if (penalties[scholarId]) {
+                const penalty = penalties[scholarId];
+                penaltyDiv.innerHTML = `
                         <p><strong>Current Penalty:</strong></p>
                         <p>Condition: ${penalty.condition}</p>
                         <p>Remark: ${penalty.remark}</p>
                         <p>Date Issued: ${penalty.dateofpenalty}</p>
                     `;
-                } else {
-                    penaltyDiv.innerHTML = `<p>No current penalty found for this scholar.</p>`;
-                }
+            } else {
+                penaltyDiv.innerHTML = `<p>No current penalty found for this scholar.</p>`;
             }
-        </script>
-    </div>
+        }
+    </script>
 
     <script src="{{ asset('js/headercontrol.js') }}"></script>
     <script src="{{ asset('js/togglepenaltyform.js') }}"></script>

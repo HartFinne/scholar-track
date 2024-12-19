@@ -2829,7 +2829,7 @@ class StaffController extends Controller
     public function showcseventinfo($csid)
     {
         $event = communityservice::findOrFail($csid);
-        $volunteers = csregistration::with('basicInfo')->where('csid', $csid)->get();
+        $volunteers = csregistration::with('basicInfo', 'csattendance')->where('csid', $csid)->get();
         $attendances = csattendance::where('csid', $csid)->get();
         return view('staff.cseventinfo', compact('event', 'volunteers', 'attendances'));
     }
@@ -3288,8 +3288,6 @@ class StaffController extends Controller
         try {
             DB::beginTransaction();
 
-            $worker = Auth::guard('staff')->user();
-
             // Mark attendees with timeout
             hcattendance::where('hcid', $hcid)
                 ->whereNull('timeout')
@@ -3319,6 +3317,10 @@ class StaffController extends Controller
 
                 $event->increment('totalabsentees', 1);
 
+                $absenteeDistrict = scholarshipinfo::where('caseCode', $absent->caseCode)->first();
+
+                $assignedWorker = staccount::where('area', $absenteeDistrict->area)->first();
+
                 // Create an LTE record for the absentee
                 $lte = lte::create([
                     'caseCode' => $absent->caseCode,
@@ -3332,11 +3334,11 @@ class StaffController extends Controller
                     'explanation' => null,
                     'proof' => null,
                     'ltestatus' => 'No Response',
-                    'workername' => strtoupper($worker->name) . ", RSW",
+                    'workername' => strtoupper($assignedWorker->name) . ", RSW",
                 ]);
 
                 // Notify absentee via SMS or email
-                $this->notifyAbsentee($absent, $lte, $worker);
+                $this->notifyAbsentee($absent, $lte);
             }
 
             DB::commit();
@@ -3349,7 +3351,7 @@ class StaffController extends Controller
         }
     }
 
-    private function notifyAbsentee($user, $lte, $worker)
+    private function notifyAbsentee($user, $lte)
     {
         $api_key = env('MOVIDER_API_KEY');
         $api_secret = env('MOVIDER_API_SECRET');

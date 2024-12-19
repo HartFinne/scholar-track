@@ -50,4 +50,9 @@ class csattendance extends Model
     {
         return $this->belongsTo(scholarshipinfo::class, 'caseCode', 'caseCode');
     }
+
+    public function csregistration()
+    {
+        return $this->belongsTo(csregistration::class, 'caseCode', 'caseCode');
+    }
 }

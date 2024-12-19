@@ -199,7 +199,7 @@
                         @else
                             @foreach ($elem as $index => $data)
                                 <tr>
-                                    <td class="text-center align-middle">{{ $index++ }}</td>
+                                    <td class="text-center align-middle">{{ $index + 1 }}</td>
                                     <td class="text-center align-middle">{{ $data->basicInfo->scLastname }},
                                         {{ $data->basicInfo->scFirstname }} {{ $data->basicInfo->scMiddlename }}</td>
                                     <td class="text-center align-middle">{{ $data->education->scYearGrade }}

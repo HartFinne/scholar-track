@@ -29,4 +29,9 @@ class csregistration extends Model
     {
         return $this->hasOne(ScBasicInfo::class, 'caseCode', 'caseCode');
     }
+
+    public function csattendance()
+    {
+        return $this->hasOne(csattendance::class, 'caseCode', 'caseCode');
+    }
 }

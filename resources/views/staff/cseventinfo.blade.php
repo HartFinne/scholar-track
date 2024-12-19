@@ -49,7 +49,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="fw-bold">Start Time:</div>
-                    <div class="border-bottom border-dark">{{ $event->starttime }}</div>
+                    <div class="border-bottom border-dark">
+                        {{ \Carbon\Carbon::parse($event->starttime)->format('g:i A') }}</div>
                 </div>
             </div>
 
@@ -61,7 +62,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="fw-bold">Call Time:</div>
-                    <div class="border-bottom border-dark">{{ $event->calltime }}</div>
+                    <div class="border-bottom border-dark">
+                        {{ \Carbon\Carbon::parse($event->calltime)->format('g:i A') }}</div>
                 </div>
             </div>
 
@@ -111,6 +113,9 @@
                     <tr>
                         <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Name</th>
+                        <th class="text-center align-middle">Time In</th>
+                        <th class="text-center align-middle">Time Out</th>
+                        <th class="text-center align-middle">Hours Rendered</th>
                         <th class="text-center align-middle">Status</th>
                         <th class="text-center align-middle">Action</th>
                     </tr>
@@ -122,15 +127,26 @@
                             <td class="text-center align-middle">{{ $volunteer->basicInfo->scLastname }},
                                 {{ $volunteer->basicInfo->scFirstname }} {{ $volunteer->basicInfo->scMiddlename }}
                             </td>
+                            <td class="text-center align-middle">
+                                {{ $volunteer->registatus == 'Completed' ? \Carbon\Carbon::parse($volunteer->csattendance->timein)->format('g:i A') : '--' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                {{ $volunteer->registatus == 'Completed' ? \Carbon\Carbon::parse($volunteer->csattendance->timeout)->format('g:i A') : '--' }}
+                            </td>
+                            <td class="text-center align-middle">{{ $volunteer->csattendance->hoursspent ?? '--' }}
+                            </td>
                             <td class="text-center align-middle">{{ $volunteer->registatus }}</td>
                             <td class="text-center align-middle">
                                 @php
-                                    $matchingAttendance = $attendances->firstWhere('caseCode', $volunteer->caseCode);
+                                    $matchingAttendance = $attendances->first(function ($attendance) use ($volunteer) {
+                                        return $attendance->caseCode == $volunteer->caseCode &&
+                                            $attendance->csastatus == 'Present';
+                                    });
                                 @endphp
 
                                 @if ($matchingAttendance)
                                     <a href="{{ route('viewcsattendance', ['csid' => $volunteer->csid, 'casecode' => $volunteer->caseCode]) }}"
-                                        class="btn btn-success">View Attendance</a>
+                                        class="btn btn-sm btn-success">View Attendance</a>
                                 @else
                                     <span class="text-danger">No Attendance Submitted</span>
                                 @endif
