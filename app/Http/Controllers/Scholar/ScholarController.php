@@ -314,21 +314,7 @@ class ScholarController extends Controller
 
             $sincome = array_sum($request->sincome);
 
-            $levels = [
-                'College' => ['First Year', 'Second Year', 'Third Year', 'Fourth Year', 'Fifth Year'],
-                'Senior High' => ['Grade 11', 'Grade 12'],
-                'Junior High' => ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'],
-                'Elementary' => ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6'],
-            ];
-
-            $schoollevel = null;
-
-            foreach ($levels as $level => $years) {
-                if (in_array($request->incomingyear, $years)) {
-                    $schoollevel = $level;
-                    break;
-                }
-            }
+            $schoollevel = $user->education->scSchoolLevel;
 
             $status = 'Pending';
 
@@ -338,7 +324,7 @@ class ScholarController extends Controller
                 $user->scholarshipinfo->save();
             }
 
-            if ($user->education->scCourseStrandSec != $request->course) {
+            if ($user->education->scCourseStrandSec != $request->course && $schoollevel == 'College') {
                 $status = 'Changed Course';
                 $user->scholarshipinfo->scholarshipstatus = 'On-Hold';
                 $user->scholarshipinfo->save();
@@ -349,13 +335,13 @@ class ScholarController extends Controller
             $gwaName = null; // Initialize the GWA key dynamically
 
             // Determine the GWA key based on the school level
-            if ($request->schoollevel === 'College') {
+            if ($schoollevel === 'College') {
                 $gwaName = 'College GWA';
-            } elseif ($request->schoollevel === 'Senior High') {
+            } elseif ($schoollevel === 'Senior High') {
                 $gwaName = 'Senior High GWA';
-            } elseif ($request->schoollevel === 'Junior High') {
+            } elseif ($schoollevel === 'Junior High') {
                 $gwaName = 'Junior High GWA';
-            } elseif ($request->schoollevel === 'Elementary') {
+            } elseif ($schoollevel === 'Elementary') {
                 $gwaName = 'Elementary GWA';
             }
 
@@ -530,14 +516,14 @@ class ScholarController extends Controller
                 $request->validate([
                     'incomingyear' => 'required|string|max:15',
                     'schoolname' => 'required|string|max:255',
-                    'gwa' => 'required|numeric|min:1|max:100',
+                    'genave' => 'required|numeric|min:1|max:100',
                     'gwaconduct' => 'required|string|max:50',
                     'chinesegwa' => 'nullable|numeric|min:1|max:100',
                     'chinesegwaconduct' => 'nullable|string|max:50',
                 ], [
                     // Required field validation messages
                     'incomingyear.required' => 'The incoming grade level is required.',
-                    'gwa.required' => 'The General Average is required.',
+                    'genave.required' => 'The General Average is required.',
                     'gwaconduct.required' => 'The conduct is required.',
 
                     // String validation messages
@@ -553,9 +539,9 @@ class ScholarController extends Controller
                     'chinesegwaconduct.max' => 'The conduct for Chinese subject must not exceed 50 characters.',
 
                     // Numeric validation messages
-                    'gwa.numeric' => 'The General Average must be a valid number.',
-                    'gwa.min' => 'The General Average must be at least 1.',
-                    'gwa.max' => 'The General Average may not be greater than 100.',
+                    'genave.numeric' => 'The General Average must be a valid number.',
+                    'genave.min' => 'The General Average must be at least 1.',
+                    'genave.max' => 'The General Average may not be greater than 100.',
 
                     'chinesegwa.numeric' => 'The General Average for Chinese subject must be a valid number.',
                     'chinesegwa.min' => 'The General Average for Chinese subject must be at least 1.',
@@ -599,8 +585,7 @@ class ScholarController extends Controller
                     'gwa.max' => 'The GWA may not be greater than 5.',
                 ]);
             }
-            // dd($request->siblingcount);
-            // Sibling info
+
             if ($request->siblingcount > 0) {
                 $rules = [];
                 $messages = [];

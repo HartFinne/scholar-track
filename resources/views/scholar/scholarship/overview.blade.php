@@ -78,35 +78,22 @@
             </div>
         </div>
 
-        @if ($renewal->status == 'Open' && $user->Scholarshipinfo->scholarshipstatus == 'Continuing')
-            @if ($appliedRenewal)
-                <div class="sc-renewal">
-                    <hr>
-                    <div class="text">
-                        <h5 class="fw-bold">YOU HAVE ALREADY APPLIED FOR SCHOLARSHIP RENEWAL.</h5>
-                    </div>
-                    <hr>
-                </div>
-            @else
-                <div class="sc-renewal">
-                    <hr>
-                    <div class="text">
-                        <h5 class="fw-bold">SCHOLARSHIP RENEWAL IS NOW OPEN.</h5>
+        <div class="sc-renewal">
+            <hr>
+            <div class="text">
+                <h3 class="fw-bold mb-3">Scholarship Renewal Form</h3>
+                @if ($renewal->status == 'Open' && $user->Scholarshipinfo->scholarshipstatus == 'Continuing')
+                    @if ($appliedRenewal)
+                        <h6 class="text-dark">You have already applied for scholarship renewal.</h6>
+                    @else
                         <button onclick="window.location.href='{{ route('screnewal') }}'">Renew Scholarship</button>
-                    </div>
-                    <hr>
-                </div>
-            @endif
-        @else
-            <div class="sc-renewal">
-                <hr>
-                <div class="text">
-                    <h5 class="fw-bold">This form is currently not accepting any responses.</h5>
-                </div>
-                <hr>
+                    @endif
+                @else
+                    <h6 class="text-dark">This form is currently not accepting any responses.</h6>
+                @endif
             </div>
-        @endif
-
+            <hr>
+        </div>
 
         <p class="sub-title">Summary of Penalties/Deductions</p>
         <div class="filter" id="filter-penalty">
@@ -140,7 +127,6 @@
                     @foreach ($penalty as $penalty)
                         <tr>
                             <td>{{ \Carbon\Carbon::parse($penalty->dateofpenalty)->format('m/d/Y') }}</td>
-                            <!-- Formatting the date -->
                             <td>{{ $penalty->condition }}</td>
                             <td>{{ $penalty->remark }}</td>
                         </tr>

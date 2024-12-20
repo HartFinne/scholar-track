@@ -358,8 +358,8 @@
                     Detailed Sketch of Home Address, Certificate
                     of indigence from the Barangay, Pictures of House (Inside and outside), Payslip or
                     Income Tax Return of Both Parents (if working).</span><span></strong>
-                Deadline of Submission is on <strong style="color: red"><u>
-                        {{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</u>
+                Deadline of Submission is on <strong><u
+                        style="color: red">{{ $form->deadline ? \Carbon\Carbon::parse($form->deadline)->format('F j, Y') : '--' }}</u>
                 </strong>.</span>
         </li>
         <li>

@@ -406,8 +406,8 @@
             <h3 class="text-center my-3">Educational Assistance Application Form</h3>
             <span class="row"><strong><u>Sketch of Home Address</u></strong></span>
             <div class="sketchimg">
-                <img class="sketchimg" src="{{ asset('storage/' . $renewal->sketchmap) }}" alt="Sketch Map of Home Address"
-                    id="sketchmap">
+                <img class="sketchimg" src="{{ asset('storage/' . $renewal->sketchmap) }}"
+                    alt="Sketch Map of Home Address" id="sketchmap">
             </div>
             <div class="instructions">
                 <ol>
@@ -653,9 +653,9 @@
             window.location.href = "#";
         });
 
-        const regionCode = '{{ $user->addressinfo->region }}';
-        const cityCode = '{{ $user->addressinfo->city }}';
-        const barangayCode = '{{ $user->addressinfo->barangay }}';
+        const regionCode = '{{ $user->addressinfo->scRegion }}';
+        const cityCode = '{{ $user->addressinfo->scCity }}';
+        const barangayCode = '{{ $user->addressinfo->scBarangay }}';
 
         // Base API URLs
         const cityApi = `https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`;
