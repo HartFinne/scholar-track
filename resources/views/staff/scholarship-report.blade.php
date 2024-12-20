@@ -11,6 +11,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 </head>
 
 <body>
@@ -396,77 +403,143 @@
                     </div>
                 </div>
             </div>
+
+            <form id="filter-form" method="GET" action="{{ route('showreports') }}">
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="cycle" class="form-label">Academic Cycle:</label>
+                        <select name="cycle" id="cycle" class="form-select">
+                            <option value="">All Cycles</option>
+                            @foreach (['Semester', 'Trimester', 'Quarter'] as $cycle)
+                                <option value="{{ $cycle }}" {{ request('cycle') == $cycle ? 'selected' : '' }}>
+                                    {{ $cycle }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+            
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Scholarship Status:</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="">All Statuses</option>
+                            @foreach (['Continuing', 'On-Hold', 'Terminated'] as $status)
+                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                    {{ $status }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+            
+                    <div class="col-md-3">
+                        <label for="remark" class="form-label">Remark:</label>
+                        <select name="remark" id="remark" class="form-select">
+                            <option value="">All Remarks</option>
+                            <?php 
+                                $remarks = [
+                                    'Satisfactory Performance' => 'Satisfactory Performance',
+                                    'Incomplete Grades' => 'Incomplete Grades',
+                                    'Failed GWA on 1st Sem' => 'Failed GWA on 1st Sem',
+                                    'Failed GWA on 2nd Sem' => 'Failed GWA on 2nd Sem',
+                                    'Incomplete CS Hours' => 'Incomplete CS Hours',
+                                    'Incomplete HC Attendance' => 'Incomplete HC Attendance',
+                                ];
+                    
+                                foreach ($remarks as $value => $text) {
+                                    echo '<option value="' . $value . '" ' . (request('remark') == $value ? 'selected' : '') . '>' . $text . '</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+            
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn <?php echo $value > 100000 ? 'btn-success' : 'btn-danger'; ?> w-100">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            
             <div class="ctn" id="college">
                 @php
-                    $cycles = [
-                        'Semester' => ['columns' => ['1st Sem GWA', '2nd Sem GWA']],
-                        'Trimester' => ['columns' => ['1st Sem GWA', '2nd Sem GWA', '3rd Sem GWA']],
-                    ];
+                    $hasData = false;
+                    foreach ($filteredColleges as $colleges) {
+                        if ($colleges->isNotEmpty()) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
                 @endphp
-                @if ($colleges->isEmpty())
-                    <div class="row text-center fw-bold h6">
-                        <span>No Data Available</span>
+            
+                @foreach ($filteredColleges as $cycle => $colleges)
+                    <div class="row">
+                        <span class="fw-bold text-success h4 text-center">Academic Cycle: {{ $cycle }}</span>
                     </div>
-                @endif
-                @foreach ($cycles as $cycle => $data)
-                    @php $cycleResults = $colleges->filter(fn($result) => $result->acadcycle == $cycle); @endphp
-
-                    @if (!$cycleResults->isEmpty())
-                        <div class="row">
-                            <span class="fw-bold text-success h4 text-center">Academic Cycle:
-                                {{ $cycle }}</span>
-                        </div>
-                        <div style="min-height: 50vh" class="ctntable table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="">
-                                    <tr>
-                                        <th class="text-center align-middle">#</th>
-                                        <th class="text-center align-middle">Scholar Name</th>
-                                        @foreach ($data['columns'] as $column)
-                                            <th class="text-center align-middle">{{ $column }}</th>
+                    <div style="min-height: 50vh" class="ctntable table-responsive">
+                        <table class="table table-bordered college-table" id="collegeTable-{{ $loop->index }}">
+                            <thead>
+                                <tr>
+                                    <th class="text-center align-middle">#</th>
+                                    <th class="text-center align-middle">Scholar Name</th>
+                                    @if ($cycle === 'Trimester')
+                                        @foreach (['1st Sem GWA', '2nd Sem GWA', '3rd Sem GWA'] as $column)
+                                        <th class="text-center align-middle">{{ $column }}</th>
                                         @endforeach
-                                        <th class="text-center align-middle">Rendered CS Hours</th>
-                                        <th class="text-center align-middle">HC Absent Count</th>
-                                        <th class="text-center align-middle">Penalty Count</th>
-                                        <th class="text-center align-middle">Scholarship Status</th>
-                                        <th class="text-center align-middle">Remark</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php $index = 1; @endphp
-                                    @foreach ($cycleResults as $result)
-                                        <tr>
-                                            <td class="text-center align-middle">{{ $index++ }}</td>
-                                            <td class="text-center align-middle">{{ $result->basicInfo->scLastname }},
-                                                {{ $result->basicInfo->scFirstname }}
-                                                {{ $result->basicInfo->scMiddlename }}
-                                            </td>
-                                            @foreach ($data['columns'] as $key => $column)
+                                    @else()
+                                        @foreach (['1st Sem GWA', '2nd Sem GWA'] as $column)
+                                        <th class="text-center align-middle">{{ $column }}</th>
+                                        @endforeach
+                                    @endif
+                                    <th class="text-center align-middle">Rendered CS Hours</th>
+                                    <th class="text-center align-middle">HC Absent Count</th>
+                                    <th class="text-center align-middle">Penalty Count</th>
+                                    <th class="text-center align-middle">Scholarship Status</th>
+                                    <th class="text-center align-middle">Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $index = ($colleges->currentPage() - 1) * $colleges->perPage() + 1; @endphp
+                                @foreach ($colleges as $result)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $index++ }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $result->basicInfo->scLastname }},
+                                            {{ $result->basicInfo->scFirstname }}
+                                            {{ $result->basicInfo->scMiddlename }}
+                                        </td>
+                                        @if ($cycle === 'Trimester')
+                                            @foreach (['1st Sem GWA', '2nd Sem GWA', '3rd Sem GWA'] as $key => $column)
                                                 <td class="text-center align-middle">
                                                     {{ $result->{'gwasem' . ($key + 1)} ?? 'No Data' }}
                                                 </td>
                                             @endforeach
-                                            <td class="text-center align-middle">{{ $result->cshours ?? 'No Data' }}
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                {{ $result->hcabsentcount ?? 'No Data' }}
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                {{ $result->penaltycount ?? 'No Data' }}
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                {{ $result->scholarshipinfo->scholarshipstatus ?? '' }}</td>
-                                            <td class="text-center align-middle">
-                                                {{ $result->remark ?? 'Incomplete Data' }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
+                                        @else()
+                                            @foreach (['1st Sem GWA', '2nd Sem GWA'] as $key => $column)
+                                                <td class="text-center align-middle">
+                                                    {{ $result->{'gwasem' . ($key + 1)} ?? 'No Data' }}
+                                                </td>
+                                            @endforeach
+                                        @endif
+                                        
+                                        <td class="text-center align-middle">{{ $result->cshours ?? 'No Data' }}</td>
+                                        <td class="text-center align-middle">{{ $result->hcabsentcount ?? 'No Data' }}</td>
+                                        <td class="text-center align-middle">{{ $result->penaltycount ?? 'No Data' }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $result->scholarshipinfo->scholarshipstatus ?? '' }}
+                                        </td>
+                                        <td class="text-center align-middle">{{ $result->remark ?? 'Incomplete Data' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $colleges->links('pagination::bootstrap-4') }} <!-- Pagination Links -->
+                    </div>
                 @endforeach
             </div>
+
             <div class="ctn" id="shs" style="display: none;">
                 @php
                     $cycles = [
@@ -474,90 +547,97 @@
                         'Trimester' => ['columns' => ['1st Sem GWA', '2nd Sem GWA', '3rd Sem GWA']],
                     ];
                 @endphp
-                @if ($shs->isEmpty())
-                    <div class="row text-center fw-bold h6">
-                        <span>No Data Available</span>
-                    </div>
-                @endif
-                @foreach ($cycles as $cycle => $data)
-                    @php $cycleResults = $shs->filter(fn($result) => $result->acadcycle == $cycle); @endphp
 
-                    @if (!$cycleResults->isEmpty())
-                        <div class="row">
-                            <span class="fw-bold text-success h4 text-center">Academic Cycle:
-                                {{ $cycle }}</span>
-                        </div>
-                        <div style="min-height: 50vh" class="ctntable table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="">
-                                    <tr>
-                                        <th class="text-center align-middle">#</th>
-                                        <th class="text-center align-middle">Scholar Name</th>
-                                        @foreach ($data['columns'] as $column)
-                                            <th class="text-center align-middle">{{ $column }}</th>
-                                        @endforeach
-                                        <th class="text-center align-middle">HC Absent Count</th>
-                                        <th class="text-center align-middle">Penalty Count</th>
-                                        <th class="text-center align-middle">Scholarship Status</th>
-                                        <th class="text-center align-middle">Remark</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php $index = 1; @endphp
-                                    @foreach ($cycleResults as $result)
-                                        <tr>
-                                            <td class="text-center align-middle">{{ $index++ }}</td>
-                                            <td class="text-center align-middle">{{ $result->basicInfo->scLastname }},
-                                                {{ $result->basicInfo->scFirstname }}
-                                                {{ $result->basicInfo->scMiddlename }}
-                                            </td>
-                                            @foreach ($data['columns'] as $key => $column)
-                                                <td class="text-center align-middle">
-                                                    {{ $result->{'gwasem' . ($key + 1)} ?? 'No Data' }}
-                                                </td>
-                                            @endforeach
-                                            <td class="text-center align-middle">
-                                                {{ $result->hcabsentcount ?? 'No Data' }}
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                {{ $result->penaltycount ?? 'No Data' }}
-                                            </td>
-                                            <td class="text-center align-middle">
-                                                {{ $result->scholarshipinfo->scholarshipstatus ?? '' }}</td>
-                                            <td class="text-center align-middle">
-                                                {{ $result->remark ?? 'Incomplete Data' }}
-                                            </td>
-                                        </tr>
+                @php
+                    $hasData = false;
+                    foreach ($filteredShs as $shs) {
+                        if ($shs->isNotEmpty()) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
+                @endphp
+
+                @if (!$hasData)
+                <div class="row text-center fw-bold h6">
+                    <span>No Data Available</span>
+                </div>
+                @endif
+                @foreach ($filteredShs as $cycle => $shs)
+                    <div class="row">
+                        <span class="fw-bold text-success h4 text-center">Academic Cycle: {{ $cycle }}</span>
+                    </div>
+                    <div style="min-height: 50vh" class="ctntable table-responsive">
+                        <table class="table table-bordered shs-table" id="collegeTable-{{ $loop->index }}">
+                            <thead>
+                                <tr>
+                                    <th class="text-center align-middle">#</th>
+                                    <th class="text-center align-middle">Scholar Name</th>
+                                    @foreach (['1st Sem GWA', '2nd Sem GWA'] as $column)
+                                        <th class="text-center align-middle">{{ $column }}</th>
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
+                                    <th class="text-center align-middle">HC Absent Count</th>
+                                    <th class="text-center align-middle">Penalty Count</th>
+                                    <th class="text-center align-middle">Scholarship Status</th>
+                                    <th class="text-center align-middle">Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $index = ($shs->currentPage() - 1) * $shs->perPage() + 1; @endphp
+                                @foreach ($shs as $result)
+                                    <tr>
+                                        <td class="text-center align-middle">{{ $index++ }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $result->basicInfo->scLastname }},
+                                            {{ $result->basicInfo->scFirstname }}
+                                            {{ $result->basicInfo->scMiddlename }}
+                                        </td>
+                                        @foreach (['1st Sem GWA', '2nd Sem GWA'] as $key => $column)
+                                            <td class="text-center align-middle">
+                                                {{ $result->{'gwasem' . ($key + 1)} ?? 'No Data' }}
+                                            </td>
+                                        @endforeach
+                                        <td class="text-center align-middle">{{ $result->hcabsentcount ?? 'No Data' }}</td>
+                                        <td class="text-center align-middle">{{ $result->penaltycount ?? 'No Data' }}</td>
+                                        <td class="text-center align-middle">
+                                            {{ $result->scholarshipinfo->scholarshipstatus ?? '' }}
+                                        </td>
+                                        <td class="text-center align-middle">{{ $result->remark ?? 'Incomplete Data' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center mt-3">
+                        {{ $colleges->links('pagination::bootstrap-4') }} <!-- Pagination Links -->
+                    </div>
                 @endforeach
             </div>
+            
             <div class="ctn" id="jhs" style="display: none;">
+            
                 @php
-                    $cycles = [
-                        'Quarter' => [
-                            'columns' => ['1st Quarter GWA', '2nd Quarter GWA', '3rd Quarter GWA', '4th Quarter GWA'],
-                        ],
-                    ];
+                    $hasData = false;
+                    foreach ($filteredJhs as $jhs) {
+                        if ($jhs->isNotEmpty()) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
                 @endphp
-                @if ($jhs->isEmpty())
-                    <div class="row text-center fw-bold h6">
-                        <span>No Data Available</span>
-                    </div>
-                @endif
-                @foreach ($cycles as $cycle => $data)
-                    @php $cycleResults = $jhs->filter(fn($result) => $result->acadcycle == $cycle); @endphp
 
-                    @if (!$cycleResults->isEmpty())
+                @if (!$hasData)
+                <div class="row text-center fw-bold h6">
+                    <span>No Data Available</span>
+                </div>
+                @endif
+                @foreach ($filteredJhs as $cycle => $Jhs)
                         <div class="row">
                             <span class="fw-bold text-success h4 text-center">Academic Cycle:
                                 {{ $cycle }}</span>
                         </div>
                         <div style="min-height: 50vh" class="ctntable table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered jhs-table">
                                 <thead class="">
                                     <tr>
                                         <th class="text-center align-middle">#</th>
@@ -570,8 +650,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $index = 1; @endphp
-                                    @foreach ($cycleResults as $result)
+                                    @php $index = ($jhs->currentPage() - 1) * $jhs->perPage() + 1; @endphp
+                                    @foreach ($jhs as $result)
                                         <tr>
                                             <td class="text-center align-middle">{{ $index++ }}</td>
                                             <td class="text-center align-middle">{{ $result->basicInfo->scLastname }},
@@ -596,32 +676,34 @@
                                 </tbody>
                             </table>
                         </div>
-                    @endif
                 @endforeach
             </div>
+
             <div class="ctn" id="elem" style="display: none;">
+                
                 @php
-                    $cycles = [
-                        'Quarter' => [
-                            'columns' => ['1st Quarter GWA', '2nd Quarter GWA', '3rd Quarter GWA', '4th Quarter GWA'],
-                        ],
-                    ];
+                    $hasData = false;
+                    foreach ($filteredElem as $elem) {
+                        if ($elem->isNotEmpty()) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
                 @endphp
-                @if ($elem->isEmpty())
+
+                @if (!$hasData)
                     <div class="row text-center fw-bold h6">
                         <span>No Data Available</span>
                     </div>
                 @endif
-                @foreach ($cycles as $cycle => $data)
-                    @php $cycleResults = $elem->filter(fn($result) => $result->acadcycle == $cycle); @endphp
 
-                    @if (!$cycleResults->isEmpty())
+                @foreach ($filteredElem as $cycle => $elem)
                         <div class="row">
                             <span class="fw-bold text-success h4 text-center">Academic Cycle:
                                 {{ $cycle }}</span>
                         </div>
                         <div style="min-height: 50vh" class="ctntable table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered elem-table">
                                 <thead class="">
                                     <tr>
                                         <th class="text-center align-middle">#</th>
@@ -634,8 +716,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $index = 1; @endphp
-                                    @foreach ($cycleResults as $result)
+                                    @php $index = ($elem->currentPage() - 1) * $elem->perPage() + 1; @endphp
+                                    @foreach ($elem as $result)
                                         <tr>
                                             <td class="text-center align-middle">{{ $index++ }}</td>
                                             <td class="text-center align-middle">
@@ -660,11 +742,31 @@
                                 </tbody>
                             </table>
                         </div>
-                    @endif
                 @endforeach
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.college-table, .shs-table, .jhs-table, .elem-table').each(function () {
+                $(this).DataTable({
+                    paging: true, // Enable pagination
+                    searching: true, // Enable search
+                    ordering: true, // Enable column sorting
+                    responsive: true, // Make the table responsive
+                    language: {
+                        search: "Search:", // Customize the search box label
+                        lengthMenu: "Display _MENU_ records per page",
+                        zeroRecords: "No matching records found",
+                        info: "Showing _START_ to _END_ of _TOTAL_ records",
+                        infoEmpty: "No records available",
+                        infoFiltered: "(filtered from _MAX_ total records)"
+                    }
+                });
+            });
+        });
+    </script>
 
     <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
         <div class="modal-dialog">
