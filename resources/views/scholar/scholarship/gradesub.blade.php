@@ -285,6 +285,21 @@
         </div>
     </div>
 
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal2" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Extracting GPA, please wait...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ asset('js/scholar.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -307,11 +322,14 @@
         const formData = new FormData();
         formData.append('gradeImage', file);
 
-
         // Determine the target input field for extracted GPA
         const targetFieldId = '{{ $institution->schoollevel == 'College' ? 'gwa' : 'genave' }}';
         const targetField = document.getElementById(targetFieldId);
         targetField.value = 'Extracting...'; // Show a loading state
+
+        // Show the loading modal
+        const loadingModal2 = new bootstrap.Modal(document.getElementById('loadingModal2'));
+        loadingModal2.show();
 
         // Use Fetch API to send the file to the server
         fetch('/extract-gpa', {
@@ -323,20 +341,23 @@
         })
         .then(response => response.json())
         .then(data => {
+            loadingModal2.hide(); // Hide the modal once the response is received
             if (data.success) {
                 targetField.value = data.extractedGpa; // Populate the GPA field
             } else {
                 targetField.value = ''; // Reset the field on failure
                 alert('Failed to extract GPA. Please ensure the document is clear.');
             }
-            })
-            .catch(error => {
+        })
+        .catch(error => {
+            loadingModal2.hide(); // Hide the modal on error
             targetField.value = ''; // Reset the field on error
             console.error('Error during GPA extraction:', error);
             alert('An error occurred while extracting GPA. Please try again.');
         });
     });
 </script>
+
 </body>
 
   

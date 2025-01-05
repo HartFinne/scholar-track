@@ -77,7 +77,7 @@
 
             <div class="app-form">
                 <form autocomplete="on" method="POST" action="{{ route('saveapplicant') }}"
-                    enctype="multipart/form-data">
+                    enctype="multipart/form-data" id="appForm">
                     @csrf
 
                     {{-- personal info --}}
@@ -676,7 +676,39 @@
         @endif
     </div>
 
+    
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border border-success rounded">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="loadingModalLabel">Please Wait</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p>The system is verifying the data you have submitted...</p>
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ asset('js/applicant.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+           const form = document.getElementById('appForm');
+           const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+
+           form.addEventListener('submit', function(event) {
+               // Show the loading modal
+               loadingModal.show();
+           });
+       });
+   </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Load saved data from sessionStorage for all input types
@@ -804,6 +836,8 @@
             }
         });
     </script>
+
+   
 </body>
 
 </html>
