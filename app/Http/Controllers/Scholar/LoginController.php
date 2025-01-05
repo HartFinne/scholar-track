@@ -40,6 +40,15 @@ class LoginController extends Controller
             return redirect()->intended('scholar/schome');
         }
 
+        // Log the failed login attempt
+        $ipAddress = $request->ip(); // Get IP address of the client
+        $userAgent = $request->header('User-Agent'); // Get the User-Agent (browser details)
+        Log::warning('Failed login attempt', [
+            'caseCode' => $request->caseCode,
+            'ip' => $ipAddress,
+            'user_agent' => $userAgent,
+        ]);
+
         // If authentication fails
         return back()->with('failure', 'The provided credentials do not match our records.');
     }

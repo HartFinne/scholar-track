@@ -12,15 +12,14 @@ class EventCreate extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    protected $event;
+    protected $workername;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(communityservice $event)
+    public function __construct(string $workername)
     {
-        //
-        $this->event = $event;
+        $this->workername = $workername;
     }
 
     /**
@@ -40,7 +39,7 @@ class EventCreate extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('New Community Service Event')
-            ->greeting('Hello ' . $this->event->workername . '!')
+            ->greeting('Hello ' . $this->workername . '!')
             ->line('This is to inform you that there is a new event');
     }
 

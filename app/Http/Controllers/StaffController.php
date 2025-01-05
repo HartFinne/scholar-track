@@ -71,6 +71,7 @@ use App\Models\summaryelem;
 use App\Models\summaryjhs;
 use App\Models\summaryshs;
 use App\Models\Reports;
+use App\Notifications\EventCreate;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\VarDumper\Caster\RedisCaster;
@@ -99,11 +100,36 @@ class StaffController extends Controller
             DB::beginTransaction();
             $worker = Auth::guard('staff')->user();
             $worker = staccount::where('id', $worker->id)->first();
+
+            // Log the current staff details before updating
+            Log::info('Staff account update initiated', [
+                'staff_id' => $worker->id,
+                'name' => $worker->name,
+                'email' => $worker->email,
+                'contactno' => $worker->mobileno,
+                'action' => 'update',
+                'user_id' => Auth::guard('staff')->id(),  // Use this to get the staff ID
+                'ip' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+            ]);
+
             $worker->name = $request->name;
             $worker->email = $request->email;
             $worker->mobileno = $request->contactno;
             $worker->save();
             DB::commit();
+
+            // Log the successful update
+            Log::info('Staff account updated successfully', [
+                'staff_id' => $worker->id,
+                'name' => $worker->name,
+                'email' => $worker->email,
+                'contactno' => $worker->mobileno,
+                'action' => 'update',
+                'user_id' => Auth::guard('staff')->id(),  // Again use this for staff ID
+                'ip' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+            ]);
 
             return redirect()->back()->with('success', 'Successfully updated account information.');
         } catch (\Exception $e) {
@@ -1328,8 +1354,9 @@ class StaffController extends Controller
     }
 
 
-    public function updateCriteria(Request $request)
+    public function updatecriteria(Request $request)
     {
+        dd($request);
         DB::beginTransaction();
 
         try {
@@ -2859,7 +2886,7 @@ class StaffController extends Controller
             $volunteersnum = 0;
             $eventstatus = 'Open';
 
-
+            $workername = $worker->workername;
 
             $event = communityservice::create([
                 'staffID' => $worker->id,
@@ -2920,7 +2947,7 @@ class StaffController extends Controller
                 } else {
                     // Send an email notification if not SMS
                     try {
-                        $user->notify(new EventUpdate($event)); // Ensure the EventUpdate notification is correct
+                        $user->notify(new EventCreate($workername)); // Ensure the EventUpdate notification is correct
                     } catch (\Exception $e) {
                         // If email notification failed, add to failed list
                         $failedEmail[] = $user->email;
@@ -2963,6 +2990,11 @@ class StaffController extends Controller
             ]);
 
             $event = communityservice::where('csid', $csid)->first();
+
+            $workername = DB::table('communityservice')
+                ->join('staccounts', 'communityservice.staffID', '=', 'staccounts.id')
+                ->where('communityservice.csid', $csid) // Replace $eventId with the actual event ID
+                ->value('staccounts.name'); // Assuming the `name` column exists in `staccounts` table
 
             if (!$event) {
                 return redirect()->back()->with('failure', 'Event not found.');
@@ -3026,7 +3058,7 @@ class StaffController extends Controller
                 } else {
                     // Send an email notification if not SMS
                     try {
-                        $user->notify(new EventUpdate($event)); // Ensure the EventUpdate notification is correct
+                        $user->notify(new EventUpdate($event, $workername)); // Ensure the EventUpdate notification is correct
                     } catch (\Exception $e) {
                         // If email notification failed, add to failed list
                         $failedEmail[] = $user->email;
