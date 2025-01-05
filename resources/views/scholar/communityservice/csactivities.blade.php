@@ -53,12 +53,18 @@
                                 <div class="card-content">
                                     <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
                                     <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>
-                                    <p><i class="fa-solid fa-calendar-days"></i>{{ $activity->eventdate }}</p>
-                                    <p><i class="fa-solid fa-clock"></i>{{ $activity->starttime }}</p>
+                                    <p><i
+                                            class="fa-solid fa-calendar-days"></i>{{ \Carbon\Carbon::parse($activity->eventdate)->format('F j, Y') }}
+                                    </p>
+                                    <p><i
+                                            class="fa-solid fa-clock"></i>{{ \Carbon\Carbon::parse($activity->starttime)->format('g:i A') }}
+                                    </p>
                                     <p><i class="fa-solid fa-user"></i>{{ $activity->facilitator }}</p><br>
                                     <p><i>Meeting Place & Call Time:</i></p>
                                     <p><i class="fa-solid fa-map-pin"></i>{{ $activity->meetingplace }}</p>
-                                    <p><i class="fa-regular fa-clock"></i>{{ $activity->calltime }}</p>
+                                    <p><i
+                                            class="fa-regular fa-clock"></i>{{ \Carbon\Carbon::parse($activity->calltime)->format('g:i A') }}
+                                    </p>
                                 </div>
 
                                 <div class="num-vol">
@@ -73,12 +79,18 @@
                                 <div class="card-content">
                                     <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
                                     <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>
-                                    <p><i class="fa-solid fa-calendar-days"></i>{{ $activity->eventdate }}</p>
-                                    <p><i class="fa-solid fa-clock"></i>{{ $activity->starttime }}</p>
+                                    <p><i
+                                            class="fa-solid fa-calendar-days"></i>{{ \Carbon\Carbon::parse($activity->eventdate)->format('F j, Y') }}
+                                    </p>
+                                    <p><i
+                                            class="fa-solid fa-clock"></i>{{ \Carbon\Carbon::parse($activity->starttime)->format('g:i A') }}
+                                    </p>
                                     <p><i class="fa-solid fa-user"></i>{{ $activity->facilitator }}</p><br>
                                     <p><i>Meeting Place & Call Time:</i></p>
                                     <p><i class="fa-solid fa-map-pin"></i>{{ $activity->meetingplace }}</p>
-                                    <p><i class="fa-regular fa-clock"></i>{{ $activity->calltime }}</p>
+                                    <p><i
+                                            class="fa-regular fa-clock"></i>{{ \Carbon\Carbon::parse($activity->calltime)->format('g:i A') }}
+                                    </p>
                                 </div>
 
                                 <div class="num-vol">
@@ -93,12 +105,18 @@
                             <div class="card-content">
                                 <p class="text-center fw-bold cs-title">{{ $activity->title }}</p>
                                 <p><i class="fa-solid fa-location-dot"></i>{{ $activity->eventloc }}</p>
-                                <p><i class="fa-solid fa-calendar-days"></i>{{ $activity->eventdate }}</p>
-                                <p><i class="fa-solid fa-clock"></i>{{ $activity->starttime }}</p>
+                                <p><i
+                                        class="fa-solid fa-calendar-days"></i>{{ \Carbon\Carbon::parse($activity->eventdate)->format('F j, Y') }}
+                                </p>
+                                <p><i
+                                        class="fa-solid fa-clock"></i>{{ \Carbon\Carbon::parse($activity->starttime)->format('g:i A') }}
+                                </p>
                                 <p><i class="fa-solid fa-user"></i>{{ $activity->facilitator }}</p><br>
                                 <p><i>Meeting Place & Call Time:</i></p>
                                 <p><i class="fa-solid fa-map-pin"></i>{{ $activity->meetingplace }}</p>
-                                <p><i class="fa-regular fa-clock"></i>{{ $activity->calltime }}</p>
+                                <p><i
+                                        class="fa-regular fa-clock"></i>{{ \Carbon\Carbon::parse($activity->calltime)->format('g:i A') }}
+                                </p>
                             </div>
 
                             <div class="num-vol">

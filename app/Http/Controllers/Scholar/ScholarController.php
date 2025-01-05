@@ -1548,17 +1548,62 @@ class ScholarController extends Controller
             // dd($data[$formname]);
         }
         return view('scholar.allowancerequest.scspecial', compact('scholar', 'forms', 'data'));
-
-        // $status = $request->input('status', 'all');
-
-        // if ($status !== 'all') {
-        //     $requests = $mergedrequests->where('status', $status)->sortBy('created_at')->values();
-        // } else {
-        //     $requests = $mergedrequests->sortBy('created_at')->values();
-        // }
-
-        // Return the filtered data (passing scholar, forms, and filtered data to the view)
     }
+
+    // public function showspecialallowance(Request $request)
+    // {
+    //     // Get the currently authenticated user and their education data
+    //     $scholar = User::with('education')
+    //         ->where('id', Auth::id())
+    //         ->first();
+
+    //     // Get the caseCode and scSchoolLevel
+    //     $caseCode = $scholar->caseCode;
+    //     $scSchoolLevel = $scholar->education->scSchoolLevel;
+
+    //     // Retrieve the forms based on the scSchoolLevel, ordered by requestDate descending
+    //     $forms = CreateSpecialAllowanceForm::whereJsonContains('requestor', $scSchoolLevel)
+    //         ->orderBy('requestDate', 'desc')  // Ordering by requestDate
+    //         ->get();
+
+    //     foreach ($forms as $form) {
+    //         $formname = $form->formname;
+    //         $filePath = $form->database;
+
+    //         // Check if the file exists in the public disk
+    //         if (!Storage::disk('public')->exists($filePath)) {
+    //             // Stop the process and return with failure message if file doesn't exist
+    //             return view('scholar.allowancerequest.scspecial', compact('scholar', 'forms'))->with('failure', 'File Not Found.');
+    //         }
+
+    //         // Read the Excel file from the public disk
+    //         $data[$formname] = Excel::toArray([], Storage::disk('public')->path($filePath));
+
+    //         // The first row contains the column headers
+    //         $headers = $data[$formname][0][0];
+
+    //         // Find the index of the 'caseCode' column
+    //         $caseCodeIndex = array_search('caseCode', $headers);
+
+    //         // Filter the data by caseCode
+    //         $filteredData = array_filter($data[$formname][0], function ($row) use ($caseCode, $caseCodeIndex) {
+    //             return isset($row[$caseCodeIndex]) && $row[$caseCodeIndex] == $caseCode;
+    //         });
+
+    //         // Optional: Reset array keys after filtering (if you want the keys to start from 0)
+    //         $filteredData = array_values($filteredData);
+
+    //         // Map the filtered data to headers (replace numeric keys with headers)
+    //         $mappedData = array_map(function ($row) use ($headers) {
+    //             // Combine each row with headers as keys
+    //             return array_combine($headers, $row);
+    //         }, $filteredData);
+
+    //         // You can store the mapped data in a separate array if you need to keep it
+    //         $data[$formname] = $mappedData;
+    //     }
+    //     return view('scholar.allowancerequest.scspecial', compact('scholar', 'forms', 'data'));
+    // }
 
     public function showrequestinstruction($requesttype)
     {
