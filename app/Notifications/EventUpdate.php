@@ -40,7 +40,7 @@ class EventUpdate extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Update on Community Service Event')
-            ->greeting('Hello ' . $this->event->workername . '!')
+            ->greeting('Hello!')
             ->line('This is to inform you that the details for the following community service event have been updated:')
             ->line('Event Title: ' . $this->event->title)
             ->line('Event Location: ' . $this->event->eventloc)

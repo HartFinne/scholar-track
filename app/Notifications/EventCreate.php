@@ -40,8 +40,9 @@ class EventCreate extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('New Community Service Event')
-            ->greeting('Hello ' . $this->event->workername . '!')
-            ->line('This is to inform you that there is a new event');
+            ->greeting('Hello!')
+            ->line('This is to inform you that a new community service event has been posted.')
+            ->action('View Event', url('/roleselection'));
     }
 
     /**
