@@ -48,7 +48,6 @@
             <table class="table table-bordered">
                 <thead class="table-success">
                     <tr>
-                        <th class="text-center align-middle">#</th>
                         <th class="text-center align-middle">Type of Request</th>
                         <th class="text-center align-middle">Date of Request</th>
                         <th class="text-center align-middle">Status</th>
@@ -60,7 +59,6 @@
                     @forelse ($forms as $form)
                         @foreach ($data[$form->formname] as $row)
                             <tr>
-                                <td class="text-center align-middle">{{ $loop->iteration }}</td>
                                 <td class="text-center align-middle">{{ $row['requestType'] }}</td>
                                 <td class="text-center align-middle">
                                     {{ \Carbon\Carbon::parse($row['requestDate'])->format('F j, Y') }}
