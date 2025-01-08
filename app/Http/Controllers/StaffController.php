@@ -2886,7 +2886,7 @@ class StaffController extends Controller
             $volunteersnum = 0;
             $eventstatus = 'Open';
 
-            $workername = $worker->workername;
+            $workername = $worker->name;
 
             $event = communityservice::create([
                 'staffID' => $worker->id,
