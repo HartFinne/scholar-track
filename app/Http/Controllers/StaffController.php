@@ -82,6 +82,15 @@ use Illuminate\Support\Facades\Schema;
 
 class StaffController extends Controller
 {
+
+    // for the ip address and user agent
+    private function getRequestDetails()
+    {
+        return [
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('User-Agent'),
+        ];
+    }
     public function showAccountSW()
     {
         $worker = Auth::guard('staff')->user();
@@ -251,6 +260,23 @@ class StaffController extends Controller
             'form'       => $form,
             'needs'      => ['Financial', 'Medical', 'Food', 'Material', 'Education']
         ];
+
+        // Log the download activity
+        $requestDetails = $this->getRequestDetails();
+        $downloadedBy = Auth::guard('staff')->user(); // Adjust if you're using a different guard
+
+        Log::info('Application form downloaded', [
+            'casecode' => $casecode,
+            'downloaded_by' => [
+                'user_id' => $downloadedBy->id ?? 'Guest',
+                'name' => $downloadedBy->name ?? 'Guest',
+                'email' => $downloadedBy->email ?? 'Guest',
+                'role' => $downloadedBy->role,
+            ],
+            'request_details' => $requestDetails,
+            'timestamp' => now(),
+        ]);
+
         $pdf = Pdf::loadView('application-form', $data);
         return $pdf->stream("Application-Form-{$applicant->casecode}.pdf");
     }
@@ -266,14 +292,43 @@ class StaffController extends Controller
             ]);
 
             $instruction = ApplicationInstruction::where('schoollevel', $level)->first();
+
+            // Save old data for logging
+            $oldData = $instruction->only(['applicants', 'qualifications', 'requireddocuments', 'applicationprocess']);
+
+            $instruction = ApplicationInstruction::where('schoollevel', $level)->first();
             $instruction->applicants = $request->applicants;
             $instruction->qualifications = $request->qualifications;
             $instruction->requireddocuments = $request->documents;
             $instruction->applicationprocess = $request->process;
             $instruction->save();
 
+            // Log the update activity
+            $requestDetails = $this->getRequestDetails();
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            Log::info('Application instructions updated', [
+                'level' => $level,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $requestDetails,
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "The Application Instruction for {$level} has been successfully updated.");
         } catch (\Exception $e) {
+
+            $requestDetails = $this->getRequestDetails();
+            Log::error('Failed to update application instructions', [
+                'level' => $level,
+                'error' => $e->getMessage(),
+                'request_details' => $requestDetails,
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('failure', "Failed to update Application Instruction for {$level}." . $e->getMessage())->withInput();
         }
     }
@@ -347,6 +402,21 @@ class StaffController extends Controller
 
             DB::commit();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Logging update
+            Log::info('Applicant status updated', [
+                'casecode' => $casecode,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
+
             $api_key = env('MOVIDER_API_KEY');
             $api_secret = env('MOVIDER_API_SECRET');
 
@@ -398,6 +468,14 @@ class StaffController extends Controller
             return redirect()->back()->with('success', "Successfully updated application progress of applicant {$casecode}.");
         } catch (ValidationException $e) {
             DB::rollback();
+
+            // Log error
+            Log::error('Validation error during application status update', [
+                'error' => $e->getMessage(),
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             $errors = $e->errors();
             $errorMessages = '<ul>';
             foreach ($errors as $fieldErrors) {
@@ -410,6 +488,14 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
+
+            // Log error
+            Log::error('Exception during application status update', [
+                'error' => $e->getMessage(),
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('failure', 'Failed to update application progress. ')->withInput();
         }
     }
@@ -478,9 +564,30 @@ class StaffController extends Controller
 
             DB::commit();
 
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+            // Log the update
+            Log::info('Applicant case details updated', [
+                'casecode' => $casecode,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "Successfully updated case details of applicant.");
         } catch (\Exception $e) {
-            Log::error("Error: {$e->getMessage()}");
+
+            // Log the error
+            Log::error('Error updating applicant case details', [
+                'error' => $e->getMessage(),
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             DB::rollBack();
             return redirect()->back()->with('failure', 'Failed to update case details of applicant. ');
         }
@@ -496,6 +603,20 @@ class StaffController extends Controller
             $form->save();
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+            // Log the form status update
+            Log::info('Application form status updated', [
+                'formname' => $formname,
+                'status' => $status,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
 
             if ($status == 'Open') {
 
@@ -563,6 +684,11 @@ class StaffController extends Controller
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
             DB::rollBack();
+            Log::error('Error updating form status', [
+                'error' => $e->getMessage(),
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
             return redirect()->back()->with('failure', 'Failed to update form status. ');
         }
     }
@@ -641,7 +767,23 @@ class StaffController extends Controller
                     $failedEmail[] = $user->email;
                 }
             }
+
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+            // Log the scholarship status update
+            Log::info('Scholarship status updated', [
+                'caseCode' => $caseCode,
+                'scholarshipstatus' => $request->scholarshipstatus,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', 'Successfully updated scholarship status.');
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -755,6 +897,22 @@ class StaffController extends Controller
 
             // Commit the transaction
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the grade status update
+            Log::info('Grade status updated', [
+                'gid' => $gid,
+                'gradestatus' => $request->gradestatus,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', 'Successfully updated grade status.');
         } catch (\Exception $e) {
             // Roll back the transaction in case of error
@@ -814,103 +972,6 @@ class StaffController extends Controller
             $letter->save();
             $scinfo = scholarshipinfo::where('caseCode', $letter->caseCode)->first();
 
-
-            $api_key = env('MOVIDER_API_KEY');
-            $api_secret = env('MOVIDER_API_SECRET');
-
-            $user = User::where('caseCode', $letter->caseCode)->first();
-
-            // Initialize the Guzzle client
-            $client = new \GuzzleHttp\Client();
-
-            // Track failed SMS and failed email notifications
-            $failedSMS = [];
-            $failedEmail = [];
-            $message = 'lte status update';
-
-            if ($user->notification_preference === 'sms') {
-                // Send the SMS using the Movider API
-                try {
-                    $response = $client->post('https://api.movider.co/v1/sms', [
-                        'form_params' => [
-                            'api_key' => $api_key,
-                            'api_secret' => $api_secret,
-                            'to' => $user->scPhoneNum,
-                            'text' => $message,
-                        ],
-                    ]);
-
-                    $responseBody = $response->getBody()->getContents();
-                    $decodedResponse = json_decode($responseBody, true);
-
-                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
-                    // Check if phone_number_list is an array and not empty
-                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
-                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
-                    }
-                } catch (\Exception $e) {
-                    // Catch and handle any exception
-                    $failedSMS[] = $user->scPhoneNum;
-                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
-                }
-            } else {
-                // Send an email notification
-                try {
-                    $user->notify(new LteStatusUpdate($letter));
-                } catch (\Exception $e) {
-                    // If email notification failed, add to failed list
-                    $failedEmail[] = $user->email;
-                }
-            }
-
-
-            $api_key = env('MOVIDER_API_KEY');
-            $api_secret = env('MOVIDER_API_SECRET');
-
-            $user = User::where('caseCode', $letter->caseCode)->first();
-
-            // Initialize the Guzzle client
-            $client = new \GuzzleHttp\Client();
-
-            // Track failed SMS and failed email notifications
-            $failedSMS = [];
-            $failedEmail = [];
-            $message = 'lte status update';
-
-            if ($user->notification_preference === 'sms') {
-                // Send the SMS using the Movider API
-                try {
-                    $response = $client->post('https://api.movider.co/v1/sms', [
-                        'form_params' => [
-                            'api_key' => $api_key,
-                            'api_secret' => $api_secret,
-                            'to' => $user->scPhoneNum,
-                            'text' => $message,
-                        ],
-                    ]);
-
-                    $responseBody = $response->getBody()->getContents();
-                    $decodedResponse = json_decode($responseBody, true);
-
-                    Log::info('Movider SMS Response', ['response' => $decodedResponse]);
-                    // Check if phone_number_list is an array and not empty
-                    if (!isset($decodedResponse['phone_number_list']) || !is_array($decodedResponse['phone_number_list']) || count($decodedResponse['phone_number_list']) == 0) {
-                        $failedSMS[] = $user->scPhoneNum; // Track failed SMS
-                    }
-                } catch (\Exception $e) {
-                    // Catch and handle any exception
-                    $failedSMS[] = $user->scPhoneNum;
-                    Log::info('Movider SMS Response', ['response' => $failedSMS]);
-                }
-            } else {
-                // Send an email notification
-                try {
-                    $user->notify(new LteStatusUpdate($letter));
-                } catch (\Exception $e) {
-                    // If email notification failed, add to failed list
-                    $failedEmail[] = $user->email;
-                }
-            }
 
             if (in_array($letter->violation, ['Late', 'Absent', 'Left Early', 'Cancelled'])) {
                 $condition = $letter->violation . ' in ' . $letter->eventtype;
@@ -1118,6 +1179,21 @@ class StaffController extends Controller
 
             DB::commit();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            Log::info('Penalty successfully created', [
+                'user_lid' => $lid,
+                'user_scholarshipstatus' => $scinfo->scholarshipstatus,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
+
             return redirect()->back()->with('success', 'Successfully updated LTE status.');
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -1178,6 +1254,21 @@ class StaffController extends Controller
             'condition' => 'required|string|in:Lost Cash Card,Dress Code Violation',
         ]);
 
+        $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+        // Log the beginning of penalty creation
+        Log::info('Penalty creation initiated', [
+            'scholar_id' => $validatedData['scholar_id'],
+            'condition' => $validatedData['condition'],
+            'updated_by' => [
+                'user_id' => $updatedBy->id ?? 'Guest',
+                'name' => $updatedBy->name ?? 'Guest',
+                'email' => $updatedBy->email ?? 'Guest',
+            ],
+            'request_details' => $this->getRequestDetails(),
+            'timestamp' => now(),
+        ]);
+
         $currentpenalty = penalty::where('caseCode', $validatedData['scholar_id'])
             ->where('condition', $validatedData['condition'])
             ->orderBy('remark', 'desc')
@@ -1203,6 +1294,22 @@ class StaffController extends Controller
             'conditionid' => NULL,
             'remark' => $remark,
             'dateofpenalty' => $date,
+        ]);
+
+        // Log penalty creation
+        Log::info('Penalty successfully created', [
+            'penalty_id' => $penalty->id,
+            'scholar_id' => $validatedData['scholar_id'],
+            'condition' => $validatedData['condition'],
+            'remark' => $remark,
+            'dateofpenalty' => $date,
+            'created_by' => [
+                'user_id' => $updatedBy->id ?? 'Guest',
+                'name' => $updatedBy->name ?? 'Guest',
+                'email' => $updatedBy->email ?? 'Guest',
+            ],
+            'request_details' => $this->getRequestDetails(),
+            'timestamp' => now(),
         ]);
 
         // Prepare notification settings
@@ -1341,6 +1448,21 @@ class StaffController extends Controller
             // Commit the transaction
             DB::commit();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log successful creation of the criteria
+            Log::info('Criteria successfully added', [
+                'criteria_name' => $validated['criteriaName'],
+                'criteria_value' => $validated['criteriaValue'],
+                'added_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', 'New criteria added successfully.');
         } catch (\Exception $e) {
             // Rollback the transaction in case of any error
@@ -1356,7 +1478,6 @@ class StaffController extends Controller
 
     public function updatecriteria(Request $request)
     {
-        dd($request);
         DB::beginTransaction();
 
         try {
@@ -1375,6 +1496,21 @@ class StaffController extends Controller
             }
 
             DB::commit();
+
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful update
+            Log::info('Criteria successfully updated', [
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', 'Criteria updated successfully.');
         } catch (ValidationException $e) {
             DB::rollback();
@@ -1391,6 +1527,21 @@ class StaffController extends Controller
     {
         try {
             Criteria::findOrFail($id)->delete();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful deletion
+            Log::info('Criterion successfully deleted', [
+                'criterion_id' => $id,
+                'deleted_by' => [
+                    'user_id' => $deletedBy->id ?? 'Guest',
+                    'name' => $deletedBy->name ?? 'Guest',
+                    'email' => $deletedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', 'Criterion deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete criterion.');
@@ -1424,6 +1575,21 @@ class StaffController extends Controller
             ]);
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+            // Log successful area addition
+            Log::info('Area added successfully', [
+                'areaname' => $request->areaname,
+                'areacode' => $request->areacode,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+
+                'timestamp' => now(),
+            ]);
 
             return redirect()->back()->with('success', "Successfully added area: {$request->areaname}.");
         } catch (\Exception $e) {
@@ -1463,6 +1629,21 @@ class StaffController extends Controller
             $area->save();
             DB::commit();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+            // Log successful update
+            Log::info('Area updated successfully', [
+                'area_id' => $id,
+                'newareaname' => $request->newareaname,
+                'newareacode' => $request->newareacode,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "Successfully updated area: {$request->newareaname}.");
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -1480,6 +1661,22 @@ class StaffController extends Controller
             $area->delete();
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log successful deletion
+            Log::info('Area successfully deleted', [
+                'area_id' => $id,
+                'areaname' => $area->areaname,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "Successfully deleted the area: {$area->areaname}.");
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -1517,6 +1714,23 @@ class StaffController extends Controller
             ]);
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful addition
+            Log::info('Institution added successfully', [
+                'schoolname' => $request->institute,
+                'schoollevel' => $request->schoollevel,
+                'academiccycle' => $request->academiccycle,
+                'highestgwa' => $request->highestgwa,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
 
             return redirect()->back()->with('success', 'Successfully added an institution.');
         } catch (ValidationException $e) {
@@ -1560,6 +1774,25 @@ class StaffController extends Controller
             ]);
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log successful update
+            Log::info('Institution updated successfully', [
+                'institution_id' => $inid,
+                'newschoolname' => $request->newschoolname,
+                'newschoollevel' => $request->newschoollevel,
+                'newacademiccycle' => $request->newacademiccycle,
+                'newgwa' => $request->newgwa,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', 'Successfully updated the institution.');
         } catch (ValidationException $e) {
             DB::rollback();
@@ -1580,6 +1813,22 @@ class StaffController extends Controller
             $institution->delete();
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log successful deletion
+            Log::info('Institution deleted successfully', [
+                'institution_id' => $inid,
+                'schoolname' => $institution->schoolname,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', 'Successfully deleted the institution.');
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -1603,6 +1852,22 @@ class StaffController extends Controller
                 ]);
 
                 DB::commit();
+
+
+                $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+                // Log the successful addition of a course
+                Log::info('Successfully added a course', [
+                    'level' => $level,
+                    'coursename' => $request->course,
+                    'created_by' => [
+                        'user_id' => $updatedBy->id ?? 'Guest',
+                        'name' => $updatedBy->name ?? 'Guest',
+                        'email' => $updatedBy->email ?? 'Guest',
+                    ],
+                    'request_details' => $this->getRequestDetails(),
+                    'timestamp' => now(),
+                ]);
 
                 return redirect()->back()->with('success', 'Successfully added a course.');
             } catch (ValidationException $e) {
@@ -1629,6 +1894,21 @@ class StaffController extends Controller
                 ]);
 
                 DB::commit();
+
+                $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+                // Log the successful addition of a course
+                Log::info('Successfully added a course', [
+                    'level' => $level,
+                    'coursename' => $request->course,
+                    'created_by' => [
+                        'user_id' => $updatedBy->id ?? 'Guest',
+                        'name' => $updatedBy->name ?? 'Guest',
+                        'email' => $updatedBy->email ?? 'Guest',
+                    ],
+                    'request_details' => $this->getRequestDetails(),
+                    'timestamp' => now(),
+                ]);
 
                 return redirect()->back()->with('success', 'Successfully added a strand.');
             } catch (ValidationException $e) {
@@ -1669,6 +1949,22 @@ class StaffController extends Controller
             ]);
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+            // Log the successful update
+            Log::info("Successfully updated {$type}", [
+                'course_id' => $coid,
+                'newcoursename' => $request->newcoursename,
+                'type' => $type,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "Successfully updated {$type}.");
         } catch (ValidationException $e) {
             DB::rollback();
@@ -1702,6 +1998,22 @@ class StaffController extends Controller
             $course->delete();
 
             DB::commit();
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log successful deletion
+            Log::info("Successfully deleted {$type}", [
+                'course_id' => $coid,
+                'coursename' => $course->coursename,
+                'type' => $type,
+                'deleted_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "Successfully deleted {$type}.");
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -1876,6 +2188,22 @@ class StaffController extends Controller
             // Commit transaction
             DB::commit();
 
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log success
+            Log::info('Successfully updated renewal info and case details', [
+                'renewal_id' => $id,
+                'status' => $request->renewalstatus,
+                'requester' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             // Return success response
             return redirect()->back()->with('success', 'Successfully updated renewal status and case details.');
         } catch (\Exception $e) {
@@ -1947,6 +2275,24 @@ class StaffController extends Controller
 
             $req->save();
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+
+            // Log the successful update
+            Log::info('Regular allowance updated successfully', [
+                'regularID' => $id,
+                'new_status' => $req->status,
+                'date_of_release' => $req->date_of_release ?? 'Not set',
+                'requestor' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
 
             // Prepare notification settings
             $api_key = config('services.movider.api_key');
@@ -2199,6 +2545,26 @@ class StaffController extends Controller
 
             $summary->save();
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+
+            $specialUpdateInfo = [
+                'request_id' => $request->requestId,
+                'old_status' => $request->oldStatus,
+                'new_status' => $request->requestStatus,
+                'releasedate' => $request->releasedate ?? null,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ];
+
+            Log::info('Special Request Status Updated', $specialUpdateInfo);
+
             return back()->with('success', 'Successfully updated request status.');
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -2297,6 +2663,21 @@ class StaffController extends Controller
             }
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log commit success
+            Log::info('Transaction committed successfully', [
+                'csafid' => $csafId,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
 
             // Return success message
             return redirect()->back()->with('success', 'Special Allowance Form created successfully.');
@@ -2415,6 +2796,20 @@ class StaffController extends Controller
 
             DB::commit();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            Log::info('Special Allowance Form updated successfully', [
+                'form_id' => $form->csafid,
+                'formname' => $form->formname,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             // Return success message
             return redirect()->back()->with('success', 'Special Allowance Form updated successfully.');
         } catch (\Exception $e) {
@@ -2499,6 +2894,20 @@ class StaffController extends Controller
 
             Db::commit();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            Log::info('Special Allowance Form deleted successfully', [
+                'form_id' => $form->csafid,
+                'formname' => $form->formname,
+                'deleted_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "Successfully deleted the {$form->formname}.");
         } catch (\Exception $e) {
             Db::rollBack();
@@ -2540,6 +2949,20 @@ class StaffController extends Controller
             specialallowanceforms::create([
                 'filename' => $request->filename,
                 'pathname' => $path,
+            ]);
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            Log::info('Downloadable file uploaded successfully', [
+                'filename' => $request->filename,
+                'file_path' => $path,
+                'uploaded_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
             ]);
 
             return redirect()->back()->with('success', "Successfully uploaded {$request->filename}.");
@@ -2589,6 +3012,23 @@ class StaffController extends Controller
             $file->pathname = $path;
             $file->save();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+
+            Log::info('Downloadable file updated successfully', [
+                'old_filename' => $file->filename,
+                'new_filename' => $request->newfilename,
+                'old_file_path' => $file->pathname,
+                'new_file_path' => $path,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return redirect()->back()->with('success', "Successfully updated {$file->filename}.");
         } catch (\Exception $e) {
             return redirect()->back()->with('failure', "Failed to delete the file. Please try again. Error: " . $e->getMessage());
@@ -2605,6 +3045,19 @@ class StaffController extends Controller
             }
 
             $file->delete();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+            Log::info('Downloadable file deleted successfully', [
+                'filename' => $file->filename,
+                'file_path' => $file->pathname,
+                'deleted_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
 
             return redirect()->back()->with('success', "Successfully deleted {$file->filename}.");
         } catch (\Exception $e) {
@@ -2902,6 +3355,21 @@ class StaffController extends Controller
                 'eventstatus' => $eventstatus
             ]);
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful creation of the event
+            Log::info('Community service event created successfully', [
+                'event_id' => $event->id,
+                'event_title' => $event->title,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             $api_key = env('MOVIDER_API_KEY');
             $api_secret = env('MOVIDER_API_SECRET');
 
@@ -3013,6 +3481,21 @@ class StaffController extends Controller
                 'eventstatus' => $request->eventstatus
             ]);
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful udate of the event
+            Log::info('Community service event updated successfully', [
+                'csid' => $event->csid,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+
+            ]);
+
             $api_key = env('MOVIDER_API_KEY');
             $api_secret = env('MOVIDER_API_SECRET');
 
@@ -3117,6 +3600,19 @@ class StaffController extends Controller
                 'hcstarttime' => $request->hcstarttime,
                 'hcendtime' => $request->hcendtime,
                 'totalattendees' => $totalattendees,
+            ]);
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            Log::info('Humanities class event created successfully', [
+                'hcid' => $event->hcid,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
             ]);
 
             return redirect()->route('attendancesystem', $event->hcid);
@@ -3643,6 +4139,24 @@ class StaffController extends Controller
             // Commit the transaction
             DB::commit();
 
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful status update
+            Log::info('Appointment status updated successfully', [
+                'appointment_id' => $appointment->id,
+                'status' => $appointment->status,
+                'caseCode' => $appointment->caseCode,
+                'user_email' => $user->email,
+                'updated_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+
+            ]);
+
             // Redirect with a success message
             return redirect()->back()->with('success', 'Successfully updated appointment status.');
         } catch (\Exception $e) {
@@ -4028,6 +4542,23 @@ class StaffController extends Controller
                 'filepath' => $filepath,
             ]);
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful report creation
+            Log::info('Summary Report generated successfully', [
+                'reportname' => $reportname,
+                'level' => $level,
+                'filepath' => $filepath,
+                'created_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return Redirect()->back()->with('success', "{$reportname} has been generated successfully.");
         } catch (\Exception $e) {
             Log::error("Error: {$e->getMessage()}");
@@ -4127,6 +4658,22 @@ class StaffController extends Controller
             $report->delete();
 
             DB::commit();
+
+            $updatedBy = auth()->guard('staff')->user(); // Adjust if you're using a different guard
+
+            // Log the successful deletion
+            Log::info('Report deleted successfully', [
+                'reportname' => $report->reportname,
+                'filepath' => $filepath,
+                'deleted_by' => [
+                    'user_id' => $updatedBy->id ?? 'Guest',
+                    'name' => $updatedBy->name ?? 'Guest',
+                    'email' => $updatedBy->email ?? 'Guest',
+                ],
+                'request_details' => $this->getRequestDetails(),
+                'timestamp' => now(),
+            ]);
+
             return Redirect()->back()->with('success', "Successfully deleted the report: {$report->reportname}.");
         } catch (\Exception $e) {
             DB::rollBack();

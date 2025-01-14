@@ -19,11 +19,26 @@ class StaffAuthController extends Controller
 
     public function login(Request $request)
     {
+
+        $ipAddress = $request->ip(); // Capture the user's IP address
+        $userAgent = $request->header('User-Agent'); // Capture the user's browser and device information
+
         if (Auth::guard('staff')->attempt($request->only('email', 'password'))) {
             $user = Auth::guard('staff')->user();
 
             if ($user->status === 'Active') {
                 $request->session()->regenerate();
+
+
+                // Log successful login
+                Log::info('Login successful', [
+                    'staff' => $user->id,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'ip_address' => $ipAddress,
+                    'user_agent' => $userAgent,
+                    'time' => now(),
+                ]);
 
                 switch ($user->role) {
                     case 'Social Worker':
@@ -34,9 +49,29 @@ class StaffAuthController extends Controller
                         return redirect()->back()->with('failure', 'Unknown role. Access denied.');
                 }
             } else {
+
+                // Log deactivated account access attempt
+                Log::warning('Deactivated account login attempt', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'ip_address' => $ipAddress,
+                    'user_agent' => $userAgent,
+                    'time' => now(),
+                ]);
+
                 return redirect()->back()->with('failure', 'Your account has been deactivated. If this was an error, please contact us at inquiriescholartrack@gmail.com for assistance.');
             }
         } else {
+
+            // Log failed login attempt with additional details
+            Log::warning('Login failed', [
+                'email' => $request->email,
+                'ip_address' => $ipAddress,
+                'user_agent' => $userAgent,
+                'time' => now(),
+            ]);
+
+
             return redirect()->back()->with('failure', 'Invalid email or password.');
         }
     }
@@ -104,6 +139,32 @@ class StaffAuthController extends Controller
                 'status' => $status,
                 'password' => Hash::make($password),
             ]);
+
+
+            // Log account creation with additional details
+            $createdBy = Auth::guard('staff')->user(); // Retrieve the authenticated user
+            $ipAddress = $request->ip();
+            $userAgent = $request->header('User-Agent');
+
+            Log::info('Account created successfully', [
+                'created_by' => [
+                    'user_id' => $createdBy->id ?? 'N/A',
+                    'name' => $createdBy->name ?? 'N/A',
+                    'email' => $createdBy->email ?? 'N/A',
+                    'role' => $createdBy->role ?? 'N/A',
+                    'ip_address' => $ipAddress,
+                    'user_agent' => $userAgent,
+                ],
+                'new_account' => [
+                    'name' => $staccount->name,
+                    'email' => $staccount->email,
+                    'role' => $staccount->role,
+                    'area' => $staccount->area,
+                    'status' => $staccount->status,
+                    'created_at' => now(),
+                ],
+            ]);
+
 
             // Fetch the created account
             $staff = Staccount::where('email', $request->email)->first();
